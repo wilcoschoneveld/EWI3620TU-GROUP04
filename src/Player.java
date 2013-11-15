@@ -4,6 +4,14 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class Player {
+    public static final float HEIGHT = 1.8f;
+    public static final float WIDTH = 0.5f;
+    
+    public static final float EYEHEIGHT = 1.7f;
+    
+    public static final float SPEED_WALKING = 2.5f;
+    public static final float SPEED_RUNNING = 4f;
+    
     private final Vector position, rotation;
     
     public Player() {
@@ -15,7 +23,11 @@ public class Player {
         position.set(x, y, z);
     }
     
-    public void update() {
+    public void setRotation(float x, float y, float z) {
+        rotation.set(x, y, z);
+    }
+    
+    public void update(float dt) {
         rotation.y -= 0.1 * Mouse.getDX();
         rotation.x += 0.1 * Mouse.getDY();
         if (rotation.x > 90) rotation.x = 90;
@@ -31,8 +43,12 @@ public class Player {
         if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) velocity.add(0, -1, 0);
         
         if(velocity.length() > 0) {
-            velocity.rotate(rotation.y, 0, 1, 0).normalize().
-                    scale(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 0.5f : 0.2f);
+            float speed = SPEED_WALKING * dt;
+            if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+                speed = SPEED_RUNNING * dt;
+            
+            velocity.rotate(rotation.y, 0, 1, 0).
+                    normalize().scale(speed);
         
             position.add(velocity);
         }
@@ -49,7 +65,7 @@ public class Player {
         GL11.glRotatef(-rotation.y, 0, 1, 0);
         GL11.glTranslatef(
                 -position.x,
-                -position.y - 2.5f,
+                -position.y - EYEHEIGHT,
                 -position.z);
     }
 }

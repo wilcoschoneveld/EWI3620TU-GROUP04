@@ -11,6 +11,8 @@ public class Main {
     private final int screenWidth = 1280;
     private final int screenHeight = 720;
     
+    private Timer timer;
+    
     private Maze maze;
     private Player player;
 
@@ -38,24 +40,30 @@ public class Main {
         // Create a single ambient light source
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, Utils.fbWhite);
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-                Utils.createFloatBuffer(0, 50, 0, 1));
+                Utils.createFloatBuffer(0, 1, 0, 1));
         
         // Enable lighting
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_LIGHT0);
         
+        // Create a new timer
+        timer = new Timer();
+        
         // Create a new maze and player
-        //maze = Maze.defaultMaze();
-        maze = Maze.readMaze("test.txt");
+        maze = Maze.defaultMaze();
+        //maze = Maze.readMaze("test.txt");
         player = new Player();
         
         // Player start position
-        //player.setPosition(27.5f, 0f, 18.5f);
+        player.setPosition(1.5f * Maze.WALL_HEIGHT, 0f, 1.5f*Maze.WALL_HEIGHT);
+        player.setRotation(0, -135, 0);
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
-        player.update();
+        float deltaTime = timer.deltaTime() * 0.001f;
+        
+        player.update(deltaTime);
     }
 
     /** The render method is called every frame, after updating */

@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.Scanner;
 
 public class Maze {
-    public static final float SQUARE_SIZE = 5;
+    public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
     
@@ -26,6 +26,20 @@ public class Maze {
 //        GL11.glVertex3f(width*SQUARE_SIZE, 0, height*SQUARE_SIZE);
 //        GL11.glVertex3f(width*SQUARE_SIZE, 0, 0);
 //        GL11.glEnd();
+        
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glNormal3f(0, 1, 0);
+        GL11.glVertex3f(0, 0, 0);
+        GL11.glVertex3f(0, 0, 100);
+        GL11.glVertex3f(100, 0, 100);
+        GL11.glVertex3f(100, 0, 0);
+        GL11.glNormal3f(0, -1, 0);
+        GL11.glVertex3f(0, WALL_HEIGHT, 0);
+        GL11.glVertex3f(100, WALL_HEIGHT, 0);
+        GL11.glVertex3f(100, WALL_HEIGHT, 100);
+        GL11.glVertex3f(0, WALL_HEIGHT, 100);
+        GL11.glEnd();
+        
         
         // Wall material
         GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);
@@ -48,7 +62,7 @@ public class Maze {
                 float zmin = -sc.nextInt() / 20f;
                 
                 Shape shape = new Shape.BoxBuilder(
-                        xmin, 0, zmin, xmax, SQUARE_SIZE, zmax).build();
+                        xmin, 0, zmin, xmax, WALL_HEIGHT, zmax).build();
                 shapes.add(shape);
                 System.out.println("shape added!");
             }
@@ -82,19 +96,19 @@ public class Maze {
                 if(maze[y][x] != 1) continue;
                 
                 // Start building a new box
-                Shape.BoxBuilder box = new Shape.BoxBuilder(SQUARE_SIZE);
+                Shape.BoxBuilder box = new Shape.BoxBuilder(WALL_HEIGHT);
 
                 // Translate the box into place
                 box.translate(
-                        SQUARE_SIZE * (x + 0.5f), SQUARE_SIZE * 0.5f,
-                        SQUARE_SIZE * (y + 0.5f));
+                        WALL_HEIGHT * (x + 0.5f), WALL_HEIGHT * 0.5f,
+                        WALL_HEIGHT * (y + 0.5f));
 
                 // Turnoff faces with adjecent walls
-//                box.setFront(isWall(x, y + 1) == false);
-//                box.setBack(isWall(x, y - 1) == false);
-//                box.setRight(isWall(x + 1, y) == false);
-//                box.setLeft(isWall(x - 1, y) == false);
-
+                if(y < maze.length - 1 && maze[y+1][x] == 1) box.setFront(false);
+                if(y > 0 && maze[y-1][x] == 1) box.setBack(false);
+                if(x < maze[0].length - 1 && maze[y][x+1] == 1) box.setRight(false);
+                if(x > 0 && maze[y][x-1] == 1) box.setLeft(false);
+                
                 // Build the box and add to list
                 shapes.add(box.build());
             }
