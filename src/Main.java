@@ -11,6 +11,8 @@ public class Main {
     private final int screenWidth = 1280;
     private final int screenHeight = 720;
     
+    private boolean lighton = true;
+    
     private Timer timer;
     
     private Maze maze;
@@ -24,7 +26,7 @@ public class Main {
         // Set the projection to perspective mode
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);
+        GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);                
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
         // Enable backface culling
@@ -38,11 +40,19 @@ public class Main {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         
         // Create a single ambient light source
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, Utils.fbWhite);
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-                Utils.createFloatBuffer(0, 1, 0, 1));
+//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, 
+//                Utils.createFloatBuffer(1, 1, 1, 1));
+//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
+//                Utils.createFloatBuffer(0, 1, 0, 1));
         
         // Enable lighting
+        
+//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
+//                Utils.createFloatBuffer(0, 0.5f, 0, 1));
+//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPOT_DIRECTION,
+//                    Utils.createFloatBuffer(0, 0, -1, 1));
+//        GL11.glLightf(GL11.GL_LIGHT0, GL11.GL_SPOT_CUTOFF, 15f);
+        
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_LIGHT0);
         
@@ -63,6 +73,11 @@ public class Main {
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
         
+        //FIXED TIMESTEP!!!???
+        
+        if(Math.random() > 0.5) lighton = true;
+        if(Math.random() > 0.99) lighton = false;
+        
         player.update(deltaTime);
     }
 
@@ -73,6 +88,14 @@ public class Main {
         
         // Set modelview matrix to FPV
         player.loadFirstPersonView();
+        
+        if(lighton) {
+            GL11.glEnable(GL11.GL_LIGHT0);
+            GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
+                    Utils.createFloatBuffer(0, 15, 0, 1));
+        } else {
+            GL11.glDisable(GL11.GL_LIGHT0);
+        }
         
         // Draw the maze
         maze.draw();
