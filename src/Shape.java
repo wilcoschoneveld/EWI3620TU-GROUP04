@@ -42,6 +42,8 @@ public class Shape {
                 right = true, left = true;
         
         public BoxBuilder(float x0, float y0, float z0, float x1, float y1, float z1) {
+            System.out.println(x0 + "/" + z0);
+            System.out.println(x1 + "/" + z1);
             vertices = new Vector[] {
                 new Vector(x0, y0, z0), new Vector(x0, y0, z1),
                 new Vector(x0, y1, z1), new Vector(x0, y1, z0),

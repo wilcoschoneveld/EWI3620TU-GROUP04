@@ -45,11 +45,12 @@ public class Main {
         GL11.glEnable(GL11.GL_LIGHT0);
         
         // Create a new maze and player
-        maze = new Maze();
+        //maze = Maze.defaultMaze();
+        maze = Maze.readMaze("test.txt");
         player = new Player();
         
         // Player start position
-        player.setPosition(27.5f, 0f, 18.5f);
+        //player.setPosition(27.5f, 0f, 18.5f);
     }
 
     /** The update method is called every frame, before rendering */
