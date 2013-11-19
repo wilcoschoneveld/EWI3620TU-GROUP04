@@ -18,8 +18,8 @@ public class Player extends Entity {
 
     public static final float EYEHEIGHT = 1.7f;
     
-    public static final float SPEED_WALKING = 2.5f;
-    public static final float SPEED_RUNNING = 10f; 
+    public static final float SPEED_WALKING = 5f;
+    public static final float SPEED_RUNNING = 4f; 
 
     public Player(Level level) {
         super(level, WIDTH, HEIGHT);
