@@ -6,13 +6,6 @@
 public class Vector {
     public float x, y, z;
     
-    /** Creates a new Vector with coordinates (0, 0, 0). */
-    public Vector() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-    }
-
     /** Creates a new Vector with given coordinates.
      * 
      * @param x
@@ -25,15 +18,18 @@ public class Vector {
         this.z = z;
     }
     
+    /** Creates a new Vector with coordinates (0, 0, 0). */
+    public Vector() {
+        this(0, 0, 0);
+    }
+
     /** Creates a new Vector with coordinates from other vector, effectively
      * making a copy.
      * 
      * @param other
      */
     public Vector(Vector other) {
-        this.x = other.x;
-        this.y = other.y;
-        this.z = other.z;
+        this(other.x, other.y, other.z);
     }
     
     /** Sets the coordinates of the vector.

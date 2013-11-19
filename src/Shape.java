@@ -7,14 +7,16 @@ import org.lwjgl.opengl.GL11;
  * @author Wilco
  */
 public class Shape {
-    private Vector[] vertices;
-    private int[][] triangles;
-    private Vector[] normals;
+    private final Vector[] vertices;
+    private final int[][] triangles;
+    private final Vector[] normals;
+    protected final AABB aabb;
     
-    public Shape(Vector[] vertices, int[][] triangles, Vector[] normals) {
+    public Shape(Vector[] vertices, int[][] triangles, Vector[] normals, AABB aabb) {
         this.vertices = vertices;
         this.triangles = triangles;
         this.normals = normals;
+        this.aabb = aabb;
     }
     
     public void draw() {
@@ -29,21 +31,23 @@ public class Shape {
             }
         }
         GL11.glEnd();
+        
+        //aabb.draw();
     }
     
     public static class BoxBuilder {
         private final Vector[] vertices;
+        
         private int[][] triangles;
         private Vector[] normals;
-        
+        private AABB aabb;
+
         private boolean
                 front = true, back = true,
                 top = true, bottom = true,
                 right = true, left = true;
         
         public BoxBuilder(float x0, float y0, float z0, float x1, float y1, float z1) {
-            System.out.println(x0 + "/" + z0);
-            System.out.println(x1 + "/" + z1);
             vertices = new Vector[] {
                 new Vector(x0, y0, z0), new Vector(x0, y0, z1),
                 new Vector(x0, y1, z1), new Vector(x0, y1, z0),
@@ -74,8 +78,15 @@ public class Shape {
         public BoxBuilder translate(float dx, float dy, float dz) {
             for(Vector vertex : vertices) 
                 vertex.add(dx, dy, dz);
+            
+            if(aabb != null)
+                aabb.translate(new Vector(dx, dy, dz));
+            
             return this;
         }
+        
+        public BoxBuilder setAABB(AABB bb) { aabb = bb; return this; }
+        
         
         public Shape build() {
             ArrayList<int[]> t = new ArrayList<>();
@@ -109,7 +120,23 @@ public class Shape {
                 normals[i] = n.get(i);
             }
             
-            return new Shape(vertices, triangles, normals);
+            if(aabb == null) {
+                Vector min = vertices[0].copy();
+                Vector max = vertices[0].copy();
+                
+                for(Vector vertex : vertices) {
+                    if(vertex.x < min.x) min.x = vertex.x;
+                    if(vertex.y < min.y) min.y = vertex.y;
+                    if(vertex.z < min.z) min.z = vertex.z;
+                    if(vertex.x > max.x) max.x = vertex.x;
+                    if(vertex.y > max.y) max.y = vertex.y;
+                    if(vertex.z > max.z) max.z = vertex.z;
+                }
+                
+                aabb = new AABB(min, max);
+            }
+            
+            return new Shape(vertices, triangles, normals, aabb);
         }
     }
 }

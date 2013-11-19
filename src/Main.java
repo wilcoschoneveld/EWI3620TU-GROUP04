@@ -2,8 +2,7 @@
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import static org.lwjgl.opengl.GL11.*;
-//import static org.lwjgl.opengl.GL20.*;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 public class Main {
@@ -14,32 +13,51 @@ public class Main {
     
     private Timer timer;
     
-    private Maze maze;
-    private Player player;
-    
-//    private static int shaderprogram;
+    private Level level;
+    private Entity player;
 
     /** The initialize method is called at application startup */
     public void initialize() {
         // Set glClearColor to black
-        glClearColor(0, 0, 0, 0);
+        GL11.glClearColor(0, 0, 0, 0);
 
         // Set the projection to perspective mode
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
         GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);
-        glMatrixMode(GL_MODELVIEW);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        
+                // Set up shaders
+//        shaderprogram = ShaderLoader.loadShaderPair(VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_LOCATION);
+        
+        // Set up Lighting
+        setUpLighting();
 
+        // Enable backface culling
+        GL11.glCullFace(GL11.GL_BACK);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        
+        // Enable smooth shading model
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+        
+        // Enable depth testing
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        
+        // Enable LIGHT0
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_LIGHT0);
+        
         // Create a new timer
         timer = new Timer();
         
         // Create a new maze and player
-        maze = Maze.defaultMaze();
-        //maze = Maze.readMaze("test.txt");
-        player = new Player();
+        level = Level.defaultLevel();
+        //level = Level.readLevel("test.txt");
+        
+        player = new Player(level);
         
         // Player start position
-        player.setPosition(1.5f * Maze.WALL_HEIGHT, 0f, 1.5f*Maze.WALL_HEIGHT);
+        player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
     }
 
@@ -53,14 +71,13 @@ public class Main {
     /** The render method is called every frame, after updating */
     public void render() {
         // Clear the canvas
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
  
         // Set modelview matrix to FPV
-        player.loadFirstPersonView();
-
-        // Draw the maze
-        maze.draw();
-      
+        player.glFirstPersonView();
+        
+        // Draw level
+        level.draw();
     }
 
     /** Starts the game loop */
@@ -76,12 +93,6 @@ public class Main {
             e.printStackTrace();
             System.exit(0);
         }
-
-        // Set up shaders
-//        shaderprogram = ShaderLoader.loadShaderPair(VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_LOCATION);
-        
-        // Set up Lighting
-        setUpLighting();
         
         // Hide and lock the mouse in place
         Mouse.setGrabbed(true);
@@ -114,30 +125,30 @@ public class Main {
     
     // Set up lighting
     private static void setUpLighting() {
-        glShadeModel(GL_SMOOTH);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-        glEnable(GL_LIGHT1);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_LIGHT0);
+        GL11.glEnable(GL11.GL_LIGHT1);
         
-        glLightModel(GL_LIGHT_MODEL_AMBIENT, 
+        GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, 
                 Utils.createFloatBuffer(0.05f, 0.05f, 0.05f, 1f));
-        glLight(GL_LIGHT0, GL_DIFFUSE,
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE,
                 Utils.createFloatBuffer(0.1f, 0.1f, 0.1f, 1));
-        glLight(GL_LIGHT0, GL_POSITION,
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
                 Utils.createFloatBuffer(0, 3, 0, 1));
         
-        glLight(GL_LIGHT1, GL_POSITION, 
-                Utils.createFloatBuffer(2, Maze.WALL_HEIGHT, 2, 1));
-        glLight(GL_LIGHT1, GL_SPOT_DIRECTION, 
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, 
+                Utils.createFloatBuffer(2, Level.WALL_HEIGHT, 2, 1));
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPOT_DIRECTION, 
                 Utils.createFloatBuffer(0, -1, 0, 1));
-        glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, (float) 45);  
-        glLight(GL_LIGHT1, GL_DIFFUSE, Utils.fbWhite);
-        glLight(GL_LIGHT1, GL_SPECULAR, Utils.fbWhite);
+        GL11.glLightf(GL11.GL_LIGHT1, GL11.GL_SPOT_CUTOFF, (float) 45);  
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, Utils.fbWhite);
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPECULAR, Utils.fbWhite);
         
         
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
     }
     
     public static void main(String[] args) {

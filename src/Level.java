@@ -2,64 +2,58 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import org.lwjgl.opengl.GL11;
 import java.util.Scanner;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
-public class Maze {
-    private static int shaderprogram;
-    private static final String VERTEX_SHADER_LOCATION = "src/shader.vert";
-    private static final String FRAGMENT_SHADER_LOCATION = "src/shader.frag";
-    
-    
+public class Level {
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
     
-    public Maze(ArrayList<Shape> shapes) {
+    public Level(ArrayList<Shape> shapes) {
         this.shapes = shapes;
+    }
+    
+    public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
+        ArrayList<AABB> aabbs = new ArrayList<>();
+        
+        for(Shape shape : shapes)
+            if(broadphase.intersects(shape.aabb))
+                aabbs.add(shape.aabb);
+
+        return aabbs;
     }
     
     public void draw() {
         // Floor material
-        shaderprogram = ShaderLoader.loadShaderPair(VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_LOCATION);
-        glUseProgram(shaderprogram);
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbBlue);
         
-//        glMaterial(GL_FRONT, GL_DIFFUSE, Utils.fbBlue);
-
         // Draw the floor
-        glBegin(GL_QUADS);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glNormal3f(0, 1, 0);
+        GL11.glVertex3f(0, 0, 0);
+        GL11.glVertex3f(0, 0, 100);
+        GL11.glVertex3f(100, 0, 100);
+        GL11.glVertex3f(100, 0, 0);
+        GL11.glNormal3f(0, -1, 0);
+        GL11.glVertex3f(0, WALL_HEIGHT, 0);
+        GL11.glVertex3f(100, WALL_HEIGHT, 0);
+        GL11.glVertex3f(100, WALL_HEIGHT, 100);
+        GL11.glVertex3f(0, WALL_HEIGHT, 100);
+        GL11.glEnd();
         
-        //100x100 floor
-        glNormal3f(0, 1, 0);
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 0, 100);
-        glVertex3f(100, 0, 100);
-        glVertex3f(100, 0, 0);
-        
-        //100x100 ceiling
-        glNormal3f(0, -1, 0);
-        glVertex3f(0, WALL_HEIGHT, 0);
-        glVertex3f(100, WALL_HEIGHT, 0);
-        glVertex3f(100, WALL_HEIGHT, 100);
-        glVertex3f(0, WALL_HEIGHT, 100);
-        glEnd();
-
-        glUseProgram(0);
         
         // Wall material
-        glMaterial(GL_FRONT, GL_DIFFUSE, Utils.fbPurple);
-        glMaterialf(GL_FRONT, GL_SHININESS, 128f);
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);
         
         // Loop through the maze        
         for(Shape shape : shapes)
             shape.draw();
         
         // end draw
-        
     }
     
-    public static Maze readMaze(String file) {
+    public static Level readLevel(String file) {
         ArrayList<Shape> shapes = new ArrayList<>();
         
         try (Scanner sc = new Scanner(new File(file))) {
@@ -69,19 +63,25 @@ public class Maze {
                 float xmax = sc.nextInt() / 20f;
                 float zmin = -sc.nextInt() / 20f;
                 
-                Shape shape = new Shape.BoxBuilder(
-                        xmin, 0, zmin, xmax, WALL_HEIGHT, zmax).build();
-                shapes.add(shape);
+                AABB aabb = new AABB(new Vector(xmin, 0, zmin),
+                        new Vector(xmax, WALL_HEIGHT, zmax));
+                
+                Shape.BoxBuilder builder = new Shape.BoxBuilder(
+                        xmin, 0, zmin, xmax, WALL_HEIGHT, zmax);
+                
+                builder.setAABB(aabb);
+                
+                shapes.add(builder.build());
                 System.out.println("shape added!");
             }
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        return new Maze(shapes);
+        return new Level(shapes);
     }
     
-    public static Maze defaultMaze() {
+    public static Level defaultLevel() {
         
         byte[][] maze =
            {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -122,6 +122,6 @@ public class Maze {
             }
         }
         
-        return new Maze(shapes);
+        return new Level(shapes);
     }
 }
