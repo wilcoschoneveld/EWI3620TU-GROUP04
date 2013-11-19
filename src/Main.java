@@ -1,9 +1,13 @@
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+
 
 public class Main {
 
@@ -15,6 +19,8 @@ public class Main {
     
     private Level level;
     private Entity player;
+    
+    private utils.Model model;
 
     /** The initialize method is called at application startup */
     public void initialize() {
@@ -53,6 +59,41 @@ public class Main {
         // Player start position
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
+        
+        // 3D models
+//        objectDisplayList = glGenLists(2);
+//        glNewList(objectDisplayList, GL_COMPILE);
+        {
+            try {
+                model = utils.OBJLoader.loadModel(new File("src/utils/sphere.obj"));
+                model.createList();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Display.destroy();
+                System.exit(1);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Display.destroy();
+                System.exit(1);
+            }
+//            glBegin(GL_TRIANGLES);
+//            for (utils.Face face: m.faces) {
+//                Vector3f n1 = m.normals.get((int) face.normal.x - 1);
+//                glNormal3f(n1.x, n1.y, n1.z);
+//                Vector3f v1 = m.vertices.get((int) face.vertex.x - 1);
+//                glVertex3f(v1.x, v1.y, v1.z);
+//                Vector3f n2 = m.normals.get((int) face.normal.y - 1);
+//                glNormal3f(n2.x, n2.y, n2.z);
+//                Vector3f v2 = m.vertices.get((int) face.vertex.y - 1);
+//                glVertex3f(v2.x, v2.y, v2.z);
+//                Vector3f n3 = m.normals.get((int) face.normal.z - 1);
+//                glNormal3f(n3.x, n3.y, n3.z);
+//                Vector3f v3 = m.vertices.get((int) face.vertex.z - 1);
+//                glVertex3f(v3.x, v3.y, v3.z);
+//            }
+//            glEnd();
+        }
+        //glEndList();
     }
 
     /** The update method is called every frame, before rendering */
@@ -75,6 +116,9 @@ public class Main {
         
         // Draw the maze
         level.draw();
+        
+        // Draws the objects
+        model.draw();
     }
 
     /** Starts the game loop */
