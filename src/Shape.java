@@ -31,8 +31,20 @@ public class Shape {
             }
         }
         GL11.glEnd();
-        
-        //aabb.draw();
+    }
+    
+    public void drawDebug() {
+        for(int i = 0; i < triangles.length; i++) {
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            GL11.glNormal3f(normals[i].x, normals[i].y, normals[i].z);
+            for (byte j = 0; j < triangles[i].length; j++) {
+                GL11.glVertex3f(
+                        vertices[triangles[i][j]].x,
+                        vertices[triangles[i][j]].y,
+                        vertices[triangles[i][j]].z);
+            }
+            GL11.glEnd();
+        } 
     }
     
     public static class BoxBuilder {

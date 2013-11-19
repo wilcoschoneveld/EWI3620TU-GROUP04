@@ -47,7 +47,7 @@ public class Level {
         
         // Loop through the maze        
         for(Shape shape : shapes)
-            shape.draw();
+            shape.drawDebug();
         
         // end draw
     }
