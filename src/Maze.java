@@ -2,10 +2,16 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import org.lwjgl.opengl.GL11;
 import java.util.Scanner;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class Maze {
+    private static int shaderprogram;
+    private static final String VERTEX_SHADER_LOCATION = "src/shader.vert";
+    private static final String FRAGMENT_SHADER_LOCATION = "src/shader.frag";
+    
+    
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
@@ -16,39 +22,41 @@ public class Maze {
     
     public void draw() {
         // Floor material
-        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbBlue);
+        shaderprogram = ShaderLoader.loadShaderPair(VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_LOCATION);
+        glUseProgram(shaderprogram);
         
+//        glMaterial(GL_FRONT, GL_DIFFUSE, Utils.fbBlue);
+
         // Draw the floor
-//        GL11.glNormal3f(0, 1, 0);
-//        GL11.glBegin(GL11.GL_QUADS);
-//        GL11.glVertex3f(0, 0, 0);
-//        GL11.glVertex3f(0, 0, height*SQUARE_SIZE);
-//        GL11.glVertex3f(width*SQUARE_SIZE, 0, height*SQUARE_SIZE);
-//        GL11.glVertex3f(width*SQUARE_SIZE, 0, 0);
-//        GL11.glEnd();
+        glBegin(GL_QUADS);
         
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glNormal3f(0, 1, 0);
-        GL11.glVertex3f(0, 0, 0);
-        GL11.glVertex3f(0, 0, 100);
-        GL11.glVertex3f(100, 0, 100);
-        GL11.glVertex3f(100, 0, 0);
-        GL11.glNormal3f(0, -1, 0);
-        GL11.glVertex3f(0, WALL_HEIGHT, 0);
-        GL11.glVertex3f(100, WALL_HEIGHT, 0);
-        GL11.glVertex3f(100, WALL_HEIGHT, 100);
-        GL11.glVertex3f(0, WALL_HEIGHT, 100);
-        GL11.glEnd();
+        //100x100 floor
+        glNormal3f(0, 1, 0);
+        glVertex3f(0, 0, 0);
+        glVertex3f(0, 0, 100);
+        glVertex3f(100, 0, 100);
+        glVertex3f(100, 0, 0);
         
+        //100x100 ceiling
+        glNormal3f(0, -1, 0);
+        glVertex3f(0, WALL_HEIGHT, 0);
+        glVertex3f(100, WALL_HEIGHT, 0);
+        glVertex3f(100, WALL_HEIGHT, 100);
+        glVertex3f(0, WALL_HEIGHT, 100);
+        glEnd();
+
+        glUseProgram(0);
         
         // Wall material
-        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);
+        glMaterial(GL_FRONT, GL_DIFFUSE, Utils.fbPurple);
+        glMaterialf(GL_FRONT, GL_SHININESS, 128f);
         
         // Loop through the maze        
         for(Shape shape : shapes)
             shape.draw();
         
         // end draw
+        
     }
     
     public static Maze readMaze(String file) {
