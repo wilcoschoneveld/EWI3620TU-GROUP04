@@ -77,7 +77,8 @@ public class Main {
     }
     
     public void destroy() {
-        //destroy shader program
+        // Clean up lighting (shaders, etc..)
+        lighting.cleanup();
     }
 
     /** Starts the game loop */

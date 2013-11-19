@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import java.util.Scanner;
 
 public class Level {
@@ -29,6 +30,8 @@ public class Level {
         GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbBlue);
         
         // Draw the floor
+        GL20.glUseProgram(Lighting.shaderProgram1);
+        
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glNormal3f(0, 1, 0);
         GL11.glVertex3f(0, 0, 0);
@@ -36,6 +39,8 @@ public class Level {
         GL11.glVertex3f(100, 0, 100);
         GL11.glVertex3f(100, 0, 0);
         GL11.glEnd();
+        
+        GL20.glUseProgram(0);
         
         // Wall material
         GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);
