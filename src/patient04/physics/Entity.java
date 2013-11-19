@@ -1,5 +1,10 @@
+package patient04.physics;
 
+
+import patient04.physics.AABB;
+import patient04.level.Level;
 import java.util.ArrayList;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -12,10 +17,10 @@ public class Entity {
     protected final Vector position;
     protected final Vector velocity;
     protected final Vector rotation;
-    
     protected final Vector acceleration;
     
     protected boolean onGround;
+    protected float distanceMoved;
     
     private final AABB aabb;
     
@@ -38,7 +43,8 @@ public class Entity {
     public void update(float dt) {
         Vector gravity = Level.GRAVITY.copy().scale(dt);
         
-        //acceleration.add(gravity);  
+        if(!Keyboard.isKeyDown(Keyboard.KEY_SPACE))
+            acceleration.add(gravity);
     }
     
     public void integrate() {
@@ -70,18 +76,21 @@ public class Entity {
         // Check if you are touching a ground
         onGround = (delta.y != velocity.y && velocity.y < 0);
         
+        // Calculate amount of distance moved
+        if(onGround)
+            distanceMoved += delta.length();
+        
         // Reset velocities to zero in case of collision
         if(velocity.x != delta.x) velocity.x = 0;
         if(velocity.y != delta.y) velocity.y = 0;
         if(velocity.z != delta.z) velocity.z = 0;
         
         // Apply air and ground friction
-        velocity.scale(Level.FRICTION_FLY);
         
-//        velocity.scale(Level.FRICTION_AIR);
-//        if(onGround)
-//            velocity.scale(Level.FRICTION_GROUND);
-
+        velocity.scale(Level.FRICTION_AIR);
+        if(onGround)
+            velocity.scale(Level.FRICTION_GROUND);
+        
         // Reset acceleration
         acceleration.set(0, 0, 0);
     }
@@ -92,15 +101,5 @@ public class Entity {
     
     public void setRotation(float x, float y, float z) { 
         rotation.set(x, y, z);
-    }
-    
-    public void glFirstPersonView() {
-        GL11.glLoadIdentity();
-        GL11.glRotatef(-rotation.x, 1, 0, 0);
-        GL11.glRotatef(-rotation.y, 0, 1, 0);
-        GL11.glTranslatef(
-                -position.x,
-                -position.y,
-                -position.z);
     }
 }

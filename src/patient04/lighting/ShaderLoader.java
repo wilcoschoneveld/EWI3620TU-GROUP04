@@ -1,3 +1,5 @@
+package patient04.lighting;
+
 /*
  * Copyright (c) 2013, Oskar Veerhoek
  * All rights reserved.

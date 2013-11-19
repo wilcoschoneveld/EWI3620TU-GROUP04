@@ -1,3 +1,5 @@
+package patient04.level;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,18 +8,24 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import java.util.Scanner;
 import org.lwjgl.input.Keyboard;
+import patient04.physics.AABB;
+import patient04.lighting.Lighting;
+import patient04.utilities.Buffers;
+import patient04.physics.Vector;
 
 public class Level {
-    public static final Vector GRAVITY = new Vector(0, -2, 0);
+    // Gravity vectors
+    public static final Vector GRAVITY = new Vector(0, -1, 0);
     
-    public static final Vector FRICTION_FLY = new Vector(0.8f, 0.8f, 0.8f);
+    // Friction vectors
+    public static final Vector FRICTION_FLY = new Vector(0.6f, 0.6f, 0.6f);
     public static final Vector FRICTION_GROUND = new Vector(0.6f, 1, 0.6f);
-    public static final Vector FRICTION_AIR = new Vector(1f, 0.97f, 1f);
+    public static final Vector FRICTION_AIR = new Vector(0.98f, 0.98f, 0.98f);
     
+    // Wall height
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
-    
     public AABB floorAABB;
     
     public Level(ArrayList<Shape> shapes) {
@@ -29,22 +37,22 @@ public class Level {
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
         
+        if(broadphase.intersects(floorAABB))
+            aabbs.add(floorAABB);
+        
         if(Keyboard.isKeyDown(Keyboard.KEY_B))
             return aabbs;
         
         for(Shape shape : shapes)
             if(broadphase.intersects(shape.aabb))
                 aabbs.add(shape.aabb);
-        
-        if(broadphase.intersects(floorAABB))
-            aabbs.add(floorAABB);
 
         return aabbs;
     }
     
     public void draw() {
         // Floor material
-        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbBlue);
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.BLUE);
         
         // Draw the floor
         GL20.glUseProgram(Lighting.shaderProgram1);
@@ -60,7 +68,7 @@ public class Level {
         GL20.glUseProgram(0);
         
         // Wall material
-        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.PURPLE);
         
         // Loop through the maze        
         for(Shape shape : shapes)

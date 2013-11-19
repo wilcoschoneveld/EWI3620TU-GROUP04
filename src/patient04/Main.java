@@ -1,3 +1,9 @@
+package patient04;
+
+import patient04.utilities.Timer;
+import patient04.lighting.Lighting;
+import patient04.level.Model;
+import patient04.level.Level;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -16,9 +22,9 @@ public class Main {
     private Timer timer;
     
     private Level level;
-    private Entity player;
+    private Player player;
     
-    private Model model;
+    private Model model, model2;
 
     /** The initialize method is called at application startup */
     public void initialize() {
@@ -55,9 +61,12 @@ public class Main {
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
         
-        model = ModelBuilder.loadModel("res/models/sphere.obj");
+        model = Model.loadModel("res/models/sphere.obj");
         model.createDisplayList();
         model.position.set(10, 1, 10);
+        
+        model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
+        model2.createDisplayList();
     }
 
     /** The update method is called every frame, before rendering */
@@ -82,7 +91,8 @@ public class Main {
         // Draw level
         level.draw();
         
-        model.draw();
+        model.drawDebug();
+        model2.draw();
     }
     
     public void destroy() {
@@ -103,6 +113,9 @@ public class Main {
             e.printStackTrace();
             System.exit(0);
         }
+        
+        // Display OpenGL information
+        System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
         
         // Enable vsync
         Display.setVSyncEnabled(true);

@@ -1,10 +1,17 @@
+package patient04.level;
+
 
 import java.util.ArrayList;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import patient04.physics.AABB;
+import patient04.physics.Vector;
 
 /**
- *
+ *                      !! OLD CLASS !!
+ * 
+ * currently in process of merging code with the new Model class
+ *         this class will be deleted in the future
+ * 
  * @author Wilco
  */
 public class Shape {

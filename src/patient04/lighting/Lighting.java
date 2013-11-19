@@ -1,7 +1,10 @@
+package patient04.lighting;
+
 
 import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import patient04.utilities.Buffers;
 
 /**
  *
@@ -22,9 +25,9 @@ public class Lighting {
         GL11.glEnable(GL11.GL_LIGHTING);
         
         // Set light 0 parameters
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, Utils.fbWhite);
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, Buffers.WHITE);
         
-        L0position = Utils.createFloatBuffer(0, 15, 0, 1);
+        L0position = Buffers.createFloatBuffer(0, 15, 0, 1);
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, L0position);        
         
         GL11.glEnable(GL11.GL_LIGHT0);
