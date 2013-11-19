@@ -5,13 +5,23 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import java.util.Scanner;
 
-public class Maze {
+public class Level {
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
     
-    public Maze(ArrayList<Shape> shapes) {
+    public Level(ArrayList<Shape> shapes) {
         this.shapes = shapes;
+    }
+    
+    public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
+        ArrayList<AABB> aabbs = new ArrayList<>();
+        
+        for(Shape shape : shapes)
+            if(broadphase.intersects(shape.aabb))
+                aabbs.add(shape.aabb);
+
+        return aabbs;
     }
     
     public void draw() {
@@ -19,14 +29,6 @@ public class Maze {
         GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbBlue);
         
         // Draw the floor
-//        GL11.glNormal3f(0, 1, 0);
-//        GL11.glBegin(GL11.GL_QUADS);
-//        GL11.glVertex3f(0, 0, 0);
-//        GL11.glVertex3f(0, 0, height*SQUARE_SIZE);
-//        GL11.glVertex3f(width*SQUARE_SIZE, 0, height*SQUARE_SIZE);
-//        GL11.glVertex3f(width*SQUARE_SIZE, 0, 0);
-//        GL11.glEnd();
-        
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glNormal3f(0, 1, 0);
         GL11.glVertex3f(0, 0, 0);
@@ -51,7 +53,7 @@ public class Maze {
         // end draw
     }
     
-    public static Maze readMaze(String file) {
+    public static Level readLevel(String file) {
         ArrayList<Shape> shapes = new ArrayList<>();
         
         try (Scanner sc = new Scanner(new File(file))) {
@@ -61,19 +63,25 @@ public class Maze {
                 float xmax = sc.nextInt() / 20f;
                 float zmin = -sc.nextInt() / 20f;
                 
-                Shape shape = new Shape.BoxBuilder(
-                        xmin, 0, zmin, xmax, WALL_HEIGHT, zmax).build();
-                shapes.add(shape);
+                AABB aabb = new AABB(new Vector(xmin, 0, zmin),
+                        new Vector(xmax, WALL_HEIGHT, zmax));
+                
+                Shape.BoxBuilder builder = new Shape.BoxBuilder(
+                        xmin, 0, zmin, xmax, WALL_HEIGHT, zmax);
+                
+                builder.setAABB(aabb);
+                
+                shapes.add(builder.build());
                 System.out.println("shape added!");
             }
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        return new Maze(shapes);
+        return new Level(shapes);
     }
     
-    public static Maze defaultMaze() {
+    public static Level defaultLevel() {
         
         byte[][] maze =
            {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -114,6 +122,6 @@ public class Maze {
             }
         }
         
-        return new Maze(shapes);
+        return new Level(shapes);
     }
 }

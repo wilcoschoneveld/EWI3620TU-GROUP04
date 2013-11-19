@@ -11,12 +11,10 @@ public class Main {
     private final int screenWidth = 1280;
     private final int screenHeight = 720;
     
-    private boolean lighton = true;
-    
     private Timer timer;
     
-    private Maze maze;
-    private Player player;
+    private Level level;
+    private Entity player;
 
     /** The initialize method is called at application startup */
     public void initialize() {
@@ -39,20 +37,7 @@ public class Main {
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         
-        // Create a single ambient light source
-//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, 
-//                Utils.createFloatBuffer(1, 1, 1, 1));
-//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-//                Utils.createFloatBuffer(0, 1, 0, 1));
-        
-        // Enable lighting
-        
-//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-//                Utils.createFloatBuffer(0, 0.5f, 0, 1));
-//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPOT_DIRECTION,
-//                    Utils.createFloatBuffer(0, 0, -1, 1));
-//        GL11.glLightf(GL11.GL_LIGHT0, GL11.GL_SPOT_CUTOFF, 15f);
-        
+        // Enable LIGHT0
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_LIGHT0);
         
@@ -60,23 +45,19 @@ public class Main {
         timer = new Timer();
         
         // Create a new maze and player
-        maze = Maze.defaultMaze();
-        //maze = Maze.readMaze("test.txt");
-        player = new Player();
+        level = Level.defaultLevel();
+        //level = Level.readLevel("test.txt");
+        
+        player = new Player(level);
         
         // Player start position
-        player.setPosition(1.5f * Maze.WALL_HEIGHT, 0f, 1.5f*Maze.WALL_HEIGHT);
+        player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
-        
-        //FIXED TIMESTEP!!!???
-        
-        if(Math.random() > 0.5) lighton = true;
-        if(Math.random() > 0.99) lighton = false;
         
         player.update(deltaTime);
     }
@@ -87,18 +68,13 @@ public class Main {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         
         // Set modelview matrix to FPV
-        player.loadFirstPersonView();
+        player.glFirstPersonView();
         
-        if(lighton) {
-            GL11.glEnable(GL11.GL_LIGHT0);
-            GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-                    Utils.createFloatBuffer(0, 15, 0, 1));
-        } else {
-            GL11.glDisable(GL11.GL_LIGHT0);
-        }
+//        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
+//                Utils.createFloatBuffer(0, 15, 0, 1)); //ugly
         
         // Draw the maze
-        maze.draw();
+        level.draw();
     }
 
     /** Starts the game loop */
