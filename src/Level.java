@@ -5,22 +5,39 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import java.util.Scanner;
+import org.lwjgl.input.Keyboard;
 
 public class Level {
+    public static final Vector GRAVITY = new Vector(0, -2, 0);
+    
+    public static final Vector FRICTION_FLY = new Vector(0.8f, 0.8f, 0.8f);
+    public static final Vector FRICTION_GROUND = new Vector(0.6f, 1, 0.6f);
+    public static final Vector FRICTION_AIR = new Vector(1f, 0.97f, 1f);
+    
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
     
+    public AABB floorAABB;
+    
     public Level(ArrayList<Shape> shapes) {
         this.shapes = shapes;
+        
+        floorAABB = new AABB(new Vector(0, -1, 0), new Vector(100, 0, 100));
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
         
+        if(Keyboard.isKeyDown(Keyboard.KEY_B))
+            return aabbs;
+        
         for(Shape shape : shapes)
             if(broadphase.intersects(shape.aabb))
                 aabbs.add(shape.aabb);
+        
+        if(broadphase.intersects(floorAABB))
+            aabbs.add(floorAABB);
 
         return aabbs;
     }
@@ -47,7 +64,11 @@ public class Level {
         
         // Loop through the maze        
         for(Shape shape : shapes)
-            shape.drawDebug();
+            shape.draw();
+        
+        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+            for(Shape shape : shapes)
+                shape.aabb.draw();
         
         // end draw
     }

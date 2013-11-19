@@ -18,8 +18,15 @@ public class Player extends Entity {
 
     public static final float EYEHEIGHT = 1.7f;
     
-    public static final float SPEED_WALKING = 5f;
-    public static final float SPEED_RUNNING = 4f; 
+    /** These values represent acceleration. Terminal velocity can be
+     * calculated with the equation: v = v * f + a * dt
+     * v is velocity on surface, f is surface friction, a is acceleration
+     * value, and dt is represents time. This equation can also be used to
+     * find the right acceleration values for given velocities.
+     */
+    public static final float ACCEL_WALKING = 3f;
+    public static final float ACCEL_RUNNING = 5f;
+    public static final float ACCEL_JUMP = 40f;
 
     public Player(Level level) {
         super(level, WIDTH, HEIGHT);
@@ -32,25 +39,29 @@ public class Player extends Entity {
         if (rotation.x > 90) rotation.x = 90;
         if (rotation.x < -90) rotation.x = -90;
         
-        velocity.set(0, 0, 0);
-
-        if(Keyboard.isKeyDown(Keyboard.KEY_W)) velocity.add(0, 0, -1);
-        if(Keyboard.isKeyDown(Keyboard.KEY_S)) velocity.add(0, 0, 1);
-        if(Keyboard.isKeyDown(Keyboard.KEY_A)) velocity.add(-1, 0, 0);
-        if(Keyboard.isKeyDown(Keyboard.KEY_D)) velocity.add(1, 0, 0);
-        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) velocity.add(0, 1, 0);
-        if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) velocity.add(0, -1, 0);
+        Vector inputForce = new Vector();
         
-        if(velocity.length() > 0) {
-            float speed = SPEED_WALKING * dt;
-            if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-                speed = SPEED_RUNNING * dt;
+        if(Keyboard.isKeyDown(Keyboard.KEY_W)) inputForce.add(0, 0, -1);
+        if(Keyboard.isKeyDown(Keyboard.KEY_S)) inputForce.add(0, 0, 1);
+        if(Keyboard.isKeyDown(Keyboard.KEY_A)) inputForce.add(-1, 0, 0);
+        if(Keyboard.isKeyDown(Keyboard.KEY_D)) inputForce.add(1, 0, 0);
+        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) inputForce.add(0, 1, 0);
+        if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) inputForce.add(0, -1, 0);
+        
+        if(inputForce.length() > 0) {
+            // Rotate inputForce according to viewing direction
+            inputForce.rotate(rotation.y, 0, 1, 0);
             
-            velocity.rotate(rotation.y, 0, 1, 0).
-                    normalize().scale(speed);
-        
-            integrate();
+            float speed = ACCEL_WALKING * dt;
+            if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+                speed = ACCEL_RUNNING * dt;
+            
+            inputForce.normalize().scale(speed);
+            
+            acceleration.add(inputForce);
         }
+        
+        super.update(dt);
     }
     
     @Override
