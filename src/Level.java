@@ -35,13 +35,7 @@ public class Level {
         GL11.glVertex3f(0, 0, 100);
         GL11.glVertex3f(100, 0, 100);
         GL11.glVertex3f(100, 0, 0);
-        GL11.glNormal3f(0, -1, 0);
-        GL11.glVertex3f(0, WALL_HEIGHT, 0);
-        GL11.glVertex3f(100, WALL_HEIGHT, 0);
-        GL11.glVertex3f(100, WALL_HEIGHT, 100);
-        GL11.glVertex3f(0, WALL_HEIGHT, 100);
         GL11.glEnd();
-        
         
         // Wall material
         GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);

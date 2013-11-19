@@ -11,6 +11,8 @@ public class Main {
     private final int screenWidth = 1280;
     private final int screenHeight = 720;
     
+    private Lighting lighting;
+    
     private Timer timer;
     
     private Level level;
@@ -18,6 +20,7 @@ public class Main {
 
     /** The initialize method is called at application startup */
     public void initialize() {
+        
         // Set glClearColor to black
         GL11.glClearColor(0, 0, 0, 0);
 
@@ -26,26 +29,16 @@ public class Main {
         GL11.glLoadIdentity();
         GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        
-                // Set up shaders
-//        shaderprogram = ShaderLoader.loadShaderPair(VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_LOCATION);
-        
-        // Set up Lighting
-        setUpLighting();
 
         // Enable backface culling
         GL11.glCullFace(GL11.GL_BACK);
         GL11.glEnable(GL11.GL_CULL_FACE);
         
-        // Enable smooth shading model
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         
-        // Enable LIGHT0
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_LIGHT0);
+        // Set up Lighting
+        lighting = new Lighting();
         
         // Create a new timer
         timer = new Timer();
@@ -76,8 +69,15 @@ public class Main {
         // Set modelview matrix to FPV
         player.glFirstPersonView();
         
+        // Update lighting
+        lighting.update();
+        
         // Draw level
         level.draw();
+    }
+    
+    public void destroy() {
+        //destroy shader program
     }
 
     /** Starts the game loop */
@@ -94,6 +94,9 @@ public class Main {
             System.exit(0);
         }
         
+        // Enable vsync
+        Display.setVSyncEnabled(true);
+        
         // Hide and lock the mouse in place
         Mouse.setGrabbed(true);
 
@@ -102,57 +105,27 @@ public class Main {
         
         // Start the game loop
         while (!Display.isCloseRequested()) {
-//            glUseProgram(shaderprogram);
             
             // Call the update method
             update();
             
             // Call the render method
             render();
-
-//            glUseProgram(0);
+            
             // Flip the buffer and process input
             Display.update();
             
             // Synchronize to 60 frames per second
             Display.sync(60);
         }
-
-        // Cleanup
-//        glDeleteProgram(shaderprogram);
+        
+        destroy();
+        
         Display.destroy();
-    }
-    
-    // Set up lighting
-    private static void setUpLighting() {
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_LIGHT0);
-        GL11.glEnable(GL11.GL_LIGHT1);
-        
-        GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, 
-                Utils.createFloatBuffer(0.05f, 0.05f, 0.05f, 1f));
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE,
-                Utils.createFloatBuffer(0.1f, 0.1f, 0.1f, 1));
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
-                Utils.createFloatBuffer(0, 3, 0, 1));
-        
-        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, 
-                Utils.createFloatBuffer(2, Level.WALL_HEIGHT, 2, 1));
-        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPOT_DIRECTION, 
-                Utils.createFloatBuffer(0, -1, 0, 1));
-        GL11.glLightf(GL11.GL_LIGHT1, GL11.GL_SPOT_CUTOFF, (float) 45);  
-        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, Utils.fbWhite);
-        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPECULAR, Utils.fbWhite);
-        
-        
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
     }
     
     public static void main(String[] args) {
         new Main().run();
-        
     }
+    
 }
