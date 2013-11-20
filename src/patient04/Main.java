@@ -26,7 +26,7 @@ public class Main {
     private Level level;
     private Player player;
     
-    private Model model, model2;
+    private Model model;
     
     private ArrayList<Model> models;
 
@@ -80,16 +80,11 @@ public class Main {
 //                models.add(copy);
 //            }
 //        }
-        
-        model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
-        model2.createDisplayList();        
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
-        
-        System.out.println(deltaTime);
         
         player.update(deltaTime);
         player.integrate();
@@ -110,7 +105,6 @@ public class Main {
         level.draw();
         
         model.drawDebug();
-        model2.draw();
         
         for(Model mdl : models) {
             if(Keyboard.isKeyDown(Keyboard.KEY_V))

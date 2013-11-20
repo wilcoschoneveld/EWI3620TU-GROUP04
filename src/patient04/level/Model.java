@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 import org.lwjgl.opengl.GL11;
+import patient04.physics.AABB;
 import patient04.physics.Vector;
 
 /**
@@ -18,6 +19,8 @@ public class Model {
     
     public final Vector position;
     public final Vector rotation;
+    
+    protected AABB aabb;
     
     private int displayList;
     
@@ -47,6 +50,10 @@ public class Model {
             model.faces.add(face.copy());
         
         return model;
+    }
+    
+    public void setAABB(AABB aabb) {
+        this.aabb = aabb;
     }
     
     /** Draws the display list */
@@ -189,22 +196,18 @@ public class Model {
     
     /** Builds a box model from given coordinates
      * 
-     * @param x0
-     * @param y0
-     * @param z0
-     * @param x1
-     * @param y1
-     * @param z1
+     * @param min Vector containing minimum coordinates
+     * @param max Vector containing maximum coordinates
      * @return generated model
      */ 
-    public static Model buildBox(float x0, float y0, float z0, float x1, float y1, float z1) {
+    public static Model buildBox(Vector min, Vector max) {
         Model model = new Model();
         
         model.vertices.addAll(Arrays.asList(new Vector[] {
-            new Vector(x0, y0, z0), new Vector(x0, y0, z1),
-            new Vector(x0, y1, z1), new Vector(x0, y1, z0),
-            new Vector(x1, y0, z0), new Vector(x1, y0, z1),
-            new Vector(x1, y1, z1), new Vector(x1, y1, z0)
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
         }));
         
         model.normals.addAll(Arrays.asList(new Vector[] {
