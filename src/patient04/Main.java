@@ -70,16 +70,16 @@ public class Main {
         model.position.set(10, 1, 10);
         
         models = new ArrayList<>();
-//        for(int i = 0; i < 20; i++) {
-//            for(int j = 0; j < 20; j++) {
-//                
-//                Model copy = model.copy();
-//                copy.createDisplayList();
-//                copy.position.set(40 + i * 2, 2, 10 + j * 2);
-//                                
-//                models.add(copy);
-//            }
-//        }
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                
+                Model copy = model.copy();
+                copy.createDisplayList();
+                copy.position.set(40 + i * 2, 2, 10 + j * 2);
+                                
+                models.add(copy);
+            }
+        }
     }
 
     /** The update method is called every frame, before rendering */
