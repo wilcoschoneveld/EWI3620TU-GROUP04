@@ -8,29 +8,42 @@ import org.lwjgl.opengl.GL20;
  * @author Bart
  */
 public class Lighting {
-    FloatBuffer L0position;
+    FloatBuffer
+            L0position,
+            L1position,
+            L1direction;
+    
     public static int shaderProgram1;
     
     public Lighting() {
         // Set shade model to phong
         GL11.glShadeModel(GL11.GL_SMOOTH);
         
-                //        GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, 
-//                Utils.createFloatBuffer(0.05f, 0.05f, 0.05f, 1f));
+        GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, 
+            Utils.fbDarkGrey);
         
         // Enable lighting
         GL11.glEnable(GL11.GL_LIGHTING);
         
+        L0position = Utils.createFloatBuffer(0, 15, 0, 1);
+        L1position = Utils.createFloatBuffer(5, Level.WALL_HEIGHT, 5, 1);
+        L1direction = Utils.createFloatBuffer(0, -1, 0, 1);
+        update();
+        
         // Set light 0 parameters
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, Utils.fbWhite);
         
-        L0position = Utils.createFloatBuffer(0, 15, 0, 1);
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, L0position);        
-        
         GL11.glEnable(GL11.GL_LIGHT0);
         
+        // Set light 1 parameters
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, Utils.fbWhite);
+        GL11.glLightf(GL11.GL_LIGHT1, GL11.GL_SPOT_CUTOFF, 80);
+        
+        GL11.glEnable(GL11.GL_LIGHT1);
+        
+        // Shaderprogram 1, floor shader
         shaderProgram1 = ShaderLoader.loadShaderPair(
-                "res/shaders/shader.vert", "res/shaders/shader.frag");
+                "res/shaders/diffuse.vert", "res/shaders/diffuse.frag");
     }
     
     public void cleanup() {
@@ -38,6 +51,8 @@ public class Lighting {
     }
     
     public void update() {
-        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, L0position);      
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, L0position);
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, L1position);
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPOT_DIRECTION, L1direction);
     }
 }

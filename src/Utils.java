@@ -15,7 +15,7 @@ public class Utils {
         fbGreen = createFloatBuffer(0, 1, 0, 1);
         fbBlue = createFloatBuffer(0, 0, 1, 0.1f);
         fbPurple = createFloatBuffer(0.5f, 0, 0.7f, 1);
-        fbDarkGrey = createFloatBuffer(0.1f, 0.1f, 0.1f, 1);
+        fbDarkGrey = createFloatBuffer(0.05f, 0.05f, 0.05f, 1);
     }
     
     public static FloatBuffer createFloatBuffer(float a, float b, float c, float d) {

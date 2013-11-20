@@ -3,6 +3,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
 
 public class Main {
@@ -68,10 +69,10 @@ public class Main {
  
         // Set modelview matrix to FPV
         player.glFirstPersonView();
-        
+
         // Update lighting
         lighting.update();
-        
+
         // Draw level
         level.draw();
     }

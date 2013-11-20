@@ -26,12 +26,14 @@ public class Level {
     }
     
     public void draw() {
-        // Floor material
-        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbBlue);
-        
-        // Draw the floor
         GL20.glUseProgram(Lighting.shaderProgram1);
+        // Floor material
+        GL11.glColor3f(0.0f, 0.0f, 1.0f);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT_AND_DIFFUSE);
+        GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 185f);
         
+        // Draw the floor        
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glNormal3f(0, 1, 0);
         GL11.glVertex3f(0, 0, 0);
@@ -40,16 +42,19 @@ public class Level {
         GL11.glVertex3f(100, 0, 0);
         GL11.glEnd();
         
-        GL20.glUseProgram(0);
+         GL20.glUseProgram(0);
         
-        // Wall material
-        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Utils.fbPurple);
+        // Wall material        
+        GL11.glColor3f(0.0f, 1.0f, 1.0f);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT_AND_DIFFUSE);
         
         // Loop through the maze        
         for(Shape shape : shapes)
             shape.draw();
-        
         // end draw
+        
+
     }
     
     public static Level readLevel(String file) {
