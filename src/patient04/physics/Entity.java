@@ -1,11 +1,8 @@
 package patient04.physics;
 
-
-import patient04.physics.AABB;
 import patient04.level.Level;
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 /**
  *
