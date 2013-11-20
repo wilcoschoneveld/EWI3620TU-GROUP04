@@ -34,6 +34,21 @@ public class Model {
         this(new Vector(), new Vector());
     }
     
+    public Model copy() {
+        Model model = new Model(position.copy(), rotation.copy());
+        
+        for (Vector vertex : vertices)
+            model.vertices.add(vertex.copy());
+        
+        for (Vector normal : normals)
+            model.normals.add(normal.copy());
+        
+        for (Face face : faces)
+            model.faces.add(face.copy());
+        
+        return model;
+    }
+    
     /** Draws the display list */
     public void draw() {
         GL11.glPushMatrix();
@@ -124,8 +139,12 @@ public class Model {
         }
         
         public Face(int... vertnormals) {
-            vertices = Arrays.copyOfRange(vertnormals, 0, 3);
-            normals = Arrays.copyOfRange(vertnormals, 3, 6);
+            this(Arrays.copyOfRange(vertnormals, 0, 3),
+                 Arrays.copyOfRange(vertnormals, 3, 6));
+        }
+        
+        public Face copy() {
+            return new Face(vertices.clone(), normals.clone());
         }
     }
     

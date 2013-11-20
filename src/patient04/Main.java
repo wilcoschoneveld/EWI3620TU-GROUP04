@@ -1,5 +1,7 @@
 package patient04;
 
+import java.util.ArrayList;
+import org.lwjgl.input.Keyboard;
 import patient04.utilities.Timer;
 import patient04.lighting.Lighting;
 import patient04.level.Model;
@@ -25,6 +27,8 @@ public class Main {
     private Player player;
     
     private Model model, model2;
+    
+    private ArrayList<Model> models;
 
     /** The initialize method is called at application startup */
     public void initialize() {
@@ -65,13 +69,27 @@ public class Main {
         model.createDisplayList();
         model.position.set(10, 1, 10);
         
+        models = new ArrayList<>();
+//        for(int i = 0; i < 10; i++) {
+//            for(int j = 0; j < 10; j++) {
+//                
+//                Model copy = model.copy();
+//                copy.createDisplayList();
+//                copy.position.set(40 + i * 2, 2, 10 + j * 2);
+//                                
+//                models.add(copy);
+//            }
+//        }
+        
         model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
-        model2.createDisplayList();
+        model2.createDisplayList();        
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
+        
+        System.out.println(deltaTime);
         
         player.update(deltaTime);
         player.integrate();
@@ -93,6 +111,14 @@ public class Main {
         
         model.drawDebug();
         model2.draw();
+        
+        for(Model mdl : models) {
+            if(Keyboard.isKeyDown(Keyboard.KEY_V))
+                mdl.drawDebug();
+            else
+                mdl.draw();
+        }
+        
     }
     
     public void destroy() {

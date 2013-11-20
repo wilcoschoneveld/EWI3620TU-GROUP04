@@ -86,7 +86,6 @@ public class Entity {
         if(velocity.z != delta.z) velocity.z = 0;
         
         // Apply air and ground friction
-        
         velocity.scale(Level.FRICTION_AIR);
         if(onGround)
             velocity.scale(Level.FRICTION_GROUND);
