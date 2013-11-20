@@ -70,8 +70,8 @@ public class Main {
         model.position.set(10, 1, 10);
         
         models = new ArrayList<>();
-//        for(int i = 0; i < 10; i++) {
-//            for(int j = 0; j < 10; j++) {
+//        for(int i = 0; i < 20; i++) {
+//            for(int j = 0; j < 20; j++) {
 //                
 //                Model copy = model.copy();
 //                copy.createDisplayList();
