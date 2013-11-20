@@ -1,9 +1,16 @@
+package patient04;
+
+import java.util.ArrayList;
+import org.lwjgl.input.Keyboard;
+import patient04.utilities.Timer;
+import patient04.lighting.Lighting;
+import patient04.level.Model;
+import patient04.level.Level;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
 
 public class Main {
@@ -17,7 +24,11 @@ public class Main {
     private Timer timer;
     
     private Level level;
-    private Entity player;
+    private Player player;
+    
+    private Model model, model2;
+    
+    private ArrayList<Model> models;
 
     /** The initialize method is called at application startup */
     public void initialize() {
@@ -53,13 +64,35 @@ public class Main {
         // Player start position
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
+        
+        model = Model.loadModel("res/models/sphere.obj");
+        model.createDisplayList();
+        model.position.set(10, 1, 10);
+        
+        models = new ArrayList<>();
+//        for(int i = 0; i < 10; i++) {
+//            for(int j = 0; j < 10; j++) {
+//                
+//                Model copy = model.copy();
+//                copy.createDisplayList();
+//                copy.position.set(40 + i * 2, 2, 10 + j * 2);
+//                                
+//                models.add(copy);
+//            }
+//        }
+        
+        model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
+        model2.createDisplayList();        
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
         
+        System.out.println(deltaTime);
+        
         player.update(deltaTime);
+        player.integrate();
     }
 
     /** The render method is called every frame, after updating */
@@ -69,12 +102,23 @@ public class Main {
  
         // Set modelview matrix to FPV
         player.glFirstPersonView();
-
+        
         // Update lighting
         lighting.update();
-
+        
         // Draw level
         level.draw();
+        
+        model.drawDebug();
+        model2.draw();
+        
+        for(Model mdl : models) {
+            if(Keyboard.isKeyDown(Keyboard.KEY_V))
+                mdl.drawDebug();
+            else
+                mdl.draw();
+        }
+        
     }
     
     public void destroy() {
@@ -95,6 +139,9 @@ public class Main {
             e.printStackTrace();
             System.exit(0);
         }
+        
+        // Display OpenGL information
+        System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
         
         // Enable vsync
         Display.setVSyncEnabled(true);

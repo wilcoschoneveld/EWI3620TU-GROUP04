@@ -1,9 +1,17 @@
+package patient04.level;
+
 
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
+import patient04.physics.AABB;
+import patient04.physics.Vector;
 
 /**
- *
+ *                      !! OLD CLASS !!
+ * 
+ * currently in process of merging code with the new Model class
+ *         this class will be deleted in the future
+ * 
  * @author Wilco
  */
 public class Shape {
@@ -31,8 +39,20 @@ public class Shape {
             }
         }
         GL11.glEnd();
-        
-        //aabb.draw();
+    }
+    
+    public void drawDebug() {
+        for(int i = 0; i < triangles.length; i++) {
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            GL11.glNormal3f(normals[i].x, normals[i].y, normals[i].z);
+            for (byte j = 0; j < triangles[i].length; j++) {
+                GL11.glVertex3f(
+                        vertices[triangles[i][j]].x,
+                        vertices[triangles[i][j]].y,
+                        vertices[triangles[i][j]].z);
+            }
+            GL11.glEnd();
+        } 
     }
     
     public static class BoxBuilder {

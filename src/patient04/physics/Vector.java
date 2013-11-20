@@ -1,3 +1,5 @@
+package patient04.physics;
+
 
 /** 
  *
@@ -10,7 +12,7 @@ public class Vector {
      * 
      * @param x
      * @param y
-     * @param z 
+     * @param z
      */
     public Vector(float x, float y, float z) {
         this.x = x;

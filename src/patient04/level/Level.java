@@ -1,3 +1,5 @@
+package patient04.level;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -5,18 +7,41 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import java.util.Scanner;
+import org.lwjgl.input.Keyboard;
+import patient04.physics.AABB;
+import patient04.lighting.Lighting;
+import patient04.utilities.Buffers;
+import patient04.physics.Vector;
 
 public class Level {
+    // Gravity vectors
+    public static final Vector GRAVITY = new Vector(0, -1, 0);
+    
+    // Friction vectors
+    public static final Vector FRICTION_FLY = new Vector(0.6f, 0.6f, 0.6f);
+    public static final Vector FRICTION_GROUND = new Vector(0.6f, 1, 0.6f);
+    public static final Vector FRICTION_AIR = new Vector(0.98f, 0.98f, 0.98f);
+    
+    // Wall height
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Shape> shapes;
+    public AABB floorAABB;
     
     public Level(ArrayList<Shape> shapes) {
         this.shapes = shapes;
+        
+        floorAABB = new AABB(new Vector(0, -1, 0), new Vector(100, 0, 100));
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
+        
+        if(broadphase.intersects(floorAABB))
+            aabbs.add(floorAABB);
+        
+        if(Keyboard.isKeyDown(Keyboard.KEY_B))
+            return aabbs;
         
         for(Shape shape : shapes)
             if(broadphase.intersects(shape.aabb))
@@ -26,14 +51,12 @@ public class Level {
     }
     
     public void draw() {
-        GL20.glUseProgram(Lighting.shaderProgram1);
         // Floor material
-        GL11.glColor3f(0.0f, 0.0f, 1.0f);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT_AND_DIFFUSE);
-        GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 185f);
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.BLUE);
         
-        // Draw the floor        
+        // Draw the floor
+        GL20.glUseProgram(Lighting.shaderProgram1);
+        
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glNormal3f(0, 1, 0);
         GL11.glVertex3f(0, 0, 0);
@@ -42,19 +65,20 @@ public class Level {
         GL11.glVertex3f(100, 0, 0);
         GL11.glEnd();
         
-         GL20.glUseProgram(0);
+        GL20.glUseProgram(0);
         
-        // Wall material        
-        GL11.glColor3f(0.0f, 1.0f, 1.0f);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT_AND_DIFFUSE);
+        // Wall material
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.PURPLE);
         
         // Loop through the maze        
         for(Shape shape : shapes)
             shape.draw();
-        // end draw
         
-
+        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+            for(Shape shape : shapes)
+                shape.aabb.draw();
+        
+        // end draw
     }
     
     public static Level readLevel(String file) {
