@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class Player extends Entity {
     // Width and height of the player, used as bounding box
-    public static final float WIDTH = 0.5f;
+    public static final float WIDTH = 0.6f;
     public static final float HEIGHT = 1.8f;
 
     // Determines where the camera is located
