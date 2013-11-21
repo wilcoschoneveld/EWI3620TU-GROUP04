@@ -32,9 +32,12 @@ package patient04.lighting;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
+import patient04.physics.Vector;
+import patient04.utilities.Buffers;
 
 public class ShaderLoader {
 
@@ -46,7 +49,7 @@ public class ShaderLoader {
      *
      * @return the shader program or -1 if the loading or compiling failed
      */
-    public static int loadShaderPair(String vertexShaderLocation, String fragmentShaderLocation) {
+    public static int loadShaderPair(String vertexShaderLocation, String fragmentShaderLocation) {    
         int shaderProgram = glCreateProgram();
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -105,14 +108,18 @@ public class ShaderLoader {
         }
         glAttachShader(shaderProgram, vertexShader);
         glAttachShader(shaderProgram, fragmentShader);
+        
         glLinkProgram(shaderProgram);
         if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
             System.err.println("Shader program wasn't linked correctly.");
             System.err.println(glGetProgramInfoLog(shaderProgram, 1024));
             return -1;
         }
+        glValidateProgram(shaderProgram);
+             
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         return shaderProgram;
     }
 }
+

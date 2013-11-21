@@ -11,7 +11,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
+import patient04.lighting.Light;
+import patient04.lighting.ShaderLoader;
 
 public class Main {
 
@@ -26,12 +29,19 @@ public class Main {
     private Level level;
     private Player player;
     
+    private Light light0, light1;
+    
     private Model model, model2;
     
     private ArrayList<Model> models;
+    
+    public static int shaderProgram1, shaderProgram2;
 
     /** The initialize method is called at application startup */
     public void initialize() {
+        // Shaderprogram 1, floor shader
+        shaderProgram1 = ShaderLoader.loadShaderPair(
+                "res/shaders/pixel.vert", "res/shaders/pixel.frag");
         
         // Set glClearColor to black
         GL11.glClearColor(0, 0, 0, 0);
@@ -41,7 +51,10 @@ public class Main {
         GL11.glLoadIdentity();
         GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-
+        
+        // Use shaderprogram
+        GL20.glUseProgram(shaderProgram1);
+        
         // Enable backface culling
         GL11.glCullFace(GL11.GL_BACK);
         GL11.glEnable(GL11.GL_CULL_FACE);
@@ -82,15 +95,19 @@ public class Main {
 //        }
         
         model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
-        model2.createDisplayList();        
+        model2.createDisplayList();
+        
+        light0 = new Light();
+        light0.position.set(4.5f, 2.9f, 4.5f);
+        
+        light1 = new Light();
+        light1.position.set(6.5f, 2.9f, 4.5f);
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
-        
-        System.out.println(deltaTime);
-        
+      
         player.update(deltaTime);
         player.integrate();
     }
@@ -102,9 +119,15 @@ public class Main {
  
         // Set modelview matrix to FPV
         player.glFirstPersonView();
-        
+ 
         // Update lighting
-        lighting.update();
+        ArrayList<Light> lights = new ArrayList<>();
+        
+        // Bereken welke lights zichtbaar zijn
+        lights.add(light0);
+        lights.add(light1);
+        
+        lighting.update(lights);
         
         // Draw level
         level.draw();
@@ -134,11 +157,11 @@ public class Main {
         // Try to create a game window
         try {
             Display.setDisplayMode(dm);
-            Display.create();
+            Display.create();       
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
-        }
+        }        
         
         // Display OpenGL information
         System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
@@ -148,12 +171,14 @@ public class Main {
         
         // Hide and lock the mouse in place
         Mouse.setGrabbed(true);
-
+        
         // Call the initialize method
         initialize();
         
         // Start the game loop
         while (!Display.isCloseRequested()) {
+            // Use shaderprogram
+            GL20.glUseProgram(shaderProgram1);
             
             // Call the update method
             update();
@@ -161,13 +186,16 @@ public class Main {
             // Call the render method
             render();
             
+            // Quit shaderprogram
+            GL20.glUseProgram(0);
+            
             // Flip the buffer and process input
             Display.update();
             
             // Synchronize to 60 frames per second
             Display.sync(60);
         }
-        
+ 
         destroy();
         
         Display.destroy();
