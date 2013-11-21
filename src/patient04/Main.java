@@ -11,17 +11,14 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
-import patient04.lighting.Light;
-import patient04.lighting.ShaderLoader;
 import patient04.utilities.DisplayModes;
 
 public class Main {
 
     // Window dimensions
-    private int screenWidth = 1280;
-    private int screenHeight = 720;
+    private int screenWidth = 1680;
+    private int screenHeight = 1050;
     
     private Lighting lighting;
     
@@ -33,8 +30,6 @@ public class Main {
     private Model model, model2;
     
     private ArrayList<Model> models;
-    
-    
 
     /** The initialize method is called at application startup */
     public void initialize() {        
@@ -146,8 +141,6 @@ public class Main {
             e.printStackTrace();
             System.exit(0);
         }
-        
-        DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
         screenWidth = Display.getWidth();
         screenHeight = Display.getHeight();
         

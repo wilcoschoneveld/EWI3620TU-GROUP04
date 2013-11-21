@@ -40,7 +40,7 @@ public class DisplayModes {
 
                 for (int i = 0; i < modes.length; i++) {
                     DisplayMode current = modes[i];
-
+                    
                     if ((current.getWidth() == width) && (current.getHeight() == height)) {
                         if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
                             if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
