@@ -15,12 +15,13 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
 import patient04.lighting.Light;
 import patient04.lighting.ShaderLoader;
+import patient04.utilities.DisplayModes;
 
 public class Main {
 
     // Window dimensions
-    private final int screenWidth = 1280;
-    private final int screenHeight = 720;
+    private int screenWidth = 1280;
+    private int screenHeight = 720;
     
     private Lighting lighting;
     
@@ -29,20 +30,14 @@ public class Main {
     private Level level;
     private Player player;
     
-    private Light light0, light1;
-    
     private Model model, model2;
     
     private ArrayList<Model> models;
     
-    public static int shaderProgram1, shaderProgram2;
+    
 
     /** The initialize method is called at application startup */
-    public void initialize() {
-        // Shaderprogram 1, floor shader
-        shaderProgram1 = ShaderLoader.loadShaderPair(
-                "res/shaders/pixel.vert", "res/shaders/pixel.frag");
-        
+    public void initialize() {        
         // Set glClearColor to black
         GL11.glClearColor(0, 0, 0, 0);
 
@@ -52,8 +47,8 @@ public class Main {
         GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
-        // Use shaderprogram
-        GL20.glUseProgram(shaderProgram1);
+        // Set up Lighting
+        lighting = new Lighting();
         
         // Enable backface culling
         GL11.glCullFace(GL11.GL_BACK);
@@ -62,8 +57,8 @@ public class Main {
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         
-        // Set up Lighting
-        lighting = new Lighting();
+        // Set shade model to smooth
+//        GL11.glShadeModel(GL11.GL_SMOOTH);
         
         // Create a new timer
         timer = new Timer();
@@ -96,12 +91,6 @@ public class Main {
         
         model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
         model2.createDisplayList();
-        
-        light0 = new Light();
-        light0.position.set(4.5f, 2.9f, 4.5f);
-        
-        light1 = new Light();
-        light1.position.set(6.5f, 2.9f, 4.5f);
     }
 
     /** The update method is called every frame, before rendering */
@@ -121,13 +110,7 @@ public class Main {
         player.glFirstPersonView();
  
         // Update lighting
-        ArrayList<Light> lights = new ArrayList<>();
-        
-        // Bereken welke lights zichtbaar zijn
-        lights.add(light0);
-        lights.add(light1);
-        
-        lighting.update(lights);
+        lighting.update();
         
         // Draw level
         level.draw();
@@ -156,12 +139,17 @@ public class Main {
 
         // Try to create a game window
         try {
-            Display.setDisplayMode(dm);
+            DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
+            //Display.setDisplayMode(dm);
             Display.create();       
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
-        }        
+        }
+        
+        DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
+        screenWidth = Display.getWidth();
+        screenHeight = Display.getHeight();
         
         // Display OpenGL information
         System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
@@ -176,18 +164,12 @@ public class Main {
         initialize();
         
         // Start the game loop
-        while (!Display.isCloseRequested()) {
-            // Use shaderprogram
-            GL20.glUseProgram(shaderProgram1);
-            
+        while (!Display.isCloseRequested()) {            
             // Call the update method
             update();
             
             // Call the render method
             render();
-            
-            // Quit shaderprogram
-            GL20.glUseProgram(0);
             
             // Flip the buffer and process input
             Display.update();

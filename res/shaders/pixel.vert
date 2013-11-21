@@ -7,7 +7,17 @@ varying vec3 varyingNormal;
 // The vertex we're going to pass to the fragment shader.
 varying vec4 varyingVertex;
 
+uniform vec3 lightPositionOC[10];
+
+uniform int numLights;
+
+varying vec3 lightPositions[10];
+
+
 void main() {
+	lightPositions[0] = lightPositionOC[0];
+	lightPositions[1] = lightPositionOC[1];
+	
     // Pass the vertex colour attribute to the fragment shader.
     // This value will be interpolated automatically by OpenGL
     // if GL_SHADE_MODEL is GL_SMOOTH. (that's the default)

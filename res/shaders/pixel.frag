@@ -6,6 +6,11 @@ varying vec3 varyingNormal;
 // The vertex that we passed in through the vertex shader.
 varying vec4 varyingVertex;
 
+varying vec3 lightPositions[10];
+
+uniform int numLights;
+
+// Variab
 vec3 lightPosition;
 vec3 vertexPosition;
 vec3 surfaceNormal;
@@ -17,18 +22,18 @@ float specular;
 float fspecular;
 
 void main() {
-for (float i=0.0; i<19.0; i=i+4.5) {
-	
+for (int i=0; i<numLights; i=i+1) {	
+
 // Calculate lightPosition, vertexPosition and surfaceNormal
-	lightPosition = (gl_ModelViewMatrix * vec4(4.5 + i, 2.9, 4.5, 1.0)).xyz;
+	lightPosition = (gl_ModelViewMatrix * vec4(lightPositions[i], 1.0)).xyz;
 	vertexPosition = (gl_ModelViewMatrix * varyingVertex).xyz;
 
 
-	float distance = length(lightPosition - vertexPosition);
+	distance = length(lightPosition - vertexPosition);
 
-	// If pixel is further away from light than 10, do not use light
+// If pixel is further away from light than 10, do not use light
 	// and continue to next light.
-	if(distance > 10) continue;
+//	if(distance > 15) continue;
 	
 
  	surfaceNormal = normalize((gl_NormalMatrix * varyingNormal).xyz);
@@ -62,6 +67,7 @@ for (float i=0.0; i<19.0; i=i+4.5) {
 // Specular light is dot product between surfaceNormal and reflectionDirection
     	specular = 0.5*max(0.0, dot(surfaceNormal, reflectionDirection));
 
+// Add specular light
     	if (diffuseLightIntensity != 0) {
         	fspecular = pow(specular, gl_FrontMaterial.shininess);
         	gl_FragColor += fspecular;
