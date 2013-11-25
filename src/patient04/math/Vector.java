@@ -2,7 +2,7 @@ package patient04.math;
 
 /** 
  *
- * @author Wilco
+ * @author Wilco Schoneveld
  */
 public final class Vector {
     // Vector values

@@ -1,9 +1,8 @@
-
 package patient04.math;
 
 /**
  *
- * @author Wilco
+ * @author Wilco Schoneveld
  */
 public class Quaternion {
     // Quaternion (a + b*i + c*j + d*k)

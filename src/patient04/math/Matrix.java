@@ -1,13 +1,13 @@
-
 package patient04.math;
 
+import java.nio.ByteOrder;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
 import java.util.Arrays;
 
 /**
  *
- * @author Wilco
+ * @author Wilco Schoneveld
  */
 public class Matrix {
     // Locations in matrix: 'mRC' where R = row and C = column
@@ -187,7 +187,8 @@ public class Matrix {
      * @return flipped FloatBuffer.
      */
     public FloatBuffer toBuffer() {
-        return (FloatBuffer) BufferUtils.createFloatBuffer(16).put(val).flip();
+        return (FloatBuffer) ByteBuffer.allocateDirect(64).
+                order(ByteOrder.nativeOrder()).asFloatBuffer().put(val).flip();
     }    
     
     /** Creates a perspective projection Matrix.
