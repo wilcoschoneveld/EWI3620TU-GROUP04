@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 import org.lwjgl.opengl.GL11;
-import patient04.physics.Vector;
+import patient04.math.Vector;
 
 /**
  *

@@ -6,7 +6,7 @@
 
 package patient04.lighting;
 
-import patient04.physics.Vector;
+import patient04.math.Vector;
 
 /**
  *

@@ -4,7 +4,7 @@ package patient04.level;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import patient04.physics.AABB;
-import patient04.physics.Vector;
+import patient04.math.Vector;
 
 /**
  *                      !! OLD CLASS !!

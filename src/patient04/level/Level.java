@@ -5,13 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import java.util.Scanner;
 import org.lwjgl.input.Keyboard;
 import patient04.physics.AABB;
-import patient04.lighting.Lighting;
-import patient04.utilities.Buffers;
-import patient04.physics.Vector;
+import patient04.math.Vector;
 
 public class Level {
     // Gravity vectors
@@ -79,7 +76,6 @@ public class Level {
         
         
         // Wall material
-//        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.PURPLE);
         GL11.glColor3f(0.5f, 0, 0.7f);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);

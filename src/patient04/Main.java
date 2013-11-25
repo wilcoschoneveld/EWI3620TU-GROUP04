@@ -11,14 +11,13 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
-import patient04.utilities.DisplayModes;
+import patient04.math.Matrix;
 
 public class Main {
 
     // Window dimensions
-    private int screenWidth = 1680;
-    private int screenHeight = 1050;
+    private final int screenWidth = 1280;
+    private final int screenHeight = 720;
     
     private Lighting lighting;
     
@@ -38,8 +37,11 @@ public class Main {
 
         // Set the projection to perspective mode
         GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        GLU.gluPerspective(70, (float) screenWidth / screenHeight, .1f, 100);
+        
+        Matrix matrix = Matrix.projPerspective(
+                70, (float) screenWidth / screenHeight, .1f, 100);
+        GL11.glLoadMatrix(matrix.toBuffer());
+        
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
         // Set up Lighting
@@ -134,15 +136,12 @@ public class Main {
 
         // Try to create a game window
         try {
-            DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
-            //Display.setDisplayMode(dm);
+            Display.setDisplayMode(dm);
             Display.create();       
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
         }
-        screenWidth = Display.getWidth();
-        screenHeight = Display.getHeight();
         
         // Display OpenGL information
         System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));

@@ -1,12 +1,13 @@
 package patient04;
 
-import patient04.physics.Vector;
+import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.level.Level;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import patient04.math.Matrix;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -70,8 +71,6 @@ public class Player extends Entity {
                 speed = ACCEL_AIR * dt;
             
             moveInput.normalize().scale(speed);
-            
-            
         }
         
         // Add movement input to acceleration
@@ -81,27 +80,29 @@ public class Player extends Entity {
     }
 
     /** Sets the current matrix to FPV. */
-    public void glFirstPersonView() {
-        GL11.glLoadIdentity();
-        
+    public void glFirstPersonView() {        
         viewbobbing *= 0.9f;
         
         if(onGround)
             viewbobbing += 0.1f;
         
-        GL11.glTranslated(
-                Math.cos(distanceMoved * 3) * 0.05 * viewbobbing,
-                Math.cos(distanceMoved * 6) * 0.05 * viewbobbing, 0);
-        GL11.glRotated(
-                -Math.cos(distanceMoved * 3) * 0.05 * viewbobbing,
+        Matrix matrix = new Matrix();
+        
+        matrix.translate(
+                (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
+                (float)  Math.cos(distanceMoved * 6) * 0.05f * viewbobbing, 0);
+        matrix.rotate(
+                (float) -Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
                 0, 0, 1);
         
-        GL11.glRotatef(-rotation.x, 1, 0, 0);
-        GL11.glRotatef(-rotation.y, 0, 1, 0);
-        GL11.glTranslatef(
+        matrix.rotate(-rotation.x, 1, 0, 0);
+        matrix.rotate(-rotation.y, 0, 1, 0);
+        matrix.translate(
                 -position.x,
                 -position.y - EYEHEIGHT,
                 -position.z);
+        
+        GL11.glLoadMatrix(matrix.toBuffer());
     }
     
     private float viewbobbing = 0;

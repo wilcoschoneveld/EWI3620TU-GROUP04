@@ -46,8 +46,10 @@ for (int i=0; i<numLights; i=i+1) {
 // DiffuseLightIntensity is dot product between surfaceNormal and lightDirection
     	diffuseLightIntensity = max(0, dot(surfaceNormal, lightDirection));
 
+        if( i == 1) diffuseLightIntensity *= 20;
+
 // DiffuseLightIntensity till distance 10
-	if (distance > 10) {
+	if (distance > 30) {
 		diffuseLightIntensity = 0;
 	} 
 // DiffuseLightIntensity is proportional to distance^2	

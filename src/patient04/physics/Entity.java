@@ -1,5 +1,6 @@
 package patient04.physics;
 
+import patient04.math.Vector;
 import patient04.level.Level;
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;

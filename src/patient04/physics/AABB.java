@@ -1,6 +1,7 @@
 package patient04.physics;
 
 
+import patient04.math.Vector;
 import org.lwjgl.opengl.GL11;
 
 /**

@@ -1,11 +1,11 @@
-package patient04.physics;
-
+package patient04.math;
 
 /** 
  *
  * @author Wilco
  */
-public class Vector {
+public final class Vector {
+    // Vector values
     public float x, y, z;
     
     /** Creates a new Vector with given coordinates.
@@ -34,6 +34,14 @@ public class Vector {
         this(other.x, other.y, other.z);
     }
     
+    /** Creates a copy of this vector.
+     * 
+     * @return 
+     */
+    public Vector copy() {
+        return new Vector(this);
+    }
+    
     /** Sets the coordinates of the vector.
      * 
      * @param x
@@ -46,14 +54,6 @@ public class Vector {
         this.y = y;
         this.z = z;
         return this;
-    }
-    
-    /** Creates a copy of this vector.
-     * 
-     * @return 
-     */
-    public Vector copy() {
-        return new Vector(this);
     }
     
     /** Adds given values to coordinates.
@@ -125,7 +125,7 @@ public class Vector {
         return scale(scale, scale, scale);
     }
     
-    /** Scales vector with other vector.
+    /** Scales vector with values from other vector.
      * 
      * @param other
      * @return 
@@ -147,11 +147,7 @@ public class Vector {
      * @return 
      */
     public Vector normalize() {
-        float length = length();
-        x /= length;
-        y /= length;
-        z /= length;
-        return this;
+        return scale(1 / length());
     }
     
     /** Calculates the dot product with another vector.
@@ -163,10 +159,12 @@ public class Vector {
         return x * other.x + y * other.y + z * other.z;
     }
     
-    /** Calculates the cross product with another vector.
+    /** Calculates the cross product with another vector. This is the only
+     * function in the entire Vector class, with the exception of copy(),
+     * which returns a new Vector object.
      * 
      * @param other
-     * @return cross product
+     * @return cross product as a new Vector.
      */
     public Vector cross(Vector other) {
         return new Vector(
@@ -175,43 +173,53 @@ public class Vector {
                 x * other.y - y * other.x);
     }
     
-    /** Rotates vector coordinates around given unit vector.
+    /** Pre-multiplies the Vector by a given Matrix.
      * 
-     * @param angle Angle in degrees
-     * @param ux
-     * @param uy
-     * @param uz
-     * @return
+     * @param mat pre-multiplicand Matrix
+     * @return 
      */
-    public Vector rotate(float angle, float ux, float uy, float uz) {
-        // Pre-calculate values
-        float x0 = x; float y0 = y; float z0 = z;
-        float sin = (float) Math.sin(angle * Math.PI/180);
-        float cos = (float) Math.cos(angle * Math.PI/180);
-
-        // Multiply vector with rotation matrix
-        x = (cos + ux*ux*(1-cos))*x0 + (ux*uy*(1-cos) - uz*sin)*y0 + (ux*uz*(1-cos) + uy*sin)*z0;
-        y = (uy*ux*(1-cos) + uz*sin)*x0 + (cos + uy*uy*(1-cos))*y0 + (uy*uz*(1-cos) - ux*sin)*z0;
-        z = (uz*ux*(1-cos) - uy*sin)*x0 + (uz*uy*(1-cos) + ux*sin)*y0 + (cos + uz*uz*(1-cos))*z0;
-
-        return this;
+    public Vector premultiply(Matrix mat) {
+        float x0 = x, y0 = y, z0 = z, w0 = 1, w;
+        
+        x = x0 * mat.val[Matrix.m00] + y0 * mat.val[Matrix.m01] +
+            z0 * mat.val[Matrix.m02] + w0 * mat.val[Matrix.m03];
+        y = x0 * mat.val[Matrix.m10] + y0 * mat.val[Matrix.m11] +
+            z0 * mat.val[Matrix.m12] + w0 * mat.val[Matrix.m13];
+        z = x0 * mat.val[Matrix.m20] + y0 * mat.val[Matrix.m21] +
+            z0 * mat.val[Matrix.m22] + w0 * mat.val[Matrix.m23];
+        w = x0 * mat.val[Matrix.m30] + y0 * mat.val[Matrix.m31] +
+            z0 * mat.val[Matrix.m32] + w0 * mat.val[Matrix.m33];
+                
+        return scale(1 / w);
     }
     
-    /** Rotates vector coordinates around given vector.
+    /** Rotates vector coordinates with given angle around given axis. The
+     * given axis values are expected to be normalized to unit length.
      * 
-     * @param angle Angle in degrees
+     * @param angle Rotation angle in degrees
+     * @param x
+     * @param y
+     * @param z
+     * @return 
+     */
+    public Vector rotate(float angle, float x, float y, float z) {
+        Matrix rot = Quaternion.fromRotation(angle, x, y, z).toMatrix();
+        
+        return premultiply(rot);
+    }
+    
+    /** Rotates vector coordinates around given vector. The given input
+     * vector is expected to be normalized to unit length.
+     * 
+     * @param angle Rotation angle in degrees
      * @param other
      * @return 
      */
-    public Vector rotate(float angle, Vector other) {
-        // Normalize to unit vector
-        Vector u = other.copy().normalize();
-        
-        // Rotate around unit vector
-        return rotate(angle, u.x, u.y, u.z);
+    public Vector rotate(float angle, Vector other) {   
+        return rotate(angle, other.x, other.y, other.z);
     }
     
-    /** Tests if vector is in the triangle described by vectors
+    /** Tests if vector is in the triangle described by vector points.
      * 
      * @param p1
      * @param p2
@@ -219,7 +227,7 @@ public class Vector {
      * @return 
      */
     public boolean isInTriangle(Vector p1, Vector p2, Vector p3) {
-        Vector v1p = this.copy().min(p1);
+        Vector v1p = copy().min(p1);
         Vector v12 = p2.copy().min(p1);
         Vector v13 = p3.copy().min(p1);
         
@@ -244,9 +252,9 @@ public class Vector {
         
         Vector other = (Vector) obj;
         
-        return  other.x == x &&
-                other.y == y &&
-                other.z == z;
+        return Float.floatToIntBits(other.x) == Float.floatToIntBits(x) &&
+               Float.floatToIntBits(other.y) == Float.floatToIntBits(y) &&
+               Float.floatToIntBits(other.z) == Float.floatToIntBits(z);
     }
 
     @Override

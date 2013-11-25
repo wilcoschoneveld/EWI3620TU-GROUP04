@@ -9,29 +9,36 @@ import org.lwjgl.opengl.GL20;
  * @author Bart
  */
 public class Lighting {    
-    public Light light0, light1;
+    public Light light0, light1, light2, light3;
     
     public int[] lightPositionOC;
     
-    public int numLights, lightPositionOC2;
+    public int numLights;
     public int shaderProgram1;
    
     public Lighting() {
         shaderProgram1 = loadShaderPairFromFiles(
                 "res/shaders/pixel.vert", "res/shaders/pixel.frag");
         
-        GL20.glUseProgram(shaderProgram1);
+        GL20.glUseProgram(shaderProgram1); 
         
         lightPositionOC = new int[10];
         numLights = GL20.glGetUniformLocation(shaderProgram1, "numLights");
-        lightPositionOC[0] = GL20.glGetUniformLocation(shaderProgram1, "lightPositionOC[0]");
-        lightPositionOC[1] = GL20.glGetUniformLocation(shaderProgram1, "lightPositionOC[1]");
+        for(int i = 0; i < 10; i++)
+            lightPositionOC[i] =
+                    GL20.glGetUniformLocation(shaderProgram1, "lightPositionOC["+i+"]");
         
         light0 = new Light();
         light0.position.set(4.5f, 2.9f, 4.5f);
         
         light1 = new Light();
-        light1.position.set(6.0f, 2.9f, 4.5f);
+        light1.position.set(6.0f, 15f, 4.5f);
+        
+        light2 = new Light();
+        light2.position.set(15.0f, 2.9f, 4.5f);
+        
+        light3 = new Light();
+        light3.position.set(4.5f, 2.9f, 9f);
     }
     
     public void cleanup() {
@@ -39,11 +46,15 @@ public class Lighting {
     }
     
     public void update() {
-        GL20.glUniform1i(numLights, 2);
+        GL20.glUniform1i(numLights, 4);
         GL20.glUniform3f(lightPositionOC[0],
                 light0.position.x, light0.position.y, light0.position.z);
         GL20.glUniform3f(lightPositionOC[1],
                 light1.position.x, light1.position.y, light1.position.z);
+        GL20.glUniform3f(lightPositionOC[2],
+                light2.position.x, light2.position.y, light2.position.z);
+        GL20.glUniform3f(lightPositionOC[3],
+                light3.position.x, light3.position.y, light3.position.z);
     }
     
     public static int loadShaderPairFromFiles(String vertexFile, String fragmentFile) {

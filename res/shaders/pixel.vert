@@ -17,6 +17,8 @@ varying vec3 lightPositions[10];
 void main() {
 	lightPositions[0] = lightPositionOC[0];
 	lightPositions[1] = lightPositionOC[1];
+        lightPositions[2] = lightPositionOC[2];
+        lightPositions[3] = lightPositionOC[3];
 	
     // Pass the vertex colour attribute to the fragment shader.
     // This value will be interpolated automatically by OpenGL
