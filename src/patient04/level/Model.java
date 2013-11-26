@@ -85,6 +85,11 @@ public class Model {
         faces.clear(); faces = null;
     }
     
+    public void cleanup() {
+        GL15.glDeleteBuffers(vboVertices);
+        GL15.glDeleteBuffers(vboNormals);
+    }
+    
     public void convertToVBO() {
         vboCount = faces.size()*3;
         
@@ -165,8 +170,6 @@ public class Model {
         matrix.rotate(rotation.z, 0, 0, 1);
         
         Renderer.setModelMatrix(matrix.toBuffer());
-        
-        GL11.glColor3f(0, 1, 0);
         
         for (Face face : faces) {
             GL11.glBegin(GL11.GL_LINE_LOOP);

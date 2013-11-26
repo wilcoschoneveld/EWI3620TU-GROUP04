@@ -3,7 +3,6 @@ package patient04.level;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import org.lwjgl.opengl.GL11;
 import java.util.Scanner;
 import org.lwjgl.input.Keyboard;
 import patient04.physics.AABB;
@@ -46,15 +45,17 @@ public class Level {
         return aabbs;
     }
     
-    public void draw() {        
-        // Shapes color
-        GL11.glColor3f(0.5f, 0, 0.7f);
-
+    public void draw() {
         // Loop through the maze        
         for(Model model : statics)
             model.draw();
         
         // end draw
+    }
+    
+    public void cleanup() {
+        for(Model model : statics)
+            model.cleanup();
     }
     
     public static Level readLevel(String file) {

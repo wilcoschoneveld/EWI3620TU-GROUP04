@@ -91,7 +91,10 @@ public class Main {
     }
     
     public void destroy() {
-        // Clean up lighting (shaders, etc..)
+        // Clean up level
+        level.cleanup();
+        
+        // Clean up renderer
         Renderer.cleanup();
     }
 
