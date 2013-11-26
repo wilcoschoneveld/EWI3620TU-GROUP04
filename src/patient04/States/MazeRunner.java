@@ -8,11 +8,13 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+
 import patient04.Main;
 import patient04.Player;
 import patient04.level.Level;
 import patient04.level.Model;
 import patient04.lighting.Lighting;
+import patient04.physics.Vector;
 import patient04.utilities.Timer;
 
 /**
@@ -28,7 +30,6 @@ public final class MazeRunner {
     
     private Level level;
     private Player player;
-    
     private Model model;
     
     private ArrayList<Model> models;
@@ -124,17 +125,36 @@ public final class MazeRunner {
     
     public void update(StateManager manager) {
         float deltaTime = timer.deltaTime() * 0.001f;
-        
+        pollUpdate();
+
         player.update(deltaTime);
         player.integrate();
-        pollUpdate();
         stateManager = manager;
     }
     
     // by pressing back you will be directed back to the Main menu
     public void pollUpdate(){
+        // set postion of the listener to the position of the player
+        Vector position = player.getPosition();
+        StateManager.sound1.setListenerPos(position.x, position.y, position.z);
+        
+        if (player.HitGround() == true){
+            StateManager.sound1.playHitGround();
+        }
         if (Keyboard.isKeyDown(Keyboard.KEY_BACK) ){
             stateManager.setState(GameStates.MAIN_MENU);
+        }
+        else if(Keyboard.isKeyDown(Keyboard.KEY_W) &&  player.step()){
+                StateManager.sound1.playWalking();
+        }
+        else if(Keyboard.isKeyDown(Keyboard.KEY_S) && player.step()){
+                StateManager.sound1.playWalking();
+        }
+        else if(Keyboard.isKeyDown(Keyboard.KEY_A) && player.step()){
+                StateManager.sound1.playWalking();
+        }
+        else if(Keyboard.isKeyDown(Keyboard.KEY_D) && player.step()){
+                StateManager.sound1.playWalking();
         }
     }
 }

@@ -30,7 +30,7 @@ public class Player extends Entity {
     public static final float ACCEL_WALKING = 1f;
     public static final float ACCEL_RUNNING = 2f;
     public static final float ACCEL_AIR = 0.1f;
-
+    
     /** Constructs a new player.
      * 
      * @param level 
@@ -53,12 +53,22 @@ public class Player extends Entity {
         
         Vector moveInput = new Vector();
         
-        if(Keyboard.isKeyDown(Keyboard.KEY_W)) moveInput.add(0, 0, -1);
-        if(Keyboard.isKeyDown(Keyboard.KEY_S)) moveInput.add(0, 0, 1);
-        if(Keyboard.isKeyDown(Keyboard.KEY_A)) moveInput.add(-1, 0, 0);
-        if(Keyboard.isKeyDown(Keyboard.KEY_D)) moveInput.add(1, 0, 0);
-        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) moveInput.add(0, 1, 0);
-
+        if(Keyboard.isKeyDown(Keyboard.KEY_W)){ 
+            moveInput.add(0, 0, -1);
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_S)){
+            moveInput.add(0, 0, 1);
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_A)){
+            moveInput.add(-1, 0, 0);
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_D)){
+            moveInput.add(1, 0, 0);
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){ 
+            moveInput.add(0, 1, 0);
+        }
+        
         if(moveInput.length() > 0) {
             // Rotate inputForce according to viewing direction
             moveInput.rotate(rotation.y, 0, 1, 0);
@@ -70,7 +80,6 @@ public class Player extends Entity {
                 speed = ACCEL_AIR * dt;
             
             moveInput.normalize().scale(speed);
-            
             
         }
         
@@ -88,7 +97,6 @@ public class Player extends Entity {
         
         if(onGround)
             viewbobbing += 0.1f;
-        
         GL11.glTranslated(
                 Math.cos(distanceMoved * 3) * 0.05 * viewbobbing,
                 Math.cos(distanceMoved * 6) * 0.05 * viewbobbing, 0);
@@ -102,6 +110,26 @@ public class Player extends Entity {
                 -position.x,
                 -position.y - EYEHEIGHT,
                 -position.z);
+    }
+    
+    public boolean HitGround() {
+        return hitGround;
+    }
+    
+    public boolean step(){
+        if(Math.cos(distanceMoved * 6) < -0.992 ) {
+            return true;
+        }
+        else
+            return false;
+    }
+    
+    public boolean isOnGround(){
+        return onGround;
+    }
+    
+    public Vector getPosition(){
+        return position;
     }
     
     private float viewbobbing = 0;

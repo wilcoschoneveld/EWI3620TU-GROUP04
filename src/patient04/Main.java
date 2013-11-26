@@ -98,9 +98,6 @@ public class Main {
             Display.sync(60);
         }
         
-        // Zonder deze als ik hem afsluit krijg ik geen error!  anders NullPointerException
-//        destroy();
-        
         Display.destroy();
     }
     

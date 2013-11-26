@@ -17,6 +17,8 @@ public class Entity {
     protected final Vector acceleration;
     
     protected boolean onGround;
+    protected boolean hitGround;
+    
     protected float distanceMoved;
     
     private final AABB aabb;
@@ -69,6 +71,13 @@ public class Entity {
         for (AABB aabb2 : aabbs)
             aabb.sweepAlongAxis(aabb2, delta, 2);
         position.add(0, 0, delta.z);
+        
+                // If hitting ground
+        if (delta.y != velocity.y && velocity.y < -0.1)
+            hitGround = true;
+        else
+            hitGround = false;
+
         
         // Check if you are touching a ground
         onGround = (delta.y != velocity.y && velocity.y < 0);

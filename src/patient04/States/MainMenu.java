@@ -2,7 +2,6 @@ package patient04.States;
 
 import patient04.Manager.GameStates;
 import patient04.Manager.StateManager;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
