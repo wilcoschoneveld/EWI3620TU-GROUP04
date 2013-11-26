@@ -3,7 +3,9 @@ package patient04.level;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.FloatBuffer;
 import java.util.*;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import patient04.math.Vector;
 
@@ -126,6 +128,25 @@ public class Model {
         
         GL11.glPopAttrib();
         GL11.glPopMatrix();
+    }
+    
+    public void testVBO() {
+        FloatBuffer verticesBuffer =
+                BufferUtils.createFloatBuffer(faces.size()*3);
+        FloatBuffer normalsBuffer =
+                BufferUtils.createFloatBuffer(faces.size()*3);
+        
+        for (Face face : faces) {
+            for (int i = 0; i < 3; i++) {
+                Vector v = vertices.get(face.vertices[i]);
+                verticesBuffer.put(v.x).put(v.y).put(v.z);
+                Vector n = normals.get(face.normals[i]);
+                normalsBuffer.put(n.x).put(n.y).put(n.z);
+            }
+        }
+        
+        verticesBuffer.flip();
+        normalsBuffer.flip();        
     }
     
     /** Inner Face class */

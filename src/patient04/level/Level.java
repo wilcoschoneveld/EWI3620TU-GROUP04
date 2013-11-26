@@ -47,39 +47,9 @@ public class Level {
         return aabbs;
     }
     
-    public void draw() {
-        // Floor material
-//        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.BLUE);
-        GL11.glColor3f(0, 0, 1);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
-        GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 12.8f);
-     
-        // Draw the floor        
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glNormal3f(0, 1, 0);
-        GL11.glVertex3f(0, 0, 0);
-        GL11.glVertex3f(0, 0, 100);
-        GL11.glVertex3f(100, 0, 100);
-        GL11.glVertex3f(100, 0, 0);
-        GL11.glEnd();
-     
-        // Draw the ceiling  
-        GL11.glColor3f(0.1f, 0.1f, 0.1f);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glNormal3f(0, -1, 0);
-        GL11.glVertex3f(0, WALL_HEIGHT, 0);
-        GL11.glVertex3f(100, WALL_HEIGHT, 0);
-        GL11.glVertex3f(100, WALL_HEIGHT, 100);
-        GL11.glVertex3f(0, WALL_HEIGHT, 100);
-        GL11.glEnd();
-        
-        
-        // Wall material
+    public void draw() {        
+        // Shapes color
         GL11.glColor3f(0.5f, 0, 0.7f);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
-        GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 12.8f);
 
         // Loop through the maze        
         for(Shape shape : shapes)

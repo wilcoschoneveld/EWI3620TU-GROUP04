@@ -1,9 +1,7 @@
 package patient04;
 
-import java.util.ArrayList;
-import org.lwjgl.input.Keyboard;
 import patient04.utilities.Timer;
-import patient04.lighting.Lighting;
+import patient04.lighting.Renderer;
 import patient04.level.Model;
 import patient04.level.Level;
 
@@ -19,16 +17,12 @@ public class Main {
     private final int screenWidth = 1280;
     private final int screenHeight = 720;
     
-    private Lighting lighting;
-    
     private Timer timer;
     
     private Level level;
     private Player player;
     
-    private Model model, model2;
-    
-    private ArrayList<Model> models;
+    private Model model;
 
     /** The initialize method is called at application startup */
     public void initialize() {        
@@ -44,8 +38,11 @@ public class Main {
         
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
-        // Set up Lighting
-        lighting = new Lighting();
+        // Set up the renderer
+        Renderer.setup();
+        
+        // Set the projection matrix
+        Renderer.setProjectionMatrix(matrix.toBuffer());
         
         // Enable backface culling
         GL11.glCullFace(GL11.GL_BACK);
@@ -53,9 +50,6 @@ public class Main {
         
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        
-        // Set shade model to smooth
-//        GL11.glShadeModel(GL11.GL_SMOOTH);
         
         // Create a new timer
         timer = new Timer();
@@ -73,21 +67,6 @@ public class Main {
         model = Model.loadModel("res/models/sphere.obj");
         model.createDisplayList();
         model.position.set(10, 1, 10);
-        
-        models = new ArrayList<>();
-//        for(int i = 0; i < 10; i++) {
-//            for(int j = 0; j < 10; j++) {
-//                
-//                Model copy = model.copy();
-//                copy.createDisplayList();
-//                copy.position.set(40 + i * 2, 2, 10 + j * 2);
-//                                
-//                models.add(copy);
-//            }
-//        }
-        
-        model2 = Model.buildBox(10, 10, 10, 20, 20, 20);
-        model2.createDisplayList();
     }
 
     /** The update method is called every frame, before rendering */
@@ -106,27 +85,18 @@ public class Main {
         // Set modelview matrix to FPV
         player.glFirstPersonView();
  
-        // Update lighting
-        lighting.update();
+        // Update renderer/lighting
+        Renderer.update();
         
         // Draw level
         level.draw();
         
         model.drawDebug();
-        model2.draw();
-        
-        for(Model mdl : models) {
-            if(Keyboard.isKeyDown(Keyboard.KEY_V))
-                mdl.drawDebug();
-            else
-                mdl.draw();
-        }
-        
     }
     
     public void destroy() {
         // Clean up lighting (shaders, etc..)
-        lighting.cleanup();
+        Renderer.cleanup();
     }
 
     /** Starts the game loop */

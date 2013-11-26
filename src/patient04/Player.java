@@ -7,6 +7,7 @@ import patient04.level.Level;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import patient04.lighting.Renderer;
 import patient04.math.Matrix;
 
 /*
@@ -103,6 +104,8 @@ public class Player extends Entity {
                 -position.z);
         
         GL11.glLoadMatrix(matrix.toBuffer());
+        
+        Renderer.setViewMatrix(matrix.toBuffer());
     }
     
     private float viewbobbing = 0;

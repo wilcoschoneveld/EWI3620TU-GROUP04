@@ -1,6 +1,7 @@
 package patient04.lighting;
 
 import java.io.*;
+import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -8,53 +9,43 @@ import org.lwjgl.opengl.GL20;
  *
  * @author Bart
  */
-public class Lighting {    
-    public Light light0, light1, light2, light3;
+public class Renderer {    
+    public static int shaderProgram1;
     
-    public int[] lightPositionOC;
-    
-    public int numLights;
-    public int shaderProgram1;
+    public static int locMatrixProj;
+    public static int locMatrixView;
+    public static int locMatrixModel;
    
-    public Lighting() {
+    public static void setup() {
         shaderProgram1 = loadShaderPairFromFiles(
-                "res/shaders/pixel.vert", "res/shaders/pixel.frag");
+                "res/shaders/shaderWilco.vert", "res/shaders/shaderWilco.frag");
         
-        GL20.glUseProgram(shaderProgram1); 
-        
-        lightPositionOC = new int[10];
-        numLights = GL20.glGetUniformLocation(shaderProgram1, "numLights");
-        for(int i = 0; i < 10; i++)
-            lightPositionOC[i] =
-                    GL20.glGetUniformLocation(shaderProgram1, "lightPositionOC["+i+"]");
-        
-        light0 = new Light();
-        light0.position.set(4.5f, 2.9f, 4.5f);
-        
-        light1 = new Light();
-        light1.position.set(6.0f, 15f, 4.5f);
-        
-        light2 = new Light();
-        light2.position.set(15.0f, 2.9f, 4.5f);
-        
-        light3 = new Light();
-        light3.position.set(4.5f, 2.9f, 9f);
+        locMatrixProj = GL20.glGetUniformLocation(shaderProgram1, "matProj");
+        locMatrixView = GL20.glGetUniformLocation(shaderProgram1, "matView");
+        locMatrixModel = GL20.glGetUniformLocation(shaderProgram1, "matModel");
     }
     
-    public void cleanup() {
+    public static void cleanup() {
         GL20.glDeleteProgram(shaderProgram1);
     }
     
-    public void update() {
-        GL20.glUniform1i(numLights, 4);
-        GL20.glUniform3f(lightPositionOC[0],
-                light0.position.x, light0.position.y, light0.position.z);
-        GL20.glUniform3f(lightPositionOC[1],
-                light1.position.x, light1.position.y, light1.position.z);
-        GL20.glUniform3f(lightPositionOC[2],
-                light2.position.x, light2.position.y, light2.position.z);
-        GL20.glUniform3f(lightPositionOC[3],
-                light3.position.x, light3.position.y, light3.position.z);
+    public static void update() {
+        GL20.glUseProgram(shaderProgram1);
+    }
+    
+    public static void setProjectionMatrix(FloatBuffer buffer) {
+        GL20.glUseProgram(shaderProgram1);
+        GL20.glUniformMatrix4(locMatrixProj, false, buffer);
+    }
+    
+    public static void setViewMatrix(FloatBuffer buffer) {
+        GL20.glUseProgram(shaderProgram1);
+        GL20.glUniformMatrix4(locMatrixView, false, buffer);
+    }
+    
+    public static void setModelMatrix(FloatBuffer buffer) {
+        GL20.glUseProgram(shaderProgram1);
+        GL20.glUniformMatrix4(locMatrixModel, false, buffer);
     }
     
     public static int loadShaderPairFromFiles(String vertexFile, String fragmentFile) {
