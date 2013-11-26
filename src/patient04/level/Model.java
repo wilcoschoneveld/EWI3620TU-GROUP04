@@ -128,20 +128,18 @@ public class Model {
             Renderer.setModelMatrix(staticModel);
         }
         
-        GL20.glEnableVertexAttribArray(Renderer.locVertPosition);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboVertices);
-        GL20.glVertexAttribPointer(Renderer.locVertPosition,
-                3, GL11.GL_FLOAT, false, 0, 0);
+        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
         
-        GL20.glEnableVertexAttribArray(Renderer.locVertNormal);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboVertices);
+        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboNormals);
-        GL20.glVertexAttribPointer(Renderer.locVertNormal,
-                3, GL11.GL_FLOAT, false, 0, 0);
+        GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
         
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vboCount);
         
-        GL20.glDisableVertexAttribArray(Renderer.locVertPosition);
-        GL20.glDisableVertexAttribArray(Renderer.locVertNormal);
+        GL20.glDisableVertexAttribArray(0);
+        GL20.glDisableVertexAttribArray(1);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
     
