@@ -22,7 +22,7 @@ import patient04.math.Matrix;
  */
 public class Player extends Entity {
     // Width and height of the player, used as bounding box
-    public static final float WIDTH = 0.5f;
+    public static final float WIDTH = 0.6f;
     public static final float HEIGHT = 1.8f;
 
     // Determines where the camera is located
@@ -102,8 +102,6 @@ public class Player extends Entity {
                 -position.x,
                 -position.y - EYEHEIGHT,
                 -position.z);
-        
-        GL11.glLoadMatrix(matrix.toBuffer());
         
         Renderer.setViewMatrix(matrix.toBuffer());
     }

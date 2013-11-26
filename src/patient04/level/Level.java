@@ -1,6 +1,5 @@
 package patient04.level;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -22,11 +21,11 @@ public class Level {
     // Wall height
     public static final float WALL_HEIGHT = 3;
     
-    public final ArrayList<Shape> shapes;
+    public final ArrayList<Model> statics;
     public AABB floorAABB;
     
-    public Level(ArrayList<Shape> shapes) {
-        this.shapes = shapes;
+    public Level(ArrayList<Model> statics) {
+        this.statics = statics;
         
         floorAABB = new AABB(new Vector(0, -1, 0), new Vector(100, 0, 100));
     }
@@ -40,9 +39,9 @@ public class Level {
         if(Keyboard.isKeyDown(Keyboard.KEY_B))
             return aabbs;
         
-        for(Shape shape : shapes)
-            if(broadphase.intersects(shape.aabb))
-                aabbs.add(shape.aabb);
+        for(Model model : statics)
+            if(broadphase.intersects(model.aabb))
+                aabbs.add(model.aabb);
 
         return aabbs;
     }
@@ -52,18 +51,14 @@ public class Level {
         GL11.glColor3f(0.5f, 0, 0.7f);
 
         // Loop through the maze        
-        for(Shape shape : shapes)
-            shape.draw();
-        
-        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
-            for(Shape shape : shapes)
-                shape.aabb.draw();
+        for(Model model : statics)
+            model.draw();
         
         // end draw
     }
     
     public static Level readLevel(String file) {
-        ArrayList<Shape> shapes = new ArrayList<>();
+        ArrayList<Model> models = new ArrayList<>();
         
         try (Scanner sc = new Scanner(new File(file))) {
             while (sc.hasNextInt()) {
@@ -72,22 +67,24 @@ public class Level {
                 float xmax = sc.nextInt() / 20f;
                 float zmin = -sc.nextInt() / 20f;
                 
-                AABB aabb = new AABB(new Vector(xmin, 0, zmin),
-                        new Vector(xmax, WALL_HEIGHT, zmax));
+                Vector min = new Vector(xmin, 0, zmin);
+                Vector max = new Vector(xmax, WALL_HEIGHT, zmax);
                 
-                Shape.BoxBuilder builder = new Shape.BoxBuilder(
-                        xmin, 0, zmin, xmax, WALL_HEIGHT, zmax);
+                Model model = Model.buildBox(min, max);
                 
-                builder.setAABB(aabb);
+                model.setAABB(new AABB(model.position, min, max));
                 
-                shapes.add(builder.build());
-                System.out.println("shape added!");
+                model.convertToVBO();
+                model.setAsStaticModel(true);
+                model.deleteRawVertices();
+                
+                models.add(model);
             }
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        return new Level(shapes);
+        return new Level(models);
     }
     
     public static Level defaultLevel() {
@@ -105,7 +102,10 @@ public class Level {
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
         
         // Create an empty list of shapes
-        ArrayList<Shape> shapes = new ArrayList<>();
+        ArrayList<Model> models = new ArrayList<>();
+        
+        Vector min = new Vector(-0.5f, -0.5f, -0.5f).scale(WALL_HEIGHT);
+        Vector max = new Vector(0.5f, 0.5f, 0.5f).scale(WALL_HEIGHT);
         
         // Loop through to maze
         for(int x = 0; x < maze[0].length; x++) {
@@ -113,24 +113,26 @@ public class Level {
                 if(maze[y][x] != 1) continue;
                 
                 // Start building a new box
-                Shape.BoxBuilder box = new Shape.BoxBuilder(WALL_HEIGHT);
-
-                // Translate the box into place
-                box.translate(
+                Model model = Model.buildBox(min, max);
+                
+                // Create AABB
+                model.setAABB(new AABB(model.position, min, max));
+                
+                // Set model position
+                model.position.set(
                         WALL_HEIGHT * (x + 0.5f), WALL_HEIGHT * 0.5f,
                         WALL_HEIGHT * (y + 0.5f));
-
-                // Turnoff faces with adjecent walls
-                if(y < maze.length - 1 && maze[y+1][x] == 1) box.setFront(false);
-                if(y > 0 && maze[y-1][x] == 1) box.setBack(false);
-                if(x < maze[0].length - 1 && maze[y][x+1] == 1) box.setRight(false);
-                if(x > 0 && maze[y][x-1] == 1) box.setLeft(false);
+                
+                // Render the display list
+                model.convertToVBO();
+                model.setAsStaticModel(true);
+                model.deleteRawVertices();
                 
                 // Build the box and add to list
-                shapes.add(box.build());
+                models.add(model);
             }
         }
         
-        return new Level(shapes);
+        return new Level(models);
     }
 }

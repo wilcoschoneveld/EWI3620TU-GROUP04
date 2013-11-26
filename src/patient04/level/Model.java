@@ -1,13 +1,17 @@
 package patient04.level;
 
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.FloatBuffer;
 import java.util.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import patient04.lighting.Renderer;
+import patient04.math.Matrix;
 import patient04.math.Vector;
+import patient04.physics.AABB;
 
 /**
  *
@@ -21,7 +25,10 @@ public class Model {
     public final Vector position;
     public final Vector rotation;
     
-    private int displayList;
+    protected AABB aabb;
+    
+    private int vboVertices, vboNormals, vboCount;
+    private FloatBuffer staticModel;
     
     public Model(Vector position, Vector rotation) {
         this.position = position;
@@ -36,7 +43,7 @@ public class Model {
         this(new Vector(), new Vector());
     }
     
-    public Model copy() {
+    public Model copyRaw() {
         Model model = new Model(position.copy(), rotation.copy());
         
         for (Vector vertex : vertices)
@@ -48,69 +55,118 @@ public class Model {
         for (Face face : faces)
             model.faces.add(face.copy());
         
+        model.aabb = aabb.copy(model.position);
+        
         return model;
     }
     
-    /** Draws the display list */
-    public void draw() {
-        GL11.glPushMatrix();
+    public Model copyCompiled() {
+        Model model = new Model(position.copy(), rotation.copy());
         
-        GL11.glTranslatef(position.x, position.y, position.z);
-        GL11.glRotatef(rotation.x, 1, 0, 0);
-        GL11.glRotatef(rotation.y, 0, 1, 0);
-        GL11.glRotatef(rotation.z, 0, 0, 1);
+        model.vboVertices = vboVertices;
+        model.vboNormals = vboNormals;
+        model.vboCount = vboCount;
         
-        GL11.glCallList(displayList);
+        model.aabb = aabb.copy(model.position);
         
-        GL11.glPopMatrix();
+        if(staticModel != null)
+            model.staticModel = staticModel;
+        
+        return model;
     }
     
-    /** Compiles the model into a display list */
-    public void createDisplayList() {
-        displayList = GL11.glGenLists(1);
-        
-        GL11.glNewList(displayList, GL11.GL_COMPILE);
-        drawFaces();
-        GL11.glEndList();
+    public void setAABB(AABB aabb) {
+        this.aabb = aabb;
     }
     
-    /** Render the faces of the model */
-    public void drawFaces() {
-        GL11.glBegin(GL11.GL_TRIANGLES);
+    public void deleteRawVertices() {
+        vertices.clear(); vertices = null;
+        normals.clear(); normals = null;
+        faces.clear(); faces = null;
+    }
+    
+    public void convertToVBO() {
+        vboCount = faces.size()*3;
+        
+        FloatBuffer verticesBuffer =
+                BufferUtils.createFloatBuffer(vboCount*3);
+        FloatBuffer normalsBuffer =
+                BufferUtils.createFloatBuffer(vboCount*3);
         
         for (Face face : faces) {
-            Vector v0 = vertices.get(face.vertices[0]);
-            Vector v1 = vertices.get(face.vertices[1]);
-            Vector v2 = vertices.get(face.vertices[2]);
-            
-            Vector n0 = normals.get(face.normals[0]);
-            Vector n1 = normals.get(face.normals[1]);
-            Vector n2 = normals.get(face.normals[2]);
-            
-            GL11.glNormal3f(n0.x, n0.y, n0.z);
-            GL11.glVertex3f(v0.x, v0.y, v0.z);
-            GL11.glNormal3f(n1.x, n1.y, n1.z);
-            GL11.glVertex3f(v1.x, v1.y, v1.z);
-            GL11.glNormal3f(n2.x, n2.y, n2.z);
-            GL11.glVertex3f(v2.x, v2.y, v2.z);
+            for (int i = 0; i < 3; i++) {
+                Vector v = vertices.get(face.vertices[i]);
+                verticesBuffer.put(v.x).put(v.y).put(v.z);
+                Vector n = normals.get(face.normals[i]);
+                normalsBuffer.put(n.x).put(n.y).put(n.z);
+            }
         }
         
-        GL11.glEnd();
+        verticesBuffer.flip();
+        normalsBuffer.flip();
+        
+        vboVertices = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboVertices);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
+        
+        vboNormals = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboNormals);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
+        
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+    
+    public void draw() {        
+        if(staticModel == null) {
+            Renderer.setModelMatrix(setAsStaticModel(false));
+        } else {
+            Renderer.setModelMatrix(staticModel);
+        }
+        
+        GL20.glEnableVertexAttribArray(Renderer.locVertPosition);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboVertices);
+        GL20.glVertexAttribPointer(Renderer.locVertPosition,
+                3, GL11.GL_FLOAT, false, 0, 0);
+        
+        GL20.glEnableVertexAttribArray(Renderer.locVertNormal);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboNormals);
+        GL20.glVertexAttribPointer(Renderer.locVertNormal,
+                3, GL11.GL_FLOAT, false, 0, 0);
+        
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vboCount);
+        
+        GL20.glDisableVertexAttribArray(Renderer.locVertPosition);
+        GL20.glDisableVertexAttribArray(Renderer.locVertNormal);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+    
+    public FloatBuffer setAsStaticModel(boolean enable) {
+        Matrix matrix = new Matrix();
+
+        matrix.translate(position.x, position.y, position.z);
+        matrix.rotate(rotation.x, 1, 0, 0);
+        matrix.rotate(rotation.y, 0, 1, 0);
+        matrix.rotate(rotation.z, 0, 0, 1);
+        
+        FloatBuffer buffer = matrix.toBuffer();
+        
+        staticModel = enable ? buffer : null;
+        
+        return buffer;
     }
     
     /** Render the model with lines */
     public void drawDebug() {
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_LIGHTING);
+        Matrix matrix = new Matrix();
         
-        GL11.glTranslatef(position.x, position.y, position.z);
-        GL11.glRotatef(rotation.x, 1, 0, 0);
-        GL11.glRotatef(rotation.y, 0, 1, 0);
-        GL11.glRotatef(rotation.z, 0, 0, 1);
+        matrix.translate(position.x, position.y, position.z);
+        matrix.rotate(rotation.x, 1, 0, 0);
+        matrix.rotate(rotation.y, 0, 1, 0);
+        matrix.rotate(rotation.z, 0, 0, 1);
         
-        GL11.glDisable(GL11.GL_LIGHTING);
+        Renderer.setModelMatrix(matrix.toBuffer());
         
-        GL11.glColor3f(1, 0, 0);
+        GL11.glColor3f(0, 1, 0);
         
         for (Face face : faces) {
             GL11.glBegin(GL11.GL_LINE_LOOP);
@@ -125,28 +181,6 @@ public class Model {
             
             GL11.glEnd();
         }
-        
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
-    }
-    
-    public void testVBO() {
-        FloatBuffer verticesBuffer =
-                BufferUtils.createFloatBuffer(faces.size()*3);
-        FloatBuffer normalsBuffer =
-                BufferUtils.createFloatBuffer(faces.size()*3);
-        
-        for (Face face : faces) {
-            for (int i = 0; i < 3; i++) {
-                Vector v = vertices.get(face.vertices[i]);
-                verticesBuffer.put(v.x).put(v.y).put(v.z);
-                Vector n = normals.get(face.normals[i]);
-                normalsBuffer.put(n.x).put(n.y).put(n.z);
-            }
-        }
-        
-        verticesBuffer.flip();
-        normalsBuffer.flip();        
     }
     
     /** Inner Face class */
@@ -210,22 +244,18 @@ public class Model {
     
     /** Builds a box model from given coordinates
      * 
-     * @param x0
-     * @param y0
-     * @param z0
-     * @param x1
-     * @param y1
-     * @param z1
+     * @param min Vector containing minimum coordinates
+     * @param max Vector containing maximum coordinates
      * @return generated model
      */ 
-    public static Model buildBox(float x0, float y0, float z0, float x1, float y1, float z1) {
+    public static Model buildBox(Vector min, Vector max) {
         Model model = new Model();
         
         model.vertices.addAll(Arrays.asList(new Vector[] {
-            new Vector(x0, y0, z0), new Vector(x0, y0, z1),
-            new Vector(x0, y1, z1), new Vector(x0, y1, z0),
-            new Vector(x1, y0, z0), new Vector(x1, y0, z1),
-            new Vector(x1, y1, z1), new Vector(x1, y1, z0)
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
         }));
         
         model.normals.addAll(Arrays.asList(new Vector[] {

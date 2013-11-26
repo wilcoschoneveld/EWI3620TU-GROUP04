@@ -15,6 +15,9 @@ public class Renderer {
     public static int locMatrixProj;
     public static int locMatrixView;
     public static int locMatrixModel;
+    
+    public static int locVertPosition;
+    public static int locVertNormal;
    
     public static void setup() {
         shaderProgram1 = loadShaderPairFromFiles(
@@ -23,6 +26,9 @@ public class Renderer {
         locMatrixProj = GL20.glGetUniformLocation(shaderProgram1, "matProj");
         locMatrixView = GL20.glGetUniformLocation(shaderProgram1, "matView");
         locMatrixModel = GL20.glGetUniformLocation(shaderProgram1, "matModel");
+        
+        locVertPosition = GL20.glGetAttribLocation(shaderProgram1, "vertPosition");
+        locVertNormal = GL20.glGetAttribLocation(shaderProgram1, "vertNormal");
     }
     
     public static void cleanup() {

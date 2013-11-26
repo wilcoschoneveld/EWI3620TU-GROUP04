@@ -23,23 +23,19 @@ public class Main {
     private Player player;
     
     private Model model;
-
+    
     /** The initialize method is called at application startup */
     public void initialize() {        
         // Set glClearColor to black
         GL11.glClearColor(0, 0, 0, 0);
-
-        // Set the projection to perspective mode
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        
-        Matrix matrix = Matrix.projPerspective(
-                70, (float) screenWidth / screenHeight, .1f, 100);
-        GL11.glLoadMatrix(matrix.toBuffer());
-        
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
         // Set up the renderer
         Renderer.setup();
+        
+        // Set the projection to perspective mode        
+        Matrix matrix = Matrix.projPerspective(
+                70, (float) screenWidth / screenHeight, .1f, 100);
+        GL11.glLoadMatrix(matrix.toBuffer());
         
         // Set the projection matrix
         Renderer.setProjectionMatrix(matrix.toBuffer());
@@ -65,14 +61,14 @@ public class Main {
         player.setRotation(0, -135, 0);
         
         model = Model.loadModel("res/models/sphere.obj");
-        model.createDisplayList();
+        model.convertToVBO();
         model.position.set(10, 1, 10);
     }
 
     /** The update method is called every frame, before rendering */
     public void update() {
         float deltaTime = timer.deltaTime() * 0.001f;
-      
+
         player.update(deltaTime);
         player.integrate();
     }

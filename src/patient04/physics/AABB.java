@@ -1,8 +1,6 @@
 package patient04.physics;
 
-
 import patient04.math.Vector;
-import org.lwjgl.opengl.GL11;
 
 /**
  *
@@ -21,12 +19,12 @@ public class AABB {
         this(new Vector(), min, max);
     }
     
-    public AABB(AABB other) {
-        this(other.pos.copy(), other.min.copy(), other.max.copy());
+    public AABB copy() {
+        return new AABB(pos.copy(), min.copy(), max.copy());
     }
     
-    public AABB copy() {
-        return new AABB(this);
+    public AABB copy(Vector pos) {
+        return new AABB(pos, min.copy(), max.copy());
     }
     
     /** Translates AABB by delta distance.
@@ -111,28 +109,4 @@ public class AABB {
         }
     }
     
-    public void draw() {
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_LIGHTING | GL11.GL_DEPTH_TEST);
-
-        GL11.glTranslatef(pos.x, pos.y, pos.z);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        
-        GL11.glColor3f(1, 0, 0);
-      
-        GL11.glBegin(GL11.GL_LINE_LOOP);
-        GL11.glVertex3f(min.x, min.y, min.z);
-        GL11.glVertex3f(min.x, min.y, max.z);
-        GL11.glVertex3f(min.x, max.y, max.z);
-        GL11.glVertex3f(min.x, max.y, min.z);
-        GL11.glVertex3f(max.x, max.y, min.z);
-        GL11.glVertex3f(max.x, max.y, max.z);
-        GL11.glVertex3f(max.x, min.y, max.z);
-        GL11.glVertex3f(max.x, min.y, min.z);
-        GL11.glEnd();
-        
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
-    }
 }
