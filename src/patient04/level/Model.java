@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.nio.FloatBuffer;
 import java.util.*;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;

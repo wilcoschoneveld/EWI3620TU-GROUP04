@@ -6,15 +6,11 @@ import patient04.level.Model;
 import patient04.level.Level;
 
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.PixelFormat;
+import patient04.level.Model2;
 import patient04.math.Matrix;
 import patient04.textures.Texture;
 
@@ -73,6 +69,8 @@ public class Main {
         model.position.set(10, 1, 10);
         
         textureTest2 = Texture.loadPNGFromFile("res/textures/wall_hospital.png");
+        
+        Model2.loadOBJ("res/models/sphere.obj");
     }
 
     /** The update method is called every frame, before rendering */
