@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.nio.FloatBuffer;
 import java.util.*;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -12,6 +13,7 @@ import patient04.lighting.Renderer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.physics.AABB;
+import patient04.textures.Texture;
 
 /**
  *
@@ -41,6 +43,10 @@ public class Model {
     
     public Model() {
         this(new Vector(), new Vector());
+    }
+    
+    public void setAABB(AABB aabb) {
+        this.aabb = aabb;
     }
     
     public Model copyRaw() {
@@ -75,19 +81,16 @@ public class Model {
         return model;
     }
     
-    public void setAABB(AABB aabb) {
-        this.aabb = aabb;
-    }
-    
-    public void deleteRawVertices() {
+    public void releaseRawData() {
         vertices.clear(); vertices = null;
         normals.clear(); normals = null;
         faces.clear(); faces = null;
     }
     
-    public void cleanup() {
+    public void releaseBufferObjects() {
         GL15.glDeleteBuffers(vboVertices);
         GL15.glDeleteBuffers(vboNormals);
+        staticModel = null;
     }
     
     public void convertToVBO() {
@@ -186,8 +189,7 @@ public class Model {
     
     /** Inner Face class */
     public static class Face {
-        private int[] vertices;
-        private int[] normals;
+        private int[] vertices, normals;
 
         public Face(int[] vertices, int[] normals) {
             this.vertices = vertices;
@@ -202,6 +204,15 @@ public class Model {
         public Face copy() {
             return new Face(vertices.clone(), normals.clone());
         }
+    }
+    
+    public static class Material {
+        FloatBuffer colorAmbient; // Ka
+        FloatBuffer colorDiffuse; // Kd
+        FloatBuffer colorSpecular;
+        float factorSpecular;
+        
+        Texture mapDiffuse;
     }
     
     /** Loads a model from an *.obj file

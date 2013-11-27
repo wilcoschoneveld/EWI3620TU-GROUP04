@@ -6,16 +6,24 @@ import patient04.level.Model;
 import patient04.level.Level;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.ContextAttribs;
+import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.PixelFormat;
 import patient04.math.Matrix;
+import patient04.textures.Texture;
 
 public class Main {
 
     // Window dimensions
     private final int screenWidth = 1280;
     private final int screenHeight = 720;
+    private final boolean vsyncEnabled = true;
     
     private Timer timer;
     
@@ -23,6 +31,7 @@ public class Main {
     private Player player;
     
     private Model model;
+    private Texture textureTest2;
     
     /** The initialize method is called at application startup */
     public void initialize() {        
@@ -35,7 +44,6 @@ public class Main {
         // Set the projection to perspective mode        
         Matrix matrix = Matrix.projPerspective(
                 70, (float) screenWidth / screenHeight, .1f, 100);
-        GL11.glLoadMatrix(matrix.toBuffer());
         
         // Set the projection matrix
         Renderer.setProjectionMatrix(matrix.toBuffer());
@@ -63,11 +71,17 @@ public class Main {
         model = Model.loadModel("res/models/sphere.obj");
         model.convertToVBO();
         model.position.set(10, 1, 10);
+        
+        textureTest2 = Texture.loadPNGFromFile("res/textures/wall_hospital.png");
     }
 
     /** The update method is called every frame, before rendering */
-    public void update() {
+    public void update() {        
         float deltaTime = timer.deltaTime() * 0.001f;
+        
+        Display.setTitle(
+                String.format("Frame update time: %.3fs", deltaTime) +
+                " / Vsync: " + (vsyncEnabled ? "Enabled" : "Disabled"));
 
         player.update(deltaTime);
         player.integrate();
@@ -88,6 +102,26 @@ public class Main {
         level.draw();
         
         model.drawDebug();
+        
+        GL20.glUseProgram(0);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
+        
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureTest2.getTextureID());
+        
+        GL11.glColor3f(1, 1, 1);
+        
+        GL11.glBegin(GL11.GL_TRIANGLES);
+        GL11.glTexCoord2f(0, 1);
+        GL11.glVertex3f(-1, -1, 0);
+        GL11.glTexCoord2f(1, 1);
+        GL11.glVertex3f(0, -1, 0);
+        GL11.glTexCoord2f(0, 0);
+        GL11.glVertex3f(-1, 0, 0);
+        GL11.glEnd();
+        
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
     
     public void destroy() {
@@ -96,27 +130,41 @@ public class Main {
         
         // Clean up renderer
         Renderer.cleanup();
+        
+        textureTest2.release();
     }
 
     /** Starts the game loop */
     public void run() {
         // Create a new DisplayMode with given width and height
         DisplayMode dm = new DisplayMode(screenWidth, screenHeight);
+        PixelFormat pf = new PixelFormat();
+        ContextAttribs ca = new ContextAttribs(3, 3).
+                withProfileCore(true).withProfileCompatibility(true);
 
         // Try to create a game window
         try {
             Display.setDisplayMode(dm);
-            Display.create();       
+            Display.create(pf, ca);
+            //Display.create();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
         }
         
         // Display OpenGL information
-        System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
+        System.out.println("OS name " + System.getProperty("os.name"));
+        System.out.println("OS version " + System.getProperty("os.version"));
+        System.out.println("LWJGL version " + org.lwjgl.Sys.getVersion());
+        System.out.println("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
+        
+        // Test create a FrameBuffer
+        int test = GL30.glGenFramebuffers();
+        
+        GL30.glDeleteFramebuffers(test);
         
         // Enable vsync
-        Display.setVSyncEnabled(true);
+        Display.setVSyncEnabled(vsyncEnabled);
         
         // Hide and lock the mouse in place
         Mouse.setGrabbed(true);
@@ -136,7 +184,7 @@ public class Main {
             Display.update();
             
             // Synchronize to 60 frames per second
-            Display.sync(60);
+            // Display.sync(60);
         }
  
         destroy();

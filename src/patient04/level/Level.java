@@ -55,7 +55,7 @@ public class Level {
     
     public void cleanup() {
         for(Model model : statics)
-            model.cleanup();
+            model.releaseBufferObjects();
     }
     
     public static Level readLevel(String file) {
@@ -77,7 +77,7 @@ public class Level {
                 
                 model.convertToVBO();
                 model.setAsStaticModel(true);
-                model.deleteRawVertices();
+                model.releaseRawData();
                 
                 models.add(model);
             }
@@ -127,8 +127,7 @@ public class Level {
                 // Render the display list
                 model.convertToVBO();
                 model.setAsStaticModel(true);
-                model.deleteRawVertices();
-                
+                model.releaseRawData();           
                 // Build the box and add to list
                 models.add(model);
             }
