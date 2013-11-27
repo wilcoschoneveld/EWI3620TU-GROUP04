@@ -70,6 +70,8 @@ public class StateManager {
     public void loadGame(){ 
        runner.initialize();
        sound1.killALData();
+//       sound1.setSourcePos(0,10, 1, 10);
        sound1.playTune();
+
     }
 }

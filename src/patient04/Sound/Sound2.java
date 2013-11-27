@@ -6,25 +6,27 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
+import patient04.Manager.GameStates;
+import patient04.Manager.StateManager;
 
 /**
  * @author kajdreef
  */
 public class Sound2 {
     private int NUM_BUFFERS = 3;
-    
+    long lastStep = 0;
+    long stepTime = 75;
     // Buffers hold sound data
     private IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
     private IntBuffer source = BufferUtils.createIntBuffer(NUM_BUFFERS);
     
     private FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.0f , 0.0f, 0.0f});
-    private FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.0f, 0.0f, 0.0f});
-    
-    private FloatBuffer sourcePos1 = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f , 0.0f, 0.0f});
-    private FloatBuffer sourceVel1 = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
+    private FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.0f, 0.0f, 0.5f});
     
     private FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
     private FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
@@ -63,7 +65,7 @@ public class Sound2 {
        mainTheme.dispose();
        
        AL10.alGenSources(source);
-       
+               
        if (AL10.alGetError() != AL10.AL_NO_ERROR){
            return AL10.AL_FALSE;
        }
@@ -141,15 +143,45 @@ public class Sound2 {
    
    public void playWalking(){
        loadALData();
-       // check what the state of the source is. If it stopped playing play it again.
-        if (AL10.alGetSourcei(source.get(1), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING)//AL10.AL_PLAYING)
+//       // check what the state of the source is. If it stopped playing play it again.
+//        if (AL10.alGetSourcei(source.get(1), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING)//AL10.AL_PLAYING)
+//            System.out.println("check");
+//        else
+//            AL10.alSourcePlay(source.get(1));
+//        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && System.currentTimeMillis() - lastStep < stepTime/2){
+//                    AL10.alSourcePlay(source.get(1));
+//        }
+//        else
+        if(System.currentTimeMillis() - lastStep < stepTime){
             System.out.println("check");
+        }         
         else
+            System.out.println("step");
+            lastStep = System.currentTimeMillis();
             AL10.alSourcePlay(source.get(1));
-   }
+        }
+                
+                
    
    public void playHitGround(){
-       loadALData();
+     //  loadALData();
        AL10.alSourcePlay(source.get(2));
    }
+   
+    public void update(){
+       long time = Sys.getTime();
+       long elapse = 0;
+           
+           elapse += Sys.getTime() - time;
+           time += elapse;
+           if(elapse > 5000){
+                elapse = 0;
+                sourcePos.put(0, sourcePos.get(0) + sourceVel.get(0));
+                sourcePos.put(1, sourcePos.get(1) + sourceVel.get(1));
+                sourcePos.put(2, sourcePos.get(2) + sourceVel.get(2));
+
+                AL10.alSource(source.get(0), AL10.AL_POSITION, sourcePos);
+           
+        }
+    }
 }

@@ -7,6 +7,7 @@ import patient04.level.Level;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import patient04.Manager.StateManager;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -87,6 +88,9 @@ public class Player extends Entity {
         acceleration.add(moveInput);
         
         super.update(dt);
+        StateManager.sound1.update();
+        StateManager.sound1.setListenerPos(position.x, position.y, position.z);
+
     }
 
     /** Sets the current matrix to FPV. */
