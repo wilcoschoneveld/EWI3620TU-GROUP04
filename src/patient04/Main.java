@@ -136,7 +136,7 @@ public class Main {
 
     /** Starts the game loop */
     public void run() {
-        // Create a new DisplayMode with given width and height
+        // Create a new DisplayMode
         DisplayMode dm = new DisplayMode(screenWidth, screenHeight);
 
         // Try to create a game window

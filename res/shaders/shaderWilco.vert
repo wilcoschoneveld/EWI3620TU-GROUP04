@@ -4,9 +4,9 @@ uniform mat4 matProj;
 uniform mat4 matView;
 uniform mat4 matModel;
 
-in vec3 inPosition;     // position 0
-in vec3 inNormal;       // position 1
-in vec3 inTexCoord;     // position 2
+attribute vec3 inPosition;
+attribute vec3 inNormal;
+attribute vec3 inTexCoord;
 
 void main() {
     gl_Position = matProj * matView * matModel * vec4(inPosition, 1);

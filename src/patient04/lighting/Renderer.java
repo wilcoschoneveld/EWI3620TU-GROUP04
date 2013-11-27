@@ -15,6 +15,9 @@ public class Renderer {
     public static int locMatrixProj;
     public static int locMatrixView;
     public static int locMatrixModel;
+    
+    public static int inPosition;
+    public static int inNormal;
    
     public static void setup() {
         shaderProgram1 = loadShaderPairFromFiles(
