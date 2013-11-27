@@ -1,19 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.level;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL15;
 import patient04.math.Vector;
 import patient04.textures.Texture;
+import patient04.utilities.Buffers;
 
 /**
  *
@@ -43,21 +41,81 @@ public class Model2 {
     }
     
     public void releaseRawData() {
+        // Clear raw data collections
         vertices = null;
         texcoords = null;
         normals = null;
-        
-        groups = null;
         materials = null;
+        
+        // We can not fully remove groups
+        for(Group group : groups.values())
+            group.faces = null;
     }
     
-    private static class Group {
+    public void compileBuffers() {
+        for(Group group : groups.values())
+            group.compileBuffer();
+    }
+    
+    public void releaseBuffers() {
+        for(Group group : groups.values())
+            group.releaseBuffer();
+    }
+    
+    private class Group {
         ArrayList<Face> faces;
         Material material;
+        
+        int bufferSize = 0;
+        int bufferObject;
         
         public Group() {
             this.faces = new ArrayList<>();
         }
+        
+        public void compileBuffer() {
+            // Number of Faces * Vertices * (Pos + Tex + Norm)
+            bufferSize = faces.size() * 3 * (3 + 2 + 3);
+            
+            // Create a FloatBuffer to store faces
+            FloatBuffer buffer =
+                    BufferUtils.createFloatBuffer(bufferSize);
+            
+            // Interleave the buffer with face information
+            for (Face face : faces) {
+                for(int i = 0; i < 3; i++) {
+                    Vector v = vertices.get(face.vertices[i]);
+                    buffer.put(v.x).put(v.y).put(v.z);
+                    UV t = texcoords.get(face.texcoords[i]);
+                    buffer.put(t.u).put(t.v);
+                    Vector n = normals.get(face.normals[i]);
+                    buffer.put(n.x).put(n.y).put(n.z);
+                }
+            }
+            
+            // Flip the buffer
+            buffer.flip();
+            
+            // Create a new VBO
+            bufferObject = GL15.glGenBuffers();
+            
+            // Fill the buffer 
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER,
+                                         buffer, GL15.GL_STATIC_DRAW);
+            
+            // Unbind
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        }
+        
+        public void releaseBuffer() {
+            GL15.glDeleteBuffers(bufferObject);
+            bufferSize = 0;
+        }
+    }
+    
+    private Group newGroup() {
+        return new Group();
     }
     
     private static class Face {
@@ -67,13 +125,12 @@ public class Model2 {
             this.vertices = vertices;
             this.texcoords = texcoords;
             this.normals = normals;
-            
         }
         
-        public Face(int... vertnormals) {
-            this(Arrays.copyOfRange(vertnormals, 0, 3),
-                 Arrays.copyOfRange(vertnormals, 3, 6),
-                 Arrays.copyOfRange(vertnormals, 6, 9));
+        public Face(int... vertexdata) {
+            this(Arrays.copyOfRange(vertexdata, 0, 3),
+                 Arrays.copyOfRange(vertexdata, 3, 5),
+                 Arrays.copyOfRange(vertexdata, 5, 8));
         }
         
         public Face copy() {
@@ -86,9 +143,9 @@ public class Model2 {
     
     private static class Material {
         Texture texture;
-        float[] colorAmbient;
-        float[] colorDiffuse;
-        float[] colorSpecular;
+        FloatBuffer colorAmbient;
+        FloatBuffer colorDiffuse;
+        FloatBuffer colorSpecular;
         float shininess;
         float opacity;
     }
@@ -108,7 +165,7 @@ public class Model2 {
             Model2 model = new Model2();
             
             // Create a new Group
-            Group activeGroup = new Group();
+            Group activeGroup = model.newGroup();
             
             // Add the active group to default
             model.groups.put("default", activeGroup);
@@ -175,7 +232,7 @@ public class Model2 {
                         if (tokens.length > 1) {
                             activeGroup = model.groups.get(tokens[1]);
                             if(activeGroup == null) {
-                                activeGroup = new Group();
+                                activeGroup = model.newGroup();
                                 model.groups.put(tokens[1], activeGroup);
                             }
                         } else
@@ -244,22 +301,22 @@ public class Model2 {
                         material.shininess = Float.parseFloat(tokens[1]);
                         continue;
                     case "ka": // Ambient Color
-                        material.colorAmbient = new float[] {
+                        material.colorAmbient = Buffers.createFloatBuffer(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])};
+                            Float.parseFloat(tokens[3]));
                         continue;
                     case "kd": // Diffuse Color
-                        material.colorDiffuse = new float[] {
+                        material.colorDiffuse = Buffers.createFloatBuffer(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])};
+                            Float.parseFloat(tokens[3]));
                         continue;
                     case "ks": // Specular Color
-                        material.colorSpecular = new float[] {
+                        material.colorSpecular = Buffers.createFloatBuffer(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])};
+                            Float.parseFloat(tokens[3]));
                         continue;
                     case "tr": // Transparancy
                     case "d":
