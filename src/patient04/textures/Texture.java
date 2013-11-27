@@ -68,7 +68,7 @@ public class Texture {
         
         // Copy buffer into texture
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D,
-                0, GL11.GL_RGBA8, texture.width, texture.height, 0,
+                0, GL11.GL_RGBA, texture.width, texture.height, 0,
                 GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         
         // Set minification and magnification filter
@@ -78,8 +78,9 @@ public class Texture {
                 GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         
         // If error, print statement
-        if (GL11.glGetError() != GL11.GL_NO_ERROR)
+        if (GL11.glGetError() != GL11.GL_NO_ERROR) {
             System.out.println("texture load error :(");
+        }
         
         return texture;
     }

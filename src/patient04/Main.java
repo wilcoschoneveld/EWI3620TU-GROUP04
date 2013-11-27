@@ -138,15 +138,11 @@ public class Main {
     public void run() {
         // Create a new DisplayMode with given width and height
         DisplayMode dm = new DisplayMode(screenWidth, screenHeight);
-        PixelFormat pf = new PixelFormat();
-        ContextAttribs ca = new ContextAttribs(3, 3).
-                withProfileCore(true).withProfileCompatibility(true);
 
         // Try to create a game window
         try {
             Display.setDisplayMode(dm);
-            Display.create(pf, ca);
-            //Display.create();
+            Display.create();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
@@ -157,11 +153,6 @@ public class Main {
         System.out.println("OS version " + System.getProperty("os.version"));
         System.out.println("LWJGL version " + org.lwjgl.Sys.getVersion());
         System.out.println("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
-        
-        // Test create a FrameBuffer
-        int test = GL30.glGenFramebuffers();
-        
-        GL30.glDeleteFramebuffers(test);
         
         // Enable vsync
         Display.setVSyncEnabled(vsyncEnabled);
