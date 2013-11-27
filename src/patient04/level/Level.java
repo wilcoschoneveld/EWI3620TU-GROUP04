@@ -55,7 +55,7 @@ public class Level {
     
     public void cleanup() {
         for(Model model : statics)
-            model.releaseBufferObjects();
+            model.releaseBuffers();
     }
     
     public static Level readLevel(String file) {
@@ -75,9 +75,9 @@ public class Level {
                 
                 model.setAABB(new AABB(model.position, min, max));
                 
-                model.convertToVBO();
-                model.setAsStaticModel(true);
+                model.compileBuffers();
                 model.releaseRawData();
+                model.setAsStaticModel(true);
                 
                 models.add(model);
             }
@@ -125,9 +125,10 @@ public class Level {
                         WALL_HEIGHT * (y + 0.5f));
                 
                 // Render the display list
-                model.convertToVBO();
+                model.compileBuffers();
+                model.releaseRawData();
                 model.setAsStaticModel(true);
-                model.releaseRawData();           
+                
                 // Build the box and add to list
                 models.add(model);
             }

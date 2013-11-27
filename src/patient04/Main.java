@@ -2,17 +2,16 @@ package patient04;
 
 import patient04.utilities.Timer;
 import patient04.lighting.Renderer;
-import patient04.level.Model;
 import patient04.level.Level;
+import patient04.level.Model;
+import patient04.math.Matrix;
+import patient04.textures.Texture;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import patient04.level.Model2;
-import patient04.math.Matrix;
-import patient04.textures.Texture;
 
 public class Main {
 
@@ -26,7 +25,7 @@ public class Main {
     private Level level;
     private Player player;
     
-    private Model2 testModel;
+    private Model testModel;
     private Texture textureTest2;
     
     /** The initialize method is called at application startup */
@@ -66,7 +65,7 @@ public class Main {
         
         textureTest2 = Texture.loadPNGFromFile("res/textures/wall_hospital.png");
         
-        testModel = Model2.loadOBJ("res/models/sphere.obj");
+        testModel = Model.loadOBJ("res/models/sphere.obj");
         testModel.compileBuffers();
         testModel.releaseRawData();
         testModel.position.set(10, 2, 10);
@@ -100,25 +99,33 @@ public class Main {
         
         testModel.draw();
         
-//        GL20.glUseProgram(0);
-//        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-//        GL11.glLoadIdentity();
-//        
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureTest2.getTextureID());
-//        
-//        GL11.glColor3f(1, 1, 1);
-//        
-//        GL11.glBegin(GL11.GL_TRIANGLES);
-//        GL11.glTexCoord2f(0, 1);
-//        GL11.glVertex3f(-1, -1, 0);
-//        GL11.glTexCoord2f(1, 1);
-//        GL11.glVertex3f(0, -1, 0);
-//        GL11.glTexCoord2f(0, 0);
-//        GL11.glVertex3f(-1, 0, 0);
-//        GL11.glEnd();
-//        
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        // Start test code
+        
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        GL20.glUseProgram(0);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
+        
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureTest2.getTextureID());
+        
+        GL11.glColor3f(1, 1, 1);
+        
+        GL11.glBegin(GL11.GL_TRIANGLES);
+        GL11.glTexCoord2f(0, 1);
+        GL11.glVertex3f(-1, -1, 0);
+        GL11.glTexCoord2f(1, 1);
+        GL11.glVertex3f(-0.8f, -1, 0);
+        GL11.glTexCoord2f(0, 0);
+        GL11.glVertex3f(-1, -0.8f, 0);
+        GL11.glEnd();
+        
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        
+        // End test code
     }
     
     public void destroy() {
