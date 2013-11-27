@@ -8,8 +8,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import patient04.lighting.Renderer;
+import patient04.math.Matrix;
 import patient04.math.Vector;
+import patient04.physics.AABB;
 import patient04.textures.Texture;
 import patient04.utilities.Buffers;
 
@@ -24,9 +29,12 @@ public class Model2 {
     
     private HashMap<String, Group> groups;
     private HashMap<String, Material> materials;
+    private FloatBuffer staticModel;
     
     public Vector position;
     public Vector rotation;
+    
+    protected AABB aabb;
     
     public Model2() {
         vertices = new ArrayList<>();
@@ -38,6 +46,33 @@ public class Model2 {
         
         position = new Vector();
         rotation = new Vector();
+    }
+    
+    public void setAABB(AABB aabb) {
+        this.aabb = aabb;
+    }
+    
+    public void draw() {
+        Renderer.setModelMatrix(
+                staticModel != null ? staticModel : setAsStaticModel(false));
+        
+        for(Group group : groups.values())
+            group.drawBuffer();
+    }
+    
+    public FloatBuffer setAsStaticModel(boolean enable) {
+        Matrix matrix = new Matrix();
+
+        matrix.translate(position.x, position.y, position.z);
+        matrix.rotate(rotation.x, 1, 0, 0);
+        matrix.rotate(rotation.y, 0, 1, 0);
+        matrix.rotate(rotation.z, 0, 0, 1);
+        
+        FloatBuffer buffer = matrix.toBuffer();
+        
+        staticModel = enable ? buffer : null;
+        
+        return buffer;
     }
     
     public void releaseRawData() {
@@ -73,21 +108,50 @@ public class Model2 {
             this.faces = new ArrayList<>();
         }
         
+        public void drawBuffer() {
+            if(bufferSize == 0) {
+                System.err.println("Model not compiled before drawing");
+                compileBuffer();
+            }
+            
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
+            GL20.glEnableVertexAttribArray(2);
+            
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);
+
+            GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 8*4, 0);
+            GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 8*4, 3*4);
+            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 8*4, 5*4);
+            
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, bufferSize);
+            
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+            
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL20.glDisableVertexAttribArray(2);
+        }
+        
         public void compileBuffer() {
             // Number of Faces * Vertices * (Pos + Tex + Norm)
-            bufferSize = faces.size() * 3 * (3 + 2 + 3);
+            bufferSize = faces.size() * 3;
             
             // Create a FloatBuffer to store faces
             FloatBuffer buffer =
-                    BufferUtils.createFloatBuffer(bufferSize);
+                    BufferUtils.createFloatBuffer(bufferSize * (3 + 2 + 3));
             
             // Interleave the buffer with face information
             for (Face face : faces) {
                 for(int i = 0; i < 3; i++) {
                     Vector v = vertices.get(face.vertices[i]);
                     buffer.put(v.x).put(v.y).put(v.z);
-                    UV t = texcoords.get(face.texcoords[i]);
-                    buffer.put(t.u).put(t.v);
+                    
+                    if(texcoords.size() > 0) {
+                        UV t = texcoords.get(face.texcoords[i]);
+                        buffer.put(t.u).put(t.v);
+                    } else buffer.put(0).put(0);
+                    
                     Vector n = normals.get(face.normals[i]);
                     buffer.put(n.x).put(n.y).put(n.z);
                 }
@@ -114,8 +178,18 @@ public class Model2 {
         }
     }
     
-    private Group newGroup() {
-        return new Group();
+    private Group requestGroup(String groupName) {
+        // Check if the group exists
+        Group group = groups.get(groupName);
+        
+        // If not, create a new group
+        if(group == null) {
+            group = new Group();
+            groups.put(groupName, group);
+        }
+        
+        // Return group
+        return group;
     }
     
     private static class Face {
@@ -165,10 +239,7 @@ public class Model2 {
             Model2 model = new Model2();
             
             // Create a new Group
-            Group activeGroup = model.newGroup();
-            
-            // Add the active group to default
-            model.groups.put("default", activeGroup);
+            Group activeGroup = model.requestGroup("default");
             
             // Define reading variables
             String line; String[] tokens;
@@ -219,24 +290,19 @@ public class Model2 {
                               normals = new int[3];
                         for (int i = 0; i < 3; i++) {
                             String[] parts = tokens[i+1].split("/");
-                            vertices[i] = Integer.parseInt(parts[0]);
-                            normals[i] = Integer.parseInt(parts[2]);
+                            vertices[i] = Integer.parseInt(parts[0]) - 1;
                             if(activeGroup.material.texture != null)
-                                texcoords[i] = Integer.parseInt(parts[1]);
+                                texcoords[i] = Integer.parseInt(parts[1]) - 1;
+                            normals[i] = Integer.parseInt(parts[2]) - 1;
+
                         }
                         activeGroup.faces.add(
                                 new Face(vertices, texcoords, normals));
                         continue;    
                     case "o": // Object
                     case "g": // Group
-                        if (tokens.length > 1) {
-                            activeGroup = model.groups.get(tokens[1]);
-                            if(activeGroup == null) {
-                                activeGroup = model.newGroup();
-                                model.groups.put(tokens[1], activeGroup);
-                            }
-                        } else
-                            activeGroup = model.groups.get("default");
+                        activeGroup = model.requestGroup(
+                                tokens.length > 1 ? tokens[1] : "default");
                         continue;
                     case "s": // TODO: Shading
                         continue; 
@@ -343,5 +409,56 @@ public class Model2 {
             // Error in loading file
             System.out.println("Failed to load material " + f);
         }
+    }
+    
+    /** Builds a box model from given coordinates
+     * 
+     * @param min Vector containing minimum coordinates
+     * @param max Vector containing maximum coordinates
+     * @return generated model
+     */ 
+    public static Model2 buildBox(Vector min, Vector max) {
+        Model2 model = new Model2();
+        
+        model.vertices.addAll(Arrays.asList(new Vector[] {
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
+        }));
+        
+        model.texcoords.addAll(Arrays.asList(new UV[] {
+            new UV(0, 0), new UV(0, 1), //0, 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, 1), // 2
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, 0), // 3
+            new UV((max.z - min.z) / Level.WALL_HEIGHT, 1), // 4
+            new UV((max.z - min.z) / Level.WALL_HEIGHT, 0)  // 5
+        }));
+        
+        model.normals.addAll(Arrays.asList(new Vector[] {
+            new Vector(0, 0, 1), new Vector(0, 0, -1),
+            new Vector(0, 1, 0), new Vector(0, -1, 0),
+            new Vector(1, 0, 0), new Vector(-1, 0, 0)
+        }));
+        
+        Group group = model.requestGroup("default");
+        
+        group.faces.addAll(Arrays.asList(new Face[] {
+            //  Face(V, V, V, T, T, T, N, N, N)
+            new Face(2, 1, 5, 0, 1, 2, 0, 0, 0), // Front 1
+            new Face(5, 6, 2, 2, 3, 0, 0, 0, 0), // Front 2
+            new Face(7, 4, 0, 0, 1, 2, 1, 1, 1), // Back 1
+            new Face(0, 3, 7, 2, 3, 0, 1, 1, 1), // Back 2
+            new Face(2, 6, 7, 0, 0, 0, 2, 2, 2), // Top 1
+            new Face(7, 3, 2, 0, 0, 0, 2, 2, 2), // Top 2
+            new Face(0, 4, 5, 0, 0, 0, 3, 3, 3), // Bottom 1
+            new Face(5, 1, 0, 0, 0, 0, 3, 3, 3), // Bottom 2
+            new Face(5, 4, 7, 1, 4, 5, 4, 4, 4), // Right 1
+            new Face(7, 6, 5, 5, 0, 1, 4, 4, 4), // Right 2
+            new Face(0, 1, 2, 1, 4, 5, 5, 5, 5), // Left 1
+            new Face(2, 3, 0, 5, 0, 1, 5, 5, 5)  // Left 2
+        }));
+        
+        return model;
     }
 }

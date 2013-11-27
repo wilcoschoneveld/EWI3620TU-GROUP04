@@ -28,7 +28,8 @@ public class Renderer {
         locMatrixModel = GL20.glGetUniformLocation(shaderProgram1, "matModel");
         
         GL20.glBindAttribLocation(shaderProgram1, 0, "inPosition");
-        GL20.glBindAttribLocation(shaderProgram1, 1, "inNormal");
+        GL20.glBindAttribLocation(shaderProgram1, 1, "inTexCoords");
+        GL20.glBindAttribLocation(shaderProgram1, 2, "inNormal");
     }
     
     public static void cleanup() {
