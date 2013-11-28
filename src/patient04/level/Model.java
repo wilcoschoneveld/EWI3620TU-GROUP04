@@ -102,6 +102,16 @@ public class Model {
             group.releaseBuffer();
     }
     
+    public void releaseAll() {
+        releaseRawData();
+        
+        for(Group group : groups.values()) {
+            group.releaseBuffer();
+            group.material.texture.release();
+        }
+            
+    }
+    
     private class Group {
         ArrayList<Face> faces;
         Material material;
@@ -117,6 +127,12 @@ public class Model {
             if(bufferSize == 0) {
                 System.err.println("Not compiled before drawing: " + toString());
                 compileBuffer();
+            }
+            
+            if(material.texture != null) {
+                GL20.glUniform1i(Renderer.useTexture, 1);
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D,
+                        material.texture.getTextureID());
             }
             
             GL20.glEnableVertexAttribArray(0);
@@ -136,6 +152,8 @@ public class Model {
             GL20.glDisableVertexAttribArray(0);
             GL20.glDisableVertexAttribArray(1);
             GL20.glDisableVertexAttribArray(2);
+            
+            GL20.glUniform1i(Renderer.useTexture, 0);
         }
         
         public void compileBuffer() {
@@ -339,7 +357,6 @@ public class Model {
             return model;
         } catch(Exception e) {
             // Error in loading file
-            e.printStackTrace();
             System.out.println("Failed to load model " + f);
             return null;
         }
@@ -423,9 +440,10 @@ public class Model {
      * 
      * @param min Vector containing minimum coordinates
      * @param max Vector containing maximum coordinates
+     * @param texture
      * @return generated model
      */ 
-    public static Model buildBox(Vector min, Vector max) {
+    public static Model buildBox(Vector min, Vector max, Texture texture) {
         Model model = new Model();
         
         model.vertices.addAll(Arrays.asList(new Vector[] {
@@ -467,6 +485,13 @@ public class Model {
             new Face(2, 3, 0, 5, 0, 1, 5, 5, 5)  // Left 2
         }));
         
+        // Also add a new material
+        group.material = new Material();
+        
+        group.material.texture = texture;
+        group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
+        
+        // Return the new model        
         return model;
     }
 }

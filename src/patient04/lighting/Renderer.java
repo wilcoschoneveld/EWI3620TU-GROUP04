@@ -16,6 +16,8 @@ public class Renderer {
     public static int locMatrixView;
     public static int locMatrixModel;
     
+    public static int useTexture;
+    
     public static int inPosition;
     public static int inNormal;
    
@@ -26,6 +28,8 @@ public class Renderer {
         locMatrixProj = GL20.glGetUniformLocation(shaderProgram1, "matProj");
         locMatrixView = GL20.glGetUniformLocation(shaderProgram1, "matView");
         locMatrixModel = GL20.glGetUniformLocation(shaderProgram1, "matModel");
+        
+        useTexture = GL20.glGetUniformLocation(shaderProgram1, "useTexture");
         
         GL20.glBindAttribLocation(shaderProgram1, 0, "inPosition");
         GL20.glBindAttribLocation(shaderProgram1, 1, "inTexCoords");
