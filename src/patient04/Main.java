@@ -10,6 +10,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import patient04.textures.Texture;
 
 public class Main {
 
@@ -60,10 +61,16 @@ public class Main {
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
         
-        testModel = Model.loadOBJ("res/models/sphere.obj");
+//        testModel = Model.loadOBJ("res/models/cubeBart.obj");
+//        testModel.compileBuffers();
+//        testModel.releaseRawData();
+//        testModel.position.set(8, 2, 8);
+        
+        testModel = Model.loadOBJ("res/models/steelCube.obj");
+        testModel.position.set(8, 2, 8);
+        testModel.rotation.set(45, 45, 0);
         testModel.compileBuffers();
         testModel.releaseRawData();
-        testModel.position.set(10, 2, 10);
     }
 
     /** The update method is called every frame, before rendering */
@@ -98,6 +105,12 @@ public class Main {
     public void destroy() {
         // Clean up level
         level.cleanup();
+        
+        // Clean up model
+        testModel.releaseAll();
+        
+        // Clean up textures
+        Texture.releaseAll();
         
         // Clean up renderer
         Renderer.cleanup();

@@ -16,6 +16,8 @@ public class Renderer {
     public static int locMatrixView;
     public static int locMatrixModel;
     
+    public static int locColorDiffuse;
+    
     public static int useTexture;
     
     public static int inPosition;
@@ -28,6 +30,8 @@ public class Renderer {
         locMatrixProj = GL20.glGetUniformLocation(shaderProgram1, "matProj");
         locMatrixView = GL20.glGetUniformLocation(shaderProgram1, "matView");
         locMatrixModel = GL20.glGetUniformLocation(shaderProgram1, "matModel");
+        
+        locColorDiffuse = GL20.glGetUniformLocation(shaderProgram1, "colorDiffuse");
         
         useTexture = GL20.glGetUniformLocation(shaderProgram1, "useTexture");
         

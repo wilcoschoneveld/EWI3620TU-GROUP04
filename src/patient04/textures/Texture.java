@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.PNGDecoder;
 
@@ -19,21 +20,52 @@ import org.newdawn.slick.opengl.PNGDecoder;
  */
 public class Texture {
     public static final String defaultTextureLocation = "res/textures/";
+    public static HashMap<String, Texture> textures = new HashMap<>();
+    public static Texture lastBind = null;
     
     private int textureID;
     
     private int width;
     private int height;
     
-    public void release() {
-        GL11.glDeleteTextures(textureID);
-    }
+//    public void release() {
+//        GL11.glDeleteTextures(textureID);
+//    }
     
-    public int getTextureID() {
-        return textureID;
+//    public int getTextureID() {
+//        return textureID;
+//    }
+    
+    public void bind() {
+        if(lastBind != this)
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        lastBind = this;
     }
 
-    public static Texture loadPNGFromFile(String textureFile) {
+    public static void unbind() {
+        lastBind = null;
+    }
+    
+    public static void releaseAll() {
+        for(Texture texture : textures.values())
+            GL11.glDeleteTextures(texture.textureID);
+    }
+    
+    public static Texture loadResource(String textureFile) {
+        // Check if texture is already loaded
+        Texture texture = textures.get(textureFile);
+        
+        // Load texture from file if needed
+        if(texture == null) {
+            texture = loadPNGFromFile(defaultTextureLocation + textureFile);
+            textures.put(textureFile, texture);
+        }
+        
+        // Return texture
+        return texture;
+    }
+
+    private static Texture loadPNGFromFile(String texturePath) {
         // Create a new Texture object
         Texture texture = new Texture();
         
@@ -41,7 +73,7 @@ public class Texture {
         ByteBuffer buffer;
         
         // Try to load the file
-        try(InputStream in = new FileInputStream(textureFile)) {
+        try(InputStream in = new FileInputStream(texturePath)) {
             // Create a new PNG decoder
             PNGDecoder decoder = new PNGDecoder(in);
             

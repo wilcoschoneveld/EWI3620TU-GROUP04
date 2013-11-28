@@ -1,15 +1,18 @@
 #version 120
 
-uniform sampler2D texLocation0;
+uniform vec3 colorDiffuse;
 
+uniform sampler2D texLocation0;
 uniform int useTexture;
 
 varying vec2 passTexCoord;
 
 void main() {
+    // Set initial color to diffuse color
+    gl_FragColor = vec4(colorDiffuse, 1);
+
+    // Set diffuse texture
     if(useTexture == 1) {
-        gl_FragColor = texture2D(texLocation0, passTexCoord);
-    } else {
-        gl_FragColor = vec4(1, 1, 1, 1);
+        gl_FragColor = gl_FragColor * texture2D(texLocation0, passTexCoord);
     }
 }

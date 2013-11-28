@@ -105,11 +105,8 @@ public class Model {
     public void releaseAll() {
         releaseRawData();
         
-        for(Group group : groups.values()) {
+        for(Group group : groups.values())
             group.releaseBuffer();
-            group.material.texture.release();
-        }
-            
     }
     
     private class Group {
@@ -129,10 +126,11 @@ public class Model {
                 compileBuffer();
             }
             
+            GL20.glUniform3(Renderer.locColorDiffuse, material.colorDiffuse);
+            
             if(material.texture != null) {
                 GL20.glUniform1i(Renderer.useTexture, 1);
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                        material.texture.getTextureID());
+                material.texture.bind();
             }
             
             GL20.glEnableVertexAttribArray(0);
@@ -178,8 +176,10 @@ public class Model {
                     } else buffer.put(0).put(0);
                     
                     // Store vertex normals
-                    Vector n = normals.get(face.normals[i]);
-                    buffer.put(n.x).put(n.y).put(n.z);
+                    if(normals.size() > 0) {
+                        Vector n = normals.get(face.normals[i]);
+                        buffer.put(n.x).put(n.y).put(n.z);
+                    } else buffer.put(0).put(0).put(0);
                 }
             }
             
@@ -242,12 +242,12 @@ public class Model {
     }    
     
     private static class Material {
-        Texture texture;
-        FloatBuffer colorAmbient;
-        FloatBuffer colorDiffuse;
-        FloatBuffer colorSpecular;
-        float shininess;
-        float opacity;
+        Texture texture = null;
+        FloatBuffer colorAmbient = Buffers.WHITE;
+        FloatBuffer colorDiffuse = Buffers.WHITE;
+        FloatBuffer colorSpecular = Buffers.WHITE;
+        float shininess = 0;
+        float opacity = 1;
     }
     
     private static class UV {
@@ -301,7 +301,7 @@ public class Model {
                     case "vt": // UV Map
                         model.texcoords.add(new UV(
                             Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2])));
+                            1 - Float.parseFloat(tokens[2])));
                         continue;
                     case "usemtl": // Use Material
                         if (tokens.length > 1)
@@ -319,7 +319,8 @@ public class Model {
                             vertices[i] = Integer.parseInt(parts[0]) - 1;
                             if(activeGroup.material.texture != null)
                                 texcoords[i] = Integer.parseInt(parts[1]) - 1;
-                            normals[i] = Integer.parseInt(parts[2]) - 1;
+                            if(parts.length > 2)
+                                normals[i] = Integer.parseInt(parts[2]) - 1;
 
                         }
                         activeGroup.faces.add(
@@ -388,6 +389,9 @@ public class Model {
                         materialName = tokens[1];
                         material = new Material();
                         continue;
+                    case "map_kd": // New Texture
+                        material.texture = Texture.loadResource(tokens[1]);
+                        continue;
                     case "ns": // Shininess
                         material.shininess = Float.parseFloat(tokens[1]);
                         continue;
@@ -440,10 +444,10 @@ public class Model {
      * 
      * @param min Vector containing minimum coordinates
      * @param max Vector containing maximum coordinates
-     * @param texture
+     * @param textureFile
      * @return generated model
      */ 
-    public static Model buildBox(Vector min, Vector max, Texture texture) {
+    public static Model buildBox(Vector min, Vector max, String textureFile) {
         Model model = new Model();
         
         model.vertices.addAll(Arrays.asList(new Vector[] {
@@ -488,7 +492,7 @@ public class Model {
         // Also add a new material
         group.material = new Material();
         
-        group.material.texture = texture;
+        group.material.texture = Texture.loadResource(textureFile);
         group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
         
         // Return the new model        

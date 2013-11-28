@@ -11,7 +11,9 @@ attribute vec3 inNormal;
 varying vec2 passTexCoord;
 
 void main() {
+    // Project vertex position on screen
     gl_Position = matProj * matView * matModel * vec4(inPosition, 1);
 
+    // Pass texture coordinate to fragment shader
     passTexCoord = inTexCoord;
 }

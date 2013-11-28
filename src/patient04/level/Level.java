@@ -7,7 +7,6 @@ import java.util.Scanner;
 import org.lwjgl.input.Keyboard;
 import patient04.physics.AABB;
 import patient04.math.Vector;
-import patient04.textures.Texture;
 
 public class Level {
     // Gravity vectors
@@ -20,8 +19,6 @@ public class Level {
     
     // Wall height
     public static final float WALL_HEIGHT = 3;
-    
-    public static Texture texWall;
     
     public final ArrayList<Model> statics;
     public AABB floorAABB;
@@ -61,9 +58,7 @@ public class Level {
             model.releaseAll();
     }
     
-    public static Level readLevel(String file) {
-        texWall = Texture.loadPNGFromFile("res/textures/wall_hospital.png");
-        
+    public static Level readLevel(String file) {        
         ArrayList<Model> models = new ArrayList<>();
         
         try (Scanner sc = new Scanner(new File(file))) {
@@ -76,7 +71,7 @@ public class Level {
                 Vector min = new Vector(xmin, 0, zmin);
                 Vector max = new Vector(xmax, WALL_HEIGHT, zmax);
                 
-                Model model = Model.buildBox(min, max, texWall);
+                Model model = Model.buildBox(min, max, "wall_hospital.png");
                 
                 model.setAABB(new AABB(model.position, min, max));
                 
@@ -94,8 +89,6 @@ public class Level {
     }
     
     public static Level defaultLevel() {
-        
-        texWall = Texture.loadPNGFromFile("res/textures/wall_hospital.png");
         
         byte[][] maze =
            {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -121,7 +114,7 @@ public class Level {
                 if(maze[y][x] != 1) continue;
                 
                 // Start building a new box
-                Model model = Model.buildBox(min, max, texWall);
+                Model model = Model.buildBox(min, max, "wall_hospital.png");
                 
                 // Create AABB
                 model.setAABB(new AABB(model.position, min, max));
