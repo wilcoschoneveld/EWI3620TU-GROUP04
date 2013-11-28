@@ -1,6 +1,6 @@
 package patient04.Manager;
 
-import patient04.Sound.Sound2;
+import patient04.Sound.Sound;
 import patient04.States.MainMenu;
 import patient04.States.MazeRunner;
 
@@ -13,7 +13,7 @@ public class StateManager {
 
     public MainMenu main = new MainMenu();
     public  MazeRunner runner = new  MazeRunner();
-    public static Sound2 sound1 = new Sound2();
+    public static Sound sound = new Sound();
     public static GameStates State;
     private static GameStates pState;
 
@@ -63,16 +63,14 @@ public class StateManager {
     
     public void loadMain(){
         main.initialize();
-        sound1.killALData();
-        sound1.playTune();
+        sound.killALData();
+        sound.playTune();
     }
     
     public void loadGame(){ 
        runner.initialize();
-       sound1.killALData();
-       sound1.playTune();
-       sound1.play3dSound();
-
-
+       sound.killALData();
+       sound.playTune();
+       sound.play3dSound();
     }
 }

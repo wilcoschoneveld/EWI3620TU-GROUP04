@@ -90,10 +90,10 @@ public class Player extends Entity {
         acceleration.add(moveInput);
         
         super.update(dt);
-        StateManager.sound1.setListenerPos(position.x, position.y, position.z);
+        StateManager.sound.setListenerPos(position.x, position.y, position.z);
         
         // use the y-rotation to give the player the right orientation for sound
-        StateManager.sound1.setListenerOri( rotation.y);
+        StateManager.sound.setListenerOri( rotation.y);
     }
 
     /** Sets the current matrix to FPV. */

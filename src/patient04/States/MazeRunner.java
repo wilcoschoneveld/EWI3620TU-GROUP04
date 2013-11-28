@@ -136,25 +136,25 @@ public final class MazeRunner {
     public void pollUpdate(){
         // set postion of the listener to the position of the player
         Vector position = player.getPosition();
-        StateManager.sound1.setListenerPos(position.x, position.y, position.z);
+        StateManager.sound.setListenerPos(position.x, position.y, position.z);
         
         if (player.HitGround() == true){
-            StateManager.sound1.playHitGround();
+            StateManager.sound.playHitGround();
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_BACK) ){
             stateManager.setState(GameStates.MAIN_MENU);
         }
         else if(Keyboard.isKeyDown(Keyboard.KEY_W) &&  player.step()){
-                StateManager.sound1.playWalking();
+                StateManager.sound.playWalking();
         }
         else if(Keyboard.isKeyDown(Keyboard.KEY_S) && player.step()){
-                StateManager.sound1.playWalking();
+                StateManager.sound.playWalking();
         }
         else if(Keyboard.isKeyDown(Keyboard.KEY_A) && player.step()){
-                StateManager.sound1.playWalking();
+                StateManager.sound.playWalking();
         }
         else if(Keyboard.isKeyDown(Keyboard.KEY_D) && player.step()){
-                StateManager.sound1.playWalking();
+                StateManager.sound.playWalking();
         }
     }
 }
