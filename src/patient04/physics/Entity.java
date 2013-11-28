@@ -41,8 +41,7 @@ public abstract class Entity {
     public void update(float dt) {
         Vector gravity = Level.GRAVITY.copy().scale(dt);
         
-        if(!Keyboard.isKeyDown(Keyboard.KEY_SPACE))
-            acceleration.add(gravity);
+        acceleration.add(gravity);
     }
     
     public void integrate() {

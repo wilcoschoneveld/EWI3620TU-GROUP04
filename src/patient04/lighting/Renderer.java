@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import patient04.utilities.Logger;
 
 /**
  *
@@ -45,7 +46,7 @@ public class Renderer {
     }
     
     public static void update() {
-        GL20.glUseProgram(shaderProgram1);
+        
     }
     
     public static void setProjectionMatrix(FloatBuffer buffer) {
@@ -92,7 +93,7 @@ public class Renderer {
         GL20.glCompileShader(vertexShader);
         
         if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            System.err.println(GL20.glGetShaderInfoLog(vertexShader, 1024));
+            Logger.error(GL20.glGetShaderInfoLog(vertexShader, 1024));
             return -1;
         }
         
@@ -103,7 +104,7 @@ public class Renderer {
         GL20.glCompileShader(fragmentShader);
         
         if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            System.err.println(GL20.glGetShaderInfoLog(fragmentShader, 1024));
+            Logger.error(GL20.glGetShaderInfoLog(fragmentShader, 1024));
             return -1;
         }
         
@@ -122,7 +123,7 @@ public class Renderer {
         
         // Make sure link was succesful
         if (GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
-            System.err.println(GL20.glGetProgramInfoLog(shaderProgram, 1024));
+            Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));
             return -1;
         }
         
@@ -130,7 +131,7 @@ public class Renderer {
         GL20.glValidateProgram(shaderProgram);
         
         if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
-            System.err.println(GL20.glGetProgramInfoLog(shaderProgram, 1024));
+            Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));
             return -1;
         }
         

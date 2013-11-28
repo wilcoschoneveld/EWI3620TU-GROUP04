@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 import org.newdawn.slick.opengl.PNGDecoder;
+import patient04.utilities.Logger;
 
 /**
  *
@@ -112,7 +112,7 @@ public class Texture {
         
         // If error, print statement
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            System.err.println("Error loading texture " + texturePath);
+            Logger.error("Error loading texture " + texturePath);
         }
         
         return texture;

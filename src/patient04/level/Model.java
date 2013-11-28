@@ -17,6 +17,7 @@ import patient04.math.Vector;
 import patient04.physics.AABB;
 import patient04.textures.Texture;
 import patient04.utilities.Buffers;
+import patient04.utilities.Logger;
 
 /**
  *
@@ -122,7 +123,7 @@ public class Model {
         
         public void drawBuffer() {
             if(bufferSize == 0) {
-                System.err.println("Not compiled before drawing: " + toString());
+                Logger.error("Not compiled before drawing: " + toString());
                 compileBuffer();
             }
             
@@ -334,8 +335,8 @@ public class Model {
                     case "s": // TODO: Shading
                         continue; 
                     default: // Incompatible line                        
-                        System.err.println("Could not read OBJ file " + f);
-                        System.err.println("Invalid line > " + line);
+                        Logger.error("Could not read OBJ file " + f);
+                        Logger.error("Invalid line > " + line);
                         return null;
                 }
             }
@@ -349,16 +350,16 @@ public class Model {
             
             // Return nothing if model contains no data
             if(model.groups.isEmpty()) {
-                System.err.println("No data found in OBJ file " + f);
+                Logger.error("No data found in OBJ file " + f);
                 return null;
             }
             
             // Return the model
-            System.out.println("Succesfully loaded " + f);
+            Logger.debug("Succesfully loaded " + f);
             return model;
         } catch(Exception e) {
             // Error in loading file
-            System.out.println("Failed to load model " + f);
+            Logger.error("Failed to load model " + f);
             return null;
         }
     }
@@ -422,8 +423,8 @@ public class Model {
                     case "illum": // TODO: illumination model
                         continue;
                     default: // Incompatible line                        
-                        System.err.println("Could not read MTL file " + f);
-                        System.err.println("Invalid line > " + line);
+                        Logger.error("Could not read MTL file " + f);
+                        Logger.error("Invalid line > " + line);
                         return;
                 }
             }
@@ -432,11 +433,10 @@ public class Model {
             if(!materialName.isEmpty())
                 materials.put(materialName, material);
             
-            System.out.println("Succesfully loaded " + f);
+            Logger.debug("Succesfully loaded " + f);
         } catch(Exception e) {
-            e.printStackTrace();
             // Error in loading file
-            System.out.println("Failed to load material " + f);
+            Logger.error("Failed to load material " + f);
         }
     }
     

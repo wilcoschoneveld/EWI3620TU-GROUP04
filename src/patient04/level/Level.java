@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import patient04.utilities.Logger;
 import patient04.physics.AABB;
 import patient04.math.Vector;
 
@@ -65,7 +66,7 @@ public class Level {
         }
         
         if (xmin == null || zmin == null || xmax == null || zmax == null) {
-            System.err.println("Could not generate floor!");
+            Logger.error("Could not generate floor!");
             return;
         }
         

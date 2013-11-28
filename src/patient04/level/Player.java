@@ -32,6 +32,7 @@ public class Player extends Entity {
     public static final float ACCEL_WALKING = 1f;
     public static final float ACCEL_RUNNING = 2f;
     public static final float ACCEL_AIR = 0.1f;
+    public static final float ACCEL_JUMP = 10f;
 
     /** Constructs a new player.
      * 
@@ -53,30 +54,40 @@ public class Player extends Entity {
         if (rotation.x > 90) rotation.x = 90;
         if (rotation.x < -90) rotation.x = -90;
         
+        // Define a new movement vector
         Vector moveInput = new Vector();
         
+        // Handle input
         if(Keyboard.isKeyDown(Keyboard.KEY_W)) moveInput.add(0, 0, -1);
         if(Keyboard.isKeyDown(Keyboard.KEY_S)) moveInput.add(0, 0, 1);
         if(Keyboard.isKeyDown(Keyboard.KEY_A)) moveInput.add(-1, 0, 0);
         if(Keyboard.isKeyDown(Keyboard.KEY_D)) moveInput.add(1, 0, 0);
-        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) moveInput.add(0, 1, 0);
 
+        // If input is given
         if(moveInput.length() > 0) {
             // Rotate inputForce according to viewing direction
             moveInput.rotate(rotation.y, 0, 1, 0);
             
+            // Determine movement speed
             float speed = ACCEL_WALKING * dt;
             if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
                 speed = ACCEL_RUNNING * dt;
             if(onGround == false)
                 speed = ACCEL_AIR * dt;
             
+            // Normalize and scale to speed
             moveInput.normalize().scale(speed);
+            
+            // Add movement input to acceleration
+            acceleration.add(moveInput);
         }
         
-        // Add movement input to acceleration
-        acceleration.add(moveInput);
+        // If space is pressed and player is on ground
+        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && onGround) {
+            acceleration.add(0, ACCEL_JUMP * dt, 0);
+        }
         
+        // Update remaining entity
         super.update(dt);
     }
 
