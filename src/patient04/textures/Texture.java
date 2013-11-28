@@ -37,6 +37,9 @@ public class Texture {
 //        return textureID;
 //    }
     
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    
     public void bind() {
         if(lastBind != this)
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);

@@ -5,6 +5,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 
 import patient04.states.State;
 import patient04.states.MainMenu;
@@ -27,7 +28,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.GAME);
+        requestNewState(States.MAIN_MENU);
     }
     
     /** Requests a state transition.
@@ -69,10 +70,12 @@ public final class Main {
         }
         
         // Display OpenGL information
-        Logger.debug("PATIENT04: OS name " + System.getProperty("os.name"));
-        Logger.debug("PATIENT04: OS version " + System.getProperty("os.version"));
-        Logger.debug("PATIENT04: LWJGL version " + org.lwjgl.Sys.getVersion());
-        Logger.debug("PATIENT04: OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
+        Logger.debug("OS name " + System.getProperty("os.name"));
+        Logger.debug("OS version " + System.getProperty("os.version"));
+        Logger.debug("LWJGL version " + org.lwjgl.Sys.getVersion());
+        Logger.debug("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
+        Logger.debug("ARB framebuffers " +
+                GLContext.getCapabilities().GL_ARB_framebuffer_object);
         
         // Enable vsync
         Display.setVSyncEnabled(vsyncEnabled);

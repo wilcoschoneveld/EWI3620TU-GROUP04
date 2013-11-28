@@ -30,7 +30,7 @@ public class Model {
     
     private HashMap<String, Group> groups;
     private HashMap<String, Material> materials;
-    private FloatBuffer staticModel;
+    private Matrix staticModel;
     
     public Vector position;
     public Vector rotation;
@@ -61,7 +61,7 @@ public class Model {
             group.drawBuffer();
     }
     
-    public FloatBuffer setAsStaticModel(boolean enable) {
+    public Matrix setAsStaticModel(boolean enable) {
         Matrix matrix = new Matrix();
 
         matrix.translate(position.x, position.y, position.z);
@@ -69,16 +69,14 @@ public class Model {
         matrix.rotate(rotation.y, 0, 1, 0);
         matrix.rotate(rotation.z, 0, 0, 1);
         
-        FloatBuffer buffer = matrix.toBuffer();
-        
         if (enable) {
-            staticModel = buffer;
+            staticModel = matrix;
             position = null;
             rotation = null;
         } else
             staticModel = null;
         
-        return buffer;
+        return matrix;
     }
     
     public void releaseRawData() {
@@ -332,8 +330,8 @@ public class Model {
                         activeGroup = model.requestGroup(
                                 tokens.length > 1 ? tokens[1] : "default");
                         continue;
-                    case "s": // TODO: Shading
-                        continue; 
+                    case "s": continue; // Shading
+                    case "l": continue; // Line
                     default: // Incompatible line                        
                         Logger.error("Could not read OBJ file " + f);
                         Logger.error("Invalid line > " + line);

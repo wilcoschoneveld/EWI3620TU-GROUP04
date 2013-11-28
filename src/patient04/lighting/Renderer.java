@@ -1,9 +1,9 @@
 package patient04.lighting;
 
 import java.io.*;
-import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import patient04.math.Matrix;
 import patient04.utilities.Logger;
 
 /**
@@ -16,6 +16,7 @@ public class Renderer {
     public static int locMatrixProj;
     public static int locMatrixView;
     public static int locMatrixModel;
+    public static int locMatrixNormal;
     
     public static int locColorDiffuse;
     
@@ -26,11 +27,12 @@ public class Renderer {
    
     public static void setup() {
         shaderProgram1 = loadShaderPairFromFiles(
-                "res/shaders/shaderWilco.vert", "res/shaders/shaderWilco.frag");
+                "res/shaders/default.vert", "res/shaders/default.frag");
         
         locMatrixProj = GL20.glGetUniformLocation(shaderProgram1, "matProj");
         locMatrixView = GL20.glGetUniformLocation(shaderProgram1, "matView");
         locMatrixModel = GL20.glGetUniformLocation(shaderProgram1, "matModel");
+        locMatrixNormal = GL20.glGetUniformLocation(shaderProgram1, "matNormal");
         
         locColorDiffuse = GL20.glGetUniformLocation(shaderProgram1, "colorDiffuse");
         
@@ -46,22 +48,22 @@ public class Renderer {
     }
     
     public static void update() {
-        
+        GL20.glUseProgram(shaderProgram1);
     }
     
-    public static void setProjectionMatrix(FloatBuffer buffer) {
+    public static void setProjectionMatrix(Matrix matrix) {
         GL20.glUseProgram(shaderProgram1);
-        GL20.glUniformMatrix4(locMatrixProj, false, buffer);
+        GL20.glUniformMatrix4(locMatrixProj, false, matrix.toBuffer());
     }
     
-    public static void setViewMatrix(FloatBuffer buffer) {
-        GL20.glUseProgram(shaderProgram1);
-        GL20.glUniformMatrix4(locMatrixView, false, buffer);
+    public static void setViewMatrix(Matrix matrix) {
+        GL20.glUniformMatrix4(locMatrixView, false, matrix.toBuffer());
     }
     
-    public static void setModelMatrix(FloatBuffer buffer) {
-        GL20.glUseProgram(shaderProgram1);
-        GL20.glUniformMatrix4(locMatrixModel, false, buffer);
+    public static void setModelMatrix(Matrix matrix) {
+        GL20.glUniformMatrix4(locMatrixModel, false, matrix.toBuffer());
+        GL20.glUniformMatrix4(locMatrixNormal, true,
+                matrix.copy().inverse().toBuffer());
     }
     
     public static int loadShaderPairFromFiles(String vertexFile, String fragmentFile) {

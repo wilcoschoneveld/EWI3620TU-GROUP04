@@ -34,7 +34,7 @@ public class Game implements State {
                 70, (float) Display.getWidth() / Display.getHeight(), .1f, 100);
         
         // Set the projection matrix
-        Renderer.setProjectionMatrix(matrix.toBuffer());
+        Renderer.setProjectionMatrix(matrix);
         
         // Enable backface culling
         GL11.glCullFace(GL11.GL_BACK);
@@ -57,9 +57,10 @@ public class Game implements State {
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
         
+        // Load a nurse
         testModel = Model.loadOBJ("res/models/nurseV2.obj");
-        testModel.position.set(8, 0, 8);
-        testModel.rotation.set(0, 0, 0);
+        testModel.position.set(8, 0, 6);
+        testModel.rotation.set(0, 230, 0);
         testModel.compileBuffers();
         testModel.releaseRawData();
     }
@@ -81,12 +82,12 @@ public class Game implements State {
     public void render() {
         // Clear the canvas
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        
+        // Update the renderer
+        Renderer.update();
  
         // Set modelview matrix to FPV
         player.glFirstPersonView();
- 
-        // Bind the shader program
-        GL20.glUseProgram(Renderer.shaderProgram1);
         
         // Draw level
         level.draw();

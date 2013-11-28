@@ -2,11 +2,9 @@ package patient04.level;
 
 import patient04.math.Vector;
 import patient04.physics.Entity;
-import patient04.level.Level;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import patient04.lighting.Renderer;
 import patient04.math.Matrix;
 
@@ -114,7 +112,7 @@ public class Player extends Entity {
                 -position.y - EYEHEIGHT,
                 -position.z);
         
-        Renderer.setViewMatrix(matrix.toBuffer());
+        Renderer.setViewMatrix(matrix);
     }
     
     private float viewbobbing = 0;

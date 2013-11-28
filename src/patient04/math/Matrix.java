@@ -125,6 +125,124 @@ public class Matrix {
         return new Vector(tmp[0]/tmp[3], tmp[1]/tmp[3], tmp[2]/tmp[3]);
     }
     
+    /** Calculates the determinant of the Matrix.
+     * 
+     * @return determinant value.
+     */
+    public float determinant() {
+        return val[m30] * val[m21] * val[m12] * val[m03] - val[m20] * val[m31]
+             * val[m12] * val[m03] - val[m30] * val[m11] * val[m22] * val[m03]
+             + val[m10] * val[m31] * val[m22] * val[m03] + val[m20] * val[m11]
+             * val[m32] * val[m03] - val[m10] * val[m21] * val[m32] * val[m03]
+             - val[m30] * val[m21] * val[m02] * val[m13] + val[m20] * val[m31]
+             * val[m02] * val[m13] + val[m30] * val[m01] * val[m22] * val[m13]
+             - val[m00] * val[m31] * val[m22] * val[m13] - val[m20] * val[m01]
+             * val[m32] * val[m13] + val[m00] * val[m21] * val[m32] * val[m13]
+             + val[m30] * val[m11] * val[m02] * val[m23] - val[m10] * val[m31]
+             * val[m02] * val[m23] - val[m30] * val[m01] * val[m12] * val[m23]
+             + val[m00] * val[m31] * val[m12] * val[m23] + val[m10] * val[m01]
+             * val[m32] * val[m23] - val[m00] * val[m11] * val[m32] * val[m23]
+             - val[m20] * val[m11] * val[m02] * val[m33] + val[m10] * val[m21]
+             * val[m02] * val[m33] + val[m20] * val[m01] * val[m12] * val[m33]
+             - val[m00] * val[m21] * val[m12] * val[m33] - val[m10] * val[m01]
+             * val[m22] * val[m33] + val[m00] * val[m11] * val[m22] * val[m33];
+    }
+    
+    /** Calculates the inverse of the Matrix.
+     * 
+     * @return 
+     */
+    public Matrix inverse() {        
+        // Calculate the determinant
+        float determinant = determinant();
+        
+        // If the determinant is zero, return null
+        if(determinant == 0)
+            return null;
+        
+        // Copy the current matrix in a tmp matrix
+        float[] tmp = val.clone();
+        
+        // Calculate the inverse values
+        val[m00] = tmp[m12] * tmp[m23] * tmp[m31] - tmp[m13] * tmp[m22] * tmp[m31]
+                 + tmp[m13] * tmp[m21] * tmp[m32] - tmp[m11] * tmp[m23] * tmp[m32]
+                 - tmp[m12] * tmp[m21] * tmp[m33] + tmp[m11] * tmp[m22] * tmp[m33];
+        val[m01] = tmp[m03] * tmp[m22] * tmp[m31] - tmp[m02] * tmp[m23] * tmp[m31]
+                 - tmp[m03] * tmp[m21] * tmp[m32] + tmp[m01] * tmp[m23] * tmp[m32]
+                 + tmp[m02] * tmp[m21] * tmp[m33] - tmp[m01] * tmp[m22] * tmp[m33];
+        val[m02] = tmp[m02] * tmp[m13] * tmp[m31] - tmp[m03] * tmp[m12] * tmp[m31]
+                 + tmp[m03] * tmp[m11] * tmp[m32] - tmp[m01] * tmp[m13] * tmp[m32]
+                 - tmp[m02] * tmp[m11] * tmp[m33] + tmp[m01] * tmp[m12] * tmp[m33];
+        val[m03] = tmp[m03] * tmp[m12] * tmp[m21] - tmp[m02] * tmp[m13] * tmp[m21]
+                 - tmp[m03] * tmp[m11] * tmp[m22] + tmp[m01] * tmp[m13] * tmp[m22]
+                 + tmp[m02] * tmp[m11] * tmp[m23] - tmp[m01] * tmp[m12] * tmp[m23];
+        val[m10] = tmp[m13] * tmp[m22] * tmp[m30] - tmp[m12] * tmp[m23] * tmp[m30]
+                 - tmp[m13] * tmp[m20] * tmp[m32] + tmp[m10] * tmp[m23] * tmp[m32]
+                 + tmp[m12] * tmp[m20] * tmp[m33] - tmp[m10] * tmp[m22] * tmp[m33];
+        val[m11] = tmp[m02] * tmp[m23] * tmp[m30] - tmp[m03] * tmp[m22] * tmp[m30]
+                 + tmp[m03] * tmp[m20] * tmp[m32] - tmp[m00] * tmp[m23] * tmp[m32]
+                 - tmp[m02] * tmp[m20] * tmp[m33] + tmp[m00] * tmp[m22] * tmp[m33];
+        val[m12] = tmp[m03] * tmp[m12] * tmp[m30] - tmp[m02] * tmp[m13] * tmp[m30]
+                 - tmp[m03] * tmp[m10] * tmp[m32] + tmp[m00] * tmp[m13] * tmp[m32]
+                 + tmp[m02] * tmp[m10] * tmp[m33] - tmp[m00] * tmp[m12] * tmp[m33];
+        val[m13] = tmp[m02] * tmp[m13] * tmp[m20] - tmp[m03] * tmp[m12] * tmp[m20]
+                 + tmp[m03] * tmp[m10] * tmp[m22] - tmp[m00] * tmp[m13] * tmp[m22]
+                 - tmp[m02] * tmp[m10] * tmp[m23] + tmp[m00] * tmp[m12] * tmp[m23];
+        val[m20] = tmp[m11] * tmp[m23] * tmp[m30] - tmp[m13] * tmp[m21] * tmp[m30]
+                 + tmp[m13] * tmp[m20] * tmp[m31] - tmp[m10] * tmp[m23] * tmp[m31]
+                 - tmp[m11] * tmp[m20] * tmp[m33] + tmp[m10] * tmp[m21] * tmp[m33];
+        val[m21] = tmp[m03] * tmp[m21] * tmp[m30] - tmp[m01] * tmp[m23] * tmp[m30]
+                 - tmp[m03] * tmp[m20] * tmp[m31] + tmp[m00] * tmp[m23] * tmp[m31]
+                 + tmp[m01] * tmp[m20] * tmp[m33] - tmp[m00] * tmp[m21] * tmp[m33];
+        val[m22] = tmp[m01] * tmp[m13] * tmp[m30] - tmp[m03] * tmp[m11] * tmp[m30]
+                 + tmp[m03] * tmp[m10] * tmp[m31] - tmp[m00] * tmp[m13] * tmp[m31]
+                 - tmp[m01] * tmp[m10] * tmp[m33] + tmp[m00] * tmp[m11] * tmp[m33];
+        val[m23] = tmp[m03] * tmp[m11] * tmp[m20] - tmp[m01] * tmp[m13] * tmp[m20]
+                 - tmp[m03] * tmp[m10] * tmp[m21] + tmp[m00] * tmp[m13] * tmp[m21]
+                 + tmp[m01] * tmp[m10] * tmp[m23] - tmp[m00] * tmp[m11] * tmp[m23];
+        val[m30] = tmp[m12] * tmp[m21] * tmp[m30] - tmp[m11] * tmp[m22] * tmp[m30]
+                 - tmp[m12] * tmp[m20] * tmp[m31] + tmp[m10] * tmp[m22] * tmp[m31]
+                 + tmp[m11] * tmp[m20] * tmp[m32] - tmp[m10] * tmp[m21] * tmp[m32];
+        val[m31] = tmp[m01] * tmp[m22] * tmp[m30] - tmp[m02] * tmp[m21] * tmp[m30]
+                 + tmp[m02] * tmp[m20] * tmp[m31] - tmp[m00] * tmp[m22] * tmp[m31]
+                 - tmp[m01] * tmp[m20] * tmp[m32] + tmp[m00] * tmp[m21] * tmp[m32];
+        val[m32] = tmp[m02] * tmp[m11] * tmp[m30] - tmp[m01] * tmp[m12] * tmp[m30]
+                 - tmp[m02] * tmp[m10] * tmp[m31] + tmp[m00] * tmp[m12] * tmp[m31]
+                 + tmp[m01] * tmp[m10] * tmp[m32] - tmp[m00] * tmp[m11] * tmp[m32];
+        val[m33] = tmp[m01] * tmp[m12] * tmp[m20] - tmp[m02] * tmp[m11] * tmp[m20]
+                 + tmp[m02] * tmp[m10] * tmp[m21] - tmp[m00] * tmp[m12] * tmp[m21]
+                 - tmp[m01] * tmp[m10] * tmp[m22] + tmp[m00] * tmp[m11] * tmp[m22];
+        
+        // Divide all values by the determinant
+        for (int i = 0; i < 16; i++)
+            val[i] /= determinant;
+        
+        return this;
+    }
+    
+    /** Transposes the Matrix.
+     * 
+     * @return 
+     */
+    public Matrix transpose() {
+        float[] tmp = val.clone();
+        
+        val[m01] = tmp[m10];
+        val[m02] = tmp[m20];
+        val[m03] = tmp[m30];
+        val[m10] = tmp[m01];
+        val[m12] = tmp[m21];
+        val[m13] = tmp[m31];
+        val[m20] = tmp[m02];
+        val[m21] = tmp[m12];
+        val[m23] = tmp[m32];
+        val[m30] = tmp[m03];
+        val[m31] = tmp[m13];
+        val[m32] = tmp[m23];
+        
+        return this;
+    }
+    
     /** Multiplies the Matrix by a translation matrix.
      * 
      * @param x the x coordinate of a translation vector.
