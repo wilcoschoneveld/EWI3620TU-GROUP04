@@ -7,7 +7,7 @@ import patient04.math.Vector;
  * @author Wilco
  */
 public class AABB {
-    private final Vector pos, min, max;
+    public final Vector pos, min, max;
     
     public AABB(Vector pos, Vector min, Vector max) {
         this.pos = pos;

@@ -457,12 +457,14 @@ public class Model {
             new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
         }));
         
+        float margin = 0.005f;
+        
         model.texcoords.addAll(Arrays.asList(new UV[] {
-            new UV(0, 0), new UV(0, 1), //0, 1
-            new UV((max.x - min.x) / Level.WALL_HEIGHT, 1), // 2
-            new UV((max.x - min.x) / Level.WALL_HEIGHT, 0), // 3
-            new UV((max.z - min.z) / Level.WALL_HEIGHT, 1), // 4
-            new UV((max.z - min.z) / Level.WALL_HEIGHT, 0)  // 5
+            new UV(margin, margin), new UV(margin, 1 - margin), //0, 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT - margin, 1 - margin), // 2
+            new UV((max.x - min.x) / Level.WALL_HEIGHT - margin, margin), // 3
+            new UV((max.z - min.z) / Level.WALL_HEIGHT - margin, 1 - margin), // 4
+            new UV((max.z - min.z) / Level.WALL_HEIGHT - margin, margin)  // 5
         }));
         
         model.normals.addAll(Arrays.asList(new Vector[] {

@@ -21,22 +21,14 @@ public class Level {
     public static final float WALL_HEIGHT = 3;
     
     public final ArrayList<Model> statics;
-    public AABB floorAABB;
+    
     
     public Level(ArrayList<Model> statics) {
         this.statics = statics;
-        
-        floorAABB = new AABB(new Vector(0, -1, 0), new Vector(100, 0, 100));
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
-        
-        if(broadphase.intersects(floorAABB))
-            aabbs.add(floorAABB);
-        
-        if(Keyboard.isKeyDown(Keyboard.KEY_B))
-            return aabbs;
         
         for(Model model : statics)
             if(broadphase.intersects(model.aabb))
@@ -56,6 +48,40 @@ public class Level {
     public void cleanup() {
         for(Model model : statics)
             model.releaseAll();
+    }
+    
+    public void generateFloor(String textureFile) {
+        Float xmin = null, zmin = null,
+                xmax = null, zmax = null;
+        
+        for (Model model : statics) {
+            if(xmin == null || model.aabb.pos.x + model.aabb.min.x <  xmin)
+                xmin = model.aabb.pos.x + model.aabb.min.x;
+            if(zmin == null || model.aabb.pos.z + model.aabb.min.z <  zmin)
+                zmin = model.aabb.pos.z + model.aabb.min.z;
+            if(xmax == null || model.aabb.pos.x + model.aabb.max.x >  xmax)
+                xmax = model.aabb.pos.x + model.aabb.max.x;
+            if(zmax == null || model.aabb.pos.z + model.aabb.max.z >  zmax)
+                zmax = model.aabb.pos.z + model.aabb.max.z;
+        }
+        
+        if (xmin == null || zmin == null || xmax == null || zmax == null) {
+            System.err.println("Could not generate floor!");
+            return;
+        }
+        
+        Vector min = new Vector(xmin, -0.1f, zmin);
+        Vector max = new Vector(xmax, 0, zmax);
+        
+        Model model = Model.buildFloor(min, max, textureFile);
+        
+        model.setAABB(new AABB(min, max));
+
+        model.compileBuffers();
+        model.releaseRawData();
+        model.setAsStaticModel(true);
+
+        statics.add(model);
     }
     
     public static Level readLevel(String file) {        
@@ -88,7 +114,7 @@ public class Level {
         return new Level(models);
     }
     
-    public static Level defaultLevel() {
+    public static Level defaultLevel(String textureFile) {
         
         byte[][] maze =
            {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -128,7 +154,7 @@ public class Level {
                     floorMaxZ = WALL_HEIGHT * (y+1);
                 
                 // Start building a new box
-                Model model = Model.buildWall(min, max, "wall_hospital.png");
+                Model model = Model.buildWall(min, max, textureFile);
                 
                 // Create AABB
                 model.setAABB(new AABB(model.position, min, max));
@@ -146,23 +172,6 @@ public class Level {
                 // Build the box and add to list
                 models.add(model);
             }
-        }
-        
-        // Build a floor if possible
-        if(floorMinX != null && floorMinZ != null &&
-                floorMaxX != null && floorMaxZ != null) {
-            min = new Vector(floorMinX, -0.1f, floorMinZ);
-            max = new Vector(floorMaxX, 0, floorMaxZ);
-
-            Model model = Model.buildFloor(min, max, "floor_hospital.png");
-
-            model.setAABB(new AABB(min, max));
-
-            model.compileBuffers();
-            model.releaseRawData();
-            model.setAsStaticModel(true);
-            
-            models.add(model);
         }
         
         return new Level(models);

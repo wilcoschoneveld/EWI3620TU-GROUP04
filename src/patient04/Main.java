@@ -52,19 +52,15 @@ public class Main {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.defaultLevel();
+        level = Level.defaultLevel("wall_hospital.png");
         //level = Level.readLevel("test.txt");
+        level.generateFloor("floor_hospital.png");
         
         player = new Player(level);
         
         // Player start position
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
-        
-//        testModel = Model.loadOBJ("res/models/cubeBart.obj");
-//        testModel.compileBuffers();
-//        testModel.releaseRawData();
-//        testModel.position.set(8, 2, 8);
         
         testModel = Model.loadOBJ("res/models/steelCube.obj");
         testModel.position.set(8, 2, 8);
