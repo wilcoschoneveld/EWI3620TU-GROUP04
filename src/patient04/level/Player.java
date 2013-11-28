@@ -1,4 +1,4 @@
-package patient04;
+package patient04.level;
 
 import patient04.math.Vector;
 import patient04.physics.Entity;

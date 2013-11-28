@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import org.lwjgl.input.Keyboard;
 import patient04.physics.AABB;
 import patient04.math.Vector;
 

@@ -1,5 +1,6 @@
 package patient04;
 
+import patient04.level.Player;
 import patient04.utilities.Timer;
 import patient04.lighting.Renderer;
 import patient04.level.Level;
@@ -62,9 +63,9 @@ public class Main {
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
         
-        testModel = Model.loadOBJ("res/models/steelCube.obj");
-        testModel.position.set(8, 2, 8);
-        testModel.rotation.set(45, 45, 0);
+        testModel = Model.loadOBJ("res/models/nurseV2.obj");
+        testModel.position.set(8, 0, 8);
+        testModel.rotation.set(0, 0, 0);
         testModel.compileBuffers();
         testModel.releaseRawData();
     }

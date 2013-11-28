@@ -457,7 +457,7 @@ public class Model {
             new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
         }));
         
-        float margin = 0.005f;
+        float margin = 0.001f;
         
         model.texcoords.addAll(Arrays.asList(new UV[] {
             new UV(margin, margin), new UV(margin, 1 - margin), //0, 1

@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard;
  *
  * @author Wilco
  */
-public class Entity {
+public abstract class Entity {
     private final Level level;
     
     protected final Vector position;
