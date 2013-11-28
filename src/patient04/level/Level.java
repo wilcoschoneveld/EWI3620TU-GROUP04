@@ -71,7 +71,7 @@ public class Level {
                 Vector min = new Vector(xmin, 0, zmin);
                 Vector max = new Vector(xmax, WALL_HEIGHT, zmax);
                 
-                Model model = Model.buildBox(min, max, "wall_hospital.png");
+                Model model = Model.buildWall(min, max, "wall_hospital.png");
                 
                 model.setAABB(new AABB(model.position, min, max));
                 
@@ -108,13 +108,27 @@ public class Level {
         Vector min = new Vector(-0.5f, -0.5f, -0.5f).scale(WALL_HEIGHT);
         Vector max = new Vector(0.5f, 0.5f, 0.5f).scale(WALL_HEIGHT);
         
+        // Floor size
+        Float floorMinX = null, floorMinZ = null,
+                floorMaxX = null, floorMaxZ = null;
+        
         // Loop through to maze
         for(int x = 0; x < maze[0].length; x++) {
             for(int y = 0; y < maze.length; y++) {
                 if(maze[y][x] != 1) continue;
                 
+                // Define floor size
+                if(floorMinX == null || WALL_HEIGHT * x < floorMinX)
+                    floorMinX = WALL_HEIGHT * x;
+                if(floorMinZ == null || WALL_HEIGHT * y < floorMinZ)
+                    floorMinZ = WALL_HEIGHT * y;
+                if(floorMaxX == null || WALL_HEIGHT * (x+1) > floorMaxX)
+                    floorMaxX = WALL_HEIGHT * (x+1);
+                if(floorMaxZ == null || WALL_HEIGHT * (y+1) > floorMaxZ)
+                    floorMaxZ = WALL_HEIGHT * (y+1);
+                
                 // Start building a new box
-                Model model = Model.buildBox(min, max, "wall_hospital.png");
+                Model model = Model.buildWall(min, max, "wall_hospital.png");
                 
                 // Create AABB
                 model.setAABB(new AABB(model.position, min, max));
@@ -132,6 +146,23 @@ public class Level {
                 // Build the box and add to list
                 models.add(model);
             }
+        }
+        
+        // Build a floor if possible
+        if(floorMinX != null && floorMinZ != null &&
+                floorMaxX != null && floorMaxZ != null) {
+            min = new Vector(floorMinX, -0.1f, floorMinZ);
+            max = new Vector(floorMaxX, 0, floorMaxZ);
+
+            Model model = Model.buildFloor(min, max, "floor_hospital.png");
+
+            model.setAABB(new AABB(min, max));
+
+            model.compileBuffers();
+            model.releaseRawData();
+            model.setAsStaticModel(true);
+            
+            models.add(model);
         }
         
         return new Level(models);

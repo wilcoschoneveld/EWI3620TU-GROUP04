@@ -447,7 +447,7 @@ public class Model {
      * @param textureFile
      * @return generated model
      */ 
-    public static Model buildBox(Vector min, Vector max, String textureFile) {
+    public static Model buildWall(Vector min, Vector max, String textureFile) {
         Model model = new Model();
         
         model.vertices.addAll(Arrays.asList(new Vector[] {
@@ -481,12 +481,54 @@ public class Model {
             new Face(0, 3, 7, 2, 3, 0, 1, 1, 1), // Back 2
             new Face(2, 6, 7, 0, 0, 0, 2, 2, 2), // Top 1
             new Face(7, 3, 2, 0, 0, 0, 2, 2, 2), // Top 2
-            new Face(0, 4, 5, 0, 0, 0, 3, 3, 3), // Bottom 1
-            new Face(5, 1, 0, 0, 0, 0, 3, 3, 3), // Bottom 2
+//            new Face(0, 4, 5, 0, 0, 0, 3, 3, 3), // Bottom 1
+//            new Face(5, 1, 0, 0, 0, 0, 3, 3, 3), // Bottom 2
             new Face(5, 4, 7, 1, 4, 5, 4, 4, 4), // Right 1
             new Face(7, 6, 5, 5, 0, 1, 4, 4, 4), // Right 2
             new Face(0, 1, 2, 1, 4, 5, 5, 5, 5), // Left 1
             new Face(2, 3, 0, 5, 0, 1, 5, 5, 5)  // Left 2
+        }));
+        
+        // Also add a new material
+        group.material = new Material();
+        
+        group.material.texture = Texture.loadResource(textureFile);
+        group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
+        
+        // Return the new model        
+        return model;
+    }
+    
+    public static Model buildFloor(Vector min, Vector max, String textureFile) {
+        Model model = new Model();
+        
+        model.vertices.addAll(Arrays.asList(new Vector[] {
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
+        }));
+        
+        model.texcoords.addAll(Arrays.asList(new UV[] {
+            new UV(0, 0), // 0
+            new UV(0, (max.z - min.z) / Level.WALL_HEIGHT),  // 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, // 2
+                    (max.z - min.z) / Level.WALL_HEIGHT),
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, 0), // 3
+        }));
+        
+        model.normals.addAll(Arrays.asList(new Vector[] {
+            new Vector(0, 0, 1), new Vector(0, 0, -1),
+            new Vector(0, 1, 0), new Vector(0, -1, 0),
+            new Vector(1, 0, 0), new Vector(-1, 0, 0)
+        }));
+        
+        Group group = model.requestGroup("default");
+        
+        group.faces.addAll(Arrays.asList(new Face[] {
+            //  Face(V, V, V, T, T, T, N, N, N)
+            new Face(2, 6, 7, 1, 2, 3, 2, 2, 2), // Top 1
+            new Face(7, 3, 2, 3, 0, 1, 2, 2, 2), // Top 2
         }));
         
         // Also add a new material
