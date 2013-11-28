@@ -24,6 +24,8 @@ public class Player extends Entity {
     public static final float WIDTH = 0.6f;
     public static final float HEIGHT = 1.8f;
 
+    public static float vrpX = 0;
+    public static float vrpZ = 0;
     // Determines where the camera is located
     public static final float EYEHEIGHT = 1.7f;
     
@@ -88,9 +90,10 @@ public class Player extends Entity {
         acceleration.add(moveInput);
         
         super.update(dt);
-        StateManager.sound1.update();
         StateManager.sound1.setListenerPos(position.x, position.y, position.z);
-
+        
+        // use the y-rotation to give the player the right orientation for sound
+        StateManager.sound1.setListenerOri( rotation.y);
     }
 
     /** Sets the current matrix to FPV. */
@@ -121,11 +124,7 @@ public class Player extends Entity {
     }
     
     public boolean step(){
-        if(Math.cos(distanceMoved * 6) < -0.992 ) {
-            return true;
-        }
-        else
-            return false;
+        return Math.cos(distanceMoved * 6) < -0.992;
     }
     
     public boolean isOnGround(){
@@ -136,5 +135,15 @@ public class Player extends Entity {
         return position;
     }
     
+    public Vector getRotation(){
+        return rotation;
+    }
+    
+   	public void calculateVRP() {
+		 vrpX = (float) (-Math.sin( Math.PI * rotation.y / 180 ) * Math.cos( Math.PI * rotation.x / 180 ));
+		//vrpY = Math.sin( Math.PI * verAngle / 180 );
+		 vrpZ = (float) (-Math.cos( Math.PI * rotation.y / 180 ) * Math.cos( Math.PI * rotation.x / 180 ));
+	}
+//    
     private float viewbobbing = 0;
 }

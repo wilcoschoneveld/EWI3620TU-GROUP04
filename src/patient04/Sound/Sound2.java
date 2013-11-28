@@ -18,8 +18,9 @@ import patient04.physics.Vector;
  */
 public class Sound2 {
     private int NUM_BUFFERS = 4;
-    long lastStep = 0;
-    long stepTime = 75;
+    private long lastStep = 0;
+    private long stepTime = 75;
+    
     // Buffers hold sound data
     private IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
     private IntBuffer source = BufferUtils.createIntBuffer(NUM_BUFFERS);

@@ -12,7 +12,7 @@ import patient04.States.MazeRunner;
 public class StateManager {
 
     public MainMenu main = new MainMenu();
-    public MazeRunner runner = new  MazeRunner();
+    public  MazeRunner runner = new  MazeRunner();
     public static Sound2 sound1 = new Sound2();
     public static GameStates State;
     private static GameStates pState;
@@ -70,8 +70,9 @@ public class StateManager {
     public void loadGame(){ 
        runner.initialize();
        sound1.killALData();
-//       sound1.setSourcePos(0,10, 1, 10);
        sound1.playTune();
+       sound1.play3dSound();
+
 
     }
 }
