@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.newdawn.slick.opengl.PNGDecoder;
 
 /**
@@ -98,20 +99,22 @@ public class Texture {
         // Bind texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.textureID);
         
+        // Set texture filters and generate mipmaps        
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
+                GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
+                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
+                GL14.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+        
         // Copy buffer into texture
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D,
                 0, GL11.GL_RGBA, texture.width, texture.height, 0,
                 GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         
-        // Set minification and magnification filter
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MAG_FILTER,GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        
         // If error, print statement
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            System.out.println("texture load error :(");
+            System.err.println("Error loading texture " + texturePath);
         }
         
         return texture;
