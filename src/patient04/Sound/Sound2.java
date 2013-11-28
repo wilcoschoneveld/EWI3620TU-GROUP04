@@ -7,18 +7,17 @@ import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
-import patient04.Manager.GameStates;
 import patient04.Manager.StateManager;
+import patient04.physics.Vector;
 
 /**
  * @author kajdreef
  */
 public class Sound2 {
-    private int NUM_BUFFERS = 3;
+    private int NUM_BUFFERS = 4;
     long lastStep = 0;
     long stepTime = 75;
     // Buffers hold sound data
@@ -26,7 +25,7 @@ public class Sound2 {
     private IntBuffer source = BufferUtils.createIntBuffer(NUM_BUFFERS);
     
     private FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.0f , 0.0f, 0.0f});
-    private FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.0f, 0.0f, 0.5f});
+    private FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.4f, 0.4f, 0.4f});
     
     private FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
     private FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
@@ -35,6 +34,12 @@ public class Sound2 {
     private WaveData mainTheme;
     private WaveData walking;
     private WaveData hitGroundSound;
+    private WaveData sound3D;
+    
+    private final int MAIN = 0;
+    private final int WALK = 1;
+    private final int GROUND = 2;
+    private final int SOUND3D = 3;
     
    public Sound2(){
        listenerPos.flip();
@@ -50,19 +55,23 @@ public class Sound2 {
             return AL10.AL_FALSE;
        }
        
-       mainTheme = WaveData.create("test.wav");
+       mainTheme = WaveData.create("test.wav");             // Stereo
        // Put wav file in buffer
        AL10.alBufferData(buffer.get(0), mainTheme.format, mainTheme.data, mainTheme.samplerate);
        // dispose the waveFile after the wav data was put in the buffer
        mainTheme.dispose();
 
-       walking = WaveData.create("footsteps_slow3.wav");
+       walking = WaveData.create("footsteps_slow3.wav");    // mono
        AL10.alBufferData(buffer.get(1), walking.format, walking.data, walking.samplerate);
-       mainTheme.dispose();
+       walking.dispose();
        
-       hitGroundSound = WaveData.create("footsteps_slow3.wav");
-       AL10.alBufferData(buffer.get(2), walking.format, walking.data, walking.samplerate);
-       mainTheme.dispose();
+       hitGroundSound = WaveData.create("footsteps_slow5.wav"); //mono
+       AL10.alBufferData(buffer.get(2), hitGroundSound.format, hitGroundSound.data, hitGroundSound.samplerate);
+       hitGroundSound.dispose();
+       
+       sound3D = WaveData.create("footsteps_slow5.wav"); //mono
+       AL10.alBufferData(buffer.get(3), sound3D.format, sound3D.data, sound3D.samplerate);
+       sound3D.dispose();
        
        AL10.alGenSources(source);
                
@@ -70,38 +79,56 @@ public class Sound2 {
            return AL10.AL_FALSE;
        }
        // main theme
-       AL10.alSourcei(source.get(0), AL10.AL_BUFFER,    buffer.get(0));
-       AL10.alSourcei(source.get(0), AL10.AL_LOOPING,   AL10.AL_TRUE);
-       AL10.alSourcef(source.get(0), AL10.AL_PITCH,     1.0f);
-       AL10.alSourcef(source.get(0), AL10.AL_GAIN,      1.0f);
-       AL10.alSource (source.get(0), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(0));
-       AL10.alSource (source.get(0), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(0));
+       AL10.alSourcei(source.get(MAIN), AL10.AL_BUFFER,    buffer.get(MAIN));
+       AL10.alSourcei(source.get(MAIN), AL10.AL_LOOPING,   AL10.AL_TRUE);
+       AL10.alSourcef(source.get(MAIN), AL10.AL_PITCH,     1.0f);
+       AL10.alSourcef(source.get(MAIN), AL10.AL_GAIN,      0.2f);
+       AL10.alSource (source.get(MAIN), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(MAIN));
+       AL10.alSource (source.get(MAIN), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(MAIN));
        
        // walking sound
-       AL10.alSourcei(source.get(1), AL10.AL_BUFFER,    buffer.get(1));
-       AL10.alSourcei(source.get(1), AL10.AL_LOOPING,   AL10.AL_FALSE);
-       AL10.alSourcef(source.get(1), AL10.AL_PITCH,     1.0f);
-       AL10.alSourcef(source.get(1), AL10.AL_GAIN,      1.0f);
-       AL10.alSource (source.get(1), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3));
-       AL10.alSource (source.get(1), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3));
+       AL10.alSourcei(source.get(WALK), AL10.AL_BUFFER,    buffer.get(WALK));
+       AL10.alSourcei(source.get(WALK), AL10.AL_LOOPING,   AL10.AL_FALSE);
+       AL10.alSourcef(source.get(WALK), AL10.AL_PITCH,     1.0f);
+       AL10.alSourcef(source.get(WALK), AL10.AL_GAIN,      0.2f);
+       AL10.alSource (source.get(WALK), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3*WALK));
+       AL10.alSource (source.get(WALK), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3*WALK));
        
        // hitGround sound
-       AL10.alSourcei(source.get(2), AL10.AL_BUFFER,    buffer.get(2));
-       AL10.alSourcei(source.get(2), AL10.AL_LOOPING,   AL10.AL_FALSE);
-       AL10.alSourcef(source.get(2), AL10.AL_PITCH,     1.0f);
-       AL10.alSourcef(source.get(2), AL10.AL_GAIN,      1.0f);
-       AL10.alSource (source.get(2), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(6));
-       AL10.alSource (source.get(2), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(6));
+       AL10.alSourcei(source.get(GROUND), AL10.AL_BUFFER,    buffer.get(GROUND));
+       AL10.alSourcei(source.get(GROUND), AL10.AL_LOOPING,   AL10.AL_FALSE);
+       AL10.alSourcef(source.get(GROUND), AL10.AL_PITCH,     1.0f);
+       AL10.alSourcef(source.get(GROUND), AL10.AL_GAIN,      0.3f);
+       AL10.alSource (source.get(GROUND), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3*GROUND));
+       AL10.alSource (source.get(GROUND), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3*GROUND));
        
+       // Test 3D sound
+       AL10.alSourcei(source.get(SOUND3D), AL10.AL_BUFFER,    buffer.get(SOUND3D));
+       AL10.alSourcei(source.get(SOUND3D), AL10.AL_LOOPING,   AL10.AL_TRUE);
+       AL10.alSourcef(source.get(SOUND3D), AL10.AL_PITCH,     0.7f);
+       AL10.alSourcef(source.get(SOUND3D), AL10.AL_GAIN,      1.0f);
+       AL10.alSource (source.get(SOUND3D), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3*SOUND3D));
+       AL10.alSource (source.get(SOUND3D), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3*SOUND3D));
        
-       // Do another error check and return.
+        // Do another error check and return.
        if(AL10.alGetError() == AL10.AL_NO_ERROR)
             return AL10.AL_TRUE;
 
        return AL10.AL_FALSE;   
 
    }
-   
+   public void setListenerOri( float ry){
+       // convert the y-rotation to a vector in the direction you are looking at
+        float x = (float) -Math.sin(Math.toRadians(ry));
+        float z = (float) -Math.cos(Math.toRadians(ry));
+        
+        // Use that vector for the orientation
+        listenerOri.put(0,x);
+        listenerOri.put(1,0);
+        listenerOri.put(2,z);
+        AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
+   }
+
    public void setListenerValues(){
        AL10.alListener(AL10.AL_POSITION, listenerPos);
        AL10.alListener(AL10.AL_VELOCITY,    listenerVel);
@@ -140,48 +167,26 @@ public class Sound2 {
        loadALData();
        AL10.alSourcePlay(source.get(0));
    }
+    
+    public void play3dSound(){
+        loadALData();
+        setSourcePos(SOUND3D, 10, 1, 10);
+        AL10.alSourcePlay(source.get(SOUND3D));
+
+    }
    
    public void playWalking(){
        loadALData();
-//       // check what the state of the source is. If it stopped playing play it again.
-//        if (AL10.alGetSourcei(source.get(1), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING)//AL10.AL_PLAYING)
-//            System.out.println("check");
-//        else
-//            AL10.alSourcePlay(source.get(1));
-//        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && System.currentTimeMillis() - lastStep < stepTime/2){
-//                    AL10.alSourcePlay(source.get(1));
-//        }
-//        else
         if(System.currentTimeMillis() - lastStep < stepTime){
-            System.out.println("check");
         }         
-        else
-            System.out.println("step");
+        else{
             lastStep = System.currentTimeMillis();
             AL10.alSourcePlay(source.get(1));
         }
-                
-                
-   
+   }        
+           
    public void playHitGround(){
-     //  loadALData();
+       loadALData();
        AL10.alSourcePlay(source.get(2));
    }
-   
-    public void update(){
-       long time = Sys.getTime();
-       long elapse = 0;
-           
-           elapse += Sys.getTime() - time;
-           time += elapse;
-           if(elapse > 5000){
-                elapse = 0;
-                sourcePos.put(0, sourcePos.get(0) + sourceVel.get(0));
-                sourcePos.put(1, sourcePos.get(1) + sourceVel.get(1));
-                sourcePos.put(2, sourcePos.get(2) + sourceVel.get(2));
-
-                AL10.alSource(source.get(0), AL10.AL_POSITION, sourcePos);
-           
-        }
-    }
 }
