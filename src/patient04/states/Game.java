@@ -64,9 +64,9 @@ public class Game implements State {
         Path path = new Path();
         path.testPath();
         
-        enemy = new Enemy(level, path);
-        enemy.setPosition(8, 0, 6);
-        enemy.target = player;
+//        enemy = new Enemy(level, path);
+//        enemy.setPosition(8, 0, 6);
+//        enemy.target = player;
         
         // Load a nurse
         testModel = Model.loadOBJ("res/models/nurseV2.obj");
@@ -86,10 +86,10 @@ public class Game implements State {
         
         // Update the player
         player.update(deltaTime);
-        enemy.update(deltaTime);
+//        enemy.update(deltaTime);
         
         player.integrate();
-        enemy.integrate();
+//        enemy.integrate();
     }
 
     @Override
@@ -106,7 +106,7 @@ public class Game implements State {
         // Draw level
         level.draw();
         
-        enemy.draw();
+//        enemy.draw();
         
         // Draw the test model
         testModel.draw();

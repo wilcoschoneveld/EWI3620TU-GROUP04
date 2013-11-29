@@ -23,6 +23,7 @@ public class Renderer {
     public static int useTexture;
     
     public static int inPosition;
+    public static int inTexCoord;
     public static int inNormal;
    
     public static void setup() {
@@ -38,9 +39,9 @@ public class Renderer {
         
         useTexture = GL20.glGetUniformLocation(shaderProgram1, "useTexture");
         
-        GL20.glBindAttribLocation(shaderProgram1, 0, "inPosition");
-        GL20.glBindAttribLocation(shaderProgram1, 1, "inTexCoords");
-        GL20.glBindAttribLocation(shaderProgram1, 2, "inNormal");
+        inPosition = GL20.glGetAttribLocation(shaderProgram1, "aPosition");
+        inTexCoord = GL20.glGetAttribLocation(shaderProgram1, "aTexCoord");
+        inNormal = GL20.glGetAttribLocation(shaderProgram1, "aNormal");
     }
     
     public static void cleanup() {

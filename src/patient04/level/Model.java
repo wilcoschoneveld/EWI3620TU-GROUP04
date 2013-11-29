@@ -132,23 +132,26 @@ public class Model {
                 material.texture.bind();
             }
             
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
-            GL20.glEnableVertexAttribArray(2);
+            GL20.glEnableVertexAttribArray(Renderer.inPosition);
+            GL20.glEnableVertexAttribArray(Renderer.inTexCoord);
+            GL20.glEnableVertexAttribArray(Renderer.inNormal);
             
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);
 
-            GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 8*4, 0);
-            GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 8*4, 3*4);
-            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 8*4, 5*4);
+            GL20.glVertexAttribPointer(Renderer.inPosition,
+                    3, GL11.GL_FLOAT, false, 8*4, 0);
+            GL20.glVertexAttribPointer(Renderer.inTexCoord,
+                    2, GL11.GL_FLOAT, false, 8*4, 3*4);
+            GL20.glVertexAttribPointer(Renderer.inNormal,
+                    3, GL11.GL_FLOAT, false, 8*4, 5*4);
             
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, bufferSize);
             
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
             
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
+            GL20.glDisableVertexAttribArray(Renderer.inPosition);
+            GL20.glDisableVertexAttribArray(Renderer.inTexCoord);
+            GL20.glDisableVertexAttribArray(Renderer.inNormal);
             
             GL20.glUniform1i(Renderer.useTexture, 0);
         }
