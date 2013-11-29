@@ -13,7 +13,7 @@ public class StateManager {
 
     public MainMenu main = new MainMenu();
     public  MazeRunner runner = new  MazeRunner();
-    public static Sound sound = new Sound();
+    public static Sound sound = new Sound(1);
     public static GameStates State;
     private static GameStates pState;
 
