@@ -11,12 +11,10 @@ attribute vec3 inNormal;
 
 varying vec3 passPosition;
 varying vec2 passTexCoord;
-varying vec3 passNormalVec;
 
 void main() {
     // Pass values to fragment shader
     passPosition = inPosition;
-    //passNormalVec = inNormal;
     passTexCoord = inTexCoord;
 
     // Project vertex position on screen

@@ -7,7 +7,6 @@ uniform int useTexture;
 
 varying vec3 passPosition;
 varying vec2 passTexCoord;
-varying vec3 passNormalVec;
 
 void main() {
     // Set initial color to diffuse color
