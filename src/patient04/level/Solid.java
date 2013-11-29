@@ -14,7 +14,7 @@ import patient04.resources.Model;
  *
  * @author Wilco
  */
-public class Body {
+public class Solid {
     public Vector position;
     public Vector rotation;
     
@@ -22,7 +22,7 @@ public class Body {
     
     public Model model;
     
-    public Body() {
+    public Solid() {
         position = new Vector();
         rotation = new Vector();
     }
@@ -30,9 +30,5 @@ public class Body {
     public void draw() {
         if(model != null)
             model.draw(position, rotation);
-    }
-    
-    public void releaseModel() {
-        model.releaseAll();
     }
 }

@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -24,6 +25,10 @@ import patient04.utilities.Logger;
  * @author Wilco
  */
 public class Model {
+    private static final String defaultModelLocation = "res/models/";
+    private static final HashMap<String, Model> models = new HashMap<>();
+    private static final HashSet<String> mtlfiles = new HashSet<>();
+    
     private ArrayList<Vector> vertices;
     private ArrayList<Vector> normals;
     private ArrayList<UV> texcoords;
@@ -78,6 +83,11 @@ public class Model {
             group.drawBuffer();
     }
     
+    public void compileBuffers() {
+        for(Group group : groups.values())
+            group.compileBuffer();
+    }
+    
     public void releaseRawData() {
         // Clear raw data collections
         vertices = null;
@@ -90,19 +100,7 @@ public class Model {
             group.faces = null;
     }
     
-    public void compileBuffers() {
-        for(Group group : groups.values())
-            group.compileBuffer();
-    }
-    
     public void releaseBuffers() {
-        for(Group group : groups.values())
-            group.releaseBuffer();
-    }
-    
-    public void releaseAll() {
-        releaseRawData();
-        
         for(Group group : groups.values())
             group.releaseBuffer();
     }
@@ -260,7 +258,42 @@ public class Model {
         }
     }
     
-    public static Model loadOBJ(String f) {        
+    public static Model getResource(String modelFile) {
+        // Return null if no model given
+        if(modelFile == null)
+            return null;
+        
+        // Check if model is already loaded
+        Model model = models.get(modelFile);
+        
+        // If model does not exist
+        if(model == null) {
+            // Load an OBJ from file
+            model = loadOBJFromFile(defaultModelLocation + modelFile);
+            
+            // Compile model and release raw data
+            model.compileBuffers();
+            model.releaseRawData();
+            
+            // Store loaded model
+            models.put(modelFile, model);
+        }
+        
+        // Return model
+        return model;
+    }
+    
+    public static void releaseResources() {
+        for (Model model : models.values()) {
+            model.releaseRawData();
+            model.releaseBuffers();
+        }
+        
+        models.clear();
+        mtlfiles.clear();
+    }
+    
+    private static Model loadOBJFromFile(String f) {        
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             // Create a new Model
             Model model = new Model();
@@ -365,6 +398,10 @@ public class Model {
     }
     
     private void loadMTL(String f) {
+        // If MTL was already loaded once
+        if(mtlfiles.contains(f))
+            return;
+        
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             // Material variables
             Material material = new Material();
@@ -391,7 +428,7 @@ public class Model {
                         material = new Material();
                         continue;
                     case "map_kd": // New Texture
-                        material.texture = Texture.loadResource(tokens[1]);
+                        material.texture = Texture.getResource(tokens[1]);
                         continue;
                     case "ns": // Shininess
                         material.shininess = Float.parseFloat(tokens[1]);
@@ -432,6 +469,9 @@ public class Model {
             // Add material to model if loaded
             if(!materialName.isEmpty())
                 materials.put(materialName, material);
+            
+            // Add MTL file to loaded list
+            mtlfiles.add(f);
             
             Logger.debug("Succesfully loaded " + f);
         } catch(Exception e) {
@@ -494,7 +534,7 @@ public class Model {
         // Also add a new material
         group.material = new Material();
         
-        group.material.texture = Texture.loadResource(textureFile);
+        group.material.texture = Texture.getResource(textureFile);
         group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
         
         // Return the new model        
@@ -536,7 +576,7 @@ public class Model {
         // Also add a new material
         group.material = new Material();
         
-        group.material.texture = Texture.loadResource(textureFile);
+        group.material.texture = Texture.getResource(textureFile);
         group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
         
         // Return the new model        

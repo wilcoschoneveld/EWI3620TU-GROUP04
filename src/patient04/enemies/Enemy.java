@@ -59,7 +59,7 @@ public class Enemy extends Entity {
                     (float) (Math.atan2(-raytrace.z, raytrace.x) * 180/Math.PI);
             
             if (angle >= -45 && angle <= 45) {
-                System.out.println("gepakt!");
+                // gepakt
             }
         }
         
@@ -85,6 +85,7 @@ public class Enemy extends Entity {
     
     public void draw() {
         // Color of enemy
+        
         model.draw(position, rotation);
     }
 }

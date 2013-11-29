@@ -95,7 +95,5 @@ public class Path {
         this.addWaypoint(n1);
         this.addWaypoint(n2);
         this.addWaypoint(n3);
-        
-//        this.linkWaypoints(n3, n0);
     }
 }

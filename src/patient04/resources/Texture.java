@@ -20,22 +20,14 @@ import patient04.utilities.Logger;
  * @author Wilco
  */
 public class Texture {
-    public static final String defaultTextureLocation = "res/textures/";
-    public static HashMap<String, Texture> textures = new HashMap<>();
-    public static Texture lastBind = null;
+    private static final String defaultTextureLocation = "res/textures/";
+    private static final HashMap<String, Texture> textures = new HashMap<>();
+    private static Texture lastBind = null;
     
     private int textureID;
     
     private int width;
     private int height;
-    
-//    public void release() {
-//        GL11.glDeleteTextures(textureID);
-//    }
-    
-//    public int getTextureID() {
-//        return textureID;
-//    }
     
     public int getWidth() { return width; }
     public int getHeight() { return height; }
@@ -50,12 +42,7 @@ public class Texture {
         lastBind = null;
     }
     
-    public static void releaseAll() {
-        for(Texture texture : textures.values())
-            GL11.glDeleteTextures(texture.textureID);
-    }
-    
-    public static Texture loadResource(String textureFile) {
+    public static Texture getResource(String textureFile) {
         // Return null if no texture given
         if(textureFile == null)
             return null;
@@ -71,6 +58,18 @@ public class Texture {
         
         // Return texture
         return texture;
+    }
+    
+    public static void releaseResources() {
+        // Delete all Textures from video memory
+        for(Texture texture : textures.values())
+            GL11.glDeleteTextures(texture.textureID);
+        
+        // Clear the loaded textures list
+        textures.clear();
+        
+        // Set lastBind to nothing
+        lastBind = null;
     }
 
     private static Texture loadPNGFromFile(String texturePath) {

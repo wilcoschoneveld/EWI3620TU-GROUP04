@@ -26,7 +26,7 @@ public class MainMenu implements State {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         
-        logo = Texture.loadResource("main_logo.png");
+        logo = Texture.getResource("main_logo.png");
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MainMenu implements State {
 
     @Override
     public void destroy() {
-        Texture.releaseAll();
+        Texture.releaseResources();
     }
     
 }

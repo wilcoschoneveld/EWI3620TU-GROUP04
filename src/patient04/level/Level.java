@@ -20,16 +20,16 @@ public class Level {
     // Wall height
     public static final float WALL_HEIGHT = 3;
     
-    public final ArrayList<Body> statics;
+    public final ArrayList<Solid> solids;
     
-    public Level(ArrayList<Body> statics) {
-        this.statics = statics;
+    public Level(ArrayList<Solid> solids) {
+        this.solids = solids;
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
         
-        for(Body obj : statics)
+        for (Solid obj : solids)
             if(broadphase.intersects(obj.aabb))
                 aabbs.add(obj.aabb);
 
@@ -38,20 +38,19 @@ public class Level {
     
     public void draw() {
         // Loop through the maze        
-        for(Body obj : statics)
+        for (Solid obj : solids)
             obj.draw();
     }
     
     public void cleanup() {
-        for(Body body : statics)
-            body.releaseModel();
+        // TODO
     }
     
     public void generateFloor(String textureFile) {
         Float xmin = null, zmin = null,
                 xmax = null, zmax = null;
         
-        for (Body obj : statics) {
+        for (Solid obj : solids) {
             if(xmin == null || obj.aabb.pos.x + obj.aabb.min.x <  xmin)
                 xmin = obj.aabb.pos.x + obj.aabb.min.x;
             if(zmin == null || obj.aabb.pos.z + obj.aabb.min.z <  zmin)
@@ -70,7 +69,7 @@ public class Level {
         Vector min = new Vector(xmin, -0.1f, zmin);
         Vector max = new Vector(xmax, 0, zmax);
         
-        Body floor = new Body();
+        Solid floor = new Solid();
         
         floor.model = Model.buildFloor(min, max, textureFile);
         floor.model.compileBuffers();
@@ -78,38 +77,8 @@ public class Level {
         
         floor.aabb = new AABB(floor.position, min, max);
         
-        statics.add(floor);
+        solids.add(floor);
     }
-    
-//    public static Level readLevel(String file) {        
-//        ArrayList<Model> models = new ArrayList<>();
-//        
-//        try (Scanner sc = new Scanner(new File(file))) {
-//            while (sc.hasNextInt()) {
-//                float xmin = sc.nextInt() / 20f;
-//                float zmax = -sc.nextInt() / 20f;
-//                float xmax = sc.nextInt() / 20f;
-//                float zmin = -sc.nextInt() / 20f;
-//                
-//                Vector min = new Vector(xmin, 0, zmin);
-//                Vector max = new Vector(xmax, WALL_HEIGHT, zmax);
-//                
-//                Model model = Model.buildWall(min, max, "wall_hospital.png");
-//                
-//                model.setAABB(new AABB(model.position, min, max));
-//                
-//                model.compileBuffers();
-//                model.releaseRawData();
-//                model.setAsStaticModel(true);
-//                
-//                models.add(model);
-//            }
-//        } catch(FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return new Level(models);
-//    }
     
     public static Level defaultLevel(String textureFile) {
         
@@ -126,7 +95,7 @@ public class Level {
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
         
         // Create an empty list of shapes
-        ArrayList<Body> objects = new ArrayList<>();
+        ArrayList<Solid> objects = new ArrayList<>();
         
         Vector min = new Vector(-0.5f, -0.5f, -0.5f).scale(WALL_HEIGHT);
         Vector max = new Vector(0.5f, 0.5f, 0.5f).scale(WALL_HEIGHT);
@@ -144,7 +113,7 @@ public class Level {
                 if(maze[y][x] != 1) continue;
                 
                 // Start building a new box
-                Body obj = new Body();
+                Solid obj = new Solid();
                 
                 obj.model = blockModel;
                 
