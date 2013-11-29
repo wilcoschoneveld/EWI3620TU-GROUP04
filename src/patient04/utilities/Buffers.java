@@ -16,7 +16,7 @@ public class Buffers {
         GREEN = createFloatBuffer(0, 1, 0, 1);
         BLUE = createFloatBuffer(0, 0, 1, 0.1f);
         PURPLE = createFloatBuffer(0.5f, 0, 0.7f, 1);
-        DARKGREY = createFloatBuffer(0.05f, 0.05f, 0.05f, 1);
+        DARKGREY = createFloatBuffer(0.01f, 0.01f, 0.01f, 1);
     }
     
     public static FloatBuffer createFloatBuffer(float... values) {

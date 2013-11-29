@@ -11,9 +11,9 @@ import org.lwjgl.input.Keyboard;
 public class Entity {
     private final Level level;
     
-    protected final Vector position;
+    public final Vector position;
     protected final Vector velocity;
-    protected final Vector rotation;
+    public final Vector rotation;
     protected final Vector acceleration;
     
     protected boolean onGround;

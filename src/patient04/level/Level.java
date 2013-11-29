@@ -14,6 +14,8 @@ import patient04.utilities.Buffers;
 import patient04.physics.Vector;
 
 public class Level {
+    public int Color;
+    
     // Gravity vectors
     public static final Vector GRAVITY = new Vector(0, -1, 0);
     
@@ -52,12 +54,11 @@ public class Level {
     
     public void draw() {
         // Floor material
-//        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.BLUE);
         GL11.glColor3f(0, 0, 1);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
         GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 12.8f);
-     
+        
         // Draw the floor        
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glNormal3f(0, 1, 0);
@@ -77,9 +78,8 @@ public class Level {
         GL11.glVertex3f(0, WALL_HEIGHT, 100);
         GL11.glEnd();
         
-        
         // Wall material
-//        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.PURPLE);
+        GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, Buffers.PURPLE);
         GL11.glColor3f(0.5f, 0, 0.7f);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);

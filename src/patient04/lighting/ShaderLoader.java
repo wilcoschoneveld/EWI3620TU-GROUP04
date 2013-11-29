@@ -121,5 +121,47 @@ public class ShaderLoader {
         glDeleteShader(fragmentShader);
         return shaderProgram;
     }
+    
+    public static int loadShaderSingle(String fragmentShaderLocation) {
+        int shaderProgram = glCreateProgram();
+        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        StringBuilder fragmentShaderSource = new StringBuilder();
+        
+        BufferedReader fragmentShaderFileReader = null;
+        try {
+            fragmentShaderFileReader = new BufferedReader(new FileReader(fragmentShaderLocation));
+            String line;
+            while ((line = fragmentShaderFileReader.readLine()) != null) {
+                fragmentShaderSource.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        } finally {
+            if (fragmentShaderFileReader != null) {
+                try {
+                    fragmentShaderFileReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        glShaderSource(fragmentShader, fragmentShaderSource);
+        glCompileShader(fragmentShader);
+        if (glGetShaderi(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE) {
+            System.err.println("Fragment shader wasn't able to be compiled correctly. Error log:");
+            System.err.println(glGetShaderInfoLog(fragmentShader, 1024));
+        }
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+        if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
+            System.err.println("Shader program wasn't linked correctly.");
+            System.err.println(glGetProgramInfoLog(shaderProgram, 1024));
+            return -1;
+        }
+        glValidateProgram(shaderProgram);
+        glDeleteShader(fragmentShader);
+        return shaderProgram;
+    }
 }
 

@@ -16,8 +16,8 @@ public class Model {
     private ArrayList<Vector> normals;
     private ArrayList<Face> faces;
     
-    public final Vector position;
-    public final Vector rotation;
+    public Vector position;
+    public Vector rotation;
     
     private int displayList;
     

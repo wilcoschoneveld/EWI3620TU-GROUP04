@@ -1,6 +1,7 @@
 package patient04;
 
 import java.util.ArrayList;
+import java.nio.*;
 import org.lwjgl.input.Keyboard;
 import patient04.utilities.Timer;
 import patient04.lighting.Lighting;
@@ -10,18 +11,24 @@ import patient04.level.Level;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.GLU;
+import patient04.Enemies.Enemy;
+import patient04.Enemies.Path;
 import patient04.lighting.Light;
 import patient04.lighting.ShaderLoader;
 import patient04.utilities.DisplayModes;
+import patient04.utilities.Framebuffer;
 
 public class Main {
-
     // Window dimensions
-    private int screenWidth = 1280;
-    private int screenHeight = 720;
+    public static int screenWidth = 1280;
+    public static int screenHeight = 720;
+    
+    private Framebuffer framebuffer;
     
     private Lighting lighting;
     
@@ -29,15 +36,19 @@ public class Main {
     
     private Level level;
     private Player player;
+    private Path path;
+    private Enemy enemy;
     
     private Model model, model2;
     
     private ArrayList<Model> models;
     
-    
 
     /** The initialize method is called at application startup */
-    public void initialize() {        
+    public void initialize() {
+        // Initialize framebuffer objects
+//        framebuffer = new Framebuffer();
+        
         // Set glClearColor to black
         GL11.glClearColor(0, 0, 0, 0);
 
@@ -57,6 +68,7 @@ public class Main {
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         
+//        GL20.glUseProgram(lighting.shaderprogram);
         // Set shade model to smooth
 //        GL11.glShadeModel(GL11.GL_SMOOTH);
         
@@ -72,6 +84,18 @@ public class Main {
         // Player start position
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
+        
+        // create path
+        path = new Path();
+        path.testPath();
+        
+        // Create enemy
+        enemy = new Enemy(level, path);
+        enemy.target = player;
+        
+        // Enemy start position
+        enemy.setPosition(path.get(0).position.x, path.get(0).position.y, path.get(0).position.z);
+//        enemy.setRotation(0, -135, 0);
         
         model = Model.loadModel("res/models/sphere.obj");
         model.createDisplayList();
@@ -99,6 +123,9 @@ public class Main {
       
         player.update(deltaTime);
         player.integrate();
+        
+        enemy.update(deltaTime);
+        enemy.integrate();
     }
 
     /** The render method is called every frame, after updating */
@@ -114,6 +141,9 @@ public class Main {
         
         // Draw level
         level.draw();
+        
+        // Draw enemy
+        enemy.draw();
         
         model.drawDebug();
         model2.draw();
@@ -139,15 +169,15 @@ public class Main {
 
         // Try to create a game window
         try {
-            DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
-            //Display.setDisplayMode(dm);
+//            DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
+            Display.setDisplayMode(dm);
             Display.create();       
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
         }
         
-        DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
+//        DisplayModes.setDisplayMode(screenWidth, screenHeight, true);
         screenWidth = Display.getWidth();
         screenHeight = Display.getHeight();
         
@@ -170,7 +200,7 @@ public class Main {
             
             // Call the render method
             render();
-            
+
             // Flip the buffer and process input
             Display.update();
             
