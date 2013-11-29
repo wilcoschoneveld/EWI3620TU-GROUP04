@@ -7,9 +7,9 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
-import patient04.states.State;
-import patient04.states.MainMenu;
-import patient04.states.Game;
+import patient04.States.State;
+import patient04.States.MainMenu;
+import patient04.States.Game;
 
 public final class Main {
     // Window dimensions
@@ -21,7 +21,7 @@ public final class Main {
     public static enum States {
         MAIN_MENU, GAME
     }
-    
+
     // State machine variables
     private static State currentState = null;
     private static State nextState = null;
@@ -68,7 +68,7 @@ public final class Main {
         } catch (LWJGLException e) {
             System.exit(0);
         }
-        
+
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));
         Logger.debug("OS version " + System.getProperty("os.version"));
@@ -102,7 +102,7 @@ public final class Main {
                 // Set current state
                 currentState = nextState;
             }
-            
+ 
             // If there is a current state
             if (currentState != null) {
                 // Update state
