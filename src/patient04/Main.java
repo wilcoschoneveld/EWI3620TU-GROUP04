@@ -68,7 +68,7 @@ public final class Main {
         } catch (LWJGLException e) {
             System.exit(0);
         }
-        
+
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));
         Logger.debug("OS version " + System.getProperty("os.version"));
@@ -102,7 +102,7 @@ public final class Main {
                 // Set current state
                 currentState = nextState;
             }
-            
+ 
             // If there is a current state
             if (currentState != null) {
                 // Update state

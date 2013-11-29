@@ -1,10 +1,9 @@
 #version 120
-// The colour that we passed in through the vertex shader.
+
 varying vec4 varyingColour;
-// The normal that we passed in through the vertex shader.
 varying vec3 varyingNormal;
-// The vertex that we passed in through the vertex shader.
 varying vec4 varyingVertex;
+varying vec3 color;
 
 varying vec3 lightPositions[10];
 
@@ -28,18 +27,16 @@ for (int i=0; i<numLights; i=i+1) {
 	lightPosition = (gl_ModelViewMatrix * vec4(lightPositions[i], 1.0)).xyz;
 	vertexPosition = (gl_ModelViewMatrix * varyingVertex).xyz;
 
-
+// Calculate distance from lightPosition to vertexPosition
 	distance = length(lightPosition - vertexPosition);
 
 // If pixel is further away from light than 10, do not use light
 	// and continue to next light.
-//	if(distance > 15) continue;
+//	if(distance > 10) continue;
 	
 
  	surfaceNormal = normalize((gl_NormalMatrix * varyingNormal).xyz);
 
-// Calculate distance from lightPosition to vertexPosition
-	
 // Calculate lightDirection
     	lightDirection = normalize(lightPosition - vertexPosition);
 
@@ -54,7 +51,7 @@ for (int i=0; i<numLights; i=i+1) {
 	} 
 // DiffuseLightIntensity is proportional to distance^2	
 	else {
-		diffuseLightIntensity = diffuseLightIntensity/(distance*distance);
+		diffuseLightIntensity = 3*diffuseLightIntensity/(distance*distance);
 	}
 
 // add the fragColor from diffuseLighting
