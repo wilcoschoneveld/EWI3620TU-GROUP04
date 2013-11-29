@@ -3,7 +3,7 @@ package patient04.enemies;
 import patient04.physics.Entity;
 import patient04.level.Level;
 
-import patient04.level.Model;
+import patient04.resources.Model;
 import patient04.math.Vector;
 
 /**
@@ -36,8 +36,6 @@ public class Enemy extends Entity {
                 new Vector(WIDTH/2, HEIGHT, WIDTH/2), "wall_hospital.png");
         model.compileBuffers();
         model.releaseRawData();
-        model.position = position;
-        model.rotation = rotation;
         
         // Initialize path enemy
         path.prevWaypoint = path.get(0);
@@ -87,6 +85,6 @@ public class Enemy extends Entity {
     
     public void draw() {
         // Color of enemy
-        model.draw();   
+        model.draw(position, rotation);
     }
 }

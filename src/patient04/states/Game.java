@@ -4,7 +4,7 @@ import patient04.level.Player;
 import patient04.utilities.Timer;
 import patient04.lighting.Renderer;
 import patient04.level.Level;
-import patient04.level.Model;
+import patient04.resources.Model;
 import patient04.math.Matrix;
 
 import org.lwjgl.input.Mouse;
@@ -12,18 +12,16 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import patient04.Main;
-import patient04.enemies.Enemy;
-import patient04.enemies.Path;
-import patient04.textures.Texture;
+import patient04.level.Body;
+import patient04.resources.Texture;
 
 public class Game implements State {
     
     private Timer timer;
     private Level level;
     private Player player;
-    private Enemy enemy;
     
-    public Model testModel;
+    public Body testBody;
     
     @Override
     public void initialize() {
@@ -61,19 +59,13 @@ public class Game implements State {
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
         
-        Path path = new Path();
-        path.testPath();
-        
-//        enemy = new Enemy(level, path);
-//        enemy.setPosition(8, 0, 6);
-//        enemy.target = player;
-        
         // Load a nurse
-        testModel = Model.loadOBJ("res/models/nurseV2.obj");
-        testModel.position.set(8, 0, 6);
-        testModel.rotation.set(0, 230, 0);
-        testModel.compileBuffers();
-        testModel.releaseRawData();
+        testBody = new Body();
+        testBody.model = Model.loadOBJ("res/models/nurseV2.obj");
+        testBody.model.compileBuffers();
+        testBody.model.releaseRawData();
+        testBody.position.set(8, 0, 6);
+        testBody.rotation.set(0, 230, 0);
     }
 
     @Override
@@ -86,10 +78,8 @@ public class Game implements State {
         
         // Update the player
         player.update(deltaTime);
-//        enemy.update(deltaTime);
         
         player.integrate();
-//        enemy.integrate();
     }
 
     @Override
@@ -106,10 +96,8 @@ public class Game implements State {
         // Draw level
         level.draw();
         
-//        enemy.draw();
-        
         // Draw the test model
-        testModel.draw();
+        testBody.draw();
         
         // Unbind the shader program
         GL20.glUseProgram(0);
@@ -121,7 +109,7 @@ public class Game implements State {
         level.cleanup();
         
         // Clean up model
-        testModel.releaseAll();
+        testBody.releaseModel();
         
         // Clean up textures
         Texture.releaseAll();

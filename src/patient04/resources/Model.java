@@ -1,4 +1,4 @@
-package patient04.level;
+package patient04.resources;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,11 +11,11 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
+import patient04.level.Level;
 import patient04.lighting.Renderer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.physics.AABB;
-import patient04.textures.Texture;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 
@@ -30,10 +30,6 @@ public class Model {
     
     private HashMap<String, Group> groups;
     private HashMap<String, Material> materials;
-    private Matrix staticModel;
-    
-    public Vector position;
-    public Vector rotation;
     
     protected AABB aabb;
     
@@ -44,9 +40,6 @@ public class Model {
         
         groups = new HashMap<>();
         materials = new HashMap<>();
-        
-        position = new Vector();
-        rotation = new Vector();
     }
     
     public void setAABB(AABB aabb) {
@@ -54,29 +47,35 @@ public class Model {
     }
     
     public void draw() {
-        Renderer.setModelMatrix(
-                staticModel != null ? staticModel : setAsStaticModel(false));
+        draw(null, null, null);
+    }
+    
+    public void draw(Vector position) {
+        draw(position, null, null);
+    }
+    
+    public void draw(Vector position, Vector rotation) {
+        draw(position, rotation, null);
+    }
+    
+    public void draw(Vector position, Vector rotation, Vector scale) {
+        Matrix matrix = new Matrix();
+
+        if(position != null && !position.isNull())
+            matrix.translate(position.x, position.y, position.z);
+
+        if(rotation != null && !rotation.isNull()) {
+            matrix.rotate(rotation.x, 1, 0, 0);
+            matrix.rotate(rotation.y, 0, 1, 0);
+            matrix.rotate(rotation.z, 0, 0, 1);
+        }
+        if(scale != null)
+            matrix.scale(scale.x, scale.y, scale.z);
+        
+        Renderer.setModelMatrix(matrix);
         
         for(Group group : groups.values())
             group.drawBuffer();
-    }
-    
-    public Matrix setAsStaticModel(boolean enable) {
-        Matrix matrix = new Matrix();
-
-        matrix.translate(position.x, position.y, position.z);
-        matrix.rotate(rotation.x, 1, 0, 0);
-        matrix.rotate(rotation.y, 0, 1, 0);
-        matrix.rotate(rotation.z, 0, 0, 1);
-        
-        if (enable) {
-            staticModel = matrix;
-            position = null;
-            rotation = null;
-        } else
-            staticModel = null;
-        
-        return matrix;
     }
     
     public void releaseRawData() {

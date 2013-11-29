@@ -4,7 +4,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
-import patient04.textures.Texture;
+import patient04.resources.Texture;
 import patient04.utilities.Inputs;
 
 /**

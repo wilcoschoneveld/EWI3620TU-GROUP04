@@ -219,6 +219,14 @@ public final class Vector {
         return rotate(angle, other.x, other.y, other.z);
     }
     
+    /** Tests if vector is equal to the null vector.
+     * 
+     * @return 
+     */
+    public boolean isNull() {
+        return x == 0 && y == 0 && z == 0;
+    }
+    
     /** Tests if vector is in the triangle described by vector points.
      * 
      * @param p1

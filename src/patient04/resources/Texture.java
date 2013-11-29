@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package patient04.textures;
+package patient04.resources;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
