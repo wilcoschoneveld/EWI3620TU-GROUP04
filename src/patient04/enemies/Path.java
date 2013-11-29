@@ -26,18 +26,12 @@ public class Path {
     public void addWaypoint(Waypoint waypoint) {
         path.add(waypoint);
         if (path.size() > 1) {
-            waypoint.addNeighbor(path.get(path.size()-2));
-            path.get(path.size()-2).addNeighbor(waypoint);
+            Waypoint.link(waypoint, path.get(path.size()-2));
         }
     }
     
     public void addSingleWaypoint(Waypoint waypoint) {
         path.add(waypoint);
-    }
-    
-    public void linkWaypoints(Waypoint i, Waypoint j) {
-        i.addNeighbor(j);
-        j.addNeighbor(i);
     }
     
     public Waypoint get(int i) {

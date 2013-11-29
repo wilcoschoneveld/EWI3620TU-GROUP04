@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL20;
 import patient04.Main;
 import patient04.enemies.Enemy;
 import patient04.enemies.Path;
-import patient04.physics.Entity;
 import patient04.textures.Texture;
 
 public class Game implements State {

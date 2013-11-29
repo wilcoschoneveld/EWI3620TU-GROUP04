@@ -21,7 +21,7 @@ public class Enemy extends Entity {
     
     // sight enemy
     public static float SIGHT_ANGLE = 45;
-    public static float SIGHT_DIST = 10;
+    public static float SIGHT_DIST = 5;
     
     public Model model;
     public Entity target;
@@ -51,6 +51,21 @@ public class Enemy extends Entity {
      */
     @Override
     public void update(float dt) {
+        // Check if player is in sight
+        Vector raytrace = target.position.copy().min(position);
+        float dist = raytrace.length();
+        
+        if (dist < 3) {
+            // Cone angle
+            float angle = rotation.y - 
+                    (float) (Math.atan2(-raytrace.z, raytrace.x) * 180/Math.PI);
+            
+            if (angle >= -45 && angle <= 45) {
+                System.out.println("gepakt!");
+            }
+        }
+        
+        
         // Check if enemy is near next waypoint
         if (path.nextWaypoint.position.copy()
                 .min(position).length() <= 0.01) {
@@ -68,19 +83,6 @@ public class Enemy extends Entity {
         rotation.set(0, (float) (Math.atan2(-dir.z, dir.x) * 180/Math.PI), 0);
         
         super.update(dt);
-        
-        // Check if player is in sight
-        Vector tmp = target.position.copy().min(position);
-        float dist = tmp.length();
-        
-        if (dist < 3) {     
-            float angle = (float) (Math.atan2(-tmp.z, tmp.x) * 180/Math.PI);
-            float diff = rotation.y - angle;
-            
-            if (diff >= -45 && diff <= 45) {
-                // gepakt
-            }
-        }
     }
     
     public void draw() {
