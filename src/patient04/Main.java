@@ -76,6 +76,8 @@ public final class Main {
         Logger.debug("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
         Logger.debug("ARB framebuffers " +
                 GLContext.getCapabilities().GL_ARB_framebuffer_object);
+        Logger.debug("EXT framebuffers " +
+                GLContext.getCapabilities().GL_EXT_framebuffer_object);
         
         // Enable vsync
         Display.setVSyncEnabled(vsyncEnabled);
