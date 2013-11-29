@@ -1,11 +1,10 @@
-package patient04.Enemies;
+package patient04.enemies;
 
-import patient04.physics.Vector;
 import patient04.physics.Entity;
 import patient04.level.Level;
 
-import org.lwjgl.opengl.GL11;
 import patient04.level.Model;
+import patient04.math.Vector;
 
 /**
  *
@@ -20,37 +19,30 @@ public class Enemy extends Entity {
     public static final float ACCEL_WALKING = 1f;
     public static final float ACCEL_AIR = 0.1f;
     
-    // Model
-    public static Model model;
-    public static Vector dir;
-    
-    public Entity target;
-    
-    // Path
-    public static Path path;
-    
     // sight enemy
-    public static float sightangle = 45;
-    public static float sightdist = 10;
+    public static float SIGHT_ANGLE = 45;
+    public static float SIGHT_DIST = 10;
     
-    /** Constructs a new player.
-     * 
-     * @param level 
-     */
+    public Model model;
+    public Entity target;
+    public Path path;
+    
     public Enemy(Level level, Path pathIn) {
         super(level, WIDTH, HEIGHT);
         path = pathIn;
         
-        model = Model.buildBox(
-                -WIDTH/2, 0, -WIDTH/2,
-                WIDTH/2, HEIGHT, WIDTH/2);
-        model.createDisplayList();
+        model = Model.buildWall(
+                new Vector(-WIDTH/2, 0, -WIDTH/2),
+                new Vector(WIDTH/2, HEIGHT, WIDTH/2), "wall_hospital.png");
+        model.compileBuffers();
+        model.releaseRawData();
+        model.position = position;
+        model.rotation = rotation;
         
         // Initialize path enemy
         path.prevWaypoint = path.get(0);
         path.nextWaypoint = path.get(1);
-        model.position = position;
-        model.rotation = rotation;
+
     }
     
     /** Updates the enemy's position
@@ -66,14 +58,9 @@ public class Enemy extends Entity {
         }
         
         // Calculate direction vector for enemy
-        dir = path.nextWaypoint.position.copy()
+        Vector dir = path.nextWaypoint.position.copy()
                 .min(position).normalize()
                 .scale(0.5f * dt).scale(1, 0, 1);
-        
-//        Vector tmp1 = target.position.copy()
-//                .min(position)
-//                .normalize()
-//                .scale(0.5f * dt).scale(1, 0, 1);
         
         acceleration.add(dir);
         
@@ -91,33 +78,13 @@ public class Enemy extends Entity {
             float diff = rotation.y - angle;
             
             if (diff >= -45 && diff <= 45) {
-                System.out.println("gepakt!");
+                // gepakt
             }
         }
-        
-        System.out.println(" ");
     }
     
     public void draw() {
-        GL11.glLineWidth(10f);
-        GL11.glColor3f(0, 1, 0);
-        GL11.glEnable(GL11.GL_LINE_WIDTH);
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex3f(model.position.x, 0.1f, model.position.z);
-        GL11.glVertex3f(model.position.x + 2f, 0.1f, model.position.z);
-        GL11.glEnd();
-        GL11.glColor3f(0, 1, 1);
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex3f(model.position.x, 0.1f, model.position.z);
-        GL11.glVertex3f(model.position.x, 0.1f, model.position.z + 2f);
-        GL11.glEnd();
-        
         // Color of enemy
-        GL11.glColor3f(1, 0, 0);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
-        GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 12.8f);
-                
         model.draw();   
     }
 }

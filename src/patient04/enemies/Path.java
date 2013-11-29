@@ -4,11 +4,10 @@
  * and open the template in the editor.
  */
 
-package patient04.Enemies;
+package patient04.enemies;
 
 import java.util.*;
-import patient04.physics.Vector;
-import patient04.Enemies.Waypoint;
+import patient04.math.Vector;
 
 /**
  *
@@ -21,7 +20,7 @@ public class Path {
     public float maxDistance = 1000;
     
     public Path() {
-        path = new ArrayList<Waypoint>();
+        path = new ArrayList<>();
     }
     
     public void addWaypoint(Waypoint waypoint) {
@@ -105,6 +104,4 @@ public class Path {
         
 //        this.linkWaypoints(n3, n0);
     }
-    
-    
 }

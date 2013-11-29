@@ -12,6 +12,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import patient04.Main;
+import patient04.enemies.Enemy;
+import patient04.enemies.Path;
+import patient04.physics.Entity;
 import patient04.textures.Texture;
 
 public class Game implements State {
@@ -19,7 +22,9 @@ public class Game implements State {
     private Timer timer;
     private Level level;
     private Player player;
-    private Model testModel;
+    private Enemy enemy;
+    
+    public Model testModel;
     
     @Override
     public void initialize() {
@@ -57,6 +62,13 @@ public class Game implements State {
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
         
+        Path path = new Path();
+        path.testPath();
+        
+        enemy = new Enemy(level, path);
+        enemy.setPosition(8, 0, 6);
+        enemy.target = player;
+        
         // Load a nurse
         testModel = Model.loadOBJ("res/models/nurseV2.obj");
         testModel.position.set(8, 0, 6);
@@ -75,7 +87,10 @@ public class Game implements State {
         
         // Update the player
         player.update(deltaTime);
+        enemy.update(deltaTime);
+        
         player.integrate();
+        enemy.integrate();
     }
 
     @Override
@@ -91,6 +106,8 @@ public class Game implements State {
         
         // Draw level
         level.draw();
+        
+        enemy.draw();
         
         // Draw the test model
         testModel.draw();

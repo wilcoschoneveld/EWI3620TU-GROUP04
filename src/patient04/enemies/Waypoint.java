@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-package patient04.Enemies;
+package patient04.enemies;
 
 import java.util.ArrayList;
-import patient04.physics.Vector;
+import patient04.math.Vector;
 
 /**
  *
