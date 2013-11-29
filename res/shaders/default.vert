@@ -11,13 +11,13 @@ attribute vec3 inNormal;
 
 varying vec3 passPosition;
 varying vec2 passTexCoord;
-varying vec3 passNormal;
+varying vec3 passNormalVec;
 
 void main() {
     // Pass values to fragment shader
     passPosition = inPosition;
+    //passNormalVec = inNormal;
     passTexCoord = inTexCoord;
-    passNormal = inNormal;
 
     // Project vertex position on screen
     gl_Position = matProj * matView * matModel * vec4(inPosition, 1);
