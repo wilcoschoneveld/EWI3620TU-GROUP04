@@ -30,7 +30,7 @@ public class Player extends Entity {
     public static final float ACCEL_WALKING = 1f;
     public static final float ACCEL_RUNNING = 2f;
     public static final float ACCEL_AIR = 0.1f;
-    public static final float ACCEL_JUMP = 10f;
+    public static final float ACCEL_JUMP = 25f;
 
     /** Constructs a new player.
      * 

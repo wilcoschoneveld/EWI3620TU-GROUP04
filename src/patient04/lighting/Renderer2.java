@@ -76,6 +76,14 @@ public class Renderer2 {
                 GL_COLOR_ATTACHMENT2
         ));
         
+        // Check framebuffer status
+        int flag = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        
+        if(flag == GL_FRAMEBUFFER_COMPLETE)
+            Logger.log("Framebuffer complete!");
+        else
+            Logger.error("Framebuffer error: " + flag);
+        
         // Unbind the FBO
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
