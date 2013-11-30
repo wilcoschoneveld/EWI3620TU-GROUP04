@@ -27,6 +27,12 @@ public class Renderer {
     public static int inNormal;
    
     public static void setup() {
+        // Enable depth testing
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        
+        // Enable backface culling
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        
         shaderProgram1 = loadShaderPairFromFiles(
                 "res/shaders/default.vert", "res/shaders/default.frag");
         

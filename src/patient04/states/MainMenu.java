@@ -71,7 +71,7 @@ public class MainMenu implements State {
 
     @Override
     public void destroy() {
-        Texture.releaseResources();
+        Texture.disposeResources();
     }
     
 }

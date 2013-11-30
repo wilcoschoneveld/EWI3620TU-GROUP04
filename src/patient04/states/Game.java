@@ -16,6 +16,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import patient04.enemies.Path;
+import patient04.utilities.Logger;
 
 public class Game implements State {
     
@@ -41,13 +42,6 @@ public class Game implements State {
         
         // Set the projection matrix
         Renderer.setProjectionMatrix(matrix);
-        
-        // Enable backface culling
-        GL11.glCullFace(GL11.GL_BACK);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        
-        // Enable depth testing
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
         
         // Create a new timer
         timer = new Timer();
@@ -127,8 +121,8 @@ public class Game implements State {
         Renderer.cleanup();
         
         // Clean up textures and models
-        Texture.releaseResources();
-        Model.releaseResources();
+        Texture.disposeResources();
+        Model.disposeResources();
         
         // Un-grab mouse
         Mouse.setGrabbed(false);

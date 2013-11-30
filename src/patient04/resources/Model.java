@@ -119,9 +119,9 @@ public class Model {
     }
     
     /** Deletes the vertex buffer objects. */
-    public void releaseBuffers() {
+    public void disposeBuffers() {
         for(Group group : groups.values())
-            group.releaseBuffer();
+            group.disposeBuffer();
     }
     
     /** Group of faces. */
@@ -224,7 +224,7 @@ public class Model {
         }
         
         /** Deletes the vertex buffer object. */
-        public void releaseBuffer() {
+        public void disposeBuffer() {
             GL15.glDeleteBuffers(bufferObject);
             bufferSize = 0;
         }
@@ -322,9 +322,9 @@ public class Model {
     }
     
     /** Deletes all loaded models from memory. */
-    public static void releaseResources() {
+    public static void disposeResources() {
         for (Model model : models.values()) {
-            model.releaseBuffers();
+            model.disposeBuffers();
         }
         
         models.clear();

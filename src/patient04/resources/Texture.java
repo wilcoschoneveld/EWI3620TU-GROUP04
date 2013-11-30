@@ -24,22 +24,52 @@ public class Texture {
     private static final HashMap<String, Texture> textures = new HashMap<>();
     private static Texture lastBind = null;
     
-    private int textureID;
+    private final int textureID;
     
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     
     public int getWidth() { return width; }
     public int getHeight() { return height; }
+    public int getID() { return textureID; }
     
+    public Texture(int width, int height, int format, ByteBuffer buffer) {
+        // Store texture dimensions
+        this.width = width;
+        this.height = height;
+        
+        // Generate a new texture
+        textureID = GL11.glGenTextures();
+        
+        // Bind texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        
+        // Set texture filters  
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
+                GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
+                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        
+        // Copy buffer into texture
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format, width, height, 0,
+                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        
+        // Unbind texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+    }
+        
     public void bind() {
         if(lastBind != this)
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         lastBind = this;
     }
-
+    
     public static void unbind() {
         lastBind = null;
+    }
+    
+    public void dispose() {
+        GL11.glDeleteTextures(textureID);
     }
     
     public static Texture getResource(String textureFile) {
@@ -60,10 +90,10 @@ public class Texture {
         return texture;
     }
     
-    public static void releaseResources() {
+    public static void disposeResources() {
         // Delete all Textures from video memory
         for(Texture texture : textures.values())
-            GL11.glDeleteTextures(texture.textureID);
+            texture.dispose();
         
         // Clear the loaded textures list
         textures.clear();
@@ -73,8 +103,8 @@ public class Texture {
     }
 
     private static Texture loadPNGFromFile(String texturePath) {
-        // Create a new Texture object
-        Texture texture = new Texture();
+        // Define texture dimensions
+        int width, height;
         
         // ByteBuffer to hold PNG data
         ByteBuffer buffer;
@@ -85,36 +115,21 @@ public class Texture {
             PNGDecoder decoder = new PNGDecoder(in);
             
             // Set the width and height from PNG
-            texture.width = decoder.getWidth();
-            texture.height = decoder.getHeight();
+            width = decoder.getWidth();
+            height = decoder.getHeight();
             
             // Allocate a ByteBuffer
-            buffer = ByteBuffer.allocateDirect(
-                    4 * texture.width * texture.height);
+            buffer = ByteBuffer.allocateDirect(4 * width * height);
             
             // Decode the PNG into the ByteBuffer
-            decoder.decode(buffer, 4 * texture.width, PNGDecoder.RGBA);
+            decoder.decode(buffer, 4 * width, PNGDecoder.RGBA);
             
             // Flip the buffer
             buffer.flip();
         } catch(IOException e) { e.printStackTrace(); return null; }
         
-        // Generate a new Texture ID
-        texture.textureID = GL11.glGenTextures();
-        
-        // Bind texture
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.textureID);
-        
-        // Set texture filters  
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri  (GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        
-        // Copy buffer into texture
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D,
-                0, GL11.GL_RGBA, texture.width, texture.height, 0,
-                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        // Create a new texture from the buffer
+        Texture texture = new Texture(width, height, GL11.GL_RGBA8, buffer);
         
         // If error, print statement
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {

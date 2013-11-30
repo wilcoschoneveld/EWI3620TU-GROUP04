@@ -31,5 +31,5 @@ void main() {
     }
 
     // Set fragment color
-    gl_FragColor = outColor;
+    gl_FragData[0] = outColor;
 }
