@@ -16,28 +16,29 @@ import patient04.level.Level;
 import patient04.lighting.Renderer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
-import patient04.physics.AABB;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 
 /**
  *
- * @author Wilco
+ * @author Wilco Schoneveld
  */
 public class Model {
+    // Static resource managing variables
     private static final String defaultModelLocation = "res/models/";
     private static final HashMap<String, Model> models = new HashMap<>();
     private static final HashSet<String> mtlfiles = new HashSet<>();
     
+    // Raw data
     private ArrayList<Vector> vertices;
     private ArrayList<Vector> normals;
     private ArrayList<UV> texcoords;
     
+    // Groups and materials
     private HashMap<String, Group> groups;
     private HashMap<String, Material> materials;
     
-    protected AABB aabb;
-    
+    /** Creates a new empty Model. */
     public Model() {
         vertices = new ArrayList<>();
         texcoords = new ArrayList<>();
@@ -47,22 +48,35 @@ public class Model {
         materials = new HashMap<>();
     }
     
-    public void setAABB(AABB aabb) {
-        this.aabb = aabb;
-    }
-    
+    /** Draws the model at the origin. */
     public void draw() {
         draw(null, null, null);
     }
     
+    /** Draws the model at a given position.
+     * 
+     * @param position 
+     */
     public void draw(Vector position) {
         draw(position, null, null);
     }
     
+    /** Draws the model at a given position with a given rotation.
+     * 
+     * @param position
+     * @param rotation 
+     */
     public void draw(Vector position, Vector rotation) {
         draw(position, rotation, null);
     }
     
+    /** Draws the model at a given position, with a given rotation and a given
+     * scale.
+     * 
+     * @param position
+     * @param rotation
+     * @param scale 
+     */
     public void draw(Vector position, Vector rotation, Vector scale) {
         Matrix matrix = new Matrix();
 
@@ -74,6 +88,7 @@ public class Model {
             matrix.rotate(rotation.y, 0, 1, 0);
             matrix.rotate(rotation.z, 0, 0, 1);
         }
+        
         if(scale != null)
             matrix.scale(scale.x, scale.y, scale.z);
         
@@ -83,11 +98,14 @@ public class Model {
             group.drawBuffer();
     }
     
+    /** Compiles the raw vertex data into vertex buffer objects. */
     public void compileBuffers() {
         for(Group group : groups.values())
             group.compileBuffer();
     }
     
+    /** Releases the raw vertex data. If no other object has a reference
+     * to this data, the memory can be reclaimed by the garbage collector. */
     public void releaseRawData() {
         // Clear raw data collections
         vertices = null;
@@ -95,16 +113,18 @@ public class Model {
         normals = null;
         materials = null;
         
-        // We can not fully remove groups
+        // Remove group face information
         for(Group group : groups.values())
             group.faces = null;
     }
     
+    /** Deletes the vertex buffer objects. */
     public void releaseBuffers() {
         for(Group group : groups.values())
             group.releaseBuffer();
     }
     
+    /** Group of faces. */
     private class Group {
         ArrayList<Face> faces;
         Material material;
@@ -112,27 +132,32 @@ public class Model {
         int bufferSize = 0;
         int bufferObject;
         
+        /** Create a new empty group. */
         public Group() {
             this.faces = new ArrayList<>();
         }
         
+        /** Draws the faces in the group. */
         public void drawBuffer() {
+            // If the buffer has not been created, do so first
             if(bufferSize == 0) {
                 Logger.error("Not compiled before drawing: " + toString());
                 compileBuffer();
             }
             
+            // Set the diffuse color
             GL20.glUniform3(Renderer.locColorDiffuse, material.colorDiffuse);
             
+            // Bind the material texture
             if(material.texture != null) {
                 GL20.glUniform1i(Renderer.useTexture, 1);
                 material.texture.bind();
             }
             
+            // Draw the vertex buffer object
             GL20.glEnableVertexAttribArray(Renderer.inPosition);
             GL20.glEnableVertexAttribArray(Renderer.inTexCoord);
             GL20.glEnableVertexAttribArray(Renderer.inNormal);
-            
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);
 
             GL20.glVertexAttribPointer(Renderer.inPosition,
@@ -145,14 +170,15 @@ public class Model {
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, bufferSize);
             
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-            
             GL20.glDisableVertexAttribArray(Renderer.inPosition);
             GL20.glDisableVertexAttribArray(Renderer.inTexCoord);
             GL20.glDisableVertexAttribArray(Renderer.inNormal);
             
+            // Turn textures off
             GL20.glUniform1i(Renderer.useTexture, 0);
         }
         
+        /** Compiles the raw vertex data into a vertex buffer object. */
         public void compileBuffer() {
             // Number of Faces * Vertices * (Pos + Tex + Norm)
             bufferSize = faces.size() * 3;
@@ -197,12 +223,19 @@ public class Model {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         }
         
+        /** Deletes the vertex buffer object. */
         public void releaseBuffer() {
             GL15.glDeleteBuffers(bufferObject);
             bufferSize = 0;
         }
     }
     
+    /** Requests a group with a given name. This will return the existing group
+     * or a new group with the given name.
+     * 
+     * @param groupName
+     * @return 
+     */
     private Group requestGroup(String groupName) {
         // Check if the group exists
         Group group = groups.get(groupName);
@@ -217,29 +250,26 @@ public class Model {
         return group;
     }
     
+    /** Triangle of vertices, texture coordinates and normals. */
     private static class Face {
         int[] vertices, texcoords, normals;
         
+        /** Creates a new Face from integer arrays. */
         public Face(int[] vertices, int[] texcoords, int[] normals) {
             this.vertices = vertices;
             this.texcoords = texcoords;
             this.normals = normals;
         }
         
+        /** Creates a new Face from interleaved integer array. */
         public Face(int... vertexdata) {
             this(Arrays.copyOfRange(vertexdata, 0, 3),
                  Arrays.copyOfRange(vertexdata, 3, 6),
                  Arrays.copyOfRange(vertexdata, 6, 9));
         }
-        
-        public Face copy() {
-            return new Face(
-                    vertices.clone(),
-                    texcoords.clone(),
-                    normals.clone());
-        }
     }    
     
+    /** Look of a model described by a Texture and colors. */
     private static class Material {
         Texture texture = null;
         FloatBuffer colorAmbient = Buffers.WHITE;
@@ -249,6 +279,7 @@ public class Model {
         float opacity = 1;
     }
     
+    /** Texture coordinates. */
     private static class UV {
         float u, v;
         
@@ -258,6 +289,13 @@ public class Model {
         }
     }
     
+    /** Obtains a reference to a model loaded from given file. The model will
+     * only be loaded once, and automatically compiled to a VBO. Subsequent
+     * calls to this method will return the same instance of the model.
+     * 
+     * @param modelFile OBJ file.
+     * @return 
+     */
     public static Model getResource(String modelFile) {
         // Return null if no model given
         if(modelFile == null)
@@ -283,9 +321,9 @@ public class Model {
         return model;
     }
     
+    /** Deletes all loaded models from memory. */
     public static void releaseResources() {
         for (Model model : models.values()) {
-            model.releaseRawData();
             model.releaseBuffers();
         }
         
@@ -293,6 +331,11 @@ public class Model {
         mtlfiles.clear();
     }
     
+    /** Loads an OBJ model from a given file.
+     * 
+     * @param f OBJ file.
+     * @return 
+     */
     private static Model loadOBJFromFile(String f) {        
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             // Create a new Model
@@ -397,6 +440,10 @@ public class Model {
         }
     }
     
+    /** Loads a material from a given file.
+     * 
+     * @param f MTL file.
+     */
     private void loadMTL(String f) {
         // If MTL was already loaded once
         if(mtlfiles.contains(f))
@@ -480,7 +527,7 @@ public class Model {
         }
     }
     
-    /** Builds a box model from given coordinates
+    /** Builds a wall model from given coordinates
      * 
      * @param min Vector containing minimum coordinates
      * @param max Vector containing maximum coordinates
@@ -540,7 +587,14 @@ public class Model {
         // Return the new model        
         return model;
     }
-    
+
+    /** Builds a floor model from given coordinates
+     * 
+     * @param min Vector containing minimum coordinates
+     * @param max Vector containing maximum coordinates
+     * @param textureFile
+     * @return generated model
+     */ 
     public static Model buildFloor(Vector min, Vector max, String textureFile) {
         Model model = new Model();
         
