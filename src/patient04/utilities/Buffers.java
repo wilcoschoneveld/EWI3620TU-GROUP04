@@ -2,6 +2,7 @@ package patient04.utilities;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -22,6 +23,11 @@ public class Buffers {
     
     public static FloatBuffer createFloatBuffer(float... values) {
         return (FloatBuffer) BufferUtils.createFloatBuffer(values.length).
+                                put(values).flip();
+    }
+    
+    public static IntBuffer createIntBuffer(int... values) {
+        return (IntBuffer) BufferUtils.createIntBuffer(values.length).
                                 put(values).flip();
     }
     

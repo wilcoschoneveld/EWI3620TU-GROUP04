@@ -53,17 +53,17 @@ public class MainMenu implements State {
         GL11.glBegin(GL11.GL_QUADS);
         
         GL11.glTexCoord2f(0, 0);
-        GL11.glVertex2f(Display.getWidth() / 2 - logo.getWidth() / 2,
-                        Display.getHeight() / 2 + logo.getHeight() / 2);
+        GL11.glVertex2f(Display.getWidth() / 2 - logo.width / 2,
+                        Display.getHeight() / 2 + logo.height / 2);
         GL11.glTexCoord2f(0, 1);
-        GL11.glVertex2f(Display.getWidth() / 2 - logo.getWidth() / 2,
-                        Display.getHeight() / 2 - logo.getHeight() / 2);
+        GL11.glVertex2f(Display.getWidth() / 2 - logo.width / 2,
+                        Display.getHeight() / 2 - logo.height / 2);
         GL11.glTexCoord2f(1, 1);
-        GL11.glVertex2f(Display.getWidth() / 2 + logo.getWidth() / 2,
-                        Display.getHeight() / 2 - logo.getHeight() / 2);
+        GL11.glVertex2f(Display.getWidth() / 2 + logo.width / 2,
+                        Display.getHeight() / 2 - logo.height / 2);
         GL11.glTexCoord2f(1, 0);
-        GL11.glVertex2f(Display.getWidth() / 2 + logo.getWidth() / 2,
-                        Display.getHeight() / 2 + logo.getHeight() / 2);
+        GL11.glVertex2f(Display.getWidth() / 2 + logo.width / 2,
+                        Display.getHeight() / 2 + logo.height / 2);
         GL11.glEnd();
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);

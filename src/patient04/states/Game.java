@@ -16,9 +16,10 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import patient04.enemies.Path;
-import patient04.utilities.Logger;
+import patient04.lighting.Renderer2;
 
 public class Game implements State {
+    private Renderer2 renderer;
     
     private Timer timer;
     private Level level;
@@ -32,6 +33,9 @@ public class Game implements State {
     public void initialize() {
         // Grab mouse
         Mouse.setGrabbed(true);
+        
+        // Create a new Renderer
+        renderer = new Renderer2();
         
         // Set up the renderer
         Renderer.setup();
@@ -123,6 +127,9 @@ public class Game implements State {
         // Clean up textures and models
         Texture.disposeResources();
         Model.disposeResources();
+        
+        // Delete renderer
+        renderer.dispose();
         
         // Un-grab mouse
         Mouse.setGrabbed(false);

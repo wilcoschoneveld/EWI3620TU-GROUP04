@@ -24,14 +24,9 @@ public class Texture {
     private static final HashMap<String, Texture> textures = new HashMap<>();
     private static Texture lastBind = null;
     
-    private final int textureID;
-    
-    private final int width;
-    private final int height;
-    
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    public int getID() { return textureID; }
+    public final int id;
+    public final int width;
+    public final int height;
     
     public Texture(int width, int height, int format, ByteBuffer buffer) {
         // Store texture dimensions
@@ -39,10 +34,10 @@ public class Texture {
         this.height = height;
         
         // Generate a new texture
-        textureID = GL11.glGenTextures();
+        id = GL11.glGenTextures();
         
         // Bind texture
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         
         // Set texture filters  
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
@@ -60,7 +55,7 @@ public class Texture {
         
     public void bind() {
         if(lastBind != this)
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         lastBind = this;
     }
     
@@ -69,7 +64,7 @@ public class Texture {
     }
     
     public void dispose() {
-        GL11.glDeleteTextures(textureID);
+        GL11.glDeleteTextures(id);
     }
     
     public static Texture getResource(String textureFile) {
