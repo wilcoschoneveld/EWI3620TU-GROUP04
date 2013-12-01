@@ -1,4 +1,4 @@
-package patient04.states;
+package patient04.States;
 
 import patient04.level.Player;
 import patient04.utilities.Timer;
@@ -6,8 +6,10 @@ import patient04.lighting.Renderer;
 import patient04.level.Level;
 import patient04.level.Model;
 import patient04.math.Matrix;
+import patient04.Sound.Sound;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -20,6 +22,8 @@ public class Game implements State {
     private Level level;
     private Player player;
     private Model testModel;
+    private Sound gameSound;
+    private final int diffSounds = 2;
     
     @Override
     public void initialize() {
@@ -63,6 +67,13 @@ public class Game implements State {
         testModel.rotation.set(0, 230, 0);
         testModel.compileBuffers();
         testModel.releaseRawData();
+        
+        gameSound = new Sound(diffSounds);
+        gameSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+        gameSound.addSound("footsteps_slow.wav", 1.0f, 0.3f, AL10.AL_TRUE);
+        
+        gameSound.playSound(0);
+        gameSound.playSound(1);
     }
 
     @Override
@@ -106,6 +117,9 @@ public class Game implements State {
         
         // Clean up model
         testModel.releaseAll();
+        
+        // Clean up Sound
+        gameSound.destroy();
         
         // Clean up textures
         Texture.releaseAll();
