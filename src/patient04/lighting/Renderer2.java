@@ -26,7 +26,8 @@ import patient04.utilities.Logger;
  * - Quad precompile and better initialize?
  * - Diffuse color to shader for models
  * - Remove position,rotation from Model and move to Entity\Solid
- * - Matrix inverse() to invert().
+ * - Matrix inverse() to invert()
+ * - Rebuild enemy
  * 
  * @author Wilco
  */
@@ -54,6 +55,7 @@ public class Renderer2 {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
         
+        // Obtain display width and height for FBO
         int width = Display.getWidth(), height = Display.getHeight();
         
         // Create new attachable texture buffers
@@ -110,12 +112,15 @@ public class Renderer2 {
         geometryShader = loadShaderPairFromFiles(
                 "res/shaders/geometry.vert", "res/shaders/geometry.frag");
         
+        // Bind the geometry shader
         GL20.glUseProgram(geometryShader);
         
+        // Bind attribute locations
         GL20.glBindAttribLocation(geometryShader, 0, "aPosition");
         GL20.glBindAttribLocation(geometryShader, 1, "aTexCoord");
         GL20.glBindAttribLocation(geometryShader, 2, "aNormal");
         
+        // Obtain uniform variable locations
         gLocP = GL20.glGetUniformLocation(geometryShader, "uProjection");
         gLocMV = GL20.glGetUniformLocation(geometryShader, "uModelView");
         gLocN = GL20.glGetUniformLocation(geometryShader, "uNormal");
@@ -124,25 +129,28 @@ public class Renderer2 {
         lightingShader = loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/lighting.frag");
         
+        // Bind the lighting shader
         GL20.glUseProgram(lightingShader);
 
+        // Bind attribute locations
         GL20.glBindAttribLocation(lightingShader, 0, "aPosition");
         GL20.glBindAttribLocation(lightingShader, 1, "aTexCoord");
         GL20.glBindAttribLocation(lightingShader, 2, "aNormal");
         
+        // Obtain uniform samplers
         lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");
         lTexN = GL20.glGetUniformLocation(lightingShader, "uTexNormal");
         lTexD = GL20.glGetUniformLocation(lightingShader, "uTexDiffuse");
         
+        // Set samplers to correct texture units
         GL20.glUniform1i(lTexP, 0);
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
         
-        System.out.println("P: " + lTexP + " / N: " + lTexN + " / D: " + lTexD);
+        // Unbind shader program
+        GL20.glUseProgram(0);
         
         checkGLerror();
-        
-        GL20.glUseProgram(0);
     }
     
     public void dispose() {
@@ -208,6 +216,7 @@ public class Renderer2 {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
         
+        // Draw fullscreen quad
         screenQuad.drawGroups();
         
         // What about GL_BLEND?
