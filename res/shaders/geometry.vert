@@ -17,7 +17,7 @@ void main() {
 
     vPosition = tmpPos.xyz;
     vTexCoord = aTexCoord;
-    vNormal = (uNormal * vec4(vNormal, 1)).xyz;
+    vNormal = (uNormal * vec4(aNormal, 1)).xyz;
 
     gl_Position = uProjection * tmpPos;
 }

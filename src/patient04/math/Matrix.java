@@ -152,7 +152,7 @@ public class Matrix {
      * 
      * @return 
      */
-    public Matrix inverse() {        
+    public Matrix invert() {        
         // Calculate the determinant
         float determinant = determinant();
         

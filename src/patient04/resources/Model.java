@@ -118,6 +118,11 @@ public class Model {
             group.drawBuffer();
     }
     
+    public void drawGroups() {
+        for(Group group : groups.values())
+            group.drawBuffer();
+    }
+    
     /** Compiles the raw vertex data into vertex buffer objects. */
     public void compileBuffers() {
         for(Group group : groups.values())
@@ -166,33 +171,33 @@ public class Model {
             }
             
             // Set the diffuse color
-            GL20.glUniform3(Renderer.locColorDiffuse, material.colorDiffuse);
+            if(material != null) {
+                // Set the diffuse color
+                GL20.glUniform3(Renderer.locColorDiffuse, material.colorDiffuse);
             
-            // Bind the material texture
-            if(material.texture != null) {
-                GL20.glUniform1i(Renderer.useTexture, 1);
-                material.texture.bind();
+                // Bind the material texture
+                if(material.texture != null) {
+                    GL20.glUniform1i(Renderer.useTexture, 1);
+                    material.texture.bind();
+                }
             }
             
             // Draw the vertex buffer object
-            GL20.glEnableVertexAttribArray(Renderer.inPosition);
-            GL20.glEnableVertexAttribArray(Renderer.inTexCoord);
-            GL20.glEnableVertexAttribArray(Renderer.inNormal);
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
+            GL20.glEnableVertexAttribArray(2);
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);
 
-            GL20.glVertexAttribPointer(Renderer.inPosition,
-                    3, GL11.GL_FLOAT, false, 8*4, 0);
-            GL20.glVertexAttribPointer(Renderer.inTexCoord,
-                    2, GL11.GL_FLOAT, false, 8*4, 3*4);
-            GL20.glVertexAttribPointer(Renderer.inNormal,
-                    3, GL11.GL_FLOAT, false, 8*4, 5*4);
+            GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 8*4, 0);
+            GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 8*4, 3*4);
+            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 8*4, 5*4);
             
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, bufferSize);
             
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-            GL20.glDisableVertexAttribArray(Renderer.inPosition);
-            GL20.glDisableVertexAttribArray(Renderer.inTexCoord);
-            GL20.glDisableVertexAttribArray(Renderer.inNormal);
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL20.glDisableVertexAttribArray(2);
             
             // Turn textures off
             GL20.glUniform1i(Renderer.useTexture, 0);
@@ -654,6 +659,37 @@ public class Model {
         group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
         
         // Return the new model        
+        return model;
+    }
+    
+    public static Model buildQuad() {
+        Model model = new Model();
+        
+        model.vertices.addAll(Arrays.asList(new Vector[] {
+            new Vector(-1, -1, 0),
+            new Vector(1, -1, 0),
+            new Vector(1, 1, 0),
+            new Vector(-1, 1, 0)            
+        }));
+        
+        model.texcoords.addAll(Arrays.asList(new UV[] {
+            new UV(0, 0),
+            new UV(1, 0),
+            new UV(1, 1),
+            new UV(0, 1)
+        }));
+        
+        model.normals.addAll(Arrays.asList(new Vector[] {
+            new Vector(0, 0, 1)
+        }));
+        
+        Group group = model.requestGroup("default");
+        
+        group.faces.addAll(Arrays.asList(new Face[] {
+            new Face(0, 1, 2, 0, 1, 2, 0, 0, 0),
+            new Face(2, 3, 0, 2, 3, 0, 0, 0, 0)
+        }));
+        
         return model;
     }
 }

@@ -14,13 +14,20 @@ import static org.lwjgl.opengl.ARBFramebufferObject.*;
 import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
 import org.lwjgl.opengl.GL13;
 import patient04.math.Matrix;
+import patient04.resources.Model;
 
 import patient04.resources.Texture;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 
 /**
- *
+ * TODO List:
+ * - Remove texnormal from lighting.frag?
+ * - Quad precompile and better initialize?
+ * - Diffuse color to shader for models
+ * - Remove position,rotation from Model and move to Entity\Solid
+ * - Matrix inverse() to invert().
+ * 
  * @author Wilco
  */
 public class Renderer2 {
@@ -38,6 +45,9 @@ public class Renderer2 {
     
     // Matrices
     public Matrix projection, view, model;
+    
+    // Full screen quad
+    public Model screenQuad = Model.buildQuad();
     
     public Renderer2() {
         // Enable depth testing and backface culling
@@ -100,6 +110,8 @@ public class Renderer2 {
         geometryShader = loadShaderPairFromFiles(
                 "res/shaders/geometry.vert", "res/shaders/geometry.frag");
         
+        GL20.glUseProgram(geometryShader);
+        
         GL20.glBindAttribLocation(geometryShader, 0, "aPosition");
         GL20.glBindAttribLocation(geometryShader, 1, "aTexCoord");
         GL20.glBindAttribLocation(geometryShader, 2, "aNormal");
@@ -111,6 +123,8 @@ public class Renderer2 {
         // Load the lighting shader
         lightingShader = loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/lighting.frag");
+        
+        GL20.glUseProgram(lightingShader);
 
         GL20.glBindAttribLocation(lightingShader, 0, "aPosition");
         GL20.glBindAttribLocation(lightingShader, 1, "aTexCoord");
@@ -120,7 +134,15 @@ public class Renderer2 {
         lTexN = GL20.glGetUniformLocation(lightingShader, "uTexNormal");
         lTexD = GL20.glGetUniformLocation(lightingShader, "uTexDiffuse");
         
+        GL20.glUniform1i(lTexP, 0);
+        GL20.glUniform1i(lTexN, 1);
+        GL20.glUniform1i(lTexD, 2);
+        
+        System.out.println("P: " + lTexP + " / N: " + lTexN + " / D: " + lTexD);
+        
         checkGLerror();
+        
+        GL20.glUseProgram(0);
     }
     
     public void dispose() {
@@ -143,6 +165,7 @@ public class Renderer2 {
         glBindFramebuffer(GL_FRAMEBUFFER, GBuffer);
         
         // Clear the buffer
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         
         // Bind the geometry shader
@@ -160,7 +183,7 @@ public class Renderer2 {
         GL20.glUniformMatrix4(gLocMV, false, mv.toBuffer());
         
         // Update normal matrix
-        GL20.glUniformMatrix4(gLocN, true, mv.inverse().toBuffer());
+        GL20.glUniformMatrix4(gLocN, true, mv.invert().toBuffer());
     }
     
     public void lightingPass() {
@@ -168,6 +191,7 @@ public class Renderer2 {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
         // Clear the buffer
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
         // Bind the lighting shader
@@ -177,13 +201,14 @@ public class Renderer2 {
         Texture.unbind();
         
         // Bind the GBuffer textures to TEXTURE0,1,etc..
-        GL13.glActiveTexture(lTexP);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
-        GL13.glActiveTexture(lTexN);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
-        GL13.glActiveTexture(lTexD);
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseBuffer.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
+        
+        screenQuad.drawGroups();
         
         // What about GL_BLEND?
         // Clear DEPTH_BIT for every light?

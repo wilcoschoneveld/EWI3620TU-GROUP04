@@ -95,8 +95,8 @@ public class Game implements State {
         enemy.integrate();
     }
 
-    @Override
-    public void render() {
+    //@Override
+    public void render2() {
         // Clear the canvas
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         
@@ -119,8 +119,8 @@ public class Game implements State {
         GL20.glUseProgram(0);
     }
     
-    //@Override
-    public void render2() {
+    @Override
+    public void render() {
         // Set view matrix
         renderer.view = player.getFirstPersonView();
         
@@ -130,6 +130,8 @@ public class Game implements State {
         // Draw level geometry
         level.drawModels(renderer);
         
+        testBody.draw2(renderer);
+        
         // Change to lighting pass
         renderer.lightingPass();
         
@@ -137,7 +139,7 @@ public class Game implements State {
         //level.drawLights();
         
         // Change to normal pass
-        renderer.guiPass();
+        //renderer.guiPass();
     }
     
     @Override

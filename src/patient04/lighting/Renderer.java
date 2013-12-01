@@ -36,9 +36,9 @@ public class Renderer {
         
         useTexture = GL20.glGetUniformLocation(shaderProgram1, "useTexture");
         
-        inPosition = GL20.glGetAttribLocation(shaderProgram1, "aPosition");
-        inTexCoord = GL20.glGetAttribLocation(shaderProgram1, "aTexCoord");
-        inNormal = GL20.glGetAttribLocation(shaderProgram1, "aNormal");
+        GL20.glBindAttribLocation(shaderProgram1, 0, "aPosition");
+        GL20.glBindAttribLocation(shaderProgram1, 1, "aTexCoord");
+        GL20.glBindAttribLocation(shaderProgram1, 2, "aNormal");
     }
     
     public static void cleanup() {
@@ -61,6 +61,6 @@ public class Renderer {
     public static void setModelMatrix(Matrix matrix) {
         GL20.glUniformMatrix4(locMatrixModel, false, matrix.toBuffer());
         GL20.glUniformMatrix4(locMatrixNormal, true,
-                matrix.copy().inverse().toBuffer());
+                matrix.copy().invert().toBuffer());
     }
 }
