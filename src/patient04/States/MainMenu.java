@@ -1,4 +1,4 @@
-package patient04.states;
+package patient04.States;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL10;
@@ -32,7 +32,7 @@ public class MainMenu implements State {
         logo = Texture.loadResource("main_logo.png");
         mainSound = new Sound(1);
         mainSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-        mainSound.playTune(0);
+        mainSound.playSound(0);
     }
 
     @Override

@@ -56,6 +56,10 @@ public class Texture {
     }
     
     public static Texture loadResource(String textureFile) {
+        // Return null if no texture given
+        if(textureFile == null)
+            return null;
+        
         // Check if texture is already loaded
         Texture texture = textures.get(textureFile);
         

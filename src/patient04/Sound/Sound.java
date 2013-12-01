@@ -29,43 +29,46 @@ public class Sound {
 
     private WaveData sound;
     
-    private int index = 0;
+    private int index;
     
    public Sound(int num){
-       NUM_BUFFERS = num;
+       
+              // initialize OpenAl and clear the error bit.
+       try{
+          // AL.create(null, 15, 22050, true);
+           AL.create();
+       } catch (LWJGLException e){
+           e.printStackTrace();
+           return;
+       }
+       AL10.alGetError();
        
        listenerPos.flip();
        listenerVel.flip();
        listenerOri.flip();
        
+       setListenerValues();
+       
+       NUM_BUFFERS = num;
+       index = 0;
+
        buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
        source = BufferUtils.createIntBuffer(NUM_BUFFERS);
        
        sourcePos = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.0f , 0.0f, 0.0f});
        sourceVel = BufferUtils.createFloatBuffer(3*NUM_BUFFERS).put(new float[] {0.4f, 0.4f, 0.4f});
-       
-       execute();
+              
+       AL10.alGenBuffers(buffer);
+       AL10.alGenSources(source);
    }
    
-   public int addSound(String soundName, float pitch, float gain , int looping){        // looping = AL10.AL_TRUE/AL10.AL_FALSE
-              System.out.println("0");
-
-       AL10.alGenBuffers(buffer);
-       
-       if(AL10.alGetError() != AL10.AL_NO_ERROR){
-            return AL10.AL_FALSE;
-       }
-       
+   public int addSound(String soundName, float pitch, float gain , int looping){        // looping = AL10.AL_TRUE/AL10.AL_FALSE       
        sound = WaveData.create(soundName);
-       System.out.println("1");
-       AL10.alBufferData(buffer.get(index), sound.format, sound.data, sound.samplerate);
-       sound.dispose();
        
-       AL10.alGenSources(source);
-               
-       if (AL10.alGetError() != AL10.AL_NO_ERROR){
-           return AL10.AL_FALSE;
-       }
+       //System.out.println(index + "index");
+       AL10.alBufferData(buffer.get(index), sound.format, sound.data, sound.samplerate);
+       
+       sound.dispose();
        
        // sound properties
        AL10.alSourcei(source.get(index), AL10.AL_BUFFER,    buffer.get(index));
@@ -75,72 +78,15 @@ public class Sound {
        AL10.alSource (source.get(index), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(index));
        AL10.alSource (source.get(index), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(index));
        
+       index++;       
        // Do another error check and return.
        if(AL10.alGetError() == AL10.AL_NO_ERROR)
             return AL10.AL_TRUE;
        
-       index++;
        return AL10.AL_FALSE;
        
    }
    
-//   public int loadALData(){
-//       AL10.alGenBuffers(buffer);
-//       
-//       if(AL10.alGetError() != AL10.AL_NO_ERROR){
-//            return AL10.AL_FALSE;
-//       }
-//       
-//       mainTheme = WaveData.create("test.wav");             // Stereo
-//       // Put wav file in buffer
-//       AL10.alBufferData(buffer.get(0), mainTheme.format, mainTheme.data, mainTheme.samplerate);
-//       // dispose the waveFile after the wav data was put in the buffer
-//       mainTheme.dispose();
-//       
-//       AL10.alGenSources(source);
-//               
-//       if (AL10.alGetError() != AL10.AL_NO_ERROR){
-//           return AL10.AL_FALSE;
-//       }
-//       // main theme
-//       AL10.alSourcei(source.get(MAIN), AL10.AL_BUFFER,    buffer.get(MAIN));
-//       AL10.alSourcei(source.get(MAIN), AL10.AL_LOOPING,   AL10.AL_TRUE);
-//       AL10.alSourcef(source.get(MAIN), AL10.AL_PITCH,     1.0f);
-//       AL10.alSourcef(source.get(MAIN), AL10.AL_GAIN,      0.2f);
-//       AL10.alSource (source.get(MAIN), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(MAIN));
-//       AL10.alSource (source.get(MAIN), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(MAIN));
-//       
-//       // walking sound
-//       AL10.alSourcei(source.get(WALK), AL10.AL_BUFFER,    buffer.get(WALK));
-//       AL10.alSourcei(source.get(WALK), AL10.AL_LOOPING,   AL10.AL_FALSE);
-//       AL10.alSourcef(source.get(WALK), AL10.AL_PITCH,     1.0f);
-//       AL10.alSourcef(source.get(WALK), AL10.AL_GAIN,      0.2f);
-//       AL10.alSource (source.get(WALK), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3*WALK));
-//       AL10.alSource (source.get(WALK), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3*WALK));
-//       
-//       // hitGround sound
-//       AL10.alSourcei(source.get(GROUND), AL10.AL_BUFFER,    buffer.get(GROUND));
-//       AL10.alSourcei(source.get(GROUND), AL10.AL_LOOPING,   AL10.AL_FALSE);
-//       AL10.alSourcef(source.get(GROUND), AL10.AL_PITCH,     1.0f);
-//       AL10.alSourcef(source.get(GROUND), AL10.AL_GAIN,      0.3f);
-//       AL10.alSource (source.get(GROUND), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3*GROUND));
-//       AL10.alSource (source.get(GROUND), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3*GROUND));
-//       
-//       // Test 3D sound
-//       AL10.alSourcei(source.get(SOUND3D), AL10.AL_BUFFER,    buffer.get(SOUND3D));
-//       AL10.alSourcei(source.get(SOUND3D), AL10.AL_LOOPING,   AL10.AL_TRUE);
-//       AL10.alSourcef(source.get(SOUND3D), AL10.AL_PITCH,     0.7f);
-//       AL10.alSourcef(source.get(SOUND3D), AL10.AL_GAIN,      1.0f);
-//       AL10.alSource (source.get(SOUND3D), AL10.AL_POSITION,  (FloatBuffer) sourcePos.position(3*SOUND3D));
-//       AL10.alSource (source.get(SOUND3D), AL10.AL_VELOCITY,  (FloatBuffer) sourceVel.position(3*SOUND3D));
-//       
-//        // Do another error check and return.
-//       if(AL10.alGetError() == AL10.AL_NO_ERROR)
-//            return AL10.AL_TRUE;
-//
-//       return AL10.AL_FALSE;   
-//
-//   }
    public void setListenerOri( float rotationy){
        // convert the y-rotation to a vector in the direction you are looking at
         float x = (float) -Math.sin(Math.toRadians(rotationy));
@@ -177,21 +123,7 @@ public class Sound {
        AL.destroy();
    }
    
-   public void execute(){
-       // initialize OpenAl and clear the error bit.
-       try{
-          // AL.create(null, 15, 22050, true);
-           AL.create();
-       } catch (LWJGLException e){
-           e.printStackTrace();
-           return;
-       }
-       AL10.alGetError();
-    
-       setListenerValues();
-   }
-   
-    public void playTune(int geluid ){
+    public void playSound(int geluid ){
        AL10.alSourcePlay(source.get(geluid));
    }
     

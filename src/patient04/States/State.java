@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package patient04.states;
+package patient04.States;
 
 /**
  *

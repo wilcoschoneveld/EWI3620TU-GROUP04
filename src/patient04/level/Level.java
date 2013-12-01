@@ -9,6 +9,8 @@ import patient04.physics.AABB;
 import patient04.math.Vector;
 
 public class Level {
+    public int Color;
+    
     // Gravity vectors
     public static final Vector GRAVITY = new Vector(0, -1, 0);
     
