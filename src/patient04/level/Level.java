@@ -2,6 +2,7 @@ package patient04.level;
 
 import patient04.resources.Model;
 import java.util.ArrayList;
+import patient04.lighting.Renderer2;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
 import patient04.math.Vector;
@@ -40,6 +41,11 @@ public class Level {
         // Loop through the maze        
         for (Solid obj : solids)
             obj.draw();
+    }
+    
+    public void drawModels(Renderer2 renderer) {
+        for (Solid obj : solids)
+            obj.draw2(renderer);
     }
     
     public void cleanup() {

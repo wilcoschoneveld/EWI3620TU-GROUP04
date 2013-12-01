@@ -36,6 +36,8 @@ public class Game implements State {
         
         // Create a new Renderer
         renderer = new Renderer2();
+        renderer.projection = Matrix.projPerspective(
+                70, (float) Display.getWidth() / Display.getHeight(), .1f, 100);
         
         // Set up the renderer
         Renderer.setup();
@@ -114,6 +116,27 @@ public class Game implements State {
         
         // Unbind the shader program
         GL20.glUseProgram(0);
+    }
+    
+    //@Override
+    public void render2() {
+        // Set view matrix
+        renderer.view = player.getFirstPersonView();
+        
+        // Change to geometry pass
+        renderer.geometryPass();
+        
+        // Draw level geometry
+        level.drawModels(renderer);
+        
+        // Change to lighting pass
+        renderer.lightingPass();
+        
+        // Draw lighting
+        //level.drawLights();
+        
+        // Change to normal pass
+        renderer.guiPass();
     }
     
     @Override

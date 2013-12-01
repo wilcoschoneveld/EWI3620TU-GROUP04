@@ -6,6 +6,7 @@
 
 package patient04.level;
 
+import patient04.lighting.Renderer2;
 import patient04.math.Vector;
 import patient04.physics.AABB;
 import patient04.resources.Model;
@@ -30,5 +31,10 @@ public class Solid {
     public void draw() {
         if(model != null)
             model.draw(position, rotation);
+    }
+    
+    public void draw2(Renderer2 renderer) {
+        if(model != null)
+            model.draw2(renderer, position, rotation);
     }
 }

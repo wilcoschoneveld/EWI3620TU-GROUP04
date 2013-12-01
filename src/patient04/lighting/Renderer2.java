@@ -12,6 +12,8 @@ import org.lwjgl.util.glu.GLU;
 
 import static org.lwjgl.opengl.ARBFramebufferObject.*;
 import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
+import org.lwjgl.opengl.GL13;
+import patient04.math.Matrix;
 
 import patient04.resources.Texture;
 import patient04.utilities.Buffers;
@@ -28,8 +30,14 @@ public class Renderer2 {
     // Geometry frame buffer object
     private final int GBuffer, depthBuffer;
     
-    // Shaders
-    private final int geometryShader, lightingShader;
+    // Geometry shader and matrices for Projection, ModelView, Normal
+    private final int geometryShader, gLocP, gLocMV, gLocN;
+            
+    // Lighting shader
+    private final int lightingShader, lTexP, lTexN, lTexD;
+    
+    // Matrices
+    public Matrix projection, view, model;
     
     public Renderer2() {
         // Enable depth testing and backface culling
@@ -70,6 +78,7 @@ public class Renderer2 {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
         
+        // Set render targets
         GL20.glDrawBuffers(Buffers.createIntBuffer(
                 GL_COLOR_ATTACHMENT0,
                 GL_COLOR_ATTACHMENT1,
@@ -91,9 +100,25 @@ public class Renderer2 {
         geometryShader = loadShaderPairFromFiles(
                 "res/shaders/geometry.vert", "res/shaders/geometry.frag");
         
+        GL20.glBindAttribLocation(geometryShader, 0, "aPosition");
+        GL20.glBindAttribLocation(geometryShader, 1, "aTexCoord");
+        GL20.glBindAttribLocation(geometryShader, 2, "aNormal");
+        
+        gLocP = GL20.glGetUniformLocation(geometryShader, "uProjection");
+        gLocMV = GL20.glGetUniformLocation(geometryShader, "uModelView");
+        gLocN = GL20.glGetUniformLocation(geometryShader, "uNormal");
+        
         // Load the lighting shader
         lightingShader = loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/lighting.frag");
+
+        GL20.glBindAttribLocation(lightingShader, 0, "aPosition");
+        GL20.glBindAttribLocation(lightingShader, 1, "aTexCoord");
+        GL20.glBindAttribLocation(lightingShader, 2, "aNormal");
+        
+        lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");
+        lTexN = GL20.glGetUniformLocation(lightingShader, "uTexNormal");
+        lTexD = GL20.glGetUniformLocation(lightingShader, "uTexDiffuse");
         
         checkGLerror();
     }
@@ -124,6 +149,18 @@ public class Renderer2 {
         GL20.glUseProgram(geometryShader);
         
         // Ready to draw models?
+        GL20.glUniformMatrix4(gLocP, false, projection.toBuffer());
+    }
+    
+    public void updateModelView() {
+        // Generate the modelview matrix
+        Matrix mv = view.copy().multiply(model);
+        
+        // Update modelview matrix
+        GL20.glUniformMatrix4(gLocMV, false, mv.toBuffer());
+        
+        // Update normal matrix
+        GL20.glUniformMatrix4(gLocN, true, mv.inverse().toBuffer());
     }
     
     public void lightingPass() {
@@ -136,10 +173,25 @@ public class Renderer2 {
         // Bind the lighting shader
         GL20.glUseProgram(lightingShader);
         
+        // Be nice and clear Texture cache
+        Texture.unbind();
+        
         // Bind the GBuffer textures to TEXTURE0,1,etc..
+        GL13.glActiveTexture(lTexP);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
+        GL13.glActiveTexture(lTexN);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
+        GL13.glActiveTexture(lTexD);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseBuffer.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
         
         // What about GL_BLEND?
         // Clear DEPTH_BIT for every light?
+    }
+    
+    public void guiPass() {
+        // Bind the standard shader
+        GL20.glUseProgram(0);
     }
     
     public void checkGLerror() {
@@ -148,7 +200,8 @@ public class Renderer2 {
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
             Logger.fatalerror("OpenGL error: "
                     + GLU.gluErrorString(error));
-        }
+        } else
+            Logger.log("No OpenGL error!");
     }
     
     public static int loadShaderPairFromFiles(String vertexFile, String fragmentFile) {
@@ -180,6 +233,7 @@ public class Renderer2 {
         GL20.glCompileShader(vertexShader);
         
         if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+            Logger.error("Vertex shader compile error " + vertexFile);
             Logger.error(GL20.glGetShaderInfoLog(vertexShader, 1024));
             return -1;
         }
@@ -191,6 +245,7 @@ public class Renderer2 {
         GL20.glCompileShader(fragmentShader);
         
         if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+            Logger.error("Fragment shader compile error " + fragmentFile);
             Logger.error(GL20.glGetShaderInfoLog(fragmentShader, 1024));
             return -1;
         }
@@ -210,6 +265,7 @@ public class Renderer2 {
         
         // Make sure link was succesful
         if (GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
+            Logger.error("Shader program link error");
             Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));
             return -1;
         }
@@ -218,6 +274,7 @@ public class Renderer2 {
         GL20.glValidateProgram(shaderProgram);
         
         if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+            Logger.error("Shader program vailidation error");
             Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));
             return -1;
         }

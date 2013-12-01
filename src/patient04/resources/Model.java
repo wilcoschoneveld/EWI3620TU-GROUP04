@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import patient04.level.Level;
 import patient04.lighting.Renderer;
+import patient04.lighting.Renderer2;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.utilities.Buffers;
@@ -93,6 +94,25 @@ public class Model {
             matrix.scale(scale.x, scale.y, scale.z);
         
         Renderer.setModelMatrix(matrix);
+        
+        for(Group group : groups.values())
+            group.drawBuffer();
+    }
+    
+    public void draw2(Renderer2 renderer, Vector position, Vector rotation) {
+        Matrix matrix = new Matrix();
+
+        if(position != null && !position.isNull())
+            matrix.translate(position.x, position.y, position.z);
+
+        if(rotation != null && !rotation.isNull()) {
+            matrix.rotate(rotation.x, 1, 0, 0);
+            matrix.rotate(rotation.y, 0, 1, 0);
+            matrix.rotate(rotation.z, 0, 0, 1);
+        }
+        
+        renderer.model = matrix;
+        renderer.updateModelView();
         
         for(Group group : groups.values())
             group.drawBuffer();

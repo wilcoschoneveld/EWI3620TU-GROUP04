@@ -115,5 +115,34 @@ public class Player extends Entity {
         Renderer.setViewMatrix(matrix);
     }
     
+    /** Obtain the view matrix.
+     * 
+     * @return 
+     */
+    public Matrix getFirstPersonView() {
+        
+        viewbobbing *= 0.9f;
+        
+        if(onGround)
+            viewbobbing += 0.1f;
+        
+        Matrix matrix = new Matrix();
+        
+        matrix.translate(
+                (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
+                (float)  Math.cos(distanceMoved * 6) * 0.05f * viewbobbing, 0);
+        matrix.rotate(
+                (float) -Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
+                0, 0, 1);
+        matrix.rotate(-rotation.x, 1, 0, 0);
+        matrix.rotate(-rotation.y, 0, 1, 0);
+        matrix.translate(
+                -position.x,
+                -position.y - EYEHEIGHT,
+                -position.z);
+        
+        return matrix;
+    }
+    
     private float viewbobbing = 0;
 }
