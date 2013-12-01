@@ -112,6 +112,7 @@ public class Game implements State {
         // Draw the test model
         testBody.draw();
         
+        // Draw the enemy
         enemy.draw();
         
         // Unbind the shader program
