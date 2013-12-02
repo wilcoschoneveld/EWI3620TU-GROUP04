@@ -6,7 +6,8 @@
 
 package patient04.level;
 
-import patient04.lighting.Renderer2;
+import patient04.lighting.Renderer;
+import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.physics.AABB;
 import patient04.resources.Model;
@@ -18,6 +19,7 @@ import patient04.resources.Model;
 public class Solid {
     public Vector position;
     public Vector rotation;
+    public Vector scale;
     
     public AABB aabb;
     
@@ -26,15 +28,36 @@ public class Solid {
     public Solid() {
         position = new Vector();
         rotation = new Vector();
+        scale = new Vector(1, 1, 1);
     }
     
-    public void draw() {
-        if(model != null)
-            model.draw(position, rotation);
-    }
-    
-    public void draw2(Renderer2 renderer) {
-        if(model != null)
-            model.draw2(renderer, position, rotation);
+    public void draw(Renderer renderer) {
+        // If there is no model, return
+        if(model == null) return;
+        
+        // Create a new model matrix
+        Matrix matrix = new Matrix();
+
+        // Translate
+        if(position != null && !position.isNull())
+            matrix.translate(position.x, position.y, position.z);
+
+        // Rotate
+        if(rotation != null && !rotation.isNull()) {
+            matrix.rotate(rotation.x, 1, 0, 0);
+            matrix.rotate(rotation.y, 0, 1, 0);
+            matrix.rotate(rotation.z, 0, 0, 1);
+        }
+        
+        // Scale
+        if(scale != null)
+            matrix.scale(scale.x, scale.y, scale.z);
+        
+        // Update modelview matrix
+        renderer.model = matrix;
+        renderer.updateModelView();
+        
+        // Draw model
+        model.draw();
     }
 }

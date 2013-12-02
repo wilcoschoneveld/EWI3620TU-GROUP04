@@ -5,7 +5,6 @@ import patient04.physics.Entity;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import patient04.lighting.Renderer;
 import patient04.math.Matrix;
 
 /*
@@ -87,32 +86,6 @@ public class Player extends Entity {
         
         // Update remaining entity
         super.update(dt);
-    }
-
-    /** Sets the current matrix to FPV. */
-    public void glFirstPersonView() {        
-        viewbobbing *= 0.9f;
-        
-        if(onGround)
-            viewbobbing += 0.1f;
-        
-        Matrix matrix = new Matrix();
-        
-        matrix.translate(
-                (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
-                (float)  Math.cos(distanceMoved * 6) * 0.05f * viewbobbing, 0);
-        matrix.rotate(
-                (float) -Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
-                0, 0, 1);
-        
-        matrix.rotate(-rotation.x, 1, 0, 0);
-        matrix.rotate(-rotation.y, 0, 1, 0);
-        matrix.translate(
-                -position.x,
-                -position.y - EYEHEIGHT,
-                -position.z);
-        
-        Renderer.setViewMatrix(matrix);
     }
     
     /** Obtain the view matrix.

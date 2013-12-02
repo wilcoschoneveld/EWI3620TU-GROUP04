@@ -6,23 +6,35 @@
 
 package patient04.lighting;
 
+import patient04.math.Matrix;
 import patient04.math.Vector;
+import patient04.resources.Model;
 
 /**
  *
  * @author Bart
  */
 public class Light {
-    public final Vector position, direction, color;
+    public static final Model lightSphere = Model.getResource("lightSphere.obj");
     
-    public float intensity;
-    public float maxdistance;
+    public final Vector position;
+    public float range;
     
-    public Light() {
-        position = new Vector();
-        direction = new Vector();
-        color = new Vector();
+    public Light(float range) {
+        this.position = new Vector();
+        this.range = range;
+    }
+    
+    public void draw(Renderer renderer) {
+        // Create a new model matrix
+        Matrix matrix = new Matrix();
+
+        // Translate and scale
+        matrix.translate(position.x, position.y, position.z);
+        matrix.scale(range, range, range);
         
-        intensity = 100;
+        // Update modelview matrix
+        renderer.model = matrix;
+        renderer.updateModelView();
     }
 }

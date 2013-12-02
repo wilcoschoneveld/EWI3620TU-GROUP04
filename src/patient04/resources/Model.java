@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import patient04.level.Level;
 import patient04.lighting.Renderer;
-import patient04.lighting.Renderer2;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.utilities.Buffers;
@@ -49,76 +48,7 @@ public class Model {
         materials = new HashMap<>();
     }
     
-    /** Draws the model at the origin. */
     public void draw() {
-        draw(null, null, null);
-    }
-    
-    /** Draws the model at a given position.
-     * 
-     * @param position 
-     */
-    public void draw(Vector position) {
-        draw(position, null, null);
-    }
-    
-    /** Draws the model at a given position with a given rotation.
-     * 
-     * @param position
-     * @param rotation 
-     */
-    public void draw(Vector position, Vector rotation) {
-        draw(position, rotation, null);
-    }
-    
-    /** Draws the model at a given position, with a given rotation and a given
-     * scale.
-     * 
-     * @param position
-     * @param rotation
-     * @param scale 
-     */
-    public void draw(Vector position, Vector rotation, Vector scale) {
-        Matrix matrix = new Matrix();
-
-        if(position != null && !position.isNull())
-            matrix.translate(position.x, position.y, position.z);
-
-        if(rotation != null && !rotation.isNull()) {
-            matrix.rotate(rotation.x, 1, 0, 0);
-            matrix.rotate(rotation.y, 0, 1, 0);
-            matrix.rotate(rotation.z, 0, 0, 1);
-        }
-        
-        if(scale != null)
-            matrix.scale(scale.x, scale.y, scale.z);
-        
-        Renderer.setModelMatrix(matrix);
-        
-        for(Group group : groups.values())
-            group.drawBuffer();
-    }
-    
-    public void draw2(Renderer2 renderer, Vector position, Vector rotation) {
-        Matrix matrix = new Matrix();
-
-        if(position != null && !position.isNull())
-            matrix.translate(position.x, position.y, position.z);
-
-        if(rotation != null && !rotation.isNull()) {
-            matrix.rotate(rotation.x, 1, 0, 0);
-            matrix.rotate(rotation.y, 0, 1, 0);
-            matrix.rotate(rotation.z, 0, 0, 1);
-        }
-        
-        renderer.model = matrix;
-        renderer.updateModelView();
-        
-        for(Group group : groups.values())
-            group.drawBuffer();
-    }
-    
-    public void drawGroups() {
         for(Group group : groups.values())
             group.drawBuffer();
     }
@@ -173,11 +103,11 @@ public class Model {
             // Set the diffuse color
             if(material != null) {
                 // Set the diffuse color
-                GL20.glUniform3(Renderer.locColorDiffuse, material.colorDiffuse);
+                //GL20.glUniform3(Renderer.locColorDiffuse, material.colorDiffuse);
             
                 // Bind the material texture
                 if(material.texture != null) {
-                    GL20.glUniform1i(Renderer.useTexture, 1);
+                    //GL20.glUniform1i(Renderer.useTexture, 1);
                     material.texture.bind();
                 }
             }
@@ -200,7 +130,7 @@ public class Model {
             GL20.glDisableVertexAttribArray(2);
             
             // Turn textures off
-            GL20.glUniform1i(Renderer.useTexture, 0);
+            //GL20.glUniform1i(Renderer.useTexture, 0);
         }
         
         /** Compiles the raw vertex data into a vertex buffer object. */
@@ -419,7 +349,8 @@ public class Model {
                         for (int i = 0; i < 3; i++) {
                             String[] parts = tokens[i+1].split("/");
                             vertices[i] = Integer.parseInt(parts[0]) - 1;
-                            if(activeGroup.material.texture != null)
+                            if(activeGroup.material != null &&
+                                    activeGroup.material.texture != null)
                                 texcoords[i] = Integer.parseInt(parts[1]) - 1;
                             if(parts.length > 2)
                                 normals[i] = Integer.parseInt(parts[2]) - 1;
@@ -461,6 +392,7 @@ public class Model {
         } catch(Exception e) {
             // Error in loading file
             Logger.error("Failed to load model " + f);
+            e.printStackTrace();
             return null;
         }
     }

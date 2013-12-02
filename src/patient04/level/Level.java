@@ -2,7 +2,7 @@ package patient04.level;
 
 import patient04.resources.Model;
 import java.util.ArrayList;
-import patient04.lighting.Renderer2;
+import patient04.lighting.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
 import patient04.math.Vector;
@@ -37,19 +37,13 @@ public class Level {
         return aabbs;
     }
     
-    public void draw() {
-        // Loop through the maze        
+    public void drawModels(Renderer renderer) {
         for (Solid obj : solids)
-            obj.draw();
-    }
-    
-    public void drawModels(Renderer2 renderer) {
-        for (Solid obj : solids)
-            obj.draw2(renderer);
+            obj.draw(renderer);
     }
     
     public void cleanup() {
-        // TODO
+        // TODO?
     }
     
     public void generateFloor(String textureFile) {

@@ -86,6 +86,6 @@ public class Enemy extends Entity {
     public void draw() {
         // Color of enemy
         
-        model.draw(position, rotation);
+        // model.draw(position, rotation);
     }
 }
