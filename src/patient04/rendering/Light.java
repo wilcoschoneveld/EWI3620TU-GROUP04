@@ -6,9 +6,11 @@
 
 package patient04.rendering;
 
+import java.nio.FloatBuffer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
+import patient04.utilities.Buffers;
 
 /**
  *
@@ -16,13 +18,40 @@ import patient04.resources.Model;
  */
 public class Light {
     public final Vector position;
-    public final Model model;
-    public float intensity;
+    private final Model model;
+    private FloatBuffer color;
+    private float intensity, radius;
     
     public Light() {
         position = new Vector();
         model = Model.getResource("lightPoint.obj");
+        color = Buffers.WHITE;
         intensity = 1;
+        radius = 1;
+    }
+    
+    public void setIntensity(float intensity) {
+        // Set intensity
+        this.intensity = intensity;
+        
+        // Set radius
+        radius = (float) Math.sqrt(256 * intensity);
+    }
+    
+    public void setColor(FloatBuffer color) {
+        this.color = color;
+    }
+    
+    public FloatBuffer getColor() {
+        return color;
+    }
+    
+    public float getIntensity() {
+        return intensity;
+    }
+    
+    public float getRadius() {
+        return radius;
     }
     
     public void draw(Renderer renderer) {        
@@ -33,7 +62,7 @@ public class Light {
         
         // Update renderer
         renderer.updateModelView(matrix);
-        renderer.updateLight(position, intensity);
+        renderer.updateLightParams(this);
         
         // Draw the model
         model.draw();

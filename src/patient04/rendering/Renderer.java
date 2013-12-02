@@ -4,18 +4,17 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import static org.lwjgl.opengl.ARBFramebufferObject.*;
+import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
 
-import static org.lwjgl.opengl.ARBFramebufferObject.*;
-import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import patient04.math.Matrix;
 import patient04.math.Vector;
-import patient04.resources.Model;
 
 import patient04.resources.Texture;
 import patient04.utilities.Buffers;
@@ -23,9 +22,7 @@ import patient04.utilities.Logger;
 
 /**
  * TODO List:
- * - Normals work perfectly :D (normalize really needed?)
- * - Remove texnormal from lighting.frag?
- * - Quad precompile and better initialize?
+ * - Remove textures&normals from lighting VBO's?
  * - Diffuse color to shader for models
  * - Redo enemy
  * - Frustum culling
@@ -43,16 +40,14 @@ public class Renderer {
     private final int geometryShader, gLocP, gLocMV, gLocN;
             
     // Lighting shader
-    private final int lightingShader, lLocP, lLocMV, lPosition, lIntensity;
+    private final int lightingShader, lLocP, lLocMV,
+            lightP, lightC, lightI, lightR;
     
     // Keep track of active shader program
     private int currentProgram = 0;
     
     // Matrices
-    public Matrix projection, view; //, model;
-    
-    // Full screen quad
-    public Model screenQuad = Model.getResource("lightDirectional.obj");
+    public Matrix projection, view;
     
     public Renderer() {
         // Enable depth testing and backface culling
@@ -144,8 +139,10 @@ public class Renderer {
         // Obtain uniform variable locations
         lLocP = GL20.glGetUniformLocation(lightingShader, "uProjection");
         lLocMV = GL20.glGetUniformLocation(lightingShader, "uModelView");
-        lPosition = GL20.glGetUniformLocation(lightingShader, "lightPosition");
-        lIntensity = GL20.glGetUniformLocation(lightingShader, "lightIntensity");
+        lightP = GL20.glGetUniformLocation(lightingShader, "lightPosition");
+        lightC = GL20.glGetUniformLocation(lightingShader, "lightColor");
+        lightI = GL20.glGetUniformLocation(lightingShader, "lightIntensity");
+        lightR = GL20.glGetUniformLocation(lightingShader, "lightRadius");
         
         // Set screensize
         int lScrW = GL20.glGetUniformLocation(lightingShader, "screenWidth");
@@ -260,13 +257,19 @@ public class Renderer {
         // End method
     }
     
-    public void updateLight(Vector position, float intensity) {
+    public void updateLightParams(Light light) {
         // Upload light position
-        Vector pos = position.copy().premultiply(view);
-        GL20.glUniform3f(lPosition, pos.x, pos.y, pos.z);
+        Vector pos = light.position.copy().premultiply(view);
+        GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
+        
+        // Upload light color
+        GL20.glUniform4(lightC, light.getColor());
         
         // Upload light intensity
-        GL20.glUniform1f(lIntensity, intensity);
+        GL20.glUniform1f(lightI, light.getIntensity());
+        
+        // Upload light radius
+        GL20.glUniform1f(lightR, light.getRadius());
     }
     
     public void setGLdefaults() {
