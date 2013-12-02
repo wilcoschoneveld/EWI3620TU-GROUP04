@@ -1,7 +1,8 @@
 package patient04.states;
 
+import java.util.ArrayList;
+import org.lwjgl.input.Keyboard;
 import patient04.Main;
-import patient04.enemies.Enemy;
 import patient04.level.Solid;
 import patient04.resources.Texture;
 import patient04.level.Player;
@@ -14,6 +15,7 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import patient04.rendering.Light;
 
 
 public class Game implements State {
@@ -24,6 +26,8 @@ public class Game implements State {
     private Player player;
     
     public Solid testBody, testSphere;
+    
+    public ArrayList<Light> testLights;
     
     @Override
     public void initialize() {
@@ -58,14 +62,28 @@ public class Game implements State {
         testBody.position.set(8, 0, 8);
         testBody.rotation.set(0, 230, 0);
         
-        testSphere = new Solid();
-        testSphere.model = Model.getResource("lightPoint.obj");
-        testSphere.position.set(12, 2, 5);
-        testSphere.scale.set(3, 3, 3);
+        testLights = new ArrayList<>();
+        
+        Light tmp = new Light();
+        tmp.position.set(5, 5, 5);
+        tmp.intensity = 20;
+        
+        testLights.add(tmp);
     }
 
     @Override
-    public void update() {        
+    public void update() {
+        while(Keyboard.next()) {
+            if(Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_F) {
+                Light tmp = new Light();
+                tmp.position.set(player.position.x,
+                        player.position.y + 2, player.position.z);
+                tmp.intensity = 5;
+                
+                testLights.add(tmp);
+            }
+        }
+        
         float deltaTime = timer.deltaTime() * 0.001f;
         
         Display.setTitle(
@@ -89,13 +107,12 @@ public class Game implements State {
         level.drawModels(renderer);
         
         testBody.draw(renderer);
-        testSphere.draw(renderer);
         
         // Change to lighting pass
         renderer.lightingPass();
         
-        // Draw lighting
-        // level.drawLights();
+        for(Light light : testLights)
+            light.draw(renderer);
         
         // Change to normal pass
         renderer.guiPass();

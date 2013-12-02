@@ -12,7 +12,7 @@ void main() {
     vec4 colorD = texture2D(uTexDiffuse, vTexCoord);
 
     if(vTexCoord.x > 0 && vTexCoord.y > 0) {
-        gl_FragColor = colorP * 0.5;
+        gl_FragColor = colorP;
     } else if(vTexCoord.x > 0 && vTexCoord.y < 0) {
         gl_FragColor = colorN;
     } else if(vTexCoord.x < 0 && vTexCoord.y > 0) {

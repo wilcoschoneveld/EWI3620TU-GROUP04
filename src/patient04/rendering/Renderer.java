@@ -6,14 +6,15 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
 
 import static org.lwjgl.opengl.ARBFramebufferObject.*;
 import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 import patient04.math.Matrix;
+import patient04.math.Vector;
 import patient04.resources.Model;
 
 import patient04.resources.Texture;
@@ -42,16 +43,16 @@ public class Renderer {
     private final int geometryShader, gLocP, gLocMV, gLocN;
             
     // Lighting shader
-    private final int lightingShader, lTexP, lTexN, lTexD, lLocP, lLocMV;
+    private final int lightingShader, lLocP, lLocMV, lPosition, lIntensity;
     
     // Keep track of active shader program
     private int currentProgram = 0;
     
     // Matrices
-    public Matrix projection, view, model;
+    public Matrix projection, view; //, model;
     
     // Full screen quad
-    public Model screenQuad = Model.buildQuad();
+    public Model screenQuad = Model.getResource("lightDirectional.obj");
     
     public Renderer() {
         // Enable depth testing and backface culling
@@ -129,10 +130,8 @@ public class Renderer {
         gLocN = GL20.glGetUniformLocation(geometryShader, "uNormal");
         
         // Load the lighting shader
-//        lightingShader = loadShaderPairFromFiles(
-//                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
         lightingShader = loadShaderPairFromFiles(
-                "res/shaders/gbuffer.vert", "res/shaders/gbuffer.frag");
+                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
@@ -142,14 +141,22 @@ public class Renderer {
         GL20.glBindAttribLocation(lightingShader, 1, "aTexCoord");
         GL20.glBindAttribLocation(lightingShader, 2, "aNormal");
         
-        // Obtain uniform samplers
-        lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");
-        lTexN = GL20.glGetUniformLocation(lightingShader, "uTexNormal");
-        lTexD = GL20.glGetUniformLocation(lightingShader, "uTexDiffuse");
+        // Obtain uniform variable locations
         lLocP = GL20.glGetUniformLocation(lightingShader, "uProjection");
         lLocMV = GL20.glGetUniformLocation(lightingShader, "uModelView");
+        lPosition = GL20.glGetUniformLocation(lightingShader, "lightPosition");
+        lIntensity = GL20.glGetUniformLocation(lightingShader, "lightIntensity");
+        
+        // Set screensize
+        int lScrW = GL20.glGetUniformLocation(lightingShader, "screenWidth");
+        int lScrH = GL20.glGetUniformLocation(lightingShader, "screenHeight");
+        GL20.glUniform1i(lScrW, Display.getWidth());
+        GL20.glUniform1i(lScrH, Display.getHeight());
         
         // Set samplers to correct texture units
+        int lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");
+        int lTexN = GL20.glGetUniformLocation(lightingShader, "uTexNormal");
+        int lTexD = GL20.glGetUniformLocation(lightingShader, "uTexDiffuse");
         GL20.glUniform1i(lTexP, 0);
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
@@ -184,6 +191,9 @@ public class Renderer {
         // Bind the geometry frame buffer object
         glBindFramebuffer(GL_FRAMEBUFFER, GBuffer);
         
+        // Set OpenGL state
+        setGLdefaults();
+        
         // Clear the buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         
@@ -197,6 +207,13 @@ public class Renderer {
     public void lightingPass() {
         // Bind the window provided buffer object
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        
+        // Set OpenGL state
+        setGLdefaults();
+        GL11.glCullFace(GL11.GL_FRONT);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         
         // Clear the buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -217,17 +234,18 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
-        
-        // Draw fullscreen quad
-        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-        
-        screenQuad.draw();
-        
-        // What about GL_BLEND?
-        // Clear DEPTH_BIT for every light?
     }
     
-    public void updateModelView() {
+    public void guiPass() {
+        // Bind the standard shader
+        useShaderProgram(0);
+        
+        // Set OpenGL state
+        setGLdefaults();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+    }
+    
+    public void updateModelView(Matrix model) {
         // Generate the modelview matrix
         Matrix mv = view.copy().multiply(model);
         
@@ -242,9 +260,25 @@ public class Renderer {
         // End method
     }
     
-    public void guiPass() {
-        // Bind the standard shader
-        useShaderProgram(0);
+    public void updateLight(Vector position, float intensity) {
+        // Upload light position
+        Vector pos = position.copy().premultiply(view);
+        GL20.glUniform3f(lPosition, pos.x, pos.y, pos.z);
+        
+        // Upload light intensity
+        GL20.glUniform1f(lIntensity, intensity);
+    }
+    
+    public void setGLdefaults() {
+        // Enable depth testing
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+                
+        // Set back-face culling
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
+        
+        // Disable blending
+        GL11.glDisable(GL11.GL_BLEND);
     }
     
     public void checkGLerror() {

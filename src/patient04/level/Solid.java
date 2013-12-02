@@ -54,8 +54,7 @@ public class Solid {
             matrix.scale(scale.x, scale.y, scale.z);
         
         // Update modelview matrix
-        renderer.model = matrix;
-        renderer.updateModelView();
+        renderer.updateModelView(matrix);
         
         // Draw model
         model.draw();
