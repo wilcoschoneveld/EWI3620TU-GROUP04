@@ -29,7 +29,12 @@ public class Texture {
     public final int width;
     public final int height;
     
-    public Texture(int width, int height, int format, ByteBuffer buffer) {
+    public Texture(int width, int height, int format) {
+        this(width, height, format, null, GL11.GL_NEAREST, GL11.GL_NEAREST);
+    }
+    
+    public Texture(int width, int height, int format, ByteBuffer buffer,
+                                                int minFilter, int magFilter) {
         // Store texture dimensions
         this.width = width;
         this.height = height;
@@ -40,11 +45,11 @@ public class Texture {
         // Bind texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
         
-        // Set texture filters  
+        // Set texture filters 
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                GL11.GL_TEXTURE_MIN_FILTER, minFilter);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+                GL11.GL_TEXTURE_MAG_FILTER, magFilter);
         
         // Copy buffer into texture
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format, width, height, 0,
@@ -125,7 +130,8 @@ public class Texture {
         } catch(IOException e) { e.printStackTrace(); return null; }
         
         // Create a new texture from the buffer
-        Texture texture = new Texture(width, height, GL11.GL_RGBA8, buffer);
+        Texture texture = new Texture(width, height, GL11.GL_RGBA8, buffer,
+                                              GL11.GL_LINEAR, GL11.GL_LINEAR);
         
         // If error, print statement
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {

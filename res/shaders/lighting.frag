@@ -1,7 +1,6 @@
 #version 120
 
-uniform int screenWidth;
-uniform int screenHeight;
+uniform vec2 screenSize;
 
 uniform vec3 lightPosition;
 uniform vec4 lightColor;
@@ -15,8 +14,7 @@ uniform sampler2D uTexDiffuse;
 void main() {
     gl_FragColor = vec4(0, 0, 0, 0);
 
-    vec2 pixelCoord = vec2(gl_FragCoord.x / screenWidth,
-                           gl_FragCoord.y / screenHeight);
+    vec2 pixelCoord = gl_FragCoord.xy / screenSize;
 
     vec3 aPosition = texture2D(uTexPosition, pixelCoord).rgb;
     float lightDistance = length(lightPosition - aPosition);

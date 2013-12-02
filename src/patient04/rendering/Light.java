@@ -38,8 +38,8 @@ public class Light {
         radius = (float) Math.sqrt(256 * intensity);
     }
     
-    public void setColor(FloatBuffer color) {
-        this.color = color;
+    public void setColor(float r, float g, float b, float a) {
+        this.color = Buffers.createFloatBuffer(r, g, b, a);
     }
     
     public FloatBuffer getColor() {

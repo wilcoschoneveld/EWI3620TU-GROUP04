@@ -16,7 +16,6 @@ import patient04.rendering.Renderer;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.rendering.Light;
-import patient04.utilities.Buffers;
 
 
 public class Game implements State {
@@ -66,8 +65,9 @@ public class Game implements State {
         testLights = new ArrayList<>();
         
         Light tmp = new Light();
-        tmp.position.set(5, 5, 5);
-        tmp.setIntensity(10);
+        tmp.position.set(7, 2, 6);
+        tmp.setIntensity(20);
+        tmp.setColor(1, 1, 0.8f, 1);
         
         testLights.add(tmp);
     }
@@ -80,10 +80,10 @@ public class Game implements State {
                 tmp.position.set(player.position.x,
                         player.position.y + 2, player.position.z);
                 tmp.setIntensity(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 20 : 10);
-                tmp.setColor(Buffers.createFloatBuffer(
+                tmp.setColor(
                         (float) Math.random(),
                         (float) Math.random(),
-                        (float) Math.random(), 1));
+                        (float) Math.random(), 1);
                 
                 testLights.add(tmp);
             }

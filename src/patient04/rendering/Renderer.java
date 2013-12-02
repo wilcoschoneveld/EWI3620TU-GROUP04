@@ -58,9 +58,9 @@ public class Renderer {
         int width = Display.getWidth(), height = Display.getHeight();
         
         // Create new attachable texture buffers
-        vertexBuffer = new Texture(width, height, GL_RGBA16F_ARB, null);
-        normalBuffer = new Texture(width, height, GL_RGBA16F_ARB, null);
-        diffuseBuffer = new Texture(width, height, GL11.GL_RGBA8, null);
+        vertexBuffer = new Texture(width, height, GL_RGBA16F_ARB);
+        normalBuffer = new Texture(width, height, GL_RGBA16F_ARB);
+        diffuseBuffer = new Texture(width, height, GL11.GL_RGBA8);
         
         // Create new attachable render buffer
         depthBuffer = glGenRenderbuffers();
@@ -145,10 +145,8 @@ public class Renderer {
         lightR = GL20.glGetUniformLocation(lightingShader, "lightRadius");
         
         // Set screensize
-        int lScrW = GL20.glGetUniformLocation(lightingShader, "screenWidth");
-        int lScrH = GL20.glGetUniformLocation(lightingShader, "screenHeight");
-        GL20.glUniform1i(lScrW, Display.getWidth());
-        GL20.glUniform1i(lScrH, Display.getHeight());
+        int lScrSize = GL20.glGetUniformLocation(lightingShader, "screenSize");
+        GL20.glUniform2f(lScrSize, Display.getWidth(), Display.getHeight());
         
         // Set samplers to correct texture units
         int lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");

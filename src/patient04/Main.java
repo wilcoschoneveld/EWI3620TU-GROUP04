@@ -74,10 +74,16 @@ public final class Main {
         Logger.debug("OS version " + System.getProperty("os.version"));
         Logger.debug("LWJGL version " + org.lwjgl.Sys.getVersion());
         Logger.debug("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
-        Logger.debug("ARB framebuffers " +
+        
+        // Check OpenGL extensions
+        Logger.debug("ARB frame buffer object: " +
                 GLContext.getCapabilities().GL_ARB_framebuffer_object);
-        Logger.debug("EXT framebuffers " +
-                GLContext.getCapabilities().GL_EXT_framebuffer_object);
+        Logger.debug("ARB vertex array object: " +
+                GLContext.getCapabilities().GL_ARB_vertex_array_object);
+        Logger.debug("ARB explicit attrib location: " +
+                GLContext.getCapabilities().GL_ARB_explicit_attrib_location);
+        Logger.debug("ARB explicit uniform location: " +
+                GLContext.getCapabilities().GL_ARB_explicit_uniform_location);
         
         // Enable vsync
         Display.setVSyncEnabled(vsyncEnabled);
