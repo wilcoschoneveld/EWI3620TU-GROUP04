@@ -2,7 +2,7 @@ package patient04.level;
 
 import patient04.resources.Model;
 import java.util.ArrayList;
-import patient04.lighting.Renderer;
+import patient04.rendering.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
 import patient04.math.Vector;

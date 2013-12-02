@@ -1,4 +1,4 @@
-package patient04.lighting;
+package patient04.rendering;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -129,8 +129,10 @@ public class Renderer {
         gLocN = GL20.glGetUniformLocation(geometryShader, "uNormal");
         
         // Load the lighting shader
+//        lightingShader = loadShaderPairFromFiles(
+//                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
         lightingShader = loadShaderPairFromFiles(
-                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
+                "res/shaders/gbuffer.vert", "res/shaders/gbuffer.frag");
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
@@ -218,6 +220,7 @@ public class Renderer {
         
         // Draw fullscreen quad
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+        
         screenQuad.draw();
         
         // What about GL_BLEND?
@@ -237,10 +240,6 @@ public class Renderer {
         }
         
         // End method
-    }
-    
-    public void lightingModelView() {
-        //GL20.glUniformMatrix4
     }
     
     public void guiPass() {

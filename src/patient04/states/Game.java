@@ -10,11 +10,10 @@ import patient04.level.Level;
 import patient04.resources.Model;
 import patient04.math.Matrix;
 import patient04.enemies.Path;
-import patient04.lighting.Renderer;
+import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import patient04.lighting.Light;
 
 
 public class Game implements State {
@@ -24,11 +23,7 @@ public class Game implements State {
     private Level level;
     private Player player;
     
-    private Enemy enemy;
-    
     public Solid testBody, testSphere;
-    
-    public Light testLight;
     
     @Override
     public void initialize() {
@@ -64,11 +59,9 @@ public class Game implements State {
         testBody.rotation.set(0, 230, 0);
         
         testSphere = new Solid();
-        testSphere.model = Model.getResource("lightSphere.obj");
+        testSphere.model = Model.getResource("lightPoint.obj");
         testSphere.position.set(12, 2, 5);
         testSphere.scale.set(3, 3, 3);
-        
-        testLight = new Light(3);
     }
 
     @Override
@@ -100,8 +93,6 @@ public class Game implements State {
         
         // Change to lighting pass
         renderer.lightingPass();
-        
-        testLight.draw(renderer);
         
         // Draw lighting
         // level.drawLights();

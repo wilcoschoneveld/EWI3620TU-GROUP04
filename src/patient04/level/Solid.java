@@ -6,7 +6,7 @@
 
 package patient04.level;
 
-import patient04.lighting.Renderer;
+import patient04.rendering.Renderer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.physics.AABB;

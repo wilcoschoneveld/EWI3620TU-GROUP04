@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import patient04.level.Level;
-import patient04.lighting.Renderer;
+import patient04.rendering.Renderer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.utilities.Buffers;
