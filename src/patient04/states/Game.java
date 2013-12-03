@@ -25,7 +25,7 @@ public class Game implements State {
     private Level level;
     private Player player;
     
-    public Solid testBody, testSphere;
+    public Solid testBody;
     
     public ArrayList<Light> testLights;
     

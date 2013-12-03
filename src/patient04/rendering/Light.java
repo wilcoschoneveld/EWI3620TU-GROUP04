@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.rendering;
 
 import java.nio.FloatBuffer;
@@ -35,7 +29,7 @@ public class Light {
         this.intensity = intensity;
         
         // Set radius
-        radius = (float) Math.sqrt(256 * intensity);
+        radius = (float) Math.sqrt(50 * intensity);
     }
     
     public void setColor(float r, float g, float b, float a) {

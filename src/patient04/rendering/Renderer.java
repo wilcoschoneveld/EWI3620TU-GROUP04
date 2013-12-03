@@ -215,32 +215,6 @@ public class Renderer {
         GL20.glUniformMatrix4(gLocP, false, projection.toBuffer());
     }
     
-    public void debugPass() {
-        // Bind the window provided buffer object
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        
-        setGLdefaults();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        
-        useShaderProgram(debugShader);
-        
-        Texture.unbind();
-        
-        // Bind the GBuffer textures to TEXTURE0,1,etc..
-        GL13.glActiveTexture(GL13.GL_TEXTURE3);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
-        
-        debugQuad.draw();
-    }
-    
     public void lightingPass() {
         // Bind the window provided buffer object
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
@@ -289,6 +263,32 @@ public class Renderer {
         // Set OpenGL state
         setGLdefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+    }
+    
+    public void debugPass() {
+        // Bind the window provided buffer object
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        
+        setGLdefaults();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        
+        useShaderProgram(debugShader);
+        
+        Texture.unbind();
+        
+        // Bind the GBuffer textures to TEXTURE0,1,etc..
+        GL13.glActiveTexture(GL13.GL_TEXTURE3);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
+        
+        debugQuad.draw();
     }
     
     public void updateModelView(Matrix model) {
