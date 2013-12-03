@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
@@ -23,8 +24,6 @@ import patient04.utilities.Logger;
 /**
  * TODO List:
  * - Full screen
- * - Stencil buffer something?
- * - Remove textures&normals from lighting VBO's?
  * - Frustum culling
  * - Diffuse color to shader for models
  * 
@@ -151,6 +150,12 @@ public class Renderer {
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
         
+        // Set stencil operations
+        GL20.glStencilOpSeparate(GL11.GL_FRONT,
+                GL11.GL_KEEP, GL14.GL_INCR_WRAP, GL11.GL_KEEP);
+        GL20.glStencilOpSeparate(GL11.GL_BACK,
+                GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
+        
         // Load debug shader
         debugShader = loadShaderPairFromFiles(
                 "res/shaders/gbuffer.vert", "res/shaders/gbuffer.frag");
@@ -176,8 +181,10 @@ public class Renderer {
     }
     
     public final void useShaderProgram(int program) {
-        GL20.glUseProgram(program);
-        currentProgram = program;
+        if(currentProgram != program) {
+            GL20.glUseProgram(program);
+            currentProgram = program;
+        }
     }
     
     public void dispose() {
@@ -204,6 +211,7 @@ public class Renderer {
         
         // Set OpenGL state
         setGLdefaults();
+        GL11.glDepthMask(true);
         
         // Clear the buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -222,10 +230,11 @@ public class Renderer {
         
         // Set OpenGL state
         setGLdefaults();
-        GL11.glCullFace(GL11.GL_FRONT);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glCullFace(GL11.GL_FRONT);
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glDepthMask(false);
         
         // Clear the buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -233,7 +242,7 @@ public class Renderer {
         // Bind the lighting shader
         useShaderProgram(lightingShader);
         
-        // Set the projection and view matrix
+        // Set the projection matrix
         GL20.glUniformMatrix4(lLocP, false, projection.toBuffer());
         
         // Be nice and clear Texture cache
@@ -322,9 +331,29 @@ public class Renderer {
         GL20.glUniform1f(lightR, light.getRadius());
     }
     
+    public void lightingPart1() {
+        GL11.glDrawBuffer(0);
+        
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0);
+        
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+    }
+    
+    public void lightingPart2() {
+        GL11.glDrawBuffer(accumAttachment);
+        
+        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 1);
+        
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+    }
+    
     public final void setGLdefaults() {
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
                 
         // Set back-face culling
         GL11.glEnable(GL11.GL_CULL_FACE);
@@ -332,6 +361,9 @@ public class Renderer {
         
         // Disable blending
         GL11.glDisable(GL11.GL_BLEND);
+        
+        // Disable stencil
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
     
     public void checkGLerror() {

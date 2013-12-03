@@ -12,24 +12,25 @@ uniform sampler2D uTexNormal;
 uniform sampler2D uTexDiffuse;
 
 void main() {
-    gl_FragColor = vec4(0, 0, 0, 0);
-
     vec2 pixelCoord = gl_FragCoord.xy / screenSize;
-
+    
     vec3 aPosition = texture2D(uTexPosition, pixelCoord).rgb;
-    float lightDistance = length(lightPosition - aPosition);
+    vec3 aNormal = texture2D(uTexNormal, pixelCoord).rgb;
+    vec3 lightDirection = normalize(lightPosition - aPosition);
 
+    float fragDot = dot(aNormal, lightDirection);
 
-    if(lightDistance < lightRadius) {
-        vec3 lightDirection = normalize(lightPosition - aPosition);
-        vec3 aNormal = texture2D(uTexNormal, pixelCoord).rgb;
+    if(fragDot > 0) {
+        float lightDistance = length(lightPosition - aPosition);
 
-        float pixelDot = dot(aNormal, lightDirection);
-        if(pixelDot > 0) {
-            vec4 aDiffuse = texture2D(uTexDiffuse, pixelCoord);
-            float intensity = 0.01 * lightIntensity * lightIntensity;
-            gl_FragColor = aDiffuse * lightColor * intensity
-                    * pixelDot / (lightDistance * lightDistance);
-        }
+        vec4 aDiffuse = texture2D(uTexDiffuse, pixelCoord);
+
+        float intensity = 0.01 * lightIntensity * lightIntensity;
+
+        gl_FragColor = aDiffuse;
+        gl_FragColor = aDiffuse * lightColor * intensity
+                    * fragDot / (lightDistance * lightDistance);
+    } else {
+        gl_FragColor = vec4(0, 0, 0, 0);
     }
 }

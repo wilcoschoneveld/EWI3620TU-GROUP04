@@ -65,8 +65,8 @@ public class Game implements State {
         testLights = new ArrayList<>();
         
         Light tmp = new Light();
-        tmp.position.set(7, 2, 6);
-        tmp.setIntensity(20);
+        tmp.position.set(5, 2, 5);
+        tmp.setIntensity(15);
         tmp.setColor(1, 1, 0.8f, 1);
         
         testLights.add(tmp);
@@ -118,10 +118,8 @@ public class Game implements State {
         for(Light light : testLights)
             light.draw(renderer);
         
-        // Change to debug pass
-        //renderer.debugPass();
-        
         // Change to normal pass
+        //renderer.debugPass();
         renderer.guiPass();
     }
     

@@ -15,7 +15,7 @@ public final class Main {
     // Window dimensions
     public static final int screenWidth = 1280;
     public static final int screenHeight = 720;
-    public static final boolean vsyncEnabled = true;
+    public static final boolean vsyncEnabled = false;
     
     // Possible states
     public static enum States {
@@ -80,6 +80,8 @@ public final class Main {
                 GLContext.getCapabilities().GL_ARB_framebuffer_object);
         Logger.debug("ARB texture float: " +
                 GLContext.getCapabilities().GL_ARB_texture_float);
+        Logger.debug("ARB uniform buffer object: " +
+                GLContext.getCapabilities().GL_ARB_uniform_buffer_object);
         
         // Enable vsync
         Display.setVSyncEnabled(vsyncEnabled);
@@ -115,6 +117,7 @@ public final class Main {
                 
                 // Flip the buffer and process input
                 Display.update();
+                Display.sync(60);
             } else
                 break;
         }
