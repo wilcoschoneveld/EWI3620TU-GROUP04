@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.glu.GLU;
 
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
@@ -126,7 +125,7 @@ public class Renderer {
         
         // Load the lighting shader
         lightingShader = loadShaderPairFromFiles(
-                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
+                "res/shaders/lighting.vert", "res/shaders/lighting2.frag");
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
@@ -286,8 +285,7 @@ public class Renderer {
         int error = GL11.glGetError();
         
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            Logger.fatalerror("OpenGL error: "
-                    + GLU.gluErrorString(error));
+            Logger.fatalerror("OpenGL error: " + error);
         } else
             Logger.log("No OpenGL error!");
     }

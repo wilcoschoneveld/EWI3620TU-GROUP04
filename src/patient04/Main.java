@@ -78,6 +78,8 @@ public final class Main {
         // Check OpenGL extensions
         Logger.debug("ARB frame buffer object: " +
                 GLContext.getCapabilities().GL_ARB_framebuffer_object);
+        Logger.debug("ARB texture float: " +
+                GLContext.getCapabilities().GL_ARB_texture_float);
         Logger.debug("ARB vertex array object: " +
                 GLContext.getCapabilities().GL_ARB_vertex_array_object);
         Logger.debug("ARB explicit attrib location: " +
