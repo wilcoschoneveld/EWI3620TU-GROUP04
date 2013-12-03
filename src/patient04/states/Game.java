@@ -109,7 +109,7 @@ public class Game implements State {
         renderer.geometryPass();
         
         // Draw level geometry
-        level.drawModels(renderer);
+        //level.drawModels(renderer);
         
         testBody.draw(renderer);
         

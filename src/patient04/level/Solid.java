@@ -57,6 +57,6 @@ public class Solid {
         renderer.updateModelView(matrix);
         
         // Draw model
-        model.draw();
+        model.draw(renderer);
     }
 }

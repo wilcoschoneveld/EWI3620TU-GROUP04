@@ -48,9 +48,9 @@ public class Model {
         materials = new HashMap<>();
     }
     
-    public void draw() {
+    public void draw(Renderer renderer) {
         for(Group group : groups.values())
-            group.drawBuffer();
+            group.drawBuffer(renderer);
     }
     
     /** Compiles the raw vertex data into vertex buffer objects. */
@@ -93,7 +93,7 @@ public class Model {
         }
         
         /** Draws the faces in the group. */
-        public void drawBuffer() {
+        public void drawBuffer(Renderer renderer) {
             // If the buffer has not been created, do so first
             if(bufferSize == 0) {
                 Logger.error("Not compiled before drawing: " + toString());
