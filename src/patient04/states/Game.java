@@ -113,14 +113,14 @@ public class Game implements State {
         
         testBody.draw(renderer);
         
-        // Change to debug pass
-        //renderer.debugPass();
-        
         // Change to lighting pass
         renderer.lightingPass();
         
         for(Light light : testLights)
             light.draw(renderer);
+        
+        // Change to debug pass
+        //renderer.debugPass();
         
         // Change to normal pass
         renderer.guiPass();

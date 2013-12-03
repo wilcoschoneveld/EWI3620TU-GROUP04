@@ -3,6 +3,7 @@ package patient04.rendering;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.ARBFramebufferObject.*;
 import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
@@ -11,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
@@ -22,20 +22,25 @@ import patient04.utilities.Logger;
 
 /**
  * TODO List:
+ * - Full screen
  * - Stencil buffer something?
  * - Remove textures&normals from lighting VBO's?
- * - Diffuse color to shader for models
- * - Redo enemy
  * - Frustum culling
+ * - Diffuse color to shader for models
  * 
  * @author Wilco
  */
 public class Renderer {
-    // Geometry pass texture objects
-    private final Texture vertexBuffer, normalBuffer, diffuseBuffer;
+    // Static geometry pass draw buffer list
+    public static IntBuffer gPassDrawBuffers = Buffers.createIntBuffer(
+            GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2);
     
+    // Geometry pass texture objects
+    private final Texture
+            vertexBuffer, normalBuffer, diffuseBuffer, accumBuffer;
+;    
     // Geometry frame buffer object
-    private final int GBuffer, depthBuffer, gbufferShader;
+    private final int GBuffer, depthBuffer, debugShader;
     
     // Geometry shader and matrices for Projection, ModelView, Normal
     private final int geometryShader, gLocP, gLocMV, gLocN;
@@ -48,7 +53,7 @@ public class Renderer {
     private int currentProgram = 0;
     
     // Debug quad
-    private final Model screenQuad;
+    private final Model debugQuad;
     
     // Matrices
     public Matrix projection, view;
@@ -58,20 +63,20 @@ public class Renderer {
         setGLdefaults();
         
         // Obtain display width and height for FBO
-        int width = Display.getWidth(), height = Display.getHeight();
+        int w = Display.getWidth(), h = Display.getHeight();
         
         // Create new attachable texture buffers
-        vertexBuffer = new Texture(width, height, GL_RGBA16F_ARB);
-        normalBuffer = new Texture(width, height, GL_RGBA16F_ARB);
-        diffuseBuffer = new Texture(width, height, GL11.GL_RGBA8);
+        vertexBuffer = new Texture(w, h, GL_RGBA16F_ARB);
+        normalBuffer = new Texture(w, h, GL_RGBA16F_ARB);
+        diffuseBuffer = new Texture(w, h, GL11.GL_RGBA8);
+        accumBuffer = new Texture(w, h, GL11.GL_RGBA8);
         
         // Create new attachable render buffer
         depthBuffer = glGenRenderbuffers();
         
         // Set storage to depth component
         glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER,
-                GL14.GL_DEPTH_COMPONENT24, width, height);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
         
         // Create a new geometry FBO
@@ -80,32 +85,21 @@ public class Renderer {
         // Bind the FBO
         glBindFramebuffer(GL_FRAMEBUFFER, GBuffer);
         
-        // Attach the texture buffers
+        // Attach the texture buffers and depth buffer
         glFramebufferTexture2D(GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, vertexBuffer.id, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT1, GL11.GL_TEXTURE_2D, normalBuffer.id, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER,
-                GL_COLOR_ATTACHMENT2, GL11.GL_TEXTURE_2D, diffuseBuffer.id, 0);        
-        
-        // Attach the render buffer
+                GL_COLOR_ATTACHMENT2, GL11.GL_TEXTURE_2D, diffuseBuffer.id, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER,
+                GL_COLOR_ATTACHMENT3, GL11.GL_TEXTURE_2D, accumBuffer.id, 0);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
         
-        // Set render targets
-        GL20.glDrawBuffers(Buffers.createIntBuffer(
-                GL_COLOR_ATTACHMENT0,
-                GL_COLOR_ATTACHMENT1,
-                GL_COLOR_ATTACHMENT2
-        ));
-        
         // Check framebuffer status
-        int flag = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        
-        if(flag == GL_FRAMEBUFFER_COMPLETE)
-            Logger.log("Framebuffer complete!");
-        else
-            Logger.error("Framebuffer error: " + flag);
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            Logger.error("Framebuffer error!");
         
         // Unbind the FBO
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -133,7 +127,7 @@ public class Renderer {
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
-//        
+        
         // Obtain uniform variable locations
         lLocP = GL20.glGetUniformLocation(lightingShader, "uProjection");
         lLocMV = GL20.glGetUniformLocation(lightingShader, "uModelView");
@@ -144,7 +138,7 @@ public class Renderer {
         
         // Set screensize
         int lScrSize = GL20.glGetUniformLocation(lightingShader, "screenSize");
-        GL20.glUniform2f(lScrSize, width, height);
+        GL20.glUniform2f(lScrSize, w, h);
         
         // Set samplers to correct texture units
         int lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");
@@ -154,20 +148,21 @@ public class Renderer {
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
         
-        gbufferShader = loadShaderPairFromFiles(
+        // Load debug shader
+        debugShader = loadShaderPairFromFiles(
                 "res/shaders/gbuffer.vert", "res/shaders/gbuffer.frag");
         
-        useShaderProgram(gbufferShader);
+        useShaderProgram(debugShader);
         
         // Bind uniform locations        
-        lTexP = GL20.glGetUniformLocation(gbufferShader, "uTexPosition");
-        lTexN = GL20.glGetUniformLocation(gbufferShader, "uTexNormal");
-        lTexD = GL20.glGetUniformLocation(gbufferShader, "uTexDiffuse");
+        lTexP = GL20.glGetUniformLocation(debugShader, "uTexPosition");
+        lTexN = GL20.glGetUniformLocation(debugShader, "uTexNormal");
+        lTexD = GL20.glGetUniformLocation(debugShader, "uTexDiffuse");
         GL20.glUniform1i(lTexP, 0);
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
         
-        screenQuad = Model.getResource("lightDirectional.obj");
+        debugQuad = Model.getResource("lightDirectional.obj");
         
         // Unbind shader program
         useShaderProgram(0);
@@ -189,16 +184,18 @@ public class Renderer {
         vertexBuffer.dispose();
         normalBuffer.dispose();
         diffuseBuffer.dispose();
+        accumBuffer.dispose();
         
         // Delete the shaders
         GL20.glDeleteProgram(geometryShader);
         GL20.glDeleteProgram(lightingShader);
-        GL20.glDeleteProgram(gbufferShader);
+        GL20.glDeleteProgram(debugShader);
     }
     
     public void geometryPass() {
         // Bind the geometry frame buffer object
         glBindFramebuffer(GL_FRAMEBUFFER, GBuffer);
+        GL20.glDrawBuffers(gPassDrawBuffers);
         
         // Set OpenGL state
         setGLdefaults();
@@ -222,7 +219,7 @@ public class Renderer {
         
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
-        useShaderProgram(gbufferShader);
+        useShaderProgram(debugShader);
         
         Texture.unbind();
         
@@ -234,7 +231,7 @@ public class Renderer {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
         
-        screenQuad.draw();
+        debugQuad.draw();
     }
     
     public void lightingPass() {
@@ -269,7 +266,7 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
     }
     
-    public void guiPass() {
+    public void guiPass() {        
         // Bind the standard shader
         useShaderProgram(0);
         
@@ -381,7 +378,7 @@ public class Renderer {
         GL20.glAttachShader(shaderProgram, vertexShader);
         GL20.glAttachShader(shaderProgram, fragmentShader);
         
-        // Application dependent
+        // Application dependent, nasty code unfortunately
         GL20.glBindAttribLocation(shaderProgram, 0, "aPosition");
         GL20.glBindAttribLocation(shaderProgram, 1, "aTexCoord");
         GL20.glBindAttribLocation(shaderProgram, 2, "aNormal");

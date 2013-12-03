@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.newdawn.slick.opengl.PNGDecoder;
 import patient04.utilities.Logger;
 
