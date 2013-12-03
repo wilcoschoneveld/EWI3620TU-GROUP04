@@ -53,13 +53,14 @@ public class Light {
         Matrix matrix = new Matrix();
         matrix.translate(position.x, position.y, position.z);
         matrix.scale(radius, radius, radius);
-        renderer.updateModelView(matrix);
-        renderer.updateLightParams(this);
         
         renderer.lightingPart1();
+        renderer.updateModelView(matrix);
         model.draw();
         
         renderer.lightingPart2();
+        renderer.updateModelView(matrix);
+        renderer.updateLightParams(this);
         model.draw();
     }
 }

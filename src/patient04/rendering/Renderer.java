@@ -54,6 +54,8 @@ public class Renderer {
     private final int lightingShader, lLocP, lLocMV,
             lightP, lightC, lightI, lightR;
     
+    private final int stencilShader, sLocP, sLocMV;
+    
     // Keep track of active shader program
     private int currentProgram = 0;
     
@@ -151,6 +153,12 @@ public class Renderer {
         GL20.glUniform1i(lTexD, 2);
         
         // Set stencil operations
+        stencilShader = loadShaderPairFromFiles(
+                "res/shaders/lighting.vert", "res/shaders/empty.frag");
+        
+        sLocP = GL20.glGetUniformLocation(stencilShader, "uProjection");
+        sLocMV = GL20.glGetUniformLocation(stencilShader, "uModelView");
+        
         GL20.glStencilOpSeparate(GL11.GL_FRONT,
                 GL11.GL_KEEP, GL14.GL_INCR_WRAP, GL11.GL_KEEP);
         GL20.glStencilOpSeparate(GL11.GL_BACK,
@@ -245,6 +253,9 @@ public class Renderer {
         // Set the projection matrix
         GL20.glUniformMatrix4(lLocP, false, projection.toBuffer());
         
+        useShaderProgram(stencilShader);
+        GL20.glUniformMatrix4(sLocP, false, projection.toBuffer());
+        
         // Be nice and clear Texture cache
         Texture.unbind();
         
@@ -311,6 +322,8 @@ public class Renderer {
         } else if(currentProgram == lightingShader) {
             // Update modelview matrix
             GL20.glUniformMatrix4(lLocMV, false, mv.toBuffer());
+        } else if(currentProgram == stencilShader) {
+            GL20.glUniformMatrix4(sLocMV, false, mv.toBuffer());
         }
         
         // End method
@@ -332,6 +345,8 @@ public class Renderer {
     }
     
     public void lightingPart1() {
+        useShaderProgram(stencilShader);
+        
         GL11.glDrawBuffer(0);
         
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
@@ -342,6 +357,8 @@ public class Renderer {
     }
     
     public void lightingPart2() {
+        useShaderProgram(lightingShader);
+        
         GL11.glDrawBuffer(accumAttachment);
         
         GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 1);
