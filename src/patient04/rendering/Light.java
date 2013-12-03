@@ -1,5 +1,6 @@
 package patient04.rendering;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -29,11 +30,16 @@ public class Light {
         this.intensity = intensity;
         
         // Set radius
-        radius = (float) Math.sqrt(20 * intensity);
+        radius = (float) Math.sqrt(15 * intensity);
     }
     
     public void setColor(float r, float g, float b, float a) {
         this.color = Buffers.createFloatBuffer(r, g, b, a);
+    }
+    
+    public void setColor(float hue) {
+        this.color = Buffers.createFloatBuffer(
+                Color.getHSBColor(hue, 1, 1).getComponents(null));
     }
     
     public FloatBuffer getColor() {

@@ -1,6 +1,8 @@
 package patient04.states;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.lwjgl.input.Keyboard;
 import patient04.Main;
 import patient04.level.Solid;
@@ -66,7 +68,7 @@ public class Game implements State {
         
         Light tmp = new Light();
         tmp.position.set(5, 2, 5);
-        tmp.setIntensity(15);
+        tmp.setIntensity(25);
         tmp.setColor(1, 1, 0.8f, 1);
         
         testLights.add(tmp);
@@ -80,10 +82,7 @@ public class Game implements State {
                 tmp.position.set(player.position.x,
                         player.position.y + 2, player.position.z);
                 tmp.setIntensity(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 20 : 10);
-                tmp.setColor(
-                        (float) Math.random(),
-                        (float) Math.random(),
-                        (float) Math.random(), 1);
+                tmp.setColor((float) Math.random());
                 
                 testLights.add(tmp);
             }
