@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import patient04.math.Matrix;
 import patient04.math.Vector;
+import patient04.resources.Model;
 
 import patient04.resources.Texture;
 import patient04.utilities.Buffers;
@@ -34,7 +35,7 @@ public class Renderer {
     private final Texture vertexBuffer, normalBuffer, diffuseBuffer;
     
     // Geometry frame buffer object
-    private final int GBuffer, depthBuffer;
+    private final int GBuffer, depthBuffer, gbufferShader;
     
     // Geometry shader and matrices for Projection, ModelView, Normal
     private final int geometryShader, gLocP, gLocMV, gLocN;
@@ -45,6 +46,8 @@ public class Renderer {
     
     // Keep track of active shader program
     private int currentProgram = 0;
+    
+    private Model screenQuad = Model.getResource("lightDirectional.obj");
     
     // Matrices
     public Matrix projection, view;
@@ -125,7 +128,7 @@ public class Renderer {
         
         // Load the lighting shader
         lightingShader = loadShaderPairFromFiles(
-                "res/shaders/lighting.vert", "res/shaders/lighting2.frag");
+                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
@@ -155,6 +158,23 @@ public class Renderer {
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
         
+        gbufferShader = loadShaderPairFromFiles(
+                "res/shaders/gbuffer.vert", "res/shaders/gbuffer.frag");
+        
+        useShaderProgram(gbufferShader);
+        
+        // Bind attribute locations
+        GL20.glBindAttribLocation(gbufferShader, 0, "aPosition");
+        GL20.glBindAttribLocation(gbufferShader, 1, "aTexCoord");
+        GL20.glBindAttribLocation(gbufferShader, 2, "aNormal");
+        
+        lTexP = GL20.glGetUniformLocation(gbufferShader, "uTexPosition");
+        lTexN = GL20.glGetUniformLocation(gbufferShader, "uTexNormal");
+        lTexD = GL20.glGetUniformLocation(gbufferShader, "uTexDiffuse");
+        GL20.glUniform1i(lTexP, 0);
+        GL20.glUniform1i(lTexN, 1);
+        GL20.glUniform1i(lTexD, 2);
+        
         // Unbind shader program
         useShaderProgram(0);
         
@@ -179,6 +199,7 @@ public class Renderer {
         // Delete the shaders
         GL20.glDeleteProgram(geometryShader);
         GL20.glDeleteProgram(lightingShader);
+        GL20.glDeleteProgram(gbufferShader);
     }
     
     public void geometryPass() {
@@ -196,6 +217,30 @@ public class Renderer {
         
         // Set the projection matrix
         GL20.glUniformMatrix4(gLocP, false, projection.toBuffer());
+    }
+    
+    public void debugPass() {
+        // Bind the window provided buffer object
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        
+        setGLdefaults();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        
+        useShaderProgram(gbufferShader);
+        
+        Texture.unbind();
+        
+        // Bind the GBuffer textures to TEXTURE0,1,etc..
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseBuffer.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
+        
+        screenQuad.draw();
     }
     
     public void lightingPass() {
