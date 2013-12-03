@@ -44,7 +44,7 @@ public class Renderer {
     // Geometry pass texture objects
     private final Texture
             positionTexture, normalTexture, diffuseTexture, accumTexture;
-;    
+
     // Geometry frame buffer object
     private final int geometryBuffer, depthStencilBuffer, debugShader;
     
@@ -118,11 +118,6 @@ public class Renderer {
         
         // Bind the geometry shader
         useShaderProgram(geometryShader);
-        
-        // Bind attribute locations
-        GL20.glBindAttribLocation(geometryShader, 0, "aPosition");
-        GL20.glBindAttribLocation(geometryShader, 1, "aTexCoord");
-        GL20.glBindAttribLocation(geometryShader, 2, "aNormal");
         
         // Obtain uniform variable locations
         gLocP = GL20.glGetUniformLocation(geometryShader, "uProjection");
