@@ -6,7 +6,7 @@ uniform sampler2D uTexDiffuse;
 
 void main() {
     vec2 tmp = vec2(gl_FragCoord.x / 1280, gl_FragCoord.y / 720);
-    //tmp = tmp*2;
+    tmp = tmp*2;
 
     vec4 colorP = texture2D(uTexPosition, tmp);
     vec4 colorN = texture2D(uTexNormal, tmp);
@@ -19,6 +19,6 @@ void main() {
     } else if(tmp.x < 1 && tmp.y > 1) {
         gl_FragColor = colorD;
     } else {
-        gl_FragColor = colorP * 0.2 + colorD + colorN * 0.5;
+        gl_FragColor = -vec4(colorP.z, colorP.z, colorP.z, 1) * 0.1;
     }
 }

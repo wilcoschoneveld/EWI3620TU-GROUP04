@@ -47,7 +47,7 @@ public class Renderer {
     // Keep track of active shader program
     private int currentProgram = 0;
     
-    private Model screenQuad = Model.getResource("lightDirectional.obj");
+    private static final Model screenQuad = Model.getResource("lightDirectional.obj");
     
     // Matrices
     public Matrix projection, view;
