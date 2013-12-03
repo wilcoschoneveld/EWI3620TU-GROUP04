@@ -31,16 +31,21 @@ import patient04.utilities.Logger;
  * @author Wilco
  */
 public class Renderer {
+    public static final int positionAttachment = GL_COLOR_ATTACHMENT0,
+                            normalAttachment = GL_COLOR_ATTACHMENT1,
+                            diffuseAttachment = GL_COLOR_ATTACHMENT2,
+                            accumAttachment = GL_COLOR_ATTACHMENT3;
+    
     // Static geometry pass draw buffer list
-    public static IntBuffer gPassDrawBuffers = Buffers.createIntBuffer(
-            GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2);
+    public static final IntBuffer gPassDrawBuffers = Buffers.createIntBuffer(
+            positionAttachment, normalAttachment, diffuseAttachment);
     
     // Geometry pass texture objects
     private final Texture
-            vertexBuffer, normalBuffer, diffuseBuffer, accumBuffer;
+            positionTexture, normalTexture, diffuseTexture, accumTexture;
 ;    
     // Geometry frame buffer object
-    private final int GBuffer, depthBuffer, debugShader;
+    private final int geometryBuffer, depthStencilBuffer, debugShader;
     
     // Geometry shader and matrices for Projection, ModelView, Normal
     private final int geometryShader, gLocP, gLocMV, gLocN;
@@ -66,36 +71,38 @@ public class Renderer {
         int w = Display.getWidth(), h = Display.getHeight();
         
         // Create new attachable texture buffers
-        vertexBuffer = new Texture(w, h, GL_RGBA16F_ARB);
-        normalBuffer = new Texture(w, h, GL_RGBA16F_ARB);
-        diffuseBuffer = new Texture(w, h, GL11.GL_RGBA8);
-        accumBuffer = new Texture(w, h, GL11.GL_RGBA8);
+        positionTexture = new Texture(w, h, GL_RGBA16F_ARB);
+        normalTexture = new Texture(w, h, GL_RGBA16F_ARB);
+        diffuseTexture = new Texture(w, h, GL11.GL_RGBA8);
+        accumTexture = new Texture(w, h, GL11.GL_RGBA8);
         
         // Create new attachable render buffer
-        depthBuffer = glGenRenderbuffers();
+        depthStencilBuffer = glGenRenderbuffers();
         
         // Set storage to depth component
-        glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, depthStencilBuffer);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
         
         // Create a new geometry FBO
-        GBuffer = glGenFramebuffers();
+        geometryBuffer = glGenFramebuffers();
         
         // Bind the FBO
-        glBindFramebuffer(GL_FRAMEBUFFER, GBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, geometryBuffer);
         
-        // Attach the texture buffers and depth buffer
+        // Attach the texture buffers
         glFramebufferTexture2D(GL_FRAMEBUFFER,
-                GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, vertexBuffer.id, 0);
+                positionAttachment, GL11.GL_TEXTURE_2D, positionTexture.id, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER,
-                GL_COLOR_ATTACHMENT1, GL11.GL_TEXTURE_2D, normalBuffer.id, 0);
+                normalAttachment, GL11.GL_TEXTURE_2D, normalTexture.id, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER,
-                GL_COLOR_ATTACHMENT2, GL11.GL_TEXTURE_2D, diffuseBuffer.id, 0);
+                diffuseAttachment, GL11.GL_TEXTURE_2D, diffuseTexture.id, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER,
-                GL_COLOR_ATTACHMENT3, GL11.GL_TEXTURE_2D, accumBuffer.id, 0);
+                accumAttachment, GL11.GL_TEXTURE_2D, accumTexture.id, 0);
+        
+        // Attach depth buffer
         glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+             GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthStencilBuffer);
         
         // Check framebuffer status
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -177,14 +184,14 @@ public class Renderer {
     
     public void dispose() {
         // Delete the framebuffers
-        glDeleteFramebuffers(GBuffer);
-        glDeleteRenderbuffers(depthBuffer);
+        glDeleteFramebuffers(geometryBuffer);
+        glDeleteRenderbuffers(depthStencilBuffer);
         
         // Delete the textures
-        vertexBuffer.dispose();
-        normalBuffer.dispose();
-        diffuseBuffer.dispose();
-        accumBuffer.dispose();
+        positionTexture.dispose();
+        normalTexture.dispose();
+        diffuseTexture.dispose();
+        accumTexture.dispose();
         
         // Delete the shaders
         GL20.glDeleteProgram(geometryShader);
@@ -194,7 +201,7 @@ public class Renderer {
     
     public void geometryPass() {
         // Bind the geometry frame buffer object
-        glBindFramebuffer(GL_FRAMEBUFFER, GBuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
         GL20.glDrawBuffers(gPassDrawBuffers);
         
         // Set OpenGL state
@@ -212,7 +219,7 @@ public class Renderer {
     
     public void debugPass() {
         // Bind the window provided buffer object
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         
         setGLdefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -225,18 +232,19 @@ public class Renderer {
         
         // Bind the GBuffer textures to TEXTURE0,1,etc..
         GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseBuffer.id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
         
         debugQuad.draw();
     }
     
     public void lightingPass() {
         // Bind the window provided buffer object
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
+        GL11.glDrawBuffer(accumAttachment);
         
         // Set OpenGL state
         setGLdefaults();
@@ -259,14 +267,22 @@ public class Renderer {
         
         // Bind the GBuffer textures to TEXTURE0,1,etc..
         GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseBuffer.id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalBuffer.id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
     }
     
-    public void guiPass() {        
+    public void guiPass() {
+        // Blit everything from accumulation buffer to frame
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, geometryBuffer);
+        GL11.glReadBuffer(accumAttachment);
+        glBlitFramebuffer(0, 0, accumTexture.width, accumTexture.height,
+                          0, 0, accumTexture.width, accumTexture.height,
+                          GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST);
+        
         // Bind the standard shader
         useShaderProgram(0);
         
@@ -284,6 +300,7 @@ public class Renderer {
             GL20.glUniformMatrix4(gLocMV, false, mv.toBuffer());
             GL20.glUniformMatrix4(gLocN, true, mv.invert().toBuffer());
         } else if(currentProgram == lightingShader) {
+            // Update modelview matrix
             GL20.glUniformMatrix4(lLocMV, false, mv.toBuffer());
         }
         
@@ -323,7 +340,7 @@ public class Renderer {
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
             Logger.fatalerror("OpenGL error: " + error);
         } else
-            Logger.log("No OpenGL error!");
+            Logger.debug("No OpenGL error!");
     }
     
     public static int loadShaderPairFromFiles(String vertexFile, String fragmentFile) {

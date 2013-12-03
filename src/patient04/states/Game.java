@@ -110,7 +110,6 @@ public class Game implements State {
         
         // Draw level geometry
         level.drawModels(renderer);
-        
         testBody.draw(renderer);
         
         // Change to lighting pass
@@ -119,11 +118,11 @@ public class Game implements State {
         for(Light light : testLights)
             light.draw(renderer);
         
-        // Change to debug pass
-        //renderer.debugPass();
-        
         // Change to normal pass
         renderer.guiPass();
+        
+        // Change to debug pass
+        //renderer.debugPass();
     }
     
     @Override
