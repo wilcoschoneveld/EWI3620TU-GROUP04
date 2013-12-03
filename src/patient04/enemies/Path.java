@@ -55,7 +55,6 @@ public class Path {
     }
     
     public void calculate() {
-        float temp, length;
         int j = 0;
         
         // Calculate the nearest waypoint, return to previous waypoint when 
@@ -64,25 +63,18 @@ public class Path {
             if (prevWaypoint == nextWaypoint.neighbors.get(j)) {
                 j++;
             }
-         
-            length = nextWaypoint.position.copy().min(
-                        nextWaypoint.neighbors.get(j).position.copy()).length();
-        
+                 
             if (nextWaypoint.neighbors.size() > 2) {
-                for (int i = j+1; i < nextWaypoint.neighbors.size(); i++) {
-                    if (prevWaypoint != nextWaypoint.neighbors.get(i)) {
-                        temp = nextWaypoint.position.copy().min(
-                            nextWaypoint.neighbors.get(i).position.copy()).length();
-                        if (temp < length) {
-                            length = temp;
-                            j = i;
-                        }
+                for (int i = 0; i < nextWaypoint.neighbors.size(); i++) {
+                    if (prevWaypoint == nextWaypoint.neighbors.get(i)) {
+                     
                     }
                 }
             }
         }
         prevWaypoint = nextWaypoint;
         nextWaypoint = nextWaypoint.neighbors.get(j);
+        nextWaypoint.addPheromone();
     }
     
     public void testPath() {
@@ -90,10 +82,20 @@ public class Path {
         Waypoint n1 = new Waypoint(new Vector(4.5f, 0, 4.5f));
         Waypoint n2 = new Waypoint(new Vector(4.5f, 0, 20f));
         Waypoint n3 = new Waypoint(new Vector(10f, 0, 23f));
+        Waypoint n4 = new Waypoint(new Vector(4.5f, 0, 23f));
+        Waypoint n5 = new Waypoint(new Vector(10f, 0, 23f));
                
         this.addWaypoint(n0);
         this.addWaypoint(n1);
         this.addWaypoint(n2);
+        this.addWaypoint(n4);
         this.addWaypoint(n3);
+        this.addWaypoint(n5);
+        
+        Waypoint.link(n5, n0);
+        Waypoint.link(n2, n5);
+        Waypoint.link(n2, n3);
+        Waypoint.link(n4, n5);
+        
     }
 }

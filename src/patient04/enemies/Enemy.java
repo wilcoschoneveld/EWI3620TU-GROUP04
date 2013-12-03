@@ -31,12 +31,6 @@ public class Enemy extends Entity {
         super(level, WIDTH, HEIGHT);
         path = pathIn;
         
-        model = Model.buildWall(
-                new Vector(-WIDTH/2, 0, -WIDTH/2),
-                new Vector(WIDTH/2, HEIGHT, WIDTH/2), "wall_hospital.png");
-        model.compileBuffers();
-        model.releaseRawData();
-        
         // Initialize path enemy
         path.prevWaypoint = path.get(0);
         path.nextWaypoint = path.get(1);
@@ -73,12 +67,17 @@ public class Enemy extends Entity {
         // Calculate direction vector for enemy
         Vector dir = path.nextWaypoint.position.copy()
                 .min(position).normalize()
-                .scale(0.5f * dt).scale(1, 0, 1);
+                .scale(2f * dt).scale(1, 0, 1);
         
         acceleration.add(dir);
         
         // Calculate rotation for enemy
         rotation.set(0, (float) (Math.atan2(-dir.z, dir.x) * 180/Math.PI), 0);
+        
+        // test
+        for (int i=0; i<path.nextWaypoint.neighbors.size(); i++) {
+            System.out.println(path.nextWaypoint.neighbors.get(i).getPheromone());
+        }
         
         super.update(dt);
     }

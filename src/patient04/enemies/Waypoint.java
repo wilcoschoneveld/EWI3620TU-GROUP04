@@ -17,6 +17,7 @@ import patient04.math.Vector;
 public class Waypoint {
     public Vector position;
     public ArrayList<Waypoint> neighbors;
+    public int pheromone = 0;
     
     public Waypoint(Vector position) {
         this.position = position;
@@ -32,6 +33,14 @@ public class Waypoint {
     public static void unlink(Waypoint one, Waypoint two) {
         one.neighbors.remove(two);
         two.neighbors.remove(one);
+    }
+    
+    public void addPheromone() {
+        pheromone++;
+    }
+    
+    public int getPheromone() {
+        return pheromone;
     }
     
     @Override
