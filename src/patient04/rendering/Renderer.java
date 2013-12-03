@@ -38,10 +38,10 @@ public class Renderer {
     private final int GBuffer, depthBuffer, gbufferShader;
     
     // Geometry shader and matrices for Projection, ModelView, Normal
-    private final int geometryShader, gLocAP, gLocAT, gLocAN, gLocP, gLocMV, gLocN;
+    private final int geometryShader, gLocP, gLocMV, gLocN;
             
     // Lighting shader
-    private final int lightingShader, lLocAP, lLocAT, lLocAN, lLocP, lLocMV,
+    private final int lightingShader, lLocP, lLocMV,
             lightP, lightC, lightI, lightR;
     
     // Keep track of active shader program
@@ -121,16 +121,6 @@ public class Renderer {
         GL20.glBindAttribLocation(geometryShader, 1, "aTexCoord");
         GL20.glBindAttribLocation(geometryShader, 2, "aNormal");
         
-        gLocAP = GL20.glGetAttribLocation(geometryShader, "aPosition");
-        gLocAT = GL20.glGetAttribLocation(geometryShader, "aTexCoord");
-        gLocAN = GL20.glGetAttribLocation(geometryShader, "aNormal");
-        
-        System.out.println("P:"+gLocAP + "/T:" + gLocAT+"/N:"+gLocAN);
-        
-//        GL20.glBindAttribLocation(geometryShader, 0, "aPosition");
-//        GL20.glBindAttribLocation(geometryShader, 1, "aTexCoord");
-//        GL20.glBindAttribLocation(geometryShader, 2, "aNormal");
-        
         // Obtain uniform variable locations
         gLocP = GL20.glGetUniformLocation(geometryShader, "uProjection");
         gLocMV = GL20.glGetUniformLocation(geometryShader, "uModelView");
@@ -142,17 +132,6 @@ public class Renderer {
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
-
-        // Bind attribute locations
-        lLocAP = GL20.glGetAttribLocation(lightingShader, "aPosition");
-        lLocAT = GL20.glGetAttribLocation(lightingShader, "aTexCoord");
-        lLocAN = GL20.glGetAttribLocation(lightingShader, "aNormal");
-        
-        System.out.println("P:"+lLocAP + "/T:" + lLocAT+"/N:"+lLocAN);
-        
-//        GL20.glBindAttribLocation(lightingShader, 0, "aPosition");
-//        GL20.glBindAttribLocation(lightingShader, 1, "aTexCoord");
-//        GL20.glBindAttribLocation(lightingShader, 2, "aNormal");
 //        
         // Obtain uniform variable locations
         lLocP = GL20.glGetUniformLocation(lightingShader, "uProjection");
@@ -179,13 +158,7 @@ public class Renderer {
         
         useShaderProgram(gbufferShader);
         
-        // Bind attribute locations
-        
-        
-//        GL20.glBindAttribLocation(gbufferShader, 0, "aPosition");
-//        GL20.glBindAttribLocation(gbufferShader, 1, "aTexCoord");
-//        GL20.glBindAttribLocation(gbufferShader, 2, "aNormal");
-        
+        // Bind uniform locations        
         lTexP = GL20.glGetUniformLocation(gbufferShader, "uTexPosition");
         lTexN = GL20.glGetUniformLocation(gbufferShader, "uTexNormal");
         lTexD = GL20.glGetUniformLocation(gbufferShader, "uTexDiffuse");
@@ -258,7 +231,7 @@ public class Renderer {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, vertexBuffer.id);
         
-        screenQuad.draw(this);
+        screenQuad.draw();
     }
     
     public void lightingPass() {
@@ -300,24 +273,6 @@ public class Renderer {
         // Set OpenGL state
         setGLdefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-    }
-    
-    public int getAttribute(int i) {
-        if(currentProgram == geometryShader) {
-            switch(i) {
-                case 0: return gLocAP;
-                case 1: return gLocAT;
-                case 2: return gLocAN;
-            }
-        } else if(currentProgram == lightingShader) {
-            switch(i) {
-                case 0: return lLocAP;
-                case 1: return lLocAT;
-                case 2: return lLocAN;
-            }
-        }
-        
-        return -1;
     }
     
     public void updateModelView(Matrix model) {
@@ -422,6 +377,12 @@ public class Renderer {
         
         GL20.glAttachShader(shaderProgram, vertexShader);
         GL20.glAttachShader(shaderProgram, fragmentShader);
+        
+        // Application dependent
+        GL20.glBindAttribLocation(shaderProgram, 0, "aPosition");
+        GL20.glBindAttribLocation(shaderProgram, 1, "aTexCoord");
+        GL20.glBindAttribLocation(shaderProgram, 2, "aNormal");
+        
         GL20.glLinkProgram(shaderProgram);
         
         // Cleanup loaded shaders

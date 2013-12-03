@@ -65,6 +65,6 @@ public class Light {
         renderer.updateLightParams(this);
         
         // Draw the model
-        model.draw(renderer);
+        model.draw();
     }
 }
