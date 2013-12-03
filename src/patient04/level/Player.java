@@ -29,7 +29,7 @@ public class Player extends Entity {
     public static final float ACCEL_WALKING = 1f;
     public static final float ACCEL_RUNNING = 2f;
     public static final float ACCEL_AIR = 0.1f;
-    public static final float ACCEL_JUMP = 25f;
+    public static final float ACCEL_JUMP = 0.5f;
 
     /** Constructs a new player.
      * 
@@ -81,7 +81,7 @@ public class Player extends Entity {
         
         // If space is pressed and player is on ground
         if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && onGround) {
-            acceleration.add(0, ACCEL_JUMP * dt, 0);
+            acceleration.add(0, ACCEL_JUMP, 0);
         }
         
         // Update remaining entity

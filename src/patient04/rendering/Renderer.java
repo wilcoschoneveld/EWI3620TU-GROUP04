@@ -22,6 +22,7 @@ import patient04.utilities.Logger;
 
 /**
  * TODO List:
+ * - Stencil buffer something?
  * - Remove textures&normals from lighting VBO's?
  * - Diffuse color to shader for models
  * - Redo enemy
@@ -51,8 +52,7 @@ public class Renderer {
     
     public Renderer() {
         // Enable depth testing and backface culling
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        setGLdefaults();
         
         // Obtain display width and height for FBO
         int width = Display.getWidth(), height = Display.getHeight();
@@ -146,7 +146,7 @@ public class Renderer {
         
         // Set screensize
         int lScrSize = GL20.glGetUniformLocation(lightingShader, "screenSize");
-        GL20.glUniform2f(lScrSize, Display.getWidth(), Display.getHeight());
+        GL20.glUniform2f(lScrSize, width, height);
         
         // Set samplers to correct texture units
         int lTexP = GL20.glGetUniformLocation(lightingShader, "uTexPosition");
