@@ -31,6 +31,7 @@ import patient04.utilities.Logger;
  * @author Wilco
  */
 public class Renderer {
+    // Geometry textures attachment locations
     public static final int positionAttachment = GL_COLOR_ATTACHMENT0,
                             normalAttachment = GL_COLOR_ATTACHMENT1,
                             diffuseAttachment = GL_COLOR_ATTACHMENT2,
@@ -162,12 +163,14 @@ public class Renderer {
         useShaderProgram(debugShader);
         
         // Bind uniform locations        
-        lTexP = GL20.glGetUniformLocation(debugShader, "uTexPosition");
-        lTexN = GL20.glGetUniformLocation(debugShader, "uTexNormal");
-        lTexD = GL20.glGetUniformLocation(debugShader, "uTexDiffuse");
-        GL20.glUniform1i(lTexP, 0);
-        GL20.glUniform1i(lTexN, 1);
-        GL20.glUniform1i(lTexD, 2);
+        int dTexP = GL20.glGetUniformLocation(debugShader, "uTexPosition");
+        int dTexN = GL20.glGetUniformLocation(debugShader, "uTexNormal");
+        int dTexD = GL20.glGetUniformLocation(debugShader, "uTexDiffuse");
+        int dTexA = GL20.glGetUniformLocation(debugShader, "uTexAccum");
+        GL20.glUniform1i(dTexP, 0);
+        GL20.glUniform1i(dTexN, 1);
+        GL20.glUniform1i(dTexD, 2);
+        GL20.glUniform1i(dTexA, 3);
         
         debugQuad = Model.getResource("lightDirectional.obj");
         
@@ -231,6 +234,8 @@ public class Renderer {
         Texture.unbind();
         
         // Bind the GBuffer textures to TEXTURE0,1,etc..
+        GL13.glActiveTexture(GL13.GL_TEXTURE3);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE2);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE1);

@@ -118,11 +118,11 @@ public class Game implements State {
         for(Light light : testLights)
             light.draw(renderer);
         
-        // Change to normal pass
-        renderer.guiPass();
-        
         // Change to debug pass
         //renderer.debugPass();
+        
+        // Change to normal pass
+        renderer.guiPass();
     }
     
     @Override
