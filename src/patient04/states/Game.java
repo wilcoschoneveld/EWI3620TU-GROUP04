@@ -109,16 +109,18 @@ public class Game implements State {
         renderer.geometryPass();
         
         // Draw level geometry
-        //level.drawModels(renderer);
+        level.drawModels(renderer);
         
         testBody.draw(renderer);
         
+        // Change to debug pass
+        //renderer.debugPass();
+        
         // Change to lighting pass
-        renderer.debugPass();
-//        renderer.lightingPass();
-//        
-//        for(Light light : testLights)
-//            light.draw(renderer);
+        renderer.lightingPass();
+        
+        for(Light light : testLights)
+            light.draw(renderer);
         
         // Change to normal pass
         renderer.guiPass();

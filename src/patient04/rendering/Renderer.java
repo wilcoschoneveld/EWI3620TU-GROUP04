@@ -47,7 +47,8 @@ public class Renderer {
     // Keep track of active shader program
     private int currentProgram = 0;
     
-    private static final Model screenQuad = Model.getResource("lightDirectional.obj");
+    // Debug quad
+    private final Model screenQuad;
     
     // Matrices
     public Matrix projection, view;
@@ -165,6 +166,8 @@ public class Renderer {
         GL20.glUniform1i(lTexP, 0);
         GL20.glUniform1i(lTexN, 1);
         GL20.glUniform1i(lTexD, 2);
+        
+        screenQuad = Model.getResource("lightDirectional.obj");
         
         // Unbind shader program
         useShaderProgram(0);
