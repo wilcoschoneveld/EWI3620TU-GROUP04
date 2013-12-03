@@ -1,5 +1,6 @@
 package patient04.States;
 
+import org.lwjgl.input.Keyboard;
 import patient04.level.Player;
 import patient04.utilities.Timer;
 import patient04.lighting.Renderer;
@@ -23,7 +24,9 @@ public class Game implements State {
     private Player player;
     private Model testModel;
     private Sound gameSound;
-    private final int diffSounds = 2;
+    private final int diffSounds = 3;
+    private long lastStep = 0;
+    private long stepTime = 450;
     
     @Override
     public void initialize() {
@@ -68,12 +71,20 @@ public class Game implements State {
         testModel.compileBuffers();
         testModel.releaseRawData();
         
+        // initialize sound
         gameSound = new Sound(diffSounds);
-        gameSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-        gameSound.addSound("footsteps_slow.wav", 1.0f, 0.3f, AL10.AL_TRUE);
         
+        // set the the different sounds 
+        gameSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE); // sound 0
+        gameSound.addSound("footsteps_slow.wav", 1.0f, 0.8f, AL10.AL_FALSE); // sound 1
+        gameSound.addSound("footsteps_slow.wav", 1.0f, 0.8f, AL10.AL_TRUE); // sound 2
+        
+        // set position of the sound 2
+        gameSound.setSourcePos(2, 10, 0, 10);
+        
+        // play the different sounds
         gameSound.playSound(0);
-        gameSound.playSound(1);
+        gameSound.playSound(2);
     }
 
     @Override
@@ -87,6 +98,16 @@ public class Game implements State {
         // Update the player
         player.update(deltaTime);
         player.integrate();
+        gameSound.setListenerPos(player.position.x, player.position.y, player.position.z);
+        gameSound.setListenerOri(player.rotation.y);
+        gameSound.setSourcePos(1, player.position.x, player.position.y, player.position.z);
+
+        // For every step play the step sound
+        if (Keyboard.isKeyDown(Keyboard.KEY_W) == true || Keyboard.isKeyDown(Keyboard.KEY_A) == true || Keyboard.isKeyDown(Keyboard.KEY_D) == true || Keyboard.isKeyDown(Keyboard.KEY_S) == true ){
+            if( Math.abs( Math.cos(3*player.getDistanceMoved())) > 0.95){
+                gameSound.playSound(1);
+            }
+        }
     }
 
     @Override

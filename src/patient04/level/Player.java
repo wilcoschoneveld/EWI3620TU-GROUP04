@@ -115,5 +115,9 @@ public class Player extends Entity {
         Renderer.setViewMatrix(matrix);
     }
     
+    public float getDistanceMoved(){
+        return distanceMoved;
+    }
+    
     private float viewbobbing = 0;
 }
