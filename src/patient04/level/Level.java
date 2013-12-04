@@ -6,6 +6,7 @@ import patient04.rendering.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
 import patient04.math.Vector;
+import patient04.rendering.Light;
 
 public class Level {
     public int Color;
@@ -21,10 +22,20 @@ public class Level {
     // Wall height
     public static final float WALL_HEIGHT = 3;
     
-    public final ArrayList<Solid> solids;
+    private final ArrayList<Solid> solids;
+    private final ArrayList<Light> lights;
     
-    public Level(ArrayList<Solid> solids) {
-        this.solids = solids;
+    public Level() {
+        this.solids = new ArrayList<>();
+        this.lights = new ArrayList<>();
+    }
+    
+    public void addObject(Solid solid) {
+        solids.add(solid);
+    }
+    
+    public void addLight(Light light) {
+        lights.add(light);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
@@ -37,9 +48,14 @@ public class Level {
         return aabbs;
     }
     
-    public void drawModels(Renderer renderer) {
-        for (Solid obj : solids)
-            obj.draw(renderer);
+    public void drawGeometry(Renderer renderer) {
+        for (Solid solid : solids)
+            solid.draw(renderer);
+    }
+    
+    public void drawLights(Renderer renderer) {
+        for (Light light : lights)
+            light.draw(renderer);
     }
     
     public void cleanup() {
@@ -81,6 +97,7 @@ public class Level {
     }
     
     public static Level defaultLevel(String textureFile) {
+        Level level = new Level();
         
         byte[][] maze =
            {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -94,13 +111,9 @@ public class Level {
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
         
-        // Create an empty list of shapes
-        ArrayList<Solid> objects = new ArrayList<>();
-        
+        // Create the wall model
         Vector min = new Vector(-0.5f, -0.5f, -0.5f).scale(WALL_HEIGHT);
         Vector max = new Vector(0.5f, 0.5f, 0.5f).scale(WALL_HEIGHT);
-        
-        // Create the wall model
         Model blockModel = Model.buildWall(min, max, textureFile);
         
         // Render the display list
@@ -126,10 +139,10 @@ public class Level {
                         WALL_HEIGHT * (y + 0.5f));
                 
                 // Build the box and add to list
-                objects.add(obj);
+                level.solids.add(obj);
             }
         }
         
-        return new Level(objects);
+        return level;
     }
 }

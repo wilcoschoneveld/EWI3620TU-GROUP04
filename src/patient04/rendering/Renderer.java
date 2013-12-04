@@ -181,12 +181,12 @@ public class Renderer {
         GL20.glUniform1i(dTexD, 2);
         GL20.glUniform1i(dTexA, 3);
         
-        debugQuad = Model.getResource("lightDirectional.obj");
-        
         // Unbind shader program
         useShaderProgram(0);
         
-        checkGLerror();
+        Logger.log("Renderer loaded");
+        
+        debugQuad = Model.getResource("lightDirectional.obj");
     }
     
     public final void useShaderProgram(int program) {

@@ -137,7 +137,7 @@ public class Texture {
             Logger.error("Error loading texture " + texturePath);
         }
         
-        Logger.log("Succesfully loaded " + texturePath);
+        Logger.debug("Succesfully loaded " + texturePath);
         
         return texture;
     }

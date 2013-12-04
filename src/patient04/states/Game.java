@@ -25,10 +25,6 @@ public class Game implements State {
     private Level level;
     private Player player;
     
-    public Solid testBody, testBody2;
-    
-    public ArrayList<Light> testLights;
-    
     @Override
     public void initialize() {
         // Grab mouse
@@ -56,37 +52,36 @@ public class Game implements State {
         Path path = new Path();
         path.testPath();
         
-        testLights = new ArrayList<>();
+        Solid tmp;
+        Light tmpl;
         
-        Light tmp = new Light();
-        tmp.position.set(5, 2, 5);
-        tmp.setIntensity(15);
-        tmp.setColor(1, 1, 0.7f, 1);
+        tmp = new Solid();
+        tmp.model = Model.getResource("metaldoor.obj");
+        tmp.position.set(10, 0, 5);
+        level.addObject(tmp);
         
-        testLights.add(tmp);
+        tmp = new Solid();
+        tmp.model = Model.getResource("needle.obj");
+        tmp.position.set(7, 0, 8);
+        level.addObject(tmp);
         
-        testBody2 = new Solid();
-        testBody2.model = Model.getResource("needle.obj");
-        testBody2.position.set(7, 0, 8);
+        tmp = new Solid();
+        tmp.model = Model.getResource("infuus.obj");
+        tmp.position.set(8, 0, 8);
+        tmp.rotation.set(0, 230, 0);
+        level.addObject(tmp);
         
-        // Load a nurse
-        testBody = new Solid();
-        testBody.model = Model.getResource("infuus.obj");
-        testBody.position.set(8, 0, 8);
-        testBody.rotation.set(0, 230, 0);
+        tmpl = new Light();
+        tmpl.position.set(7, 0.2f, 8);
+        tmpl.setIntensity(2);
+        tmpl.setColor(0.1f);
+        level.addLight(tmpl);
         
-        Light tmp2 = new Light();
-        tmp2.position.set(8, 0.2f, 8);
-        tmp2.setIntensity(3);
-        tmp2.setColor(0.3f);
-        
-        Light tmp3 = new Light();
-        tmp3.position.set(7, 0.2f, 8);
-        tmp3.setIntensity(2);
-        tmp3.setColor(0.1f);
-        
-        testLights.add(tmp2);
-        testLights.add(tmp3);
+        tmpl = new Light();
+        tmpl.position.set(5, 2, 5);
+        tmpl.setIntensity(15);
+        tmpl.setColor(1, 1, 0.7f, 1);
+        level.addLight(tmpl);
     }
 
     @Override
@@ -94,9 +89,6 @@ public class Game implements State {
         //testLights.get(0).position.set(player.position.x, player.position.y + 1, player.position.z);
         
         while(Keyboard.next()) {
-            if(Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_R) {
-                testLights.get(0).setColor((float) Math.random());
-            }
             if(Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_F) {
                 Light tmp = new Light();
                 tmp.position.set(player.position.x,
@@ -104,7 +96,7 @@ public class Game implements State {
                 tmp.setIntensity(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 20 : 10);
                 tmp.setColor((float) Math.random());
                 
-                testLights.add(tmp);
+                level.addLight(tmp);
             }
         }
         
@@ -128,15 +120,12 @@ public class Game implements State {
         renderer.geometryPass();
         
         // Draw level geometry
-        level.drawModels(renderer);
-        testBody.draw(renderer);
-        testBody2.draw(renderer);
+        level.drawGeometry(renderer);
         
         // Change to lighting pass
         renderer.lightingPass();
         
-        for(Light light : testLights)
-            light.draw(renderer);
+        level.drawLights(renderer);
         
         // Change to normal pass
         //renderer.debugPass();
