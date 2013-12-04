@@ -5,7 +5,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.resources.Texture;
-import patient04.utilities.Inputs;
+import patient04.utilities.Input;
 
 /**
  *
@@ -34,7 +34,7 @@ public class MainMenu implements State {
         // Poll for new mouse events
         while(Mouse.next()) {
             // If left mouse button is released
-            if (Inputs.leftMouseRelease()) {
+            if (Input.mouseButton(0, false)) {
                 // Transition to game
                 Main.requestNewState(Main.States.GAME);
             }

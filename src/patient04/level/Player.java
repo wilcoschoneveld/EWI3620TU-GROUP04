@@ -6,6 +6,7 @@ import patient04.physics.Entity;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import patient04.math.Matrix;
+import patient04.utilities.Input;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,13 +18,13 @@ import patient04.math.Matrix;
  *
  * @author Wilco
  */
-public class Player extends Entity {
+public class Player extends Entity implements Input.Listener {
     // Width and height of the player, used as bounding box
     public static final float WIDTH = 0.6f;
     public static final float HEIGHT = 1.8f;
 
     // Determines where the camera is located
-    public static final float EYEHEIGHT = 1.7f;
+    public static final float EYEHEIGHT = 1.6f;
     
     // Movement acceleration
     public static final float ACCEL_WALKING = 1f;
@@ -45,12 +46,6 @@ public class Player extends Entity {
      */
     @Override
     public void update(float dt) {
-        // Update the camera orientation from mouse movement
-        rotation.y -= 0.1 * Mouse.getDX();
-        rotation.x += 0.1 * Mouse.getDY();
-        if (rotation.x > 90) rotation.x = 90;
-        if (rotation.x < -90) rotation.x = -90;
-        
         // Define a new movement vector
         Vector moveInput = new Vector();
         
@@ -107,6 +102,7 @@ public class Player extends Entity {
         matrix.rotate(
                 (float) -Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
                 0, 0, 1);
+        
         matrix.rotate(-rotation.x, 1, 0, 0);
         matrix.rotate(-rotation.y, 0, 1, 0);
         matrix.translate(
@@ -118,4 +114,20 @@ public class Player extends Entity {
     }
     
     private float viewbobbing = 0;
+
+    @Override
+    public boolean handleMouseEvent() {
+        // Update the camera orientation from mouse movement
+        rotation.y -= 0.1 * Mouse.getDX();
+        rotation.x += 0.1 * Mouse.getDY();
+        if (rotation.x > 90) rotation.x = 90;
+        if (rotation.x < -90) rotation.x = -90;
+        
+        return Input.UNHANDLED;
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+        return Input.UNHANDLED;
+    }
 }
