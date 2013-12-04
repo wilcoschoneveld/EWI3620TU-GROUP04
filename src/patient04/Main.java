@@ -15,7 +15,7 @@ public final class Main {
     // Window dimensions
     public static final int screenWidth = 1280;
     public static final int screenHeight = 720;
-    public static final boolean vsyncEnabled = true;
+    public static final boolean vsyncEnabled = false;
     
     // Possible states
     public static enum States {
@@ -115,6 +115,7 @@ public final class Main {
                 
                 // Flip the buffer and process input
                 Display.update();
+                Display.sync(60);
             } else
                 break;
         }

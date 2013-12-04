@@ -29,7 +29,7 @@ public class Light {
         this.intensity = intensity;
         
         // Set radius
-        radius = (float) Math.sqrt(50 * intensity);
+        radius = (float) Math.sqrt(10 * intensity);
     }
     
     public void setColor(float r, float g, float b, float a) {
@@ -52,7 +52,7 @@ public class Light {
         // Set modelview matrix
         Matrix matrix = new Matrix();
         matrix.translate(position.x, position.y, position.z);
-        matrix.scale(intensity, intensity, intensity);
+        matrix.scale(radius, radius, radius);
         
         // Update renderer
         renderer.updateModelView(matrix);
