@@ -33,14 +33,17 @@ public final class Main {
     
     /** Requests a state transition.
      * 
-     * @param state State to transition to.
+     * @param state States enum to transition to.
+     * @return new instance of requested State for modifications.
      */
-    public static void requestNewState(States state) {
+    public static State requestNewState(States state) {
         switch(state) {
             case MAIN_MENU:
+                Logger.log("Transition to Main Menu");
                 nextState = new MainMenu();
                 break;
             case GAME:
+                Logger.log("Transition to Game");
                 nextState = new Game();
                 break;
             default:
@@ -48,6 +51,8 @@ public final class Main {
                 nextState = null;
                 break;
         }
+        
+        return nextState;
     }
     
     /** Main application entry point.

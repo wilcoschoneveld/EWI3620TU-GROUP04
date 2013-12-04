@@ -3,6 +3,8 @@ package patient04.level;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import patient04.Main;
 import patient04.utilities.Input;
 
 /**
@@ -52,7 +54,6 @@ public class Pauser implements Input.Listener {
         if(!paused)
             return Input.UNHANDLED;
         
-        // If the escape key is pressed
         if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             // Unpause game
             setPaused(false);
@@ -60,6 +61,15 @@ public class Pauser implements Input.Listener {
             return Input.HANDLED;
         }
         
+        // TODO: remove this response
+        if(Input.keyboardKey(Keyboard.KEY_RETURN, true)) {
+            // Request transition to main menu
+            Main.requestNewState(Main.States.MAIN_MENU);
+            
+            return Input.HANDLED;
+        }
+        
+        // Event, you shall not pass!
         return Input.HANDLED;
     }
     
