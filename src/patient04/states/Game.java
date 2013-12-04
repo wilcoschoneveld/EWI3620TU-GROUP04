@@ -65,7 +65,8 @@ public class Game implements State {
         testLights = new ArrayList<>();
         
         Light tmp = new Light();
-        tmp.setIntensity(10);
+        tmp.position.set(5, 2, 5);
+        tmp.setIntensity(15);
         tmp.setColor(1, 1, 0.7f, 1);
         
         testLights.add(tmp);

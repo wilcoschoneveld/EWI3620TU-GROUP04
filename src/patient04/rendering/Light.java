@@ -2,6 +2,7 @@ package patient04.rendering;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
+import org.lwjgl.input.Keyboard;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;

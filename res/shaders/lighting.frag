@@ -20,14 +20,14 @@ void main() {
 
     float fragDot = dot(aNormal, lightDirection);
 
-    if(fragDot < 0) discard;
+    if(fragDot > 0) {
+        float lightDistance = length(lightPosition - aPosition);
 
-    float lightDistance = length(lightPosition - aPosition);
+        vec4 aDiffuse = texture2D(uTexDiffuse, pixelCoord);
 
-    vec4 aDiffuse = texture2D(uTexDiffuse, pixelCoord);
+        float intensity = 0.01 * lightIntensity * lightIntensity;
 
-    float intensity = 0.01 * lightIntensity * lightIntensity;
-
-    gl_FragColor = aDiffuse * lightColor * intensity
-            * fragDot / (lightDistance * lightDistance);
+        gl_FragColor = aDiffuse * lightColor * intensity
+                * fragDot / (lightDistance * lightDistance);
+    }
 }
