@@ -336,12 +336,12 @@ public class Model {
                         for (int i = 0; i < 3; i++) {
                             String[] parts = tokens[i+1].split("/");
                             vertices[i] = Integer.parseInt(parts[0]) - 1;
-                            if(activeGroup.material != null &&
-                                    activeGroup.material.texture != null)
+                            if(parts[1].length() > 0
+                                  && activeGroup.material != null
+                                  && activeGroup.material.texture != null)
                                 texcoords[i] = Integer.parseInt(parts[1]) - 1;
                             if(parts.length > 2)
                                 normals[i] = Integer.parseInt(parts[2]) - 1;
-
                         }
                         activeGroup.faces.add(
                                 new Face(vertices, texcoords, normals));

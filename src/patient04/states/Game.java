@@ -25,7 +25,7 @@ public class Game implements State {
     private Level level;
     private Player player;
     
-    public Solid testBody;
+    public Solid testBody, testBody2;
     
     public ArrayList<Light> testLights;
     
@@ -56,12 +56,6 @@ public class Game implements State {
         Path path = new Path();
         path.testPath();
         
-        // Load a nurse
-        testBody = new Solid();
-        testBody.model = Model.getResource("nurseV4.1_000001.obj");
-        testBody.position.set(8, 0, 8);
-        testBody.rotation.set(0, 230, 0);
-        
         testLights = new ArrayList<>();
         
         Light tmp = new Light();
@@ -70,6 +64,29 @@ public class Game implements State {
         tmp.setColor(1, 1, 0.7f, 1);
         
         testLights.add(tmp);
+        
+        testBody2 = new Solid();
+        testBody2.model = Model.getResource("needle.obj");
+        testBody2.position.set(7, 0, 8);
+        
+        // Load a nurse
+        testBody = new Solid();
+        testBody.model = Model.getResource("infuus.obj");
+        testBody.position.set(8, 0, 8);
+        testBody.rotation.set(0, 230, 0);
+        
+        Light tmp2 = new Light();
+        tmp2.position.set(8, 0.2f, 8);
+        tmp2.setIntensity(3);
+        tmp2.setColor(0.3f);
+        
+        Light tmp3 = new Light();
+        tmp3.position.set(7, 0.2f, 8);
+        tmp3.setIntensity(2);
+        tmp3.setColor(0.1f);
+        
+        testLights.add(tmp2);
+        testLights.add(tmp3);
     }
 
     @Override
@@ -113,6 +130,7 @@ public class Game implements State {
         // Draw level geometry
         level.drawModels(renderer);
         testBody.draw(renderer);
+        testBody2.draw(renderer);
         
         // Change to lighting pass
         renderer.lightingPass();

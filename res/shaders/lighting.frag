@@ -29,5 +29,7 @@ void main() {
 
         gl_FragColor = aDiffuse * lightColor * intensity
                 * fragDot / (lightDistance * lightDistance);
+    } else {
+        //gl_FragColor = vec4(0);
     }
 }

@@ -15,7 +15,7 @@ public final class Main {
     // Window dimensions
     public static final int screenWidth = 1280;
     public static final int screenHeight = 720;
-    public static final boolean vsyncEnabled = false;
+    public static final boolean vsyncEnabled = true;
     
     // Possible states
     public static enum States {
@@ -28,7 +28,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.GAME);
+        requestNewState(States.MAIN_MENU);
     }
     
     /** Requests a state transition.
@@ -80,14 +80,12 @@ public final class Main {
                 GLContext.getCapabilities().GL_ARB_framebuffer_object);
         Logger.debug("ARB texture float: " +
                 GLContext.getCapabilities().GL_ARB_texture_float);
-        Logger.debug("ARB uniform buffer object: " +
-                GLContext.getCapabilities().GL_ARB_uniform_buffer_object);
         
         // Enable vsync
         Display.setVSyncEnabled(vsyncEnabled);
         
         // Set glClearColor to black
-        GL11.glClearColor(0, 0, 0, 0);
+        GL11.glClearColor(0, 0, 0, 1);
         
         // Call the initialize method
         initialize();
@@ -117,7 +115,6 @@ public final class Main {
                 
                 // Flip the buffer and process input
                 Display.update();
-                Display.sync(60);
             } else
                 break;
         }

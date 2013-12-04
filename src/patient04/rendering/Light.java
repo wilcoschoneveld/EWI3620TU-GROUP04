@@ -2,7 +2,7 @@ package patient04.rendering;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
-import org.lwjgl.input.Keyboard;
+import patient04.level.Solid;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
@@ -13,6 +13,7 @@ import patient04.utilities.Buffers;
  * @author Wilco
  */
 public class Light {
+    public Solid parent;
     public final Vector position;
     private final Model model;
     private FloatBuffer color;
@@ -58,7 +59,7 @@ public class Light {
     public void draw(Renderer renderer) {        
         // Set modelview matrix
         Matrix matrix = new Matrix();
-        matrix.translate(position.x, position.y, position.z);
+        matrix.translate(position.x, position.y, position.z);                
         matrix.scale(radius, radius, radius);
         
         renderer.lightingPart1();
