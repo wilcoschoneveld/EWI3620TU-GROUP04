@@ -13,10 +13,11 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import patient04.level.Pauser;
+import patient04.math.Vector;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
+import patient04.utilities.Logger;
 
 
 public class Game implements State, Input.Listener {
@@ -65,11 +66,7 @@ public class Game implements State, Input.Listener {
         tmp.position.set(7, 0, 8);
         level.addObject(tmp);
         
-        tmpl = new Light();
-        tmpl.position.set(7, 0.2f, 8);
-        tmpl.setIntensity(2);
-        tmpl.setColor(0.1f);
-        level.addLight(tmpl);
+        level.addLight(new Vector(7, 0.2f, 8), 2, 0.1f);
         
         tmp = new Solid();
         tmp.model = Model.getResource("infuus.obj");
@@ -77,11 +74,13 @@ public class Game implements State, Input.Listener {
         tmp.rotation.set(0, 230, 0);
         level.addObject(tmp);
         
-        tmpl = new Light();
-        tmpl.position.set(8, 0.2f, 8);
-        tmpl.setIntensity(3);
-        tmpl.setColor(0.3f);
-        level.addLight(tmpl);
+        level.addLight(new Vector(8, 0.2f, 8), 3, 0.3f);
+        
+        // Add more level lights
+        level.addLight(new Vector(25, 2, 4.5f), 15, 0.1f);
+        level.addLight(new Vector(16, 2, 10.5f), 8, 0.6f);
+        level.addLight(new Vector(7, 2, 22), 20, 0.4f);
+        level.addLight(new Vector(13, 2, 4.5f), 10, 0.9f);
         
         // Pauser
         pauser = new Pauser();
@@ -89,6 +88,8 @@ public class Game implements State, Input.Listener {
         
         // Input controller
         controller = new Input();
+        
+        // Add listeners in order of priority
         controller.addListener(pauser);
         controller.addListener(this);
         controller.addListener(player);
@@ -100,16 +101,16 @@ public class Game implements State, Input.Listener {
         controller.processInput();
         
         // Obtain frame time
-        float deltaTime = timer.deltaTime() * 0.001f;
+        float dt = timer.deltaTime() * 0.001f;
         
         // Set frame title to performance information
         Display.setTitle(
-                String.format("Frame update time: %.3fs", deltaTime) +
+                String.format("Frame update time: %.3fs", dt) +
                 " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
-            player.update(deltaTime);
+            player.update(dt);
             player.integrate();
         }
     }
@@ -139,6 +140,9 @@ public class Game implements State, Input.Listener {
             // Add light to level
             level.addLight(tmp);
             
+            // Print position
+            Logger.debug(tmp.position.toString());
+            
             return Input.HANDLED;
         }
         
@@ -148,12 +152,7 @@ public class Game implements State, Input.Listener {
     
     @Override
     public void render() {
-        if(pauser.isPaused()) {
-            // Change to normal pass
-            renderer.guiPass();
-            
-            pauser.draw();
-        } else {
+        if(!pauser.isPaused()) {
             // Set view matrix
             renderer.view = player.getFirstPersonView();
 
@@ -170,10 +169,17 @@ public class Game implements State, Input.Listener {
         
             // Change to normal pass
             renderer.guiPass();
-            
-            // renderer.debugPass();
         }
-        // End render
+        
+        // Change to normal pass
+        renderer.guiPass();
+        
+        
+        if(pauser.isPaused()) {
+            pauser.draw();
+        }
+        
+        // renderer.debugPass();
     }
     
     @Override

@@ -38,6 +38,17 @@ public class Level {
         lights.add(light);
     }
     
+    public void addLight(Vector position, float intensity, float colorHue) {
+        Light light = new Light();
+        
+        light.position.set(position.x, position.y, position.z);
+        
+        light.setIntensity(intensity);
+        light.setColor(colorHue);
+        
+        lights.add(light);
+    }
+    
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
         

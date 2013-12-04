@@ -7,7 +7,6 @@
 package patient04.enemies;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import patient04.math.Vector;
 
 /**

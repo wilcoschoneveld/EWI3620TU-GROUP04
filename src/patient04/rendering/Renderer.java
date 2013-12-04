@@ -345,7 +345,7 @@ public class Renderer {
         GL20.glUniform1f(lightR, light.getRadius());
     }
     
-    public void lightingPart1() {
+    public void pointLightFirstPass() {
         useShaderProgram(stencilShader);
         
         GL11.glDrawBuffer(0);
@@ -357,7 +357,7 @@ public class Renderer {
         GL11.glDisable(GL11.GL_CULL_FACE);
     }
     
-    public void lightingPart2() {
+    public void pointLightSecondPass() {
         useShaderProgram(lightingShader);
         
         GL11.glDrawBuffer(accumAttachment);

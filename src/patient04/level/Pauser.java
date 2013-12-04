@@ -30,7 +30,7 @@ public class Pauser implements Input.Listener {
         Mouse.setGrabbed(!pause);
         this.paused = pause;
     }
-
+    
     /** Handles mouse events.
      * 
      * @return 
@@ -85,7 +85,7 @@ public class Pauser implements Input.Listener {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
 
-        GL11.glColor4f(0, 0, 0, 0.7f);
+        GL11.glColor4f(0, 0, 0, 0.8f);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(-1, -1);
         GL11.glVertex2f(1, -1);
