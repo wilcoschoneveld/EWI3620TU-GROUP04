@@ -1,5 +1,7 @@
 package patient04.States;
 
+import java.sql.SQLException;
+import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
 import patient04.level.Player;
 import patient04.utilities.Timer;
@@ -8,6 +10,7 @@ import patient04.level.Level;
 import patient04.level.Model;
 import patient04.math.Matrix;
 import patient04.Sound.Sound;
+import patient04.Database.Database;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL10;
@@ -25,8 +28,7 @@ public class Game implements State {
     private Model testModel;
     private Sound gameSound;
     private final int diffSounds = 3;
-    private long lastStep = 0;
-    private long stepTime = 450;
+    private Database db;
     
     @Override
     public void initialize() {
@@ -85,6 +87,9 @@ public class Game implements State {
         // play the different sounds
         gameSound.playSound(0);
         gameSound.playSound(2);
+        
+        // initialise database;
+        db = new Database();
     }
 
     @Override
@@ -131,8 +136,25 @@ public class Game implements State {
         GL20.glUseProgram(0);
     }
     
+    /**
+     *
+     */
     @Override
     public void destroy() {
+        // save score database
+        db.addScore(2000, "kaj");
+        db.addScore(1000, "bart");
+        db.addScore(3000, "gracia");
+        db.addScore(2500, "wilco");
+        try {
+            db.getScoreTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        
+        // Clean up database
+        db.destroy();
+        
         // Clean up level
         level.cleanup();
         
