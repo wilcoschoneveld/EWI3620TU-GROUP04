@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.IntBuffer;
+import org.lwjgl.input.Keyboard;
 
 import static org.lwjgl.opengl.ARBFramebufferObject.*;
 import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
@@ -361,7 +362,7 @@ public class Renderer {
         
         GL11.glDrawBuffer(accumAttachment);
         
-        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 1);
+        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
         
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);

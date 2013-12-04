@@ -1,8 +1,6 @@
 package patient04.states;
 
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.lwjgl.input.Keyboard;
 import patient04.Main;
 import patient04.level.Solid;
@@ -67,16 +65,20 @@ public class Game implements State {
         testLights = new ArrayList<>();
         
         Light tmp = new Light();
-        tmp.position.set(5, 2, 5);
-        tmp.setIntensity(25);
-        tmp.setColor(1, 1, 0.8f, 1);
+        tmp.setIntensity(10);
+        tmp.setColor(1, 1, 0.7f, 1);
         
         testLights.add(tmp);
     }
 
     @Override
     public void update() {
+        testLights.get(0).position.set(player.position.x, player.position.y + 1, player.position.z);
+        
         while(Keyboard.next()) {
+            if(Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_R) {
+                testLights.get(0).setColor((float) Math.random());
+            }
             if(Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_F) {
                 Light tmp = new Light();
                 tmp.position.set(player.position.x,

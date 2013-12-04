@@ -29,8 +29,8 @@ public class Light {
         // Set intensity
         this.intensity = intensity;
         
-        // Set radius
-        radius = (float) Math.sqrt(15 * intensity);
+        // Set radius 
+       radius = (float) Math.sqrt(10 * intensity);
     }
     
     public void setColor(float r, float g, float b, float a) {
