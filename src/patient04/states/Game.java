@@ -58,7 +58,7 @@ public class Game implements State {
         
         // Load a nurse
         testBody = new Solid();
-        testBody.model = Model.getResource("nurseV2.obj");
+        testBody.model = Model.getResource("metaldoor.obj");
         testBody.position.set(8, 0, 8);
         testBody.rotation.set(0, 230, 0);
         
