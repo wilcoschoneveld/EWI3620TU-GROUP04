@@ -73,7 +73,7 @@ public class Game implements State {
 
     @Override
     public void update() {
-        testLights.get(0).position.set(player.position.x, player.position.y + 1, player.position.z);
+        //testLights.get(0).position.set(player.position.x, player.position.y + 1, player.position.z);
         
         while(Keyboard.next()) {
             if(Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_R) {
