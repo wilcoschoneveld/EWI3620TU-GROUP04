@@ -1,5 +1,6 @@
 package patient04.States;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
@@ -141,15 +142,15 @@ public class Game implements State {
      */
     @Override
     public void destroy() {
-        // save score database
-        db.addScore(2000, "kaj");
-        db.addScore(1000, "bart");
-        db.addScore(3000, "gracia");
-        db.addScore(2500, "wilco");
         try {
-            db.getScoreTable();
+            db.addLevel("test.txt");
+            db.getLevel();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            System.out.println("test1");
         } catch (SQLException ex) {
             Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            System.out.println("test2");
         }
         
         // Clean up database
