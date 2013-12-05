@@ -49,13 +49,14 @@ public class Level {
         lights.add(light);
     }
     
-    public void addLight(Vector position, float intensity, float colorHue) {
+    public void addLight(Vector position, float intensity,
+                                                float hue, float saturation) {
         Light light = new Light();
         
         light.position.set(position.x, position.y, position.z);
         
         light.setIntensity(intensity);
-        light.setColor(colorHue);
+        light.setColor(hue, saturation);
         
         lights.add(light);
     }

@@ -39,9 +39,9 @@ public class Light {
         this.color = Buffers.createFloatBuffer(r, g, b, a);
     }
     
-    public void setColor(float hue) {
+    public void setColor(float hue, float saturation) {
         this.color = Buffers.createFloatBuffer(
-                Color.getHSBColor(hue, 1, 1).getComponents(null));
+                Color.getHSBColor(hue, saturation, 1).getComponents(null));
     }
     
     public FloatBuffer getColor() {

@@ -62,7 +62,7 @@ public class Game implements State, Input.Listener {
         tmpl = new Light();
         tmpl.position.set(5, 2, 5);
         tmpl.setIntensity(10);
-        tmpl.setColor(0.2f);
+        tmpl.setColor(0.2f, 0.2f);
         level.addLight(tmpl);
         
         tmp = new Solid();
@@ -70,7 +70,7 @@ public class Game implements State, Input.Listener {
         tmp.position.set(7, 0, 8);
         level.addSolid(tmp);
         
-        level.addLight(new Vector(7, 0.2f, 8), 2, 0.1f);
+        level.addLight(new Vector(7, 0.2f, 8), 2, 0.1f, 1f);
         
         tmp = new Solid();
         tmp.model = Model.getResource("infuus.obj");
@@ -78,13 +78,13 @@ public class Game implements State, Input.Listener {
         tmp.rotation.set(0, 230, 0);
         level.addSolid(tmp);
         
-        level.addLight(new Vector(8, 0.2f, 8), 3, 0.3f);
+        level.addLight(new Vector(8, 0.2f, 8), 3, 0.3f, 1f);
         
         // Add more level lights
-        level.addLight(new Vector(25, 2, 4.5f), 15, 0.1f);
-        level.addLight(new Vector(16, 2, 10.5f), 8, 0.6f);
-        level.addLight(new Vector(7, 2, 22), 20, 0.4f);
-        level.addLight(new Vector(13, 2, 4.5f), 10, 0.9f);
+        level.addLight(new Vector(25, 2, 4.5f), 15, 0.1f, 0.2f);
+        level.addLight(new Vector(16, 2, 10.5f), 8, 0.6f, 0.2f);
+        level.addLight(new Vector(7, 2, 22), 20, 0.4f, 0.2f);
+        level.addLight(new Vector(13, 2, 4.5f), 10, 0.9f, 0.2f);
         
         // Pauser
         pauser = new Pauser();
@@ -150,7 +150,7 @@ public class Game implements State, Input.Listener {
             tmp.position.set(player.position.x,
                     player.position.y + 2, player.position.z);
             tmp.setIntensity(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 20 : 10);
-            tmp.setColor((float) Math.random());
+            tmp.setColor((float) Math.random(), 0.2f);
 
             // Add light to level
             level.addLight(tmp);
@@ -195,7 +195,8 @@ public class Game implements State, Input.Listener {
         if(pauser.isPaused()) {
             pauser.draw();
         }
-        // renderer.debugPass();
+        
+        //renderer.debugPass();
     }
     
     @Override
