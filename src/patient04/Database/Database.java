@@ -14,8 +14,8 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
- *
  * @author kajdreef
  */
 public class Database {
@@ -32,16 +32,15 @@ public class Database {
     public void initialize(){
         try{
             Class.forName("org.sqlite.JDBC");
-
             conn = DriverManager.getConnection("jdbc:sqlite:mydatabase.db");
+
             System.out.println("****** Succesfull Connection ******");
             
-
             stat = conn.createStatement();
             // create highscore table with attributes playerName and score only if the table doesn't allready exists
             stat.executeUpdate("CREATE TABLE IF NOT EXISTS highscore (playerName STRING, score INT);");
             // Create levels table with attribute levelName and fileData only if the table doesn't allready exists
-            stat.executeUpdate("CREATE TABLE IF NOT EXISTS levels (levelName STRING, fileData TEXT);");
+            stat.executeUpdate("CREATE TABLE IF NOT EXISTS levels (levelName STRING, fileData BLOB);");
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -50,19 +49,24 @@ public class Database {
     
     public void addLevel(String level) throws FileNotFoundException{
         File file = new File(level);
-        InputStream value = null;
         int fileLength = (int) file.length();
 
-        FileInputStream fiStream= null;
+        FileInputStream fiStream;
         fiStream = new FileInputStream(file);
         
+        InputStream value = null;
         value = (InputStream)fiStream;
         try{
             // create prepared Statement
             prepStat = conn.prepareStatement("INSERT INTO levels (levelName, fileData) VALUES (?, ?);");
             prepStat.setString(1, level);
-            prepStat.setAsciiStream(2, value, fiStream.available());
-         //   fiStream.
+            
+//            prepStat.setBinaryStream(2, value, (int) fileLength);
+//            prepStat.setBinaryStream(2, value, (long) fileLength);
+//            prepStat.setBinaryStream(2, value);
+            prepStat.setAsciiStream(2, value, fileLength);
+//            prepStat.setBlob(2, value, fileLength);
+
             prepStat.executeUpdate();
             prepStat.close();
             
@@ -78,6 +82,7 @@ public class Database {
             levelName = rs.getString("levelName");
             System.out.println("levelName = " + levelName);
         }
+        System.out.println();
         return rs;
     }
     
