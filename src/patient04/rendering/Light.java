@@ -32,7 +32,7 @@ public class Light {
         this.intensity = intensity;
         
         // Set radius 
-       radius = (float) Math.sqrt(10 * intensity);
+       radius = (float) Math.sqrt(15 * intensity);
     }
     
     public void setColor(float r, float g, float b, float a) {
@@ -63,12 +63,12 @@ public class Light {
         matrix.scale(radius, radius, radius);
         
         renderer.pointLightFirstPass();
-        renderer.setModelMatrix(matrix);
+        renderer.glUpdateModelMatrix(matrix);
         model.draw();
         
         renderer.pointLightSecondPass();
-        renderer.setModelMatrix(matrix);
-        renderer.updateLightParams(this);
+        renderer.glUpdateModelMatrix(matrix);
+        renderer.glUpdateLightParams(this);
         model.draw();
     }
 }

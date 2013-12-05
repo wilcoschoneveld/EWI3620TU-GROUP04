@@ -1,6 +1,5 @@
 package patient04.enemies;
 
-import org.lwjgl.input.Keyboard;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -140,7 +139,7 @@ public class Enemy extends Entity {
         }
         
         // Update modelview matrix
-        renderer.setModelMatrix(matrix);
+        renderer.glUpdateModelMatrix(matrix);
         
         // Draw model
         int frame = (int) (time * 23);

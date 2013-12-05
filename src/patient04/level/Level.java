@@ -129,15 +129,12 @@ public class Level {
     }
     
     public void drawNavPoints(Renderer renderer) {
-        // Temporary debug code
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadMatrix(renderer.projection.toBuffer());
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glLoadMatrix(renderer.view.toBuffer());
+        renderer.glUpdateModelMatrix(null);
+        
         GL11.glBegin(GL11.GL_LINES);
         for(Waypoint wp : navpoints) {
             for(Waypoint np : wp.neighbors) {

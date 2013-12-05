@@ -107,6 +107,12 @@ public class Game implements State, Input.Listener {
         tmpe.setPosition(10, 0, 12);
         tmpe.selectNearestWaypoint();
         level.addEntity(tmpe);
+        
+        tmpe = new Enemy(level);
+        tmpe.setPosition(26, 0, 4.5f);
+        tmpe.setRotation(0, 180, 0);
+        tmpe.selectNearestWaypoint();
+        level.addEntity(tmpe);
     }
 
     @Override
