@@ -2,6 +2,7 @@ package patient04.level;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import org.lwjgl.opengl.GL11;
 
 import patient04.resources.Model;
 import patient04.enemies.Waypoint;
@@ -87,14 +88,20 @@ public class Level {
     }
     
     public void testPath() {
-        Waypoint start = addWaypoint(new Vector(5, 0, 5), null);
+        Waypoint wpA = addWaypoint(new Vector(5, 0, 4.5f), null);
         addWaypoint(new Vector(5, 0, 13), null);
         addWaypoint(new Vector(5, 0, 22), null);
         addWaypoint(new Vector(10, 0, 22), null);
-        addWaypoint(new Vector(10, 0, 13), null);
-        Waypoint end = addWaypoint(new Vector(10, 0, 5), null);
+        Waypoint wpE = addWaypoint(new Vector(10, 0, 10), null);
+        Waypoint wpB = addWaypoint(new Vector(10, 0, 4.5f), null);
+        Waypoint wpC = addWaypoint(new Vector(17, 0, 4.5f), null);
+        addWaypoint(new Vector(25, 0, 4.5f), null);
+        Waypoint wpD = addWaypoint(new Vector(16.5f, 0, 10.5f), wpC);
+        addWaypoint(new Vector(16.5f, 0, 18), null);
         
-        Waypoint.link(start, end);
+        Waypoint.link(wpA, wpB);
+        Waypoint.link(wpD, wpE);
+        Waypoint.link(wpD, wpE);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
@@ -118,6 +125,30 @@ public class Level {
     public void drawLights(Renderer renderer) {
         for (Light light : lights)
             light.draw(renderer);
+    }
+    
+    public void drawNavPoints(Renderer renderer) {
+        // Temporary debug code
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadMatrix(renderer.projection.toBuffer());
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadMatrix(renderer.view.toBuffer());
+        GL11.glBegin(GL11.GL_LINES);
+        for(Waypoint wp : navpoints) {
+            for(Waypoint np : wp.neighbors) {
+                GL11.glColor4f(0, 1, 0, 0.3f);
+                GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);
+                GL11.glVertex3f(np.position.x, np.position.y, np.position.z);
+            }
+            GL11.glColor4f(1, 0, 0, 0.9f);
+            GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);
+            GL11.glVertex3f(wp.position.x, wp.position.y + 1, wp.position.z);
+        }
+        GL11.glEnd();
     }
     
     public void update(float dt) {

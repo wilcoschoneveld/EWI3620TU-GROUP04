@@ -189,25 +189,12 @@ public class Game implements State, Input.Listener {
         // Change to normal pass
         renderer.guiPass();
         
+        // Debug navigation grid
+        level.drawNavPoints(renderer);
         
         if(pauser.isPaused()) {
             pauser.draw();
         }
-        
-        // Temporary debug code
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadMatrix(renderer.projection.toBuffer());
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glLoadMatrix(renderer.view.toBuffer());
-        GL11.glColor3f(1, 0, 0);
-        GL11.glBegin(GL11.GL_LINES);
-        for(Waypoint wp : level.navpoints) {
-            GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);
-            GL11.glVertex3f(wp.position.x, wp.position.y + 1, wp.position.z);
-        }
-        GL11.glEnd();
-        
         // renderer.debugPass();
     }
     

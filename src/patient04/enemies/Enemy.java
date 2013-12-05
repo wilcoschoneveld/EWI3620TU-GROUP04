@@ -1,5 +1,6 @@
 package patient04.enemies;
 
+import org.lwjgl.input.Keyboard;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -64,7 +65,8 @@ public class Enemy extends Entity {
         
         direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
         
-        acceleration.add(direction);
+        if(!Keyboard.isKeyDown(Keyboard.KEY_V))
+            acceleration.add(direction);
         
         rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
         
