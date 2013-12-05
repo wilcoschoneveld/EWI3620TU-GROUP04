@@ -2,9 +2,12 @@ package patient04.enemies;
 
 import patient04.physics.Entity;
 import patient04.level.Level;
+import patient04.math.Matrix;
+import patient04.math.Quaternion;
 
 import patient04.resources.Model;
 import patient04.math.Vector;
+import patient04.utilities.Utils;
 
 /**
  *
@@ -27,6 +30,9 @@ public class Enemy extends Entity {
     public Entity target;
     public Path path;
     
+    public Vector dir;
+    public float angleStep = 3;
+    
     public Enemy(Level level, Path pathIn) {
         super(level, WIDTH, HEIGHT);
         path = pathIn;
@@ -34,7 +40,7 @@ public class Enemy extends Entity {
         // Initialize path enemy
         path.prevWaypoint = path.get(0);
         path.nextWaypoint = path.get(1);
-
+        dir = path.nextWaypoint.position.copy().min(position).normalize();
     }
     
     /** Updates the enemy's position
@@ -43,42 +49,49 @@ public class Enemy extends Entity {
      */
     @Override
     public void update(float dt) {
-        // Check if player is in sight
-        Vector raytrace = target.position.copy().min(position);
-        float dist = raytrace.length();
+        Vector toWaypoint = path.nextWaypoint.position.copy().min(position).normalize();
+        Vector toPlayer = target.position.copy().min(position).normalize();
+        dir.normalize();
+        float distPlayer = toPlayer.length();
         
-        if (dist < 3) {
+        // Check if player is in sight
+        if (distPlayer < 2) {
             // Cone angle
-            float angle = rotation.y - 
-                    (float) (Math.atan2(-raytrace.z, raytrace.x) * 180/Math.PI);
+            float anglePlayer = (float) (Math.acos(toWaypoint.copy().dot(toPlayer.copy())) 
+                 * 180/Math.PI);
             
-            if (angle >= -45 && angle <= 45) {
+            if (anglePlayer >= -45 && anglePlayer <= 45) {
                 // gepakt
             }
-        }
-        
-        
+        }       
+                         
         // Check if enemy is near next waypoint
         if (path.nextWaypoint.position.copy()
-                .min(position).length() <= 0.01) {
+                .min(position).length() <= 0.5) {
             path.calculate();
+            toWaypoint = path.nextWaypoint.position.copy().min(position).normalize();
         }
         
-        // Calculate direction vector for enemy
-        Vector dir = path.nextWaypoint.position.copy()
-                .min(position).normalize()
-                .scale(2f * dt).scale(1, 0, 1);
+        float ySign = Math.signum(dir.copy().cross(toWaypoint).y);
+        float tdot = Utils.clamp(0, dir.dot(toWaypoint), 1);
+        float angle = (float) (Math.acos(tdot) * 180/Math.PI);
+        
+        float deltaAngle = Math.min(angle, angleStep);
+        Matrix tmp = new Matrix().rotate(deltaAngle, 0, ySign, 0);
+        
+        if (angle > 1) {
+            dir.premultiply(tmp).normalize();
+        } else {
+            dir = path.nextWaypoint.position.copy().min(position).normalize();
+        }
+        
+        dir = dir.scale(0.5f*dt).scale(1, 0, 1);
         
         acceleration.add(dir);
         
         // Calculate rotation for enemy
-        rotation.set(0, (float) (Math.atan2(-dir.z, dir.x) * 180/Math.PI), 0);
-        
-        // test
-        for (int i=0; i<path.nextWaypoint.neighbors.size(); i++) {
-            System.out.println(path.nextWaypoint.neighbors.get(i).getPheromone());
-        }
-        
+        rotation.set(0, (float) (90 + Math.atan2(-dir.z, dir.x) * 180/Math.PI), 0);
+                
         super.update(dt);
     }
     

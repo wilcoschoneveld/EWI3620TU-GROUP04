@@ -17,7 +17,7 @@ import patient04.math.Vector;
 public class Waypoint {
     public Vector position;
     public ArrayList<Waypoint> neighbors;
-    public int pheromone = 0;
+    public int pheromone = 1;
     
     public Waypoint(Vector position) {
         this.position = position;
