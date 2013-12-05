@@ -140,7 +140,7 @@ public class Enemy extends Entity {
         }
         
         // Update modelview matrix
-        renderer.updateModelView(matrix);
+        renderer.setModelMatrix(matrix);
         
         // Draw model
         int frame = (int) (time * 23);

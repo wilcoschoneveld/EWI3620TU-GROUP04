@@ -13,9 +13,7 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import patient04.enemies.Enemy;
-import patient04.enemies.Waypoint;
 import patient04.level.Pauser;
 import patient04.math.Vector;
 import patient04.rendering.Light;
@@ -38,7 +36,7 @@ public class Game implements State, Input.Listener {
         // Create a new Renderer
         renderer = new Renderer();
         renderer.projection = Matrix.projPerspective(
-                70, (float) Display.getWidth() / Display.getHeight(), .1f, 100);
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 100);
         
         // Create a new timer
         timer = new Timer();
@@ -190,11 +188,11 @@ public class Game implements State, Input.Listener {
         renderer.guiPass();
         
         // Debug navigation grid
-        level.drawNavPoints(renderer);
+        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+            level.drawNavPoints(renderer);
         
-        if(pauser.isPaused()) {
+        if(pauser.isPaused())
             pauser.draw();
-        }
         
         //renderer.debugPass();
     }

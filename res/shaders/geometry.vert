@@ -1,23 +1,15 @@
 #version 120
 
-uniform mat4 uProjection;
-uniform mat4 uModelView;
-uniform mat4 uNormal;
-
-attribute vec3 aPosition;
-attribute vec2 aTexCoord;
-attribute vec3 aNormal;
-
 varying vec3 vPosition;
 varying vec2 vTexCoord;
 varying vec3 vNormal;
 
 void main() {
-    vec4 tmpPos = uModelView * vec4(aPosition, 1);
+    vec4 tmpPos = gl_ModelViewMatrix * gl_Vertex;
 
     vPosition = tmpPos.xyz;
-    vTexCoord = aTexCoord;
-    vNormal = (uNormal * vec4(aNormal, 1)).xyz;
+    vTexCoord = gl_MultiTexCoord0.st;
+    vNormal = (gl_NormalMatrix * gl_Normal).xyz;
 
-    gl_Position = uProjection * tmpPos;
+    gl_Position = gl_ProjectionMatrix * tmpPos;
 }

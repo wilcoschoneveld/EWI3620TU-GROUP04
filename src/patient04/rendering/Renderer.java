@@ -49,13 +49,12 @@ public class Renderer {
     private final int geometryBuffer, depthStencilBuffer, debugShader;
     
     // Geometry shader and matrices for Projection, ModelView, Normal
-    private final int geometryShader, gLocP, gLocMV, gLocN;
+    private final int geometryShader;
             
     // Lighting shader
-    private final int lightingShader, lLocP, lLocMV,
-            lightP, lightC, lightI, lightR;
+    private final int lightingShader, lightP, lightC, lightI, lightR;
     
-    private final int stencilShader, sLocP, sLocMV;
+    private final int stencilShader;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -69,6 +68,11 @@ public class Renderer {
     public Renderer() {
         // Enable depth testing and backface culling
         setGLdefaults();
+        
+        // Enable client states
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
         
         // Obtain display width and height for FBO
         int w = Display.getWidth(), h = Display.getHeight();
@@ -118,14 +122,6 @@ public class Renderer {
         geometryShader = loadShaderPairFromFiles(
                 "res/shaders/geometry.vert", "res/shaders/geometry.frag");
         
-        // Bind the geometry shader
-        useShaderProgram(geometryShader);
-        
-        // Obtain uniform variable locations
-        gLocP = GL20.glGetUniformLocation(geometryShader, "uProjection");
-        gLocMV = GL20.glGetUniformLocation(geometryShader, "uModelView");
-        gLocN = GL20.glGetUniformLocation(geometryShader, "uNormal");
-        
         // Load the lighting shader
         lightingShader = loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/lighting.frag");
@@ -134,8 +130,6 @@ public class Renderer {
         useShaderProgram(lightingShader);
         
         // Obtain uniform variable locations
-        lLocP = GL20.glGetUniformLocation(lightingShader, "uProjection");
-        lLocMV = GL20.glGetUniformLocation(lightingShader, "uModelView");
         lightP = GL20.glGetUniformLocation(lightingShader, "lightPosition");
         lightC = GL20.glGetUniformLocation(lightingShader, "lightColor");
         lightI = GL20.glGetUniformLocation(lightingShader, "lightIntensity");
@@ -156,9 +150,6 @@ public class Renderer {
         // Set stencil operations
         stencilShader = loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/empty.frag");
-        
-        sLocP = GL20.glGetUniformLocation(stencilShader, "uProjection");
-        sLocMV = GL20.glGetUniformLocation(stencilShader, "uModelView");
         
         GL20.glStencilOpSeparate(GL11.GL_FRONT,
                 GL11.GL_KEEP, GL14.GL_INCR_WRAP, GL11.GL_KEEP);
@@ -220,6 +211,7 @@ public class Renderer {
         
         // Set OpenGL state
         setGLdefaults();
+        setProjectionMatrix();
         GL11.glDepthMask(true);
         
         // Clear the buffer
@@ -228,8 +220,6 @@ public class Renderer {
         // Bind the geometry shader
         useShaderProgram(geometryShader);
         
-        // Set the projection matrix
-        GL20.glUniformMatrix4(gLocP, false, projection.toBuffer());
     }
     
     public void lightingPass() {
@@ -239,6 +229,7 @@ public class Renderer {
         
         // Set OpenGL state
         setGLdefaults();
+        setProjectionMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
         GL11.glCullFace(GL11.GL_FRONT);
@@ -247,15 +238,6 @@ public class Renderer {
         
         // Clear the buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        
-        // Bind the lighting shader
-        useShaderProgram(lightingShader);
-        
-        // Set the projection matrix
-        GL20.glUniformMatrix4(lLocP, false, projection.toBuffer());
-        
-        useShaderProgram(stencilShader);
-        GL20.glUniformMatrix4(sLocP, false, projection.toBuffer());
         
         // Be nice and clear Texture cache
         Texture.unbind();
@@ -267,6 +249,7 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
+        
     }
     
     public void guiPass() {
@@ -312,22 +295,16 @@ public class Renderer {
         debugQuad.draw();
     }
     
-    public void updateModelView(Matrix model) {
-        // Generate the modelview matrix
+    private void setProjectionMatrix() {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadMatrix(projection.toBuffer());
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
+    
+    public void setModelMatrix(Matrix model) {
         Matrix mv = view.copy().multiply(model);
         
-        if(currentProgram == geometryShader) {
-            // Update modelview matrix and normal matrix
-            GL20.glUniformMatrix4(gLocMV, false, mv.toBuffer());
-            GL20.glUniformMatrix4(gLocN, true, mv.invert().toBuffer());
-        } else if(currentProgram == lightingShader) {
-            // Update modelview matrix
-            GL20.glUniformMatrix4(lLocMV, false, mv.toBuffer());
-        } else if(currentProgram == stencilShader) {
-            GL20.glUniformMatrix4(sLocMV, false, mv.toBuffer());
-        }
-        
-        // End method
+        GL11.glLoadMatrix(mv.toBuffer());
     }
     
     public void updateLightParams(Light light) {
@@ -384,16 +361,7 @@ public class Renderer {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
     
-    public void checkGLerror() {
-        int error = GL11.glGetError();
-        
-        if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            Logger.fatalerror("OpenGL error: " + error);
-        } else
-            Logger.debug("No OpenGL error!");
-    }
-    
-    public static int loadShaderPairFromFiles(String vertexFile, String fragmentFile) {
+    public static int loadShaderPairFromFiles(String vertFile, String fragFile) {
         // String variable for line reading
         String line;
         
@@ -401,7 +369,7 @@ public class Renderer {
         StringBuilder vertexSource = new StringBuilder();
         
         try (BufferedReader vertexReader =
-                new BufferedReader(new FileReader(vertexFile))) {
+                new BufferedReader(new FileReader(vertFile))) {
             while ((line = vertexReader.readLine()) != null)
                 vertexSource.append(line).append('\n');
         } catch(IOException e) { e.printStackTrace(); return -1; }
@@ -410,7 +378,7 @@ public class Renderer {
         StringBuilder fragmentSource = new StringBuilder();
         
         try (BufferedReader fragmentReader =
-                new BufferedReader(new FileReader(fragmentFile))) {
+                new BufferedReader(new FileReader(fragFile))) {
             while ((line = fragmentReader.readLine()) != null)
                 fragmentSource.append(line).append('\n');
         } catch(IOException e) { e.printStackTrace(); return -1; }
@@ -421,8 +389,8 @@ public class Renderer {
         GL20.glShaderSource(vertexShader, vertexSource);
         GL20.glCompileShader(vertexShader);
         
-        if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            Logger.error("Vertex shader compile error " + vertexFile);
+        if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == 0) {
+            Logger.error("Vertex shader compile error " + vertFile);
             Logger.error(GL20.glGetShaderInfoLog(vertexShader, 1024));
             return -1;
         }
@@ -433,8 +401,8 @@ public class Renderer {
         GL20.glShaderSource(fragmentShader, fragmentSource);
         GL20.glCompileShader(fragmentShader);
         
-        if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            Logger.error("Fragment shader compile error " + fragmentFile);
+        if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == 0) {
+            Logger.error("Fragment shader compile error " + fragFile);
             Logger.error(GL20.glGetShaderInfoLog(fragmentShader, 1024));
             return -1;
         }
@@ -445,11 +413,6 @@ public class Renderer {
         GL20.glAttachShader(shaderProgram, vertexShader);
         GL20.glAttachShader(shaderProgram, fragmentShader);
         
-        // Application dependent, nasty code unfortunately
-        GL20.glBindAttribLocation(shaderProgram, 0, "aPosition");
-        GL20.glBindAttribLocation(shaderProgram, 1, "aTexCoord");
-        GL20.glBindAttribLocation(shaderProgram, 2, "aNormal");
-        
         GL20.glLinkProgram(shaderProgram);
         
         // Cleanup loaded shaders
@@ -459,7 +422,7 @@ public class Renderer {
         GL20.glDeleteShader(fragmentShader);
         
         // Make sure link was succesful
-        if (GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
+        if (GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == 0) {
             Logger.error("Shader program link error");
             Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));
             return -1;
@@ -468,7 +431,7 @@ public class Renderer {
         // Validate the shader program
         GL20.glValidateProgram(shaderProgram);
         
-        if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+        if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == 0) {
             Logger.error("Shader program vailidation error");
             Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));
             return -1;

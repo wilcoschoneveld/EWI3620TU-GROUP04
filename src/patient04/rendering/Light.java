@@ -63,11 +63,11 @@ public class Light {
         matrix.scale(radius, radius, radius);
         
         renderer.pointLightFirstPass();
-        renderer.updateModelView(matrix);
+        renderer.setModelMatrix(matrix);
         model.draw();
         
         renderer.pointLightSecondPass();
-        renderer.updateModelView(matrix);
+        renderer.setModelMatrix(matrix);
         renderer.updateLightParams(this);
         model.draw();
     }
