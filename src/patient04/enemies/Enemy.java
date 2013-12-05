@@ -1,91 +1,70 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package patient04.enemies;
 
-import patient04.physics.Entity;
 import patient04.level.Level;
-
+import patient04.math.Matrix;
+import patient04.physics.Entity;
+import patient04.rendering.Renderer;
 import patient04.resources.Model;
-import patient04.math.Vector;
 
 /**
  *
- * @author Bart
+ * @author Wilco
  */
-public class Enemy extends Entity {
-     // Width and height of the player, used as bounding box
+public class EnemyAnimationTest extends Entity {
     public static final float WIDTH = 0.5f;
     public static final float HEIGHT = 1.8f;
     
-    // Movement acceleration
-    public static final float ACCEL_WALKING = 1f;
-    public static final float ACCEL_AIR = 0.1f;
+    public Model[] anim_walking;
     
-    // sight enemy
-    public static float SIGHT_ANGLE = 45;
-    public static float SIGHT_DIST = 5;
-    
-    public Model model;
-    public Entity target;
-    public Path path;
-    
-    public Enemy(Level level, Path pathIn) {
-        super(level, WIDTH, HEIGHT);
-        path = pathIn;
-        
-        model = Model.buildWall(
-                new Vector(-WIDTH/2, 0, -WIDTH/2),
-                new Vector(WIDTH/2, HEIGHT, WIDTH/2), "wall_hospital.png");
-        model.compileBuffers();
-        model.releaseRawData();
-        
-        // Initialize path enemy
-        path.prevWaypoint = path.get(0);
-        path.nextWaypoint = path.get(1);
+    private float time;
 
+    public EnemyAnimationTest(Level level) {
+        super(level, WIDTH, HEIGHT);
+        
+        anim_walking = new Model[23];
+        
+        for(int i = 0; i < anim_walking.length; i++) {
+            String file = "nurseWalking/nurseV4.1_";
+            file += String.format("%06d.obj", i+1);
+            
+            anim_walking[i] = Model.getResource(file);
+        }
     }
     
-    /** Updates the enemy's position
-     * 
-     * @param dt delta time
-     */
     @Override
     public void update(float dt) {
-        // Check if player is in sight
-        Vector raytrace = target.position.copy().min(position);
-        float dist = raytrace.length();
-        
-        if (dist < 3) {
-            // Cone angle
-            float angle = rotation.y - 
-                    (float) (Math.atan2(-raytrace.z, raytrace.x) * 180/Math.PI);
-            
-            if (angle >= -45 && angle <= 45) {
-                // gepakt
-            }
-        }
-        
-        
-        // Check if enemy is near next waypoint
-        if (path.nextWaypoint.position.copy()
-                .min(position).length() <= 0.01) {
-            path.calculate();
-        }
-        
-        // Calculate direction vector for enemy
-        Vector dir = path.nextWaypoint.position.copy()
-                .min(position).normalize()
-                .scale(0.5f * dt).scale(1, 0, 1);
-        
-        acceleration.add(dir);
-        
-        // Calculate rotation for enemy
-        rotation.set(0, (float) (Math.atan2(-dir.z, dir.x) * 180/Math.PI), 0);
+        time += dt;
+        if(time >= 1) time -= 1;
         
         super.update(dt);
     }
     
-    public void draw() {
-        // Color of enemy
+    public void draw(Renderer renderer) {
+        // Create a new model matrix
+        Matrix matrix = new Matrix();
+
+        // Translate
+        if(position != null && !position.isNull())
+            matrix.translate(position.x, position.y, position.z);
+
+        // Rotate
+        if(rotation != null && !rotation.isNull()) {
+            matrix.rotate(rotation.x, 1, 0, 0);
+            matrix.rotate(rotation.y, 0, 1, 0);
+            matrix.rotate(rotation.z, 0, 0, 1);
+        }
         
-        // model.draw(position, rotation);
+        // Update modelview matrix
+        renderer.updateModelView(matrix);
+        
+        // Draw model
+        int frame = (int) (time * 23);
+        anim_walking[frame].draw();
     }
 }
