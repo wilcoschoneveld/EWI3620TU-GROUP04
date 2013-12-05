@@ -65,8 +65,7 @@ public class Enemy extends Entity {
         
         direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
         
-        if(!Keyboard.isKeyDown(Keyboard.KEY_V))
-            acceleration.add(direction);
+        acceleration.add(direction);
         
         rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
         
