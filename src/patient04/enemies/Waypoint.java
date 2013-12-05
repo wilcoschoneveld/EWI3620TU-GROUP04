@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.enemies;
 
 import java.util.ArrayList;
@@ -11,12 +5,12 @@ import patient04.math.Vector;
 
 /**
  *
- * @author Bart
+ * @author Bart Keulen
  */
 public class Waypoint {
-    public Vector position;
-    public ArrayList<Waypoint> neighbors;
-    public int pheromone = 1;
+    public final Vector position;
+    public final ArrayList<Waypoint> neighbors;
+    private int pheromones = 1;
     
     public Waypoint(Vector position) {
         this.position = position;
@@ -24,22 +18,33 @@ public class Waypoint {
         neighbors = new ArrayList<>();
     }
     
+    /** Links two Waypoints together.
+     * 
+     * @param one
+     * @param two
+     */
     public static void link(Waypoint one, Waypoint two) {
+        unlink(one, two);
         one.neighbors.add(two);
         two.neighbors.add(one);
     }
     
+    /** Deletes the link between two Waypoints.
+     * 
+     * @param one
+     * @param two 
+     */
     public static void unlink(Waypoint one, Waypoint two) {
         one.neighbors.remove(two);
         two.neighbors.remove(one);
     }
     
-    public void addPheromone() {
-        pheromone++;
+    public void addPheromones(int i) {
+        pheromones += i;
     }
     
-    public int getPheromone() {
-        return pheromone;
+    public int getPheromones() {
+        return pheromones;
     }
     
     @Override

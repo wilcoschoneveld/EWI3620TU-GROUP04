@@ -9,11 +9,11 @@ import java.util.ArrayList;
  * @author Wilco
  */
 public abstract class Entity {
-    private final Level level;
+    protected final Level level;
     
     public final Vector position;
     protected final Vector velocity;
-    public final Vector rotation;
+    protected final Vector rotation;
     protected final Vector acceleration;
     
     protected boolean onGround;

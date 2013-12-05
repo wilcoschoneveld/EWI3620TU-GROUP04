@@ -56,6 +56,15 @@ public final class Vector {
         return this;
     }
     
+    /** Sets the coordinates of the vector to the coordinates of other vector.
+     * 
+     * @param other
+     * @return 
+     */
+    public Vector set(Vector other) {
+        return set(other.x, other.y, other.z);
+    }
+    
     /** Adds given values to coordinates.
      * 
      * @param dx

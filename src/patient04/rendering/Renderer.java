@@ -27,6 +27,7 @@ import patient04.utilities.Logger;
  * - Full screen
  * - Frustum culling
  * - Diffuse color to shader for models
+ * - Modelview matrix from ENEMy to Entity?
  * 
  * @author Wilco
  */

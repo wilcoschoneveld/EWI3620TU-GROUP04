@@ -1,7 +1,10 @@
 package patient04.level;
 
-import patient04.resources.Model;
 import java.util.ArrayList;
+import java.util.HashSet;
+
+import patient04.resources.Model;
+import patient04.enemies.Waypoint;
 import patient04.rendering.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
@@ -27,10 +30,14 @@ public class Level {
     private final ArrayList<Light> lights;
     private final ArrayList<Entity> entities;
     
+    public final HashSet<Waypoint> navpoints;
+    private Waypoint navlast;
+    
     public Level() {
         this.solids = new ArrayList<>();
         this.lights = new ArrayList<>();
         this.entities = new ArrayList<>();
+        this.navpoints = new HashSet<>();
     }
     
     public void addSolid(Solid solid) {
@@ -54,6 +61,40 @@ public class Level {
     
     public void addEntity(Entity entity) {
         entities.add(entity);
+    }
+    
+    public Waypoint addWaypoint(Waypoint waypoint) {
+        navlast = waypoint;
+        navpoints.add(waypoint);
+        
+        return waypoint;
+    }
+    
+    public Waypoint addWaypoint(Vector position) {
+        return addWaypoint(new Waypoint(position));
+    }
+    
+    public Waypoint addWaypoint(Vector position, Waypoint linkTo) {
+        Waypoint waypoint = new Waypoint(position);
+        
+        if(linkTo != null) {
+            Waypoint.link(waypoint, linkTo);
+        } else if(navlast != null) {
+            Waypoint.link(waypoint, navlast);
+        }
+        
+        return addWaypoint(waypoint);
+    }
+    
+    public void testPath() {
+        Waypoint start = addWaypoint(new Vector(5, 0, 5), null);
+        addWaypoint(new Vector(5, 0, 13), null);
+        addWaypoint(new Vector(5, 0, 22), null);
+        addWaypoint(new Vector(10, 0, 22), null);
+        addWaypoint(new Vector(10, 0, 13), null);
+        Waypoint end = addWaypoint(new Vector(10, 0, 5), null);
+        
+        Waypoint.link(start, end);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {

@@ -13,10 +13,9 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import patient04.enemies.EnemyAnimationTest;
+import patient04.enemies.Enemy;
 import patient04.level.Pauser;
 import patient04.math.Vector;
-import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
@@ -32,7 +31,7 @@ public class Game implements State, Input.Listener {
     private Level level;
     private Player player;
     
-    private EnemyAnimationTest enemyTest;
+    private Enemy enemyTest;
     
     @Override
     public void initialize() {        
@@ -48,6 +47,7 @@ public class Game implements State, Input.Listener {
         level = Level.defaultLevel("wall_hospital.png");
         //level = Level.readLevel("test.txt");
         level.generateFloor("floor_hospital.png");
+        level.testPath();
         
         // Add player to level
         player = new Player(level);
@@ -98,8 +98,10 @@ public class Game implements State, Input.Listener {
         controller.addListener(this);
         controller.addListener(player);
         
-        enemyTest = new EnemyAnimationTest(level);
+        enemyTest = new Enemy(level);
         enemyTest.setPosition(5, 0, 5);
+        enemyTest.selectNearestWaypoint();
+        level.addEntity(enemyTest);
     }
 
     @Override
@@ -118,8 +120,6 @@ public class Game implements State, Input.Listener {
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
             level.update(dt);
-            
-            enemyTest.update(dt);
         }
     }
     
