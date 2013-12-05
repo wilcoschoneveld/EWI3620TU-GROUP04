@@ -31,7 +31,7 @@ public class Enemy extends Entity {
     public Path path;
     
     public Vector dir;
-    public float angleStep = 3;
+    public float angleStep = 2f;
     
     public Enemy(Level level, Path pathIn) {
         super(level, WIDTH, HEIGHT);
@@ -85,7 +85,11 @@ public class Enemy extends Entity {
             dir = path.nextWaypoint.position.copy().min(position).normalize();
         }
         
-        dir = dir.scale(0.5f*dt).scale(1, 0, 1);
+        float maxspeed = 0.5f;
+        float speedratio = 0.7f;
+        
+        float speed = speedratio + (1-speedratio) * (float) Math.pow(2.7, -.04*angle);
+        dir = dir.scale(maxspeed * speed*dt);
         
         acceleration.add(dir);
         
