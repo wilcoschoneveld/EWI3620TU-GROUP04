@@ -120,45 +120,45 @@ public class Path {
     }
     
     public void testPath() {
-        Waypoint n0 = new Waypoint(new Vector(4.5f, 0, 4.5f));
-        Waypoint n1 = new Waypoint(new Vector(4.5f, 0, 20f));
-        Waypoint n2 = new Waypoint(new Vector(4.5f, 0, 23f));
-        Waypoint n3 = new Waypoint(new Vector(6f, 0, 23f));
-        Waypoint n4 = new Waypoint(new Vector(10f, 0, 23f));
-        Waypoint n5 = new Waypoint(new Vector(10f, 0, 20f));
-        Waypoint n6 = new Waypoint(new Vector(10f, 0, 4.5f));
-        Waypoint n7 = new Waypoint(new Vector(6f, 0, 20f));
-        Waypoint n8 = new Waypoint(new Vector(6f, 0, 7f));
-        
-        this.addWaypoint(n0);
-        this.addWaypoint(n1);
-        this.addWaypoint(n2);
-        this.addWaypoint(n3);
-        this.addWaypoint(n4);
-        this.addWaypoint(n5);
-        this.addWaypoint(n6);
-        
-        this.addSingleWaypoint(n7);
-        this.addSingleWaypoint(n8);
-        
-        Waypoint.link(n1, n7);
-        Waypoint.link(n3, n7);
-        Waypoint.link(n5, n7);
-        Waypoint.link(n0, n6);
-        Waypoint.link(n0, n8);
-        Waypoint.link(n6, n8);
-        
-        
 //        Waypoint n0 = new Waypoint(new Vector(4.5f, 0, 4.5f));
-//        Waypoint n1 = new Waypoint(new Vector(10f, 0, 4.5f));
-//        Waypoint n2 = new Waypoint(new Vector(10f, 0, 10f));
-//        Waypoint n3 = new Waypoint(new Vector(4.5f, 0, 7f));
+//        Waypoint n1 = new Waypoint(new Vector(4.5f, 0, 20f));
+//        Waypoint n2 = new Waypoint(new Vector(4.5f, 0, 23f));
+//        Waypoint n3 = new Waypoint(new Vector(6f, 0, 23f));
+//        Waypoint n4 = new Waypoint(new Vector(10f, 0, 23f));
+//        Waypoint n5 = new Waypoint(new Vector(10f, 0, 20f));
+//        Waypoint n6 = new Waypoint(new Vector(10f, 0, 4.5f));
+//        Waypoint n7 = new Waypoint(new Vector(6f, 0, 20f));
+//        Waypoint n8 = new Waypoint(new Vector(6f, 0, 7f));
 //        
 //        this.addWaypoint(n0);
 //        this.addWaypoint(n1);
 //        this.addWaypoint(n2);
 //        this.addWaypoint(n3);
+//        this.addWaypoint(n4);
+//        this.addWaypoint(n5);
+//        this.addWaypoint(n6);
 //        
+//        this.addSingleWaypoint(n7);
+//        this.addSingleWaypoint(n8);
+//        
+//        Waypoint.link(n1, n7);
+//        Waypoint.link(n3, n7);
+//        Waypoint.link(n5, n7);
+//        Waypoint.link(n0, n6);
+//        Waypoint.link(n0, n8);
+//        Waypoint.link(n6, n8);
+        
+        
+        Waypoint n0 = new Waypoint(new Vector(4.5f, 0, 4.5f));
+        Waypoint n1 = new Waypoint(new Vector(10f, 0, 4.5f));
+        Waypoint n2 = new Waypoint(new Vector(10f, 0, 10f));
+        Waypoint n3 = new Waypoint(new Vector(4.5f, 0, 7f));
+        
+        this.addWaypoint(n0);
+        this.addWaypoint(n1);
+        this.addWaypoint(n2);
+//        this.addWaypoint(n3);
+        
 //        Waypoint.link(n3, n0);
     }
 }
