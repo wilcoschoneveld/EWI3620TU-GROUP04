@@ -14,7 +14,6 @@ import patient04.utilities.Utils;
 
 public final class Main {
     
-    
     // Window dimensions
     public static final int screenWidth = 1280;
     public static final int screenHeight = 720;
@@ -77,7 +76,7 @@ public final class Main {
             System.exit(0);
         }
         
-        Utils.setDisplayMode(1280, 720, true);
+        //Utils.setDisplayMode(1280, 720, true);
 
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));

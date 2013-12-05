@@ -25,6 +25,7 @@ public class Enemy extends Entity {
     private final Model[] anim_walking;
     
     private float time;
+    public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
 
     public Enemy(Level level) {
@@ -46,9 +47,8 @@ public class Enemy extends Entity {
         time += dt;
         if(time >= 1) time -= 1;
         
-        //System.out.println("help? " + nextWaypoint.position.copy().min(position).length());
-        
         if(nextWaypoint.position.copy().min(position).length() < 0.5) {
+            
             selectNextWaypoint();
         }
         
@@ -56,7 +56,7 @@ public class Enemy extends Entity {
         Vector towaypoint = nextWaypoint.position
                                          .copy().min(position).normalize();
         
-        float tmpsign = Math.signum(direction.cross(towaypoint).y);
+        float tmpsign = Utils.sign(direction.cross(towaypoint).y);
         float tmpdot = Utils.clamp(direction.dot(towaypoint), 0, 1);
         float tmpangle = (float) Utils.acos(tmpdot);
         
@@ -77,31 +77,62 @@ public class Enemy extends Entity {
         for (Waypoint waypoint : level.navpoints) {
             float tmpdist = waypoint.position.copy().min(position).length();
             if(tmpdist < currentDist) {
+                prevWaypoint = null;
                 nextWaypoint = waypoint;
                 currentDist = tmpdist;
             }
         }
-        
     }
     
-    public void selectNextWaypoint() {        
-        // Select random next waypoint
-        int index = (int) (Math.random() * nextWaypoint.neighbors.size());
+    public void selectNextWaypoint() {
+        // Get the number of neighbors to choose from
+        int neighborsNum = nextWaypoint.neighbors.size();
         
-        // Set as next waypoint
+        // Variable for selecting neighbor
+        int index;
+        
+        // Roulette weights
+        float[] weight = new float[neighborsNum];
+        float total = 0;
+        
+        // Loop through all neighbors and assign weights
+        for(index = 0; index < neighborsNum; index++) {
+            Waypoint wp = nextWaypoint.neighbors.get(index);
+            
+            if(wp.equals(prevWaypoint))
+                weight[index] = 0.2f;
+            else
+                weight[index] = 1f;
+            
+            total += weight[index];
+        }
+        
+        // Spin the wheel!
+        float roulette = (float) Math.random() * total;
+        
+        // Loop through all neighbors and find selected
+        for(index = 0; index < neighborsNum; index++) {
+            roulette -= weight[index];
+            if(roulette < 0)
+                break; // now index indicates selected
+        }
+        
+        // Set prev and next waypoint
+        prevWaypoint = nextWaypoint;
         nextWaypoint = nextWaypoint.neighbors.get(index);
     }
     
+    @Override
     public void draw(Renderer renderer) {
         // Create a new model matrix
         Matrix matrix = new Matrix();
 
         // Translate
-        if(position != null && !position.isNull())
+        if(position != null)
             matrix.translate(position.x, position.y, position.z);
 
         // Rotate
-        if(rotation != null && !rotation.isNull()) {
+        if(rotation != null) {
             matrix.rotate(rotation.x, 1, 0, 0);
             matrix.rotate(rotation.y + 90, 0, 1, 0);
             matrix.rotate(rotation.z, 0, 0, 1);

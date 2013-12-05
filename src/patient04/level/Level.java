@@ -110,6 +110,9 @@ public class Level {
     public void drawGeometry(Renderer renderer) {
         for (Solid solid : solids)
             solid.draw(renderer);
+        
+        for (Entity entity : entities)
+            entity.draw(renderer);
     }
     
     public void drawLights(Renderer renderer) {

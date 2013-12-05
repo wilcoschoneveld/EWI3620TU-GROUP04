@@ -15,10 +15,13 @@ import org.lwjgl.opengl.DisplayMode;
  * @author Bart
  */
 public class Utils {
-    //public static float PI = (float) Math.PI;
     
     public static float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(value, max));
+    }
+    
+    public static float sign(float value) {
+        return Math.signum(value) > 0 ? 1 : -1;
     }
     
     public static float atan2(float dy, float dx) {

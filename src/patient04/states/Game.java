@@ -31,8 +31,6 @@ public class Game implements State, Input.Listener {
     private Level level;
     private Player player;
     
-    private Enemy enemyTest;
-    
     @Override
     public void initialize() {        
         // Create a new Renderer
@@ -98,10 +96,17 @@ public class Game implements State, Input.Listener {
         controller.addListener(this);
         controller.addListener(player);
         
-        enemyTest = new Enemy(level);
-        enemyTest.setPosition(5, 0, 5);
-        enemyTest.selectNearestWaypoint();
-        level.addEntity(enemyTest);
+        Enemy tmpe;
+        
+        tmpe = new Enemy(level);
+        tmpe.setPosition(5, 0, 5);
+        tmpe.selectNearestWaypoint();
+        level.addEntity(tmpe);
+        
+        tmpe = new Enemy(level);
+        tmpe.setPosition(10, 0, 12);
+        tmpe.selectNearestWaypoint();
+        level.addEntity(tmpe);
     }
 
     @Override
@@ -169,8 +174,6 @@ public class Game implements State, Input.Listener {
 
             // Draw level geometry
             level.drawGeometry(renderer);
-            
-            enemyTest.draw(renderer);
 
             // Change to lighting pass
             renderer.lightingPass();

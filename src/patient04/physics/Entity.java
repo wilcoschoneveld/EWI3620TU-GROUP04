@@ -3,6 +3,7 @@ package patient04.physics;
 import patient04.math.Vector;
 import patient04.level.Level;
 import java.util.ArrayList;
+import patient04.rendering.Renderer;
 
 /**
  *
@@ -96,5 +97,9 @@ public abstract class Entity {
     
     public void setRotation(float x, float y, float z) { 
         rotation.set(x, y, z);
+    }
+    
+    public void draw(Renderer renderer) {
+        
     }
 }
