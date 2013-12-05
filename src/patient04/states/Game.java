@@ -68,7 +68,7 @@ public class Game implements State {
         
         enemy = new Enemy(level, path);
         enemy.target = player;
-        enemy.setPosition(8, 0, 6);
+        enemy.setPosition(4.5f, 0, 4.5f);
         enemy.model = Model.getResource("nurseV2.obj");
         
         // Load a nurse
