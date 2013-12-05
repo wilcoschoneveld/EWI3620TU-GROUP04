@@ -362,8 +362,7 @@ public class Renderer {
         
         GL11.glDrawBuffer(accumAttachment);
         
-        if(!Keyboard.isKeyDown(Keyboard.KEY_V))
-            GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
+        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
         
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);

@@ -6,6 +6,7 @@ import patient04.rendering.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
 import patient04.math.Vector;
+import patient04.physics.Entity;
 import patient04.rendering.Light;
 
 public class Level {
@@ -24,13 +25,15 @@ public class Level {
     
     private final ArrayList<Solid> solids;
     private final ArrayList<Light> lights;
+    private final ArrayList<Entity> entities;
     
     public Level() {
         this.solids = new ArrayList<>();
         this.lights = new ArrayList<>();
+        this.entities = new ArrayList<>();
     }
     
-    public void addObject(Solid solid) {
+    public void addSolid(Solid solid) {
         solids.add(solid);
     }
     
@@ -47,6 +50,10 @@ public class Level {
         light.setColor(colorHue);
         
         lights.add(light);
+    }
+    
+    public void addEntity(Entity entity) {
+        entities.add(entity);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
@@ -67,6 +74,14 @@ public class Level {
     public void drawLights(Renderer renderer) {
         for (Light light : lights)
             light.draw(renderer);
+    }
+    
+    public void update(float dt) {
+        for (Entity entity : entities)
+            entity.update(dt);
+        
+        for (Entity entity : entities)
+            entity.integrate();
     }
     
     public void cleanup() {

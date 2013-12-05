@@ -45,11 +45,11 @@ public class Game implements State, Input.Listener {
         //level = Level.readLevel("test.txt");
         level.generateFloor("floor_hospital.png");
         
+        // Add player to level
         player = new Player(level);
-        
-        // Player start position
         player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
         player.setRotation(0, -135, 0);
+        level.addEntity(player);
         
         // Test objects and lights
         Solid tmp;
@@ -64,7 +64,7 @@ public class Game implements State, Input.Listener {
         tmp = new Solid();
         tmp.model = Model.getResource("needle.obj");
         tmp.position.set(7, 0, 8);
-        level.addObject(tmp);
+        level.addSolid(tmp);
         
         level.addLight(new Vector(7, 0.2f, 8), 2, 0.1f);
         
@@ -72,7 +72,7 @@ public class Game implements State, Input.Listener {
         tmp.model = Model.getResource("infuus.obj");
         tmp.position.set(8, 0, 8);
         tmp.rotation.set(0, 230, 0);
-        level.addObject(tmp);
+        level.addSolid(tmp);
         
         level.addLight(new Vector(8, 0.2f, 8), 3, 0.3f);
         
@@ -109,10 +109,8 @@ public class Game implements State, Input.Listener {
                 " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
         // Update game dynamics if the game is not paused
-        if(!pauser.isPaused()) {
-            player.update(dt);
-            player.integrate();
-        }
+        if(!pauser.isPaused())
+            level.update(dt);
     }
     
     @Override
