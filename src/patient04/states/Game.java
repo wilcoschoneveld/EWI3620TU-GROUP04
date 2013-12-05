@@ -13,8 +13,10 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import patient04.enemies.EnemyAnimationTest;
 import patient04.level.Pauser;
 import patient04.math.Vector;
+import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
@@ -29,6 +31,8 @@ public class Game implements State, Input.Listener {
     private Timer timer;
     private Level level;
     private Player player;
+    
+    private EnemyAnimationTest enemyTest;
     
     @Override
     public void initialize() {        
@@ -93,6 +97,9 @@ public class Game implements State, Input.Listener {
         controller.addListener(pauser);
         controller.addListener(this);
         controller.addListener(player);
+        
+        enemyTest = new EnemyAnimationTest(level);
+        enemyTest.setPosition(5, 0, 5);
     }
 
     @Override
@@ -109,8 +116,11 @@ public class Game implements State, Input.Listener {
                 " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
         // Update game dynamics if the game is not paused
-        if(!pauser.isPaused())
+        if(!pauser.isPaused()) {
             level.update(dt);
+            
+            enemyTest.update(dt);
+        }
     }
     
     @Override
@@ -159,6 +169,8 @@ public class Game implements State, Input.Listener {
 
             // Draw level geometry
             level.drawGeometry(renderer);
+            
+            enemyTest.draw(renderer);
 
             // Change to lighting pass
             renderer.lightingPass();

@@ -24,7 +24,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float HEIGHT = 1.8f;
 
     // Determines where the camera is located
-    public static final float EYEHEIGHT = 1.6f;
+    public static final float EYEHEIGHT = 1.7f;
     
     // Movement acceleration
     public static final float ACCEL_WALKING = 1f;
