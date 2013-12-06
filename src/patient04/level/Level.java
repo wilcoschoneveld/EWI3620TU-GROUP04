@@ -102,7 +102,6 @@ public class Level {
         
         Waypoint.link(wpA, wpB);
         Waypoint.link(wpD, wpE);
-        Waypoint.link(wpD, wpE);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
