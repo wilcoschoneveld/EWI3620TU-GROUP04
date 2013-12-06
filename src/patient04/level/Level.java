@@ -49,16 +49,10 @@ public class Level {
         lights.add(light);
     }
     
-    public void addLight(Vector position, float intensity,
-                                                float hue, float saturation) {
+    public Light addNewLight() {
         Light light = new Light();
-        
-        light.position.set(position.x, position.y, position.z);
-        
-        light.setIntensity(intensity);
-        light.setColor(hue, saturation);
-        
         lights.add(light);
+        return light;
     }
     
     public void addEntity(Entity entity) {

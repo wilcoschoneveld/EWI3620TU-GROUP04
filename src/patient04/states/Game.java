@@ -57,18 +57,10 @@ public class Game implements State, Input.Listener {
         Solid tmp;
         Light tmpl;
         
-        tmpl = new Light();
-        tmpl.position.set(5, 2, 5);
-        tmpl.setIntensity(10);
-        tmpl.setColor(0.2f, 0.2f);
-        level.addLight(tmpl);
-        
         tmp = new Solid();
         tmp.model = Model.getResource("needle.obj");
         tmp.position.set(7, 0, 8);
         level.addSolid(tmp);
-        
-        level.addLight(new Vector(7, 0.2f, 8), 2, 0.1f, 1f);
         
         tmp = new Solid();
         tmp.model = Model.getResource("infuus.obj");
@@ -76,13 +68,20 @@ public class Game implements State, Input.Listener {
         tmp.rotation.set(0, 230, 0);
         level.addSolid(tmp);
         
-        level.addLight(new Vector(8, 0.2f, 8), 3, 0.3f, 1f);
+        level.addNewLight().setPosition(7, 0.2f, 8)
+                .setColor(0.1f, 1f).setIntensity(3).setItemLight();
         
-        // Add more level lights
-        level.addLight(new Vector(25, 2, 4.5f), 15, 0.1f, 0.2f);
-        level.addLight(new Vector(16, 2, 10.5f), 8, 0.6f, 0.2f);
-        level.addLight(new Vector(7, 2, 22), 20, 0.4f, 0.2f);
-        level.addLight(new Vector(13, 2, 4.5f), 10, 0.9f, 0.2f);
+        level.addNewLight().setPosition(8, 0.2f, 8).setIntensity(3)
+                .setColor(0.3f, 1).setItemLight();
+        
+        level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)
+                .setColor(0.1f, 0).setEnvironmentLight();
+        level.addNewLight().setPosition(16, 2, 10.5f).setIntensity(8)
+                .setColor(0.6f, 0.2f).setEnvironmentLight();
+        level.addNewLight().setPosition(7, 2, 22).setIntensity(15)
+                .setColor(0.4f, 0.2f).setEnvironmentLight();
+        level.addNewLight().setPosition(13, 2, 4.5f).setIntensity(10)
+                .setColor(0.9f, 0.2f).setEnvironmentLight();
         
         // Pauser
         pauser = new Pauser();
@@ -150,17 +149,11 @@ public class Game implements State, Input.Listener {
         
         if(Input.keyboardKey(Keyboard.KEY_F, true)) {
             // Create a new light at player position
-            Light tmp = new Light();
-            tmp.position.set(player.position.x,
-                    player.position.y + 2, player.position.z);
-            tmp.setIntensity(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 20 : 10);
-            tmp.setColor((float) Math.random(), 0.5f);
-
-            // Add light to level
-            level.addLight(tmp);
-            
-            // Print position
-            Logger.debug(tmp.position.toString());
+            level.addNewLight().setColor((float) Math.random(), 0.5f)
+                    .setIntensity(10).setEnvironmentLight()
+                    .setPosition(player.position.x,
+                                 player.position.y + 2,
+                                 player.position.z);
             
             return Input.HANDLED;
         }

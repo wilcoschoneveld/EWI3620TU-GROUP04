@@ -47,8 +47,9 @@ public class Renderer {
     private final int geometryBuffer, depthStencilBuffer;
     
     // Shaders
-    private final int geometryShader, screenShader, lightingShader,
-            stencilShader, debugShader, lightP, lightC, lightI, lightR;
+    private final int geometryShader, screenShader,
+                        lightingShader, stencilShader, debugShader,
+                            lightP, lightC, lightI, lightR, attC, attL, attQ;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -132,9 +133,9 @@ public class Renderer {
         lightI = GL20.glGetUniformLocation(lightingShader, "lightIntensity");
         lightR = GL20.glGetUniformLocation(lightingShader, "lightRadius");
         
-        Shaders.glUniform1f(lightingShader, "falloffConstant", 0);
-        Shaders.glUniform1f(lightingShader, "falloffLinear", 0);
-        Shaders.glUniform1f(lightingShader, "falloffQuadratic", 1f);
+        attC = GL20.glGetUniformLocation(lightingShader, "falloffConstant");
+        attL = GL20.glGetUniformLocation(lightingShader, "falloffLinear");
+        attQ = GL20.glGetUniformLocation(lightingShader, "falloffQuadratic");
         
         // Set screensize
         Shaders.glUniform2f(lightingShader, "screenSize", w, h);
@@ -336,17 +337,18 @@ public class Renderer {
     
     public void glUpdateLightParams(Light light) {
         // Upload light position
-        Vector pos = light.position.copy().premultiply(view);
+        Vector pos = light.getPosition().copy().premultiply(view);
+        
+        // Update light values
         GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
-        
-        // Upload light color
         GL20.glUniform4(lightC, light.getColor());
-        
-        // Upload light intensity
-        GL20.glUniform1f(lightI, light.getIntensity() * 0.7f);
-        
-        // Upload light radius
+        GL20.glUniform1f(lightI, light.getIntensity());
         GL20.glUniform1f(lightR, light.getRadius());
+        
+        // Update light attenuation model
+        GL20.glUniform1f(attC, light.getConstant());
+        GL20.glUniform1f(attL, light.getLinear());
+        GL20.glUniform1f(attQ, light.getQuadratic());
     }
     
     public void pointLightFirstPass() {

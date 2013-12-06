@@ -17,48 +17,78 @@ public class Light {
     public static final float falloffLinear = 0.045f;
     public static final float falloffQuadratic = 0.0075f;
     
-    public Solid parent;
-    public final Vector position;
+    private final Vector position;
     private final Model model;
     private FloatBuffer color;
     private float intensity, radius;
+    private float constant, linear, quadratic;
     
     public Light() {
         position = new Vector();
         model = Model.getResource("lightPoint.obj");
-        color = Buffers.WHITE;
-        intensity = 1;
-        radius = 1;
+        
+        setColor(0, 0);
+        setIntensity(10);
+        setEnvironmentLight();
     }
     
-    public void setIntensity(float intensity) {
+    public final Light setPosition(float x, float y, float z) {
+        // Set position vector
+        position.set(x, y, z);
+        
+        return this;
+    }
+    
+    public final Light setIntensity(float intensity) {
         // Set intensity
         this.intensity = intensity;
         
         // Set radius 
        radius = (float) Math.sqrt(15 * intensity);
+       
+       return this;
     }
     
-    public void setColor(float r, float g, float b, float a) {
-        this.color = Buffers.createFloatBuffer(r, g, b, a);
+    public Light setColor(float r, float g, float b) {
+        // Set color
+        color = Buffers.createFloatBuffer(r, g, b, 1);
+        
+        return this;
     }
     
-    public void setColor(float hue, float saturation) {
-        this.color = Buffers.createFloatBuffer(
+    public final Light setColor(float hue, float saturation) {
+        // Set color
+        color = Buffers.createFloatBuffer(
                 Color.getHSBColor(hue, saturation, 1).getComponents(null));
+        
+        return this;
     }
     
-    public FloatBuffer getColor() {
-        return color;
+    public Light setItemLight() {
+        // Set attenuation model
+        constant = 0;
+        linear = 0;
+        quadratic = 1;
+        
+        return this;
     }
     
-    public float getIntensity() {
-        return intensity;
+    public final Light setEnvironmentLight() {
+        // Set attenuation model
+        constant = 1;
+        linear = 0;
+        quadratic = 0.5f;
+        
+        return this;
     }
     
-    public float getRadius() {
-        return radius;
-    }
+    public Vector getPosition() { return position; }
+    public FloatBuffer getColor() { return color; }
+    public float getIntensity() { return intensity; }
+    public float getRadius() { return radius; }
+    public float getConstant() { return constant; }
+    public float getLinear() { return linear; }
+    public float getQuadratic() { return quadratic; }
     
     public void draw(Renderer renderer) {        
         // Set modelview matrix
