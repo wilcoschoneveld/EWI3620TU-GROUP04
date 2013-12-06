@@ -13,6 +13,7 @@ import patient04.utilities.Buffers;
  * @author Wilco
  */
 public class Light {
+    
     public Solid parent;
     public final Vector position;
     private final Model model;

@@ -47,14 +47,14 @@ public class Renderer {
     private final int geometryBuffer, depthStencilBuffer;
     
     // Shaders
-    private final int geometryShader, lightingShader, stencilShader,
-            debugShader, lightP, lightC, lightI, lightR;
+    private final int geometryShader, screenShader, lightingShader,
+            stencilShader, debugShader, lightP, lightC, lightI, lightR;
     
     // Keep track of active shader program
     private int currentProgram = 0;
     
-    // Debug quad
-    private final Model debugQuad;
+    // Full screen quad
+    private final Model screenQuad;
     
     // Matrices
     public Matrix projection, view;
@@ -62,6 +62,9 @@ public class Renderer {
     public Renderer() {
         // Enable depth testing and backface culling
         glLoadDefaults();
+        
+        // Load full screen quad
+        screenQuad = Model.getResource("lightDirectional.obj");
         
         // Enable client states
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
@@ -141,10 +144,22 @@ public class Renderer {
         stencilShader = Shaders.loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/empty.frag");
         
+        useShaderProgram(stencilShader);
+        
         GL20.glStencilOpSeparate(GL11.GL_FRONT,
                 GL11.GL_KEEP, GL14.GL_INCR_WRAP, GL11.GL_KEEP);
         GL20.glStencilOpSeparate(GL11.GL_BACK,
                 GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
+        
+        screenShader = Shaders.loadShaderPairFromFiles(
+                "res/shaders/gbuffer.vert", "res/shaders/directional.frag");
+        
+        useShaderProgram(screenShader);
+        
+        Shaders.glUniform1i(screenShader, "uTexPosition", 0);
+        Shaders.glUniform1i(screenShader, "uTexNormal", 1);
+        Shaders.glUniform1i(screenShader, "uTexDiffuse", 2);
+        Shaders.glUniform2f(screenShader, "screenSize", w, h);
         
         // Load debug shader
         debugShader = Shaders.loadShaderPairFromFiles(
@@ -152,18 +167,17 @@ public class Renderer {
         
         useShaderProgram(debugShader);
         
-        // Bind uniform locations        
+        // Bind uniform variables 
         Shaders.glUniform1i(debugShader, "uTexPosition", 0);
         Shaders.glUniform1i(debugShader, "uTexNormal", 1);
         Shaders.glUniform1i(debugShader, "uTexDiffuse", 2);
         Shaders.glUniform1i(debugShader, "uTexAccum", 3);
+        Shaders.glUniform2f(debugShader, "screenSize", w, h);
         
         // Unbind shader program
         useShaderProgram(0);
         
         Logger.log("Renderer loaded");
-        
-        debugQuad = Model.getResource("lightDirectional.obj");
     }
     
     public final void useShaderProgram(int program) {
@@ -218,8 +232,6 @@ public class Renderer {
         glUpdateProjectionMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        GL11.glCullFace(GL11.GL_FRONT);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
         GL11.glDepthMask(false);
         
         // Clear the buffer
@@ -236,6 +248,12 @@ public class Renderer {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
         
+        useShaderProgram(screenShader);
+        
+        screenQuad.draw();
+        
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glCullFace(GL11.GL_FRONT);
     }
     
     public void guiPass() {
@@ -278,7 +296,7 @@ public class Renderer {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
         
-        debugQuad.draw();
+        screenQuad.draw();
     }
     
     private void glUpdateProjectionMatrix() {
