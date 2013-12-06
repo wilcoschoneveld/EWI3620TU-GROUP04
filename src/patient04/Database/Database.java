@@ -157,17 +157,6 @@ public class Database {
         return rs;
     }
     
-    public void destroy(){
-        try{
-            rs.close();
-            stat.close();
-            conn.close();
-        } 
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
     public void resetHighscoreDB(){
         try {
             stat.executeUpdate("DROP TABLE IF EXISTS highscore;");
@@ -183,6 +172,17 @@ public class Database {
             stat.executeUpdate("CREATE TABLE levels (levelName STRING UNIQUE, fileData FILE)");
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void destroy(){
+        try{
+            rs.close();
+            stat.close();
+            conn.close();
+        } 
+        catch(Exception e) {
+            e.printStackTrace();
         }
     }
     
