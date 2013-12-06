@@ -9,7 +9,10 @@ package patient04.Database;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,32 +43,28 @@ public class Database {
             // create highscore table with attributes playerName and score only if the table doesn't allready exists
             stat.executeUpdate("CREATE TABLE IF NOT EXISTS highscore (playerName STRING, score INT);");
             // Create levels table with attribute levelName and fileData only if the table doesn't allready exists
-            stat.executeUpdate("CREATE TABLE IF NOT EXISTS levels (levelName STRING, fileData BLOB);");
+            stat.executeUpdate("CREATE TABLE IF NOT EXISTS levels (levelName STRING UNIQUE, fileData BLOB);");
         }
         catch(Exception e) {
             e.printStackTrace();
         }
     }
     
-    public void addLevel(String level) throws FileNotFoundException{
+    public void addLevel(String level){
         File file = new File(level);
-        int fileLength = (int) file.length();
-
-        FileInputStream fiStream;
-        fiStream = new FileInputStream(file);
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        InputStream value = null;
-        value = (InputStream)fiStream;
-        try{
+            try{
             // create prepared Statement
             prepStat = conn.prepareStatement("INSERT INTO levels (levelName, fileData) VALUES (?, ?);");
-            prepStat.setString(1, level);
             
-//            prepStat.setBinaryStream(2, value, (int) fileLength);
-//            prepStat.setBinaryStream(2, value, (long) fileLength);
-//            prepStat.setBinaryStream(2, value);
-            prepStat.setAsciiStream(2, value, fileLength);
-//            prepStat.setBlob(2, value, fileLength);
+            prepStat.setString(1, level);
+            prepStat.setAsciiStream(2, (InputStream)inputStream, (int)file.length());
 
             prepStat.executeUpdate();
             prepStat.close();
@@ -75,14 +74,56 @@ public class Database {
         }
     }
     
-    public ResultSet getLevel() throws SQLException{
-        rs = stat.executeQuery("SELECT levelName FROM levels ORDER BY levelName ASC");
-        String levelName;
+    public ResultSet getLevel(String level){
+        try {
+            prepStat = conn.prepareStatement("SELECT * FROM levels WHERE levelName = ? ORDER BY levelName ASC");
+            prepStat.setString(1, level);
+            rs = prepStat.executeQuery();
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        String levelName;        
+        InputStream inputStream;
+        
+        int read;
+	byte[] bytes = new byte[1024];
+        
+        OutputStream outputStream = null;
+        
+        try {
+            outputStream = new FileOutputStream( new File("loadLevel.txt"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            while( rs.next()){
+                levelName = rs.getString("levelName");
+                System.out.println("levelName = " + levelName);
+                inputStream = rs.getBinaryStream("fileData");
+                try {
+                    while((read = inputStream.read(bytes))!= -1){
+                        outputStream.write(bytes, 0, read);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
+    }
+    
+    public ResultSet getAllLevels() throws SQLException, FileNotFoundException, IOException{
+        rs = stat.executeQuery("SELECT * FROM levels ORDER BY levelName ASC");
+        String levelName;        
+        
         while( rs.next()){
             levelName = rs.getString("levelName");
             System.out.println("levelName = " + levelName);
         }
-        System.out.println();
         return rs;
     }
     
@@ -127,9 +168,13 @@ public class Database {
         stat.executeUpdate("CREATE TABLE highscore (playerName STRING, score INT);"); 
     }
     
-    public void resetLevelDB() throws SQLException{
-        stat.executeUpdate("DROP TABLE IF EXISTS levels;");
-        stat.executeUpdate("CREATE TABLE levels levels (levelName STRING, fileData FILE)"); 
+    public void resetLevelDB(){
+        try {
+            stat.executeUpdate("DROP TABLE IF EXISTS levels;");
+            stat.executeUpdate("CREATE TABLE levels (levelName STRING UNIQUE, fileData FILE)");
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
