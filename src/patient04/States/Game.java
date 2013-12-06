@@ -1,9 +1,5 @@
 package patient04.States;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
 import patient04.level.Player;
 import patient04.utilities.Timer;
@@ -143,12 +139,14 @@ public class Game implements State {
      */
     @Override
     public void destroy() {
-
+        db.resetHighscoreDB();
         db.resetLevelDB();
+        db.addScore(100, "adf");
+        db.addScore(12, "adfe");
+        db.addScore(1000, "kaj");
+        db.getScoreTable();
         db.addLevel("leveleditor_test.txt");
         db.getLevel("leveleditor_test.txt");
-
-
         
         // Clean up database
         db.destroy();

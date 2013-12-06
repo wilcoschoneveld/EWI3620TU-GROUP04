@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-/**
+/*
  * @author kajdreef
  */
 public class Database {
@@ -34,10 +34,10 @@ public class Database {
     
     public void initialize(){
         try{
+            
+            // Connect to database
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:mydatabase.db");
-
-            System.out.println("****** Succesfull Connection ******");
             
             stat = conn.createStatement();
             // create highscore table with attributes playerName and score only if the table doesn't allready exists
@@ -74,7 +74,7 @@ public class Database {
         }
     }
     
-    public ResultSet getLevel(String level){
+    public void getLevel(String level){
         try {
             prepStat = conn.prepareStatement("SELECT * FROM levels WHERE levelName = ? ORDER BY levelName ASC");
             prepStat.setString(1, level);
@@ -113,7 +113,6 @@ public class Database {
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return rs;
     }
     
     public ResultSet getAllLevels() throws SQLException, FileNotFoundException, IOException{
@@ -142,13 +141,19 @@ public class Database {
         }
     }
     
-    public ResultSet getScoreTable() throws SQLException{
-        rs = stat.executeQuery("SELECT * FROM highscore ORDER BY score DESC");
-        while( rs.next()){
-            int score = rs.getInt("score");
-            String name = rs.getString("playerName");
-            System.out.println("score = " + score + ":  name = " + name);
-        }
+    public ResultSet getScoreTable(){
+        try {
+            rs = stat.executeQuery("SELECT * FROM highscore ORDER BY score DESC");
+
+
+            while( rs.next()){
+                int score = rs.getInt("score");
+                String name = rs.getString("playerName");
+                System.out.println("score = " + score + ":  name = " + name);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }    
         return rs;
     }
     
@@ -163,9 +168,13 @@ public class Database {
         }
     }
     
-    public void resetHighscoreDB() throws SQLException{
-        stat.executeUpdate("DROP TABLE IF EXISTS highscore;");
-        stat.executeUpdate("CREATE TABLE highscore (playerName STRING, score INT);"); 
+    public void resetHighscoreDB(){
+        try {
+            stat.executeUpdate("DROP TABLE IF EXISTS highscore;");
+            stat.executeUpdate("CREATE TABLE highscore (playerName STRING, score INT);"); 
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }    
     }
     
     public void resetLevelDB(){
