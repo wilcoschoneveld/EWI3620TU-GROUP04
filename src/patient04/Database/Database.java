@@ -45,8 +45,7 @@ public class Database {
             // Create levels table with attribute levelName and fileData only if the table doesn't allready exists
             stat.executeUpdate("CREATE TABLE IF NOT EXISTS levels (levelName STRING UNIQUE, fileData BLOB);");
         }
-        catch(Exception e) {
-            e.printStackTrace();
+        catch(ClassNotFoundException | SQLException e) {
         }
     }
     
@@ -69,7 +68,7 @@ public class Database {
             prepStat.executeUpdate();
             prepStat.close();
             
-        }catch(Exception e){
+        }catch(SQLException e){
             System.err.println(e);
         }
     }
@@ -180,8 +179,7 @@ public class Database {
             stat.close();
             conn.close();
         } 
-        catch(Exception e) {
-            e.printStackTrace();
+        catch(SQLException e) {
         }
     }
     
