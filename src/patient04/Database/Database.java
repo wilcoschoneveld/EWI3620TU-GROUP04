@@ -23,9 +23,9 @@ import java.util.logging.Logger;
  */
 public class Database {
     
+    private Connection conn;
     private Statement stat;
     private PreparedStatement prepStat;
-    private Connection conn;
     private ResultSet rs;
     
     public Database(){
