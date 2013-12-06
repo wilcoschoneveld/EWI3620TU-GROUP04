@@ -82,7 +82,6 @@ public class Database {
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         
         String levelName;        
         InputStream inputStream;
@@ -109,13 +108,14 @@ public class Database {
                 } catch (IOException ex) {
                     Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                rs.close();
             }
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public ResultSet getAllLevels() throws SQLException, FileNotFoundException, IOException{
+    public void getAllLevels() throws SQLException, FileNotFoundException, IOException{
         rs = stat.executeQuery("SELECT * FROM levels ORDER BY levelName ASC");
         String levelName;        
         
@@ -123,7 +123,7 @@ public class Database {
             levelName = rs.getString("levelName");
             System.out.println("levelName = " + levelName);
         }
-        return rs;
+        rs.close();
     }
     
     public void addScore(int score, String name){
@@ -145,12 +145,12 @@ public class Database {
         try {
             rs = stat.executeQuery("SELECT * FROM highscore ORDER BY score DESC");
 
-
             while( rs.next()){
                 int score = rs.getInt("score");
                 String name = rs.getString("playerName");
                 System.out.println("score = " + score + ":  name = " + name);
             }
+            rs.close();
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }    
@@ -177,7 +177,6 @@ public class Database {
     
     public void destroy(){
         try{
-            rs.close();
             stat.close();
             conn.close();
         } 
