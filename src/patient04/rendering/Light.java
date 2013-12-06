@@ -13,6 +13,9 @@ import patient04.utilities.Buffers;
  * @author Wilco
  */
 public class Light {
+    public static final float falloffConstant = 1;
+    public static final float falloffLinear = 0.045f;
+    public static final float falloffQuadratic = 0.0075f;
     
     public Solid parent;
     public final Vector position;

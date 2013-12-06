@@ -132,6 +132,10 @@ public class Renderer {
         lightI = GL20.glGetUniformLocation(lightingShader, "lightIntensity");
         lightR = GL20.glGetUniformLocation(lightingShader, "lightRadius");
         
+        Shaders.glUniform1f(lightingShader, "falloffConstant", 0);
+        Shaders.glUniform1f(lightingShader, "falloffLinear", 0);
+        Shaders.glUniform1f(lightingShader, "falloffQuadratic", 1f);
+        
         // Set screensize
         Shaders.glUniform2f(lightingShader, "screenSize", w, h);
         
@@ -152,7 +156,7 @@ public class Renderer {
                 GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
         
         screenShader = Shaders.loadShaderPairFromFiles(
-                "res/shaders/gbuffer.vert", "res/shaders/directional.frag");
+                "res/shaders/pass.vert", "res/shaders/ambient.frag");
         
         useShaderProgram(screenShader);
         
@@ -163,7 +167,7 @@ public class Renderer {
         
         // Load debug shader
         debugShader = Shaders.loadShaderPairFromFiles(
-                "res/shaders/gbuffer.vert", "res/shaders/gbuffer.frag");
+                "res/shaders/pass.vert", "res/shaders/gbuffer.frag");
         
         useShaderProgram(debugShader);
         
@@ -232,6 +236,7 @@ public class Renderer {
         glUpdateProjectionMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
         
         // Clear the buffer
@@ -338,7 +343,7 @@ public class Renderer {
         GL20.glUniform4(lightC, light.getColor());
         
         // Upload light intensity
-        GL20.glUniform1f(lightI, light.getIntensity());
+        GL20.glUniform1f(lightI, light.getIntensity() * 0.7f);
         
         // Upload light radius
         GL20.glUniform1f(lightR, light.getRadius());

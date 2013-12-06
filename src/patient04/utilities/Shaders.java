@@ -21,6 +21,10 @@ public class Shaders {
         GL20.glUniform1i(GL20.glGetUniformLocation(program, name), value);
     }
     
+    public static void glUniform1f(int program, String name, float value) {
+        GL20.glUniform1f(GL20.glGetUniformLocation(program, name), value);
+    }
+    
     public static void glUniform2f(int program, String name, float v1, float v2) {
         GL20.glUniform2f(GL20.glGetUniformLocation(program, name), v1, v2);
     }

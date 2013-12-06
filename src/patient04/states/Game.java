@@ -154,7 +154,7 @@ public class Game implements State, Input.Listener {
             tmp.position.set(player.position.x,
                     player.position.y + 2, player.position.z);
             tmp.setIntensity(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 20 : 10);
-            tmp.setColor((float) Math.random(), 0.2f);
+            tmp.setColor((float) Math.random(), 0.5f);
 
             // Add light to level
             level.addLight(tmp);

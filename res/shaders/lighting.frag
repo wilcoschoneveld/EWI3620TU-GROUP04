@@ -7,6 +7,10 @@ uniform vec4 lightColor;
 uniform float lightIntensity;
 uniform float lightRadius;
 
+uniform float falloffConstant;
+uniform float falloffLinear;
+uniform float falloffQuadratic;
+
 uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexDiffuse;
@@ -27,8 +31,9 @@ void main() {
 
         float intensity = 0.01 * lightIntensity * lightIntensity;
 
-        gl_FragColor = aDiffuse * lightColor * intensity
-                * fragDot / (lightDistance * lightDistance);
+        gl_FragColor = aDiffuse * lightColor * intensity * fragDot /
+                (falloffConstant + falloffLinear * lightDistance
+                        + falloffQuadratic * lightDistance * lightDistance);
     } else {
         //gl_FragColor = vec4(0);
     }

@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GLContext;
 import patient04.states.State;
 import patient04.states.MainMenu;
 import patient04.states.Game;
-import patient04.utilities.Utils;
 
 public final class Main {
     
