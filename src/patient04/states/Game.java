@@ -15,10 +15,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
-import patient04.math.Vector;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
-import patient04.utilities.Logger;
 
 
 public class Game implements State, Input.Listener {
@@ -150,7 +148,7 @@ public class Game implements State, Input.Listener {
         if(Input.keyboardKey(Keyboard.KEY_F, true)) {
             // Create a new light at player position
             level.addNewLight().setColor((float) Math.random(), 0.5f)
-                    .setIntensity(10).setEnvironmentLight()
+                    .setIntensity(15).setEnvironmentLight()
                     .setPosition(player.position.x,
                                  player.position.y + 2,
                                  player.position.z);
