@@ -52,9 +52,7 @@ public class Camera implements Input.Listener {
         }
         
         // If mouse movement has occured
-        if ((dx != 0 || dy != 0) && mouseDrag) {
-            System.out.println("holy shit");
-            
+        if ((dx != 0 || dy != 0) && mouseDrag) {            
             // Adjust camera position if dragging
             position.add(convertMouseD(-dx), 0, convertMouseD(dy));
             

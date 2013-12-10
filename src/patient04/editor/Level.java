@@ -26,6 +26,9 @@ public class Level {
         int minZ = (int) editor.camera.viewMinZ() - 1;
         int maxZ = (int) editor.camera.viewMaxZ() + 1;
         
+        // Disable OpenGL textures
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        
         // Grid lines
         GL11.glColor3f(0.1f, 0.1f, 0.1f);
         GL11.glLineWidth(1);
