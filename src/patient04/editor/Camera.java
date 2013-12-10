@@ -26,6 +26,8 @@ public class Camera implements Input.Listener {
     public final Vector position;
     public float zoom;
     
+    private boolean mouseDrag = false;
+    
     public Camera() {
         position = new Vector();
         zoom = 1f;
@@ -33,13 +35,15 @@ public class Camera implements Input.Listener {
 
     @Override
     public boolean handleMouseEvent() {
-        // Get event scroll wheel value
-        int scrollvalue = Mouse.getEventDWheel();
+        // Get mouse event delta values
+        int dz = Mouse.getEventDWheel(),
+            dx = Mouse.getEventDX(),
+            dy = Mouse.getEventDY();
         
         // If scrolling happened
-        if (scrollvalue != 0) {
+        if (dz != 0) {
             // Adjust the zoom by scroll amount
-            zoom *= 1 + (-scrollvalue * 0.001f);
+            zoom *= 1 + (-dz * 0.001f);
             
             // Clamp the zoom between min and max values
             zoom = Utils.clamp(zoom, ZOOM_MIN, ZOOM_MAX);
@@ -47,9 +51,33 @@ public class Camera implements Input.Listener {
             return Input.HANDLED;
         }
         
-        if (Input.mouseButton(0, true))
-            System.out.println(convertMouseX(Mouse.getEventX()) + "/" +
-                               convertMouseY(Mouse.getEventY()));
+        // If mouse movement has occured
+        if ((dx != 0 || dy != 0) && mouseDrag) {
+            System.out.println("holy shit");
+            
+            // Adjust camera position if dragging
+            position.add(convertMouseD(-dx), 0, convertMouseD(dy));
+            
+            return Input.HANDLED;
+        }
+        
+        // If right mouse button is pressed
+        if (Input.mouseButton(1, true)) {
+            mouseDrag = true;
+            
+            return Input.HANDLED;
+        }
+        
+        // If right mouse button is released
+        if (Input.mouseButton(1, false)) {
+            mouseDrag = false;
+            
+            return Input.HANDLED;
+        }
+        
+//        if (Input.mouseButton(0, true))
+//            System.out.println(convertMouseX(Mouse.getEventX()) + "/" +
+//                               convertMouseY(Mouse.getEventY()));
         
         return Input.UNHANDLED;
     }
@@ -57,6 +85,17 @@ public class Camera implements Input.Listener {
     @Override
     public boolean handleKeyboardEvent() {
         return Input.UNHANDLED;
+    }
+    
+    public void setCameraMatrix() {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        
+        Matrix matrix = Matrix.projOrthographic(
+                viewMinX(), viewMaxX(), viewMaxZ(), viewMinZ(), -1, 1);
+        
+        GL11.glLoadMatrix(matrix.toBuffer());
+        
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
     
     public float convertMouseX(float x) {
@@ -91,16 +130,5 @@ public class Camera implements Input.Listener {
     public float viewMaxZ() {
         return position.z + HALF_VIEW * zoom
                 * Display.getHeight() / Display.getWidth();
-    }
-    
-    public void setCameraMatrix() {
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        
-        Matrix matrix = Matrix.projOrthographic(
-                viewMinX(), viewMaxX(), viewMaxZ(), viewMinZ(), -1, 1);
-        
-        GL11.glLoadMatrix(matrix.toBuffer());
-        
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 }

@@ -142,6 +142,7 @@ public class Game implements State, Input.Listener {
         // (Un)pause the game
         if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             pauser.setPaused(true);
+            
             return Input.HANDLED;
         }
         

@@ -12,7 +12,7 @@ public final class Main {
     
     // Window dimensions
     public static final int screenWidth = 800;
-    public static final int screenHeight = 1000;
+    public static final int screenHeight = 800;
     public static final boolean vsyncEnabled = true;
     
     // Possible states
@@ -26,7 +26,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.MAIN_MENU);
+        requestNewState(States.EDITOR);
     }
     
     /** Requests a state transition.
@@ -34,7 +34,8 @@ public final class Main {
      * @param state States enum to transition to.
      * @return new instance of requested State for modifications.
      */
-    public static State requestNewState(States state) {
+    public static State requestNewState(States state) {   
+        // set nextState to a new instance of the selected State
         switch(state) {
             case MAIN_MENU:
                 Logger.log("Transition to Main Menu");
@@ -54,6 +55,7 @@ public final class Main {
                 break;
         }
         
+        // return nextState for parameter purposes
         return nextState;
     }
     

@@ -112,11 +112,17 @@ public class Player extends Entity implements Input.Listener {
 
     @Override
     public boolean handleMouseEvent() {
-        // Update the camera orientation from mouse movement
-        rotation.y -= 0.1 * Mouse.getEventDX();
-        rotation.x += 0.1 * Mouse.getEventDY();
-        if (rotation.x > 90) rotation.x = 90;
-        if (rotation.x < -90) rotation.x = -90;
+        int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();
+        
+        if (dx != 0 || dy != 0) {
+            // Update the camera orientation from mouse movement
+            rotation.y -= 0.1 * Mouse.getEventDX();
+            rotation.x += 0.1 * Mouse.getEventDY();
+            if (rotation.x > 90) rotation.x = 90;
+            if (rotation.x < -90) rotation.x = -90;
+            
+            return Input.HANDLED;
+        }
         
         return Input.UNHANDLED;
     }
