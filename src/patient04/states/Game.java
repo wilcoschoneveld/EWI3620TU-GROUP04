@@ -114,9 +114,6 @@ public class Game implements State, Input.Listener {
 
     @Override
     public void update() {
-        // Handle keyboard and mouse events
-        controller.processInput();
-        
         // Obtain frame time
         float dt = timer.deltaTime() * 0.001f;
         
@@ -125,6 +122,9 @@ public class Game implements State, Input.Listener {
                 String.format("Frame update time: %.3fs", dt) +
                 " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
+        // Handle keyboard and mouse events
+        controller.processInput();
+        
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
             level.update(dt);
@@ -132,7 +132,7 @@ public class Game implements State, Input.Listener {
     }
     
     @Override
-    public boolean handleMouseEvent() {        
+    public boolean handleMouseEvent() {
         // Event unhandled
         return Input.UNHANDLED;
     }

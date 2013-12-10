@@ -11,5 +11,5 @@ void main() {
 
     vec4 aDiffuse = texture2D(uTexDiffuse, pixelCoord);
     
-    gl_FragColor = aDiffuse * 0.05;
+    gl_FragColor = aDiffuse * 0.02;
 }

@@ -6,21 +6,18 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
-
-import patient04.states.State;
-import patient04.states.MainMenu;
-import patient04.states.Game;
+import patient04.states.*;
 
 public final class Main {
     
     // Window dimensions
-    public static final int screenWidth = 1280;
-    public static final int screenHeight = 720;
+    public static final int screenWidth = 800;
+    public static final int screenHeight = 1000;
     public static final boolean vsyncEnabled = true;
     
     // Possible states
     public static enum States {
-        MAIN_MENU, GAME
+        MAIN_MENU, GAME, EDITOR
     }
     
     // State machine variables
@@ -46,6 +43,10 @@ public final class Main {
             case GAME:
                 Logger.log("Transition to Game");
                 nextState = new Game();
+                break;
+            case EDITOR:
+                Logger.log("Transition to Editor");
+                nextState = new Editor();
                 break;
             default:
                 Logger.error("Requested unknown State!");
@@ -74,8 +75,6 @@ public final class Main {
         } catch (LWJGLException e) {
             System.exit(0);
         }
-        
-        //Utils.setDisplayMode(1280, 720, true);
 
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));
