@@ -7,12 +7,13 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import patient04.states.*;
+import patient04.utilities.Utils;
 
 public final class Main {
-    
     // Window dimensions
-    public static final int screenWidth = 800;
-    public static final int screenHeight = 800;
+    public static final int desiredWidth = 1280;
+    public static final int desiredHeight = 800;
+    public static final boolean fullscreen = false;
     public static final boolean vsyncEnabled = true;
     
     // Possible states
@@ -68,11 +69,12 @@ public final class Main {
         Logger.log("Starting application...");
         
         // Create a new DisplayMode
-        DisplayMode dm = new DisplayMode(screenWidth, screenHeight);
+        DisplayMode dm = Utils.findDisplayMode(desiredWidth, desiredHeight);
 
         // Try to create a game window
         try {
             Display.setDisplayMode(dm);
+            Display.setFullscreen(fullscreen);
             Display.create();
         } catch (LWJGLException e) {
             System.exit(0);
@@ -81,8 +83,8 @@ public final class Main {
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));
         Logger.debug("OS version " + System.getProperty("os.version"));
-        Logger.debug("LWJGL version " + org.lwjgl.Sys.getVersion());
         Logger.debug("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
+        Logger.debug("Display mode " + dm);
         
         // Check OpenGL extensions
         Logger.debug("ARB frame buffer object: " +
