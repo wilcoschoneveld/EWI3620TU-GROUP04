@@ -14,7 +14,7 @@ import patient04.states.Editor;
  * @author Wilco
  */
 public class Level {
-    public Editor editor;
+    private final Editor editor;
     
     public Level(Editor editor) {
         this.editor = editor;

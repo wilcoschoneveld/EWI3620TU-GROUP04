@@ -15,6 +15,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
+import patient04.level.Tutorial;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 
@@ -24,6 +25,7 @@ public class Game implements State, Input.Listener {
     
     private Input controller;
     private Pauser pauser;
+    private Tutorial tutorial;
     
     private Timer timer;
     private Level level;
@@ -85,11 +87,15 @@ public class Game implements State, Input.Listener {
         pauser = new Pauser();
         pauser.setPaused(false);
         
+        // Tutorial
+        tutorial = new Tutorial();
+        
         // Input controller
         controller = new Input();
         
         // Add listeners in order of priority
         controller.addListener(pauser);
+        controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
         
@@ -128,6 +134,7 @@ public class Game implements State, Input.Listener {
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
             level.update(dt);
+            tutorial.update(dt);
         }
     }
     
@@ -189,8 +196,11 @@ public class Game implements State, Input.Listener {
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))
             level.drawNavPoints(renderer);
         
-        if(pauser.isPaused())
+        if(pauser.isPaused()) {
             pauser.draw();
+        } else {
+            tutorial.draw();
+        }
         
         //renderer.debugPass();
     }

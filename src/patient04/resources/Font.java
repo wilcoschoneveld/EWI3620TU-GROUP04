@@ -2,6 +2,7 @@ package patient04.resources;
 import java.util.HashMap;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.opengl.TextureImpl;
 
@@ -23,9 +24,39 @@ public class Font {
     }
     
     private final TrueTypeFont font;
+    private Color color;
     
     public Font(TrueTypeFont font) {
         this.font = font;
+        color = Color.white;
+    }
+    
+    public void setColor(float r, float g, float b, float a) {
+        color = new Color(r, g, b, a);
+    }
+    
+    public void drawCentered(float y,  String str) {
+        int width = Display.getWidth(), height = Display.getHeight();
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, width, height, 0, -1, 1);
+        
+        TextureImpl.unbind();
+        font.drawString(
+                width / 2 - font.getWidth(str) / 2, y * height, str, color);
+        
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glPopMatrix();
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glPopMatrix();
     }
     
     public void draw(float x, float y, String str) {
@@ -71,10 +102,7 @@ public class Font {
         GL11.glPopMatrix();
     }
     
-    public static Font getResource(String fontName, int style, int size) {
-        // Create a new font from given attributes
-        java.awt.Font jFont = new java.awt.Font(fontName, style, size);
-        
+    public static Font getResource(java.awt.Font jFont) {
         // Check if TrueTypeFont was already created
         Font font = fonts.get(jFont);
 
@@ -89,5 +117,13 @@ public class Font {
 
         // Return font
         return font;
+    }
+    
+    public static Font getResource(String fontName, int style, int size) {
+        // Create a new font from given attributes
+        java.awt.Font jFont = new java.awt.Font(fontName, style, size);
+        
+        // Get resource from font
+        return getResource(jFont);
     }
 }

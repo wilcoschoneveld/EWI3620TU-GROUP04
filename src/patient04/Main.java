@@ -27,7 +27,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.EDITOR);
+        requestNewState(States.GAME);
     }
     
     /** Requests a state transition.

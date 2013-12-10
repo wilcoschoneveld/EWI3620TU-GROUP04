@@ -8,7 +8,6 @@ package patient04.editor;
 
 import java.util.Locale;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import patient04.resources.Font;
 import patient04.states.Editor;
 
@@ -20,8 +19,8 @@ public class Info {
     public static final float AXIS_ARROW_LENGTH = 100f;
     public static final float AXIS_ARROW_HEAD = 5f;
     
-    public Editor editor;
-    public Font fntInfo;
+    private final Editor editor;
+    private final Font fntInfo;
     
     public Info(Editor editor) {
         this.editor = editor;
