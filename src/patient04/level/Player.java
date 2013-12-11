@@ -6,7 +6,9 @@ import patient04.physics.Entity;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import patient04.math.Matrix;
+import patient04.physics.AABB;
 import patient04.utilities.Input;
+import patient04.utilities.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -90,6 +92,25 @@ public class Player extends Entity implements Input.Listener {
             viewbobbing += 0.1f;
         
         Matrix matrix = new Matrix();
+        
+        Vector leanInput = new Vector();
+        if(Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-1, 0, 0);
+        if(Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(1, 0, 0);
+        
+        if(leanInput.x != 0) {
+            leanInput.rotate(rotation.y, 0, 1, 0);
+            
+            // Create head aabb
+            AABB aabb2 = aabb.copy();
+            aabb2.min.add(0, 1.6f,0);
+            aabb2.pos.add(leanInput);
+            
+            // Check if collision free
+            boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
+            
+            // Print
+            System.out.println(isFree + " / " + Timer.getTime());
+        }
         
         matrix.translate(
                 (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
