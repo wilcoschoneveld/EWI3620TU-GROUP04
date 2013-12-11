@@ -96,6 +96,9 @@ public class Player extends Entity implements Input.Listener {
         
         Matrix matrix = new Matrix();
         
+        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+            matrix.translate(2, 0, 0);
+        
         matrix.translate(
                 (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
                 (float)  Math.cos(distanceMoved * 6) * 0.05f * viewbobbing, 0);
