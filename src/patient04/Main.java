@@ -12,7 +12,7 @@ import patient04.utilities.Utils;
 public final class Main {
     // Window dimensions
     public static final int desiredWidth = 1280;
-    public static final int desiredHeight = 800;
+    public static final int desiredHeight = 600;
     public static final boolean fullscreen = false;
     public static final boolean vsyncEnabled = true;
     
@@ -27,7 +27,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.EDITOR);
+        requestNewState(States.GAME);
     }
     
     /** Requests a state transition.

@@ -6,7 +6,9 @@ import patient04.physics.Entity;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import patient04.math.Matrix;
+import patient04.physics.AABB;
 import patient04.utilities.Input;
+import patient04.utilities.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,6 +33,9 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_RUNNING = 2f;
     public static final float ACCEL_AIR = 0.1f;
     public static final float ACCEL_JUMP = 0.5f;
+    
+    private float viewbobbing = 0;
+    private float leandist = 0;
 
     /** Constructs a new player.
      * 
@@ -91,8 +96,46 @@ public class Player extends Entity implements Input.Listener {
         
         Matrix matrix = new Matrix();
         
-        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
-            matrix.translate(2, 0, 0);
+        
+        Vector leanInput = new Vector();
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-1, 0, 0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(1, 0, 0);
+        
+//        if(Keyboard.isKeyDown(Keyboard.KEY_Q)) {
+//            leandist -= 1;
+//            leanInput.add(Math.signum(leandist)*(1-10/(leandist+10)), 0, 0); 
+//        }
+//        
+//        if(Keyboard.isKeyDown(Keyboard.KEY_E)) { 
+//            leandist += 1;
+//            leanInput.add(Math.signum(leandist)*(1-10/(leandist+10)), 0, 0); 
+//        }
+//        
+//        if(!Keyboard.isKeyDown(Keyboard.KEY_Q) && !Keyboard.isKeyDown(Keyboard.KEY_E)) {
+//            leandist *= 0.9;
+//            leanInput.add(Math.signum(leandist)*(1-10/(leandist+10)), 0, 0); 
+//        }
+            
+        leandist *= 0.9;  
+        
+        if(leanInput.x != 0) {
+            
+            
+            // Create head aabb
+            AABB aabb2 = aabb.copy();
+            aabb2.min.add(0, 1.6f,0);
+            aabb2.pos.add(leanInput.copy().rotate(rotation.y, 0, 1, 0));
+            
+            // Check if collision free
+            boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
+            
+            if (isFree) {
+                leandist += leanInput.x * 0.1;
+            } else
+                leandist *= 0.2;
+        }
+        
+        matrix.translate(-leandist, 0.1f, 0);   
         
         matrix.translate(
                 (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
@@ -111,7 +154,7 @@ public class Player extends Entity implements Input.Listener {
         return matrix;
     }
     
-    private float viewbobbing = 0;
+    
 
     @Override
     public boolean handleMouseEvent() {

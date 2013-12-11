@@ -20,7 +20,7 @@ public abstract class Entity {
     protected boolean onGround;
     protected float distanceMoved;
     
-    private final AABB aabb;
+    protected final AABB aabb;
     
     public Entity(Level level, float width, float height) {
         this.level = level;
