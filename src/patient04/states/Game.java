@@ -155,7 +155,7 @@ public class Game implements State, Input.Listener {
         
         if(Input.keyboardKey(Keyboard.KEY_F, true)) {
             // Create a new light at player position
-            level.addNewLight().setColor((float) Math.random(), 0.5f)
+            level.addNewLight().setColor((float) Math.random(), 0.7f)
                     .setIntensity(15).setEnvironmentLight()
                     .setPosition(player.position.x,
                                  player.position.y + 2,

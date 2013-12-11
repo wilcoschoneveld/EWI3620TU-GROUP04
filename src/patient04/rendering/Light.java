@@ -2,7 +2,6 @@ package patient04.rendering;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
-import patient04.level.Solid;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
@@ -13,9 +12,9 @@ import patient04.utilities.Buffers;
  * @author Wilco
  */
 public class Light {
-    public static final float falloffConstant = 1;
-    public static final float falloffLinear = 0.045f;
-    public static final float falloffQuadratic = 0.0075f;
+    public static final float falloffConstant = 0;
+    public static final float falloffLinear = 0;
+    public static final float falloffQuadratic = 0;
     
     private final Vector position;
     private final Model model;
@@ -44,7 +43,7 @@ public class Light {
         this.intensity = intensity;
         
         // Set radius 
-       radius = (float) Math.sqrt(15 * intensity);
+       radius = (float) Math.sqrt(20 * intensity);
        
        return this;
     }
@@ -76,7 +75,7 @@ public class Light {
     public final Light setEnvironmentLight() {
         // Set attenuation model
         constant = 1;
-        linear = 0;
+        linear = 0f;
         quadratic = 0.5f;
         
         return this;

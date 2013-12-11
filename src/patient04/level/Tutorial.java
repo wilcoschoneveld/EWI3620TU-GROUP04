@@ -1,4 +1,5 @@
 package patient04.level;
+import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import patient04.resources.Font;
@@ -16,7 +17,7 @@ public class Tutorial implements Input.Listener {
     private int stage = 0;
     
     public Tutorial() {
-        fntHints = Font.getResource("Trebuchet MS", 0, 25);
+        fntHints = Font.getResource("Lucida Sans Unicode", 0, 25);
     }
     
     public void update(float dt) {
@@ -24,21 +25,22 @@ public class Tutorial implements Input.Listener {
     }
     
     public void draw() {
-        if(stage >= 0)
-            fntHints.setColor(1, 1, 1, alpha);
+        String hint = null;
         
         switch(stage) {
-            case 0:
-                fntHints.drawCentered(0.6f, "Use the mouse to look around...");
-                break;
-            case 1:
-                fntHints.drawCentered(0.6f, "Press W,A,S,D to move around...");
-                break;
+            case 0: hint = "Use the mouse to look around..."; break;
+            case 1: hint = "Press W,A,S,D to move around..."; break;
         }
+        
+        if (hint == null) return;
+        
+        fntHints.setColor(1, 1, 1, alpha);
+        fntHints.drawCentered(0.7f, hint);
+
     }
 
     @Override
-    public boolean handleMouseEvent() {
+    public boolean handleMouseEvent() {        
         int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();
         
         // Check for mouse look
@@ -53,7 +55,7 @@ public class Tutorial implements Input.Listener {
     }
 
     @Override
-    public boolean handleKeyboardEvent() {
+    public boolean handleKeyboardEvent() {                
         // Check for movement
         if (stage == 1 && (Input.keyboardKey(Keyboard.KEY_W, true) ||
                            Input.keyboardKey(Keyboard.KEY_A, true) ||
