@@ -92,6 +92,17 @@ public class Camera implements Input.Listener {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
     
+    public void setWindowMatrix() {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        
+        Matrix matrix = Matrix.projOrthographic(
+                0, 1, 1, 0, -1, 1);
+        
+        GL11.glLoadMatrix(matrix.toBuffer());
+                
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
+    
     public float convertMouseX(float x) {
         return 2 * zoom * HALF_VIEW *
                 (x / Display.getWidth() - 0.5f)

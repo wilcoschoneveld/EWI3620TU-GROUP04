@@ -15,10 +15,7 @@ import patient04.states.Editor;
  *
  * @author Wilco
  */
-public class Info {
-    public static final float AXIS_ARROW_LENGTH = 100f;
-    public static final float AXIS_ARROW_HEAD = 5f;
-    
+public class Info {    
     private final Editor editor;
     private final Font fntInfo;
     
@@ -30,7 +27,7 @@ public class Info {
     
     public void draw() {
         fntInfo.draw(0.02f, 0.02f, "Mouse location: " +
-                String.format(Locale.US, "x = %.4f, z = %.4f",
+                String.format(Locale.US, "x = %.2f, z = %.2f",
                         editor.camera.convertMouseX(Mouse.getX()),
                         editor.camera.convertMouseY(Mouse.getY())));
     }

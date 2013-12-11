@@ -6,6 +6,7 @@ import patient04.Main;
 import patient04.editor.Camera;
 import patient04.editor.Info;
 import patient04.editor.Level;
+import patient04.editor.ToolPane;
 import patient04.utilities.Input;
 
 /**
@@ -17,6 +18,7 @@ public class Editor implements State, Input.Listener {
     public Level level;
     public Camera camera;
     public Info info;
+    public ToolPane tools;
     public Input controller;
 
     @Override
@@ -34,9 +36,11 @@ public class Editor implements State, Input.Listener {
         camera = new Camera();
         level = new Level(this);
         info = new Info(this);
+        tools = new ToolPane(this);
         
         controller = new Input();
         controller.addListener(this);
+        controller.addListener(tools);
         controller.addListener(camera);
     }
 
@@ -54,6 +58,9 @@ public class Editor implements State, Input.Listener {
         
         level.draw();
         
+        camera.setWindowMatrix();
+        
+        tools.draw();
         info.draw();
     }
 
