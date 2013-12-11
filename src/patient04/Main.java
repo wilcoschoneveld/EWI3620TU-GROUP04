@@ -6,21 +6,19 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
-
-import patient04.states.State;
-import patient04.states.MainMenu;
-import patient04.states.Game;
+import patient04.states.*;
+import patient04.utilities.Utils;
 
 public final class Main {
-    
     // Window dimensions
-    public static final int screenWidth = 1280;
-    public static final int screenHeight = 720;
+    public static final int desiredWidth = 1280;
+    public static final int desiredHeight = 800;
+    public static final boolean fullscreen = false;
     public static final boolean vsyncEnabled = true;
     
     // Possible states
     public static enum States {
-        MAIN_MENU, GAME
+        MAIN_MENU, GAME, EDITOR
     }
     
     // State machine variables
@@ -29,7 +27,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.MAIN_MENU);
+        requestNewState(States.EDITOR);
     }
     
     /** Requests a state transition.
@@ -37,7 +35,8 @@ public final class Main {
      * @param state States enum to transition to.
      * @return new instance of requested State for modifications.
      */
-    public static State requestNewState(States state) {
+    public static State requestNewState(States state) {   
+        // set nextState to a new instance of the selected State
         switch(state) {
             case MAIN_MENU:
                 Logger.log("Transition to Main Menu");
@@ -47,12 +46,17 @@ public final class Main {
                 Logger.log("Transition to Game");
                 nextState = new Game();
                 break;
+            case EDITOR:
+                Logger.log("Transition to Editor");
+                nextState = new Editor();
+                break;
             default:
                 Logger.error("Requested unknown State!");
                 nextState = null;
                 break;
         }
         
+        // return nextState for parameter purposes
         return nextState;
     }
     
@@ -65,23 +69,22 @@ public final class Main {
         Logger.log("Starting application...");
         
         // Create a new DisplayMode
-        DisplayMode dm = new DisplayMode(screenWidth, screenHeight);
+        DisplayMode dm = Utils.findDisplayMode(desiredWidth, desiredHeight);
 
         // Try to create a game window
         try {
             Display.setDisplayMode(dm);
+            Display.setFullscreen(fullscreen);
             Display.create();
         } catch (LWJGLException e) {
             System.exit(0);
         }
-        
-//        Utils.setDisplayMode(1280, 720, true);
 
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));
         Logger.debug("OS version " + System.getProperty("os.version"));
-        Logger.debug("LWJGL version " + org.lwjgl.Sys.getVersion());
         Logger.debug("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
+        Logger.debug("Display mode " + dm);
         
         // Check OpenGL extensions
         Logger.debug("ARB frame buffer object: " +

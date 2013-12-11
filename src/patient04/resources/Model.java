@@ -270,7 +270,7 @@ public class Model {
      * @param f OBJ file.
      * @return 
      */
-    private static Model loadOBJFromFile(String f) {        
+    private static Model loadOBJFromFile(String f) {
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             // Create a new Model
             Model model = new Model();

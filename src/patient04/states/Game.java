@@ -15,18 +15,17 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
-import patient04.math.Vector;
+import patient04.level.Tutorial;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
-import patient04.utilities.Logger;
-
 
 public class Game implements State, Input.Listener {
     private Renderer renderer;
     
     private Input controller;
     private Pauser pauser;
+    private Tutorial tutorial;
     
     private Timer timer;
     private Level level;
@@ -91,11 +90,15 @@ public class Game implements State, Input.Listener {
         pauser = new Pauser();
         pauser.setPaused(false);
         
+        // Tutorial
+        tutorial = new Tutorial();
+        
         // Input controller
         controller = new Input();
         
         // Add listeners in order of priority
         controller.addListener(pauser);
+        controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
         
@@ -124,9 +127,6 @@ public class Game implements State, Input.Listener {
 
     @Override
     public void update() {
-        // Handle keyboard and mouse events
-        controller.processInput();
-        
         // Obtain frame time
         float dt = timer.deltaTime() * 0.001f;
         
@@ -135,14 +135,18 @@ public class Game implements State, Input.Listener {
                 String.format("Frame update time: %.3fs", dt) +
                 " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
+        // Handle keyboard and mouse events
+        controller.processInput();
+        
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
             level.update(dt);
+            tutorial.update(dt);
         }
     }
     
     @Override
-    public boolean handleMouseEvent() {        
+    public boolean handleMouseEvent() {
         // Event unhandled
         return Input.UNHANDLED;
     }
@@ -152,13 +156,14 @@ public class Game implements State, Input.Listener {
         // (Un)pause the game
         if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             pauser.setPaused(true);
+            
             return Input.HANDLED;
         }
         
         if(Input.keyboardKey(Keyboard.KEY_F, true)) {
             // Create a new light at player position
-            level.addNewLight().setColor((float) Math.random(), 0.5f)
-                    .setIntensity(10).setEnvironmentLight()
+            level.addNewLight().setColor((float) Math.random(), 0.7f)
+                    .setIntensity(15).setEnvironmentLight()
                     .setPosition(player.position.x,
                                  player.position.y + 2,
                                  player.position.z);
@@ -210,8 +215,11 @@ public class Game implements State, Input.Listener {
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))
             level.drawNavPoints(renderer);
         
-        if(pauser.isPaused())
+        if(pauser.isPaused()) {
             pauser.draw();
+        } else {
+            tutorial.draw();
+        }
         
         //renderer.debugPass();
     }

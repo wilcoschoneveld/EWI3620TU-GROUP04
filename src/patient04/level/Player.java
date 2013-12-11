@@ -74,11 +74,6 @@ public class Player extends Entity implements Input.Listener {
             acceleration.add(moveInput);
         }
         
-        // If space is pressed and player is on ground
-        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && onGround) {
-            acceleration.add(0, ACCEL_JUMP, 0);
-        }
-        
         // Update remaining entity
         super.update(dt);
     }
@@ -120,17 +115,30 @@ public class Player extends Entity implements Input.Listener {
 
     @Override
     public boolean handleMouseEvent() {
-        // Update the camera orientation from mouse movement
-        rotation.y -= 0.1 * Mouse.getDX();
-        rotation.x += 0.1 * Mouse.getDY();
-        if (rotation.x > 90) rotation.x = 90;
-        if (rotation.x < -90) rotation.x = -90;
+        int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();
+        
+        if (dx != 0 || dy != 0) {
+            // Update the camera orientation from mouse movement
+            rotation.y -= 0.1 * Mouse.getEventDX();
+            rotation.x += 0.1 * Mouse.getEventDY();
+            if (rotation.x > 90) rotation.x = 90;
+            if (rotation.x < -90) rotation.x = -90;
+            
+            return Input.HANDLED;
+        }
         
         return Input.UNHANDLED;
     }
 
     @Override
     public boolean handleKeyboardEvent() {
+        // Handle jump key
+        if (Input.keyboardKey(Keyboard.KEY_SPACE, true) && onGround) {
+            acceleration.add(0, ACCEL_JUMP, 0);
+            
+            return Input.HANDLED;
+        }
+        
         return Input.UNHANDLED;
     }
 }

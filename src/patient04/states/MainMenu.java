@@ -39,6 +39,12 @@ public class MainMenu implements State {
                 // Transition to game
                 Main.requestNewState(Main.States.GAME);
             }
+            
+            // If right mouse button is released
+            if (Input.mouseButton(1, false)) {
+                // Transition to editor
+                Main.requestNewState(Main.States.EDITOR);
+            }
         }
     }
 
