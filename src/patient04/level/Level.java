@@ -29,7 +29,7 @@ public class Level {
     
     private final ArrayList<Solid> solids;
     private final ArrayList<Light> lights;
-    private final ArrayList<Entity> entities;
+    public final ArrayList<Entity> entities;
     
     public final HashSet<Waypoint> navpoints;
     private Waypoint navlast;

@@ -1,5 +1,8 @@
 package patient04.enemies;
 
+import org.lwjgl.opengl.GL11;
+import patient04.Main;
+import patient04.Main;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -18,15 +21,19 @@ public class Enemy extends Entity {
     
     public static final float ACCEL_WALKING = 0.45f;
     public static final float SPEED_ROTATE = 100f;
+    public static final float SPEED_CORRECTION = 0.8f;
     
-    public static float SIGHT_ANGLE = 45;
-    public static float SIGHT_DIST = 5;
+    public static float SIGHT_ANGLE_MAX = 85;
+    public static float SIGHT_DIST = 10;
     
     private final Model[] anim_walking;
     
+    public Entity target;
     private float time;
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
+    
+    private boolean gepakt;
 
     public Enemy(Level level) {
         super(level, WIDTH, HEIGHT);
@@ -47,27 +54,59 @@ public class Enemy extends Entity {
         time += dt;
         if(time >= 1) time -= 1;
         
-        if(nextWaypoint.position.copy().min(position).length() < 0.5) {
-            
+        
+        if(nextWaypoint.position.copy().min(position).length() < 1) {
             selectNextWaypoint();
         }
-        
+                
         Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
-        Vector towaypoint = nextWaypoint.position
-                                         .copy().min(position).normalize();
+        
+        // Is needed for calculating the normal of the vector to the nextWaypoint
+        Vector tmptowaypoint = nextWaypoint.position.copy()
+                                                    .min(position).normalize();
+        
+        // Walk on the left side
+        Vector left = tmptowaypoint.copy().cross(new Vector(0, -1, 0));
+        left.normalize().scale(0.4f);
+        
+        // Add left to the position of the next Waypoint
+        Vector towaypoint = nextWaypoint.position.copy().add(left)
+                                                    .min(position).normalize();
         
         float tmpsign = Utils.sign(direction.cross(towaypoint).y);
-        float tmpdot = Utils.clamp(direction.dot(towaypoint), 0, 1);
+        float tmpdot = Utils.clamp(direction.dot(towaypoint), -1, 1);
         float tmpangle = (float) Utils.acos(tmpdot);
         
         float tmpdelta = Math.min(tmpangle, SPEED_ROTATE * dt);
         
-        direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
-        
+        float anglescale = 1;
+        if (tmpangle > 70 && tmpangle <=165) {
+            anglescale = (float) (SPEED_CORRECTION + 
+                    (1 - SPEED_CORRECTION) * Math.cos(0.0661*(tmpangle-70)));
+        } 
+                
+        direction.rotate(tmpdelta, 0, tmpsign, 0)
+                                    .scale(ACCEL_WALKING * anglescale * dt);
+                
         acceleration.add(direction);
         
         rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
         
+        Vector toPlayer = target.position.copy().min(position);
+        float dist = toPlayer.length();
+        // Check if player is in sight
+        
+        gepakt = false;
+        if (dist <= SIGHT_DIST 
+                && Utils.acos(direction.copy().normalize()
+                        .dot(toPlayer.normalize())) <= (85-7*dist) 
+                && lineOfSight(target)) {
+            System.out.println("Gepakt"); 
+            Main.requestNewState(Main.States.MAIN_MENU);
+            gepakt = true;
+        }
+                                        
+        //System.out.println("");
         super.update(dt);
     }
     
@@ -98,11 +137,12 @@ public class Enemy extends Entity {
         // Loop through all neighbors and assign weights
         for(index = 0; index < neighborsNum; index++) {
             Waypoint wp = nextWaypoint.neighbors.get(index);
+            int ph = wp.getPheromones();
             
             if(wp.equals(prevWaypoint))
-                weight[index] = 0.2f;
+                weight[index] = 0.05f / ph;
             else
-                weight[index] = 1f;
+                weight[index] = 1f / ph;
             
             total += weight[index];
         }
@@ -120,6 +160,7 @@ public class Enemy extends Entity {
         // Set prev and next waypoint
         prevWaypoint = nextWaypoint;
         nextWaypoint = nextWaypoint.neighbors.get(index);
+        nextWaypoint.addPheromones(1);
     }
     
     @Override
@@ -144,5 +185,20 @@ public class Enemy extends Entity {
         // Draw model
         int frame = (int) (time * 23);
         anim_walking[frame].draw();
+    }
+    
+    public void draw2(Renderer renderer) {
+        if(!gepakt) return;
+        
+        renderer.glUpdateModelMatrix(null);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1, 0, 1, 0.8f);
+        GL11.glBegin(GL11.GL_LINES);
+        
+        GL11.glVertex3f(position.x, position.y + 1, position.z);
+        GL11.glVertex3f(target.position.x, target.position.y + 1, target.position.z);
+        GL11.glEnd();
     }
 }

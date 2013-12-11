@@ -16,6 +16,7 @@ import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
 import patient04.math.Vector;
+import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
@@ -30,6 +31,7 @@ public class Game implements State, Input.Listener {
     private Timer timer;
     private Level level;
     private Player player;
+    private Enemy enemy1;
     
     @Override
     public void initialize() {        
@@ -49,9 +51,11 @@ public class Game implements State, Input.Listener {
         
         // Add player to level
         player = new Player(level);
-        player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
-        player.setRotation(0, -135, 0);
+        player.setPosition(23, 0, 14);
+        player.setRotation(0, -180, 0);
         level.addEntity(player);
+        
+        level.addNewLight().setColor(0, 0).setEnvironmentLight().setIntensity(20).setPosition(24.5f, 4, 22f);
         
         // Test objects and lights
         Solid tmp;
@@ -100,17 +104,21 @@ public class Game implements State, Input.Listener {
         tmpe = new Enemy(level);
         tmpe.setPosition(5, 0, 5);
         tmpe.selectNearestWaypoint();
+        tmpe.target = player;
         level.addEntity(tmpe);
+        enemy1 = tmpe;
         
         tmpe = new Enemy(level);
         tmpe.setPosition(10, 0, 12);
         tmpe.selectNearestWaypoint();
+        tmpe.target = player;
         level.addEntity(tmpe);
         
         tmpe = new Enemy(level);
         tmpe.setPosition(26, 0, 4.5f);
         tmpe.setRotation(0, 180, 0);
         tmpe.selectNearestWaypoint();
+        tmpe.target = player;
         level.addEntity(tmpe);
     }
 
@@ -154,6 +162,13 @@ public class Game implements State, Input.Listener {
                     .setPosition(player.position.x,
                                  player.position.y + 2,
                                  player.position.z);
+            System.out.println(player.position);
+            return Input.HANDLED;
+        }
+        
+        if(Input.keyboardKey(Keyboard.KEY_L, true)) {
+            
+            System.out.println(player.lineOfSight(enemy1));
             
             return Input.HANDLED;
         }
@@ -185,6 +200,11 @@ public class Game implements State, Input.Listener {
         
         // Change to normal pass
         renderer.guiPass();
+        
+        for(Entity entity : level.entities) {
+            if (entity instanceof Enemy)
+                ((Enemy) entity).draw2(renderer);
+        }
         
         // Debug navigation grid
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))

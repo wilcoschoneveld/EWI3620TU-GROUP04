@@ -99,6 +99,44 @@ public abstract class Entity {
         rotation.set(x, y, z);
     }
     
+    public boolean lineOfSight(Entity other) {
+        if(other == null) return false;
+        
+        // Vector from entity to other entity
+        Vector delta = other.position.copy().min(position);
+        
+        // Obtain broadphase box
+        AABB broadphase = aabb.copy().expand(delta);
+        
+        // Get possible line of sight blockers
+        ArrayList<AABB> aabbs = level.getCollisionBoxes(broadphase);
+        
+        // Get plane properties
+        Vector pNormal = delta.cross(new Vector(0, 1, 0)).normalize();
+        float pDistance = -pNormal.dot(position);
+        
+        for (AABB aabb2 : aabbs) {
+            //aabb2 = box to test
+            Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);
+            Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);
+            Vector p3 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
+            Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
+            
+            float sign = Math.signum(pNormal.dot(p1) + pDistance);
+            
+            if(Math.signum(pNormal.dot(p2) + pDistance) != sign)
+                return false;
+            
+            if(Math.signum(pNormal.dot(p3) + pDistance) != sign)
+                return false;
+            
+            if(Math.signum(pNormal.dot(p4) + pDistance) != sign)
+                return false;
+        }
+        
+        return true;
+    }
+    
     public void draw(Renderer renderer) {
         
     }

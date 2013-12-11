@@ -61,12 +61,12 @@ public class AABB {
      */
     public boolean intersects(AABB o) {
         // Y coordinate is checked last because it is least critical.
-        return !(o == null || o.pos.x + o.min.x > pos.x + max.x ||
-                              o.pos.x + o.max.x < pos.x + min.x ||
-                              o.pos.z + o.min.z > pos.z + max.z ||
-                              o.pos.z + o.max.z < pos.z + min.z ||
-                              o.pos.y + o.min.y > pos.y + max.y ||
-                              o.pos.y + o.max.y < pos.y + min.y);
+        return o != null && o.pos.x + o.min.x < pos.x + max.x &&
+                            o.pos.x + o.max.x > pos.x + min.x &&
+                            o.pos.z + o.min.z < pos.z + max.z &&
+                            o.pos.z + o.max.z > pos.z + min.z &&
+                            o.pos.y + o.min.y < pos.y + max.y &&
+                            o.pos.y + o.max.y > pos.y + min.y;
     }
     
     /** Performs a sweep test with other AABB along a given axis.

@@ -21,7 +21,7 @@ public class Utils {
     }
     
     public static float sign(float value) {
-        return Math.signum(value) > 0 ? 1 : -1;
+        return Math.signum(value) >= 0 ? 1 : -1;
     }
     
     public static float atan2(float dy, float dx) {

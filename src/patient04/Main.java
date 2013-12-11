@@ -75,7 +75,7 @@ public final class Main {
             System.exit(0);
         }
         
-        //Utils.setDisplayMode(1280, 720, true);
+//        Utils.setDisplayMode(1280, 720, true);
 
         // Display OpenGL information
         Logger.debug("OS name " + System.getProperty("os.name"));
