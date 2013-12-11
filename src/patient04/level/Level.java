@@ -119,6 +119,9 @@ public class Level {
     public void drawLights(Renderer renderer) {
         for (Light light : lights)
             light.draw(renderer);
+        
+        for (Entity entity : entities)
+            entity.drawLight(renderer);
     }
     
     public void drawNavPoints(Renderer renderer) {

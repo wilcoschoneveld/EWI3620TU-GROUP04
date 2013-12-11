@@ -16,9 +16,9 @@ import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
-import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
+
 
 public class Game implements State, Input.Listener {
     private Renderer renderer;

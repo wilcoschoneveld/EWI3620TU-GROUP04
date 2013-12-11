@@ -7,6 +7,7 @@ import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.physics.Entity;
+import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
 import patient04.utilities.Utils;
@@ -28,10 +29,14 @@ public class Enemy extends Entity {
     
     private final Model[] anim_walking;
     
-    public Entity target;
+    private final Light light;
+    private float nextflicker;
+    
     private float time;
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
+    
+    public Entity target;
     
     private boolean gepakt;
 
@@ -47,12 +52,16 @@ public class Enemy extends Entity {
             
             anim_walking[i] = Model.getResource(file);
         }
+        
+        light = new Light()
+                .setColor(0.15f, 0.6f)
+                .setEnvironmentLight();
     }
     
     @Override
     public void update(float dt) {
-        time += dt;
-        if(time >= 1) time -= 1;
+        if((time += dt) >= 1)
+            time -= 1;
         
         
         if(nextWaypoint.position.copy().min(position).length() < 1) {
@@ -91,6 +100,20 @@ public class Enemy extends Entity {
         acceleration.add(direction);
         
         rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
+        
+        // Light
+        if((nextflicker -= dt) <= 0) { 
+            light.setIntensity(11 + (float) Math.random() * 2f);
+            
+            nextflicker = (float) Math.random() * 0.2f;
+        }
+        
+        Vector tmp = new Vector(0.5f, 1.5f, 0);
+        
+        tmp.rotate(rotation.y, 0, 1, 0);
+        tmp.add(position);
+        
+        light.setPosition(tmp.x, tmp.y, tmp.z);
         
         Vector toPlayer = target.position.copy().min(position);
         float dist = toPlayer.length();
@@ -200,5 +223,10 @@ public class Enemy extends Entity {
         GL11.glVertex3f(position.x, position.y + 1, position.z);
         GL11.glVertex3f(target.position.x, target.position.y + 1, target.position.z);
         GL11.glEnd();
+    }
+
+    @Override
+    public void drawLight(Renderer renderer) {        
+        light.draw(renderer);
     }
 }

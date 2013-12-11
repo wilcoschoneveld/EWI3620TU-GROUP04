@@ -13,7 +13,7 @@ public final class Main {
     // Window dimensions
     public static final int desiredWidth = 1280;
     public static final int desiredHeight = 600;
-    public static final boolean fullscreen = false;
+    public static final boolean fullscreen = true;
     public static final boolean vsyncEnabled = true;
     
     // Possible states
@@ -35,7 +35,11 @@ public final class Main {
      * @param state States enum to transition to.
      * @return new instance of requested State for modifications.
      */
-    public static State requestNewState(States state) {   
+    public static State requestNewState(States state) {
+        // if no nextState is given, set to null
+        if (state == null)
+            return (nextState = null);
+        
         // set nextState to a new instance of the selected State
         switch(state) {
             case MAIN_MENU:
@@ -110,7 +114,8 @@ public final class Main {
                     currentState.destroy();
                 
                 // Initialize the new state
-                nextState.initialize();
+                if (nextState != null)
+                    nextState.initialize();
                 
                 // Set current state
                 currentState = nextState;
