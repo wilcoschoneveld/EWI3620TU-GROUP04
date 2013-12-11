@@ -102,4 +102,8 @@ public abstract class Entity {
     public void draw(Renderer renderer) {
         
     }
+    
+    public void drawLight(Renderer renderer) {
+        
+    }
 }

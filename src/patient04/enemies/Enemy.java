@@ -4,6 +4,7 @@ import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.physics.Entity;
+import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
 import patient04.utilities.Utils;
@@ -24,6 +25,9 @@ public class Enemy extends Entity {
     
     private final Model[] anim_walking;
     
+    private final Light light;
+    private float nextflicker;
+    
     private float time;
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
@@ -40,15 +44,18 @@ public class Enemy extends Entity {
             
             anim_walking[i] = Model.getResource(file);
         }
+        
+        light = new Light()
+                .setColor(0.15f, 0.6f)
+                .setEnvironmentLight();
     }
     
     @Override
     public void update(float dt) {
-        time += dt;
-        if(time >= 1) time -= 1;
+        if((time += dt) >= 1)
+            time -= 1;
         
         if(nextWaypoint.position.copy().min(position).length() < 0.5) {
-            
             selectNextWaypoint();
         }
         
@@ -67,6 +74,20 @@ public class Enemy extends Entity {
         acceleration.add(direction);
         
         rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
+        
+        // Light
+        if((nextflicker -= dt) <= 0) { 
+            light.setIntensity(11 + (float) Math.random() * 2f);
+            
+            nextflicker = (float) Math.random() * 0.2f;
+        }
+        
+        Vector tmp = new Vector(0.5f, 1.5f, 0);
+        
+        tmp.rotate(rotation.y, 0, 1, 0);
+        tmp.add(position);
+        
+        light.setPosition(tmp.x, tmp.y, tmp.z);
         
         super.update(dt);
     }
@@ -100,7 +121,7 @@ public class Enemy extends Entity {
             Waypoint wp = nextWaypoint.neighbors.get(index);
             
             if(wp.equals(prevWaypoint))
-                weight[index] = 0.2f;
+                weight[index] = 0.01f;
             else
                 weight[index] = 1f;
             
@@ -144,5 +165,10 @@ public class Enemy extends Entity {
         // Draw model
         int frame = (int) (time * 23);
         anim_walking[frame].draw();
+    }
+    
+    @Override
+    public void drawLight(Renderer renderer) {        
+        light.draw(renderer);
     }
 }

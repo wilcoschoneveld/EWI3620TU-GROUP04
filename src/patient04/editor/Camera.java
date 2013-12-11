@@ -73,10 +73,6 @@ public class Camera implements Input.Listener {
             return Input.HANDLED;
         }
         
-//        if (Input.mouseButton(0, true))
-//            System.out.println(convertMouseX(Mouse.getEventX()) + "/" +
-//                               convertMouseY(Mouse.getEventY()));
-        
         return Input.UNHANDLED;
     }
 

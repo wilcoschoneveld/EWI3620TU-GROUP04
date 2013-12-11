@@ -1,5 +1,6 @@
 package patient04.states;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -12,8 +13,9 @@ import patient04.utilities.Input;
  *
  * @author Wilco
  */
-public class MainMenu implements State {
+public class MainMenu implements State, Input.Listener {
     private Image logo;
+    private Input controller;
 
     @Override
     public void initialize() {
@@ -27,25 +29,15 @@ public class MainMenu implements State {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         
+        controller = new Input();
+        controller.addListener(this);
+        
         logo = Image.getFromTextureResource("main_logo.png");
     }
 
     @Override
     public void update() {
-        // Poll for new mouse events
-        while(Mouse.next()) {
-            // If left mouse button is released
-            if (Input.mouseButton(0, false)) {
-                // Transition to game
-                Main.requestNewState(Main.States.GAME);
-            }
-            
-            // If right mouse button is released
-            if (Input.mouseButton(1, false)) {
-                // Transition to editor
-                Main.requestNewState(Main.States.EDITOR);
-            }
-        }
+        controller.processInput();
     }
 
     @Override
@@ -59,6 +51,39 @@ public class MainMenu implements State {
     @Override
     public void destroy() {
         Texture.disposeResources();
+    }
+
+    @Override
+    public boolean handleMouseEvent() {
+        // If left mouse button is released
+        if (Input.mouseButton(0, false)) {
+            // Transition to game
+            Main.requestNewState(Main.States.GAME);
+
+            return Input.HANDLED;
+        }
+
+        // If right mouse button is released
+        if (Input.mouseButton(1, false)) {
+            // Transition to editor
+            Main.requestNewState(Main.States.EDITOR);
+
+            return Input.HANDLED;
+        }
+
+        return Input.UNHANDLED;
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+        // Exit the game
+        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
+            Main.requestNewState(null);
+            
+            return Input.HANDLED;
+        }
+        
+        return Input.UNHANDLED;
     }
     
 }

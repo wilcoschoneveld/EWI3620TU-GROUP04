@@ -45,7 +45,7 @@ public class Utils {
                 int dw = mode.getWidth() - width;
                 int dh = mode.getHeight() - height;
                 
-                if (dw * dw + dh * dh < distance
+                if (dw * dw + dh * dh <= distance
                         && mode.getBitsPerPixel() >= bitdepth
                         && mode.getFrequency() >= frequency) {
                     distance = dw * dw + dh * dh;
