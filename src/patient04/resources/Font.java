@@ -35,7 +35,7 @@ public class Font {
         color = new Color(r, g, b, a);
     }
     
-    public void drawCentered(float y,  String str) {
+    public void drawCentered(float y, String str) {
         int width = Display.getWidth(), height = Display.getHeight();
         
         GL11.glEnable(GL11.GL_BLEND);

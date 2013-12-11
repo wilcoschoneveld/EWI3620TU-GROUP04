@@ -41,10 +41,7 @@ public class Utils {
         try {
             DisplayMode[] modes = Display.getAvailableDisplayModes();
             
-            for (DisplayMode mode : modes) {
-                if (mode.getBitsPerPixel() != 32) continue;
-                if (mode.getFrequency() != 60) continue;
-                
+            for (DisplayMode mode : modes) {                
                 int dw = mode.getWidth() - width;
                 int dh = mode.getHeight() - height;
                 

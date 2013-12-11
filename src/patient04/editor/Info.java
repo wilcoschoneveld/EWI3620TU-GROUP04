@@ -25,11 +25,11 @@ public class Info {
     public Info(Editor editor) {
         this.editor = editor;
         
-        fntInfo = Font.getResource("Verdana", Font.BOLD, 12);
+        fntInfo = Font.getResource("Verdana", Font.BOLD, 15);
     }
     
     public void draw() {
-        fntInfo.draw(0.1f, 0.1f, "Mouse location: " +
+        fntInfo.draw(0.02f, 0.02f, "Mouse location: " +
                 String.format(Locale.US, "x = %.4f, z = %.4f",
                         editor.camera.convertMouseX(Mouse.getX()),
                         editor.camera.convertMouseY(Mouse.getY())));
