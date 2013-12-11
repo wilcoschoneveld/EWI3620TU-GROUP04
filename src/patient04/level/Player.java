@@ -34,6 +34,8 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_AIR = 0.1f;
     public static final float ACCEL_JUMP = 0.5f;
     
+    public static final float LEAN_SPEED = 0.95f;
+    
     private float viewbobbing = 0;
     private float leandist = 0;
 
@@ -96,43 +98,30 @@ public class Player extends Entity implements Input.Listener {
         
         Matrix matrix = new Matrix();
         
-        
+        float leandir = 0;
         Vector leanInput = new Vector();
-        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-1, 0, 0);
-        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(1, 0, 0);
+        Vector lean = new Vector();
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leandir -= 1;
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leandir += 1;
         
-//        if(Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-//            leandist -= 1;
-//            leanInput.add(Math.signum(leandist)*(1-10/(leandist+10)), 0, 0); 
-//        }
-//        
-//        if(Keyboard.isKeyDown(Keyboard.KEY_E)) { 
-//            leandist += 1;
-//            leanInput.add(Math.signum(leandist)*(1-10/(leandist+10)), 0, 0); 
-//        }
-//        
-//        if(!Keyboard.isKeyDown(Keyboard.KEY_Q) && !Keyboard.isKeyDown(Keyboard.KEY_E)) {
-//            leandist *= 0.9;
-//            leanInput.add(Math.signum(leandist)*(1-10/(leandist+10)), 0, 0); 
-//        }
-            
-        leandist *= 0.9;  
+        leanInput.add(leandir, 0, 0);
+        
+        leandist *= LEAN_SPEED;  
         
         if(leanInput.x != 0) {
-            
-            
+            lean.add(leandist, 0, 0);
             // Create head aabb
             AABB aabb2 = aabb.copy();
             aabb2.min.add(0, 1.6f,0);
-            aabb2.pos.add(leanInput.copy().rotate(rotation.y, 0, 1, 0));
+            aabb2.pos.add(lean.copy().rotate(rotation.y, 0, 1, 0));
             
             // Check if collision free
             boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
             
             if (isFree) {
-                leandist += leanInput.x * 0.1;
+                leandist += leanInput.x * (1 - LEAN_SPEED);
             } else
-                leandist *= 0.2;
+                leandist *= 0.90;
         }
         
         matrix.translate(-leandist, 0.1f, 0);   
