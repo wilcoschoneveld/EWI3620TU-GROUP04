@@ -1,15 +1,21 @@
 package patient04.editor;
 
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.states.Editor;
 import patient04.utilities.Input;
+import patient04.utilities.Utils;
 
 /**
  *
  * @author Wilco
  */
 public class ToolPane implements Input.Listener {
-    private static final float width = 0.5f;
+    private static final float MIN = 0.6f;
+    private static final float MAX = 0.95f;
+    private static final float SPEED = 0.03f;
+    
     public enum Tool {
         SELECT;
     }
@@ -18,11 +24,19 @@ public class ToolPane implements Input.Listener {
     
     public Tool selected = Tool.SELECT;
     private float x;
+    private boolean collapsed;
     
     public ToolPane(Editor editor) {
         this.editor = editor;
         
-        x = 0.9f;
+        x = MAX;
+    }
+    
+    public void update() {
+        collapsed = Mouse.getX() < Display.getWidth() * x
+                || editor.camera.mouseDrag;
+        
+        x = Utils.clamp(x + (collapsed ? 1 : -1) * SPEED, MIN, MAX);
     }
     
     public void draw() {
@@ -40,6 +54,12 @@ public class ToolPane implements Input.Listener {
     
     @Override
     public boolean handleMouseEvent() {
+        if(Input.mouseButton(0, true) && !collapsed)
+            return Input.HANDLED;
+        
+        if(Input.mouseButton(1, true) && !collapsed)
+            return Input.HANDLED;
+        
         return Input.UNHANDLED;
     }
 

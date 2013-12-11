@@ -26,7 +26,7 @@ public class Camera implements Input.Listener {
     public final Vector position;
     public float zoom;
     
-    private boolean mouseDrag = false;
+    public boolean mouseDrag = false;
     
     public Camera() {
         position = new Vector();

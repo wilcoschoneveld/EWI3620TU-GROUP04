@@ -47,6 +47,8 @@ public class Editor implements State, Input.Listener {
     @Override
     public void update() {
         controller.processInput();
+        
+        tools.update();
     }
 
     @Override
