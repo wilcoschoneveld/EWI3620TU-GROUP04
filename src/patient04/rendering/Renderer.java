@@ -49,7 +49,14 @@ public class Renderer {
     // Shaders
     private final int geometryShader, screenShader,
                         lightingShader, stencilShader, debugShader,
-                            lightP, lightC, lightI, lightR, attC, attL, attQ;
+                            lightP, lightC, lightI, lightR, attC, attL, attQ,
+                                effShader0, effShader1;
+    
+    private float sinEffShader, cosEffShader, EffectIntensity = 0.1f;
+    private int j = 0;
+    
+    // Effect shaders
+    private final int effectShader;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -166,6 +173,18 @@ public class Renderer {
         Shaders.glUniform1i(screenShader, "uTexDiffuse", 2);
         Shaders.glUniform2f(screenShader, "screenSize", w, h);
         
+        // Effect Shader
+        effectShader = Shaders.loadShaderPairFromFiles(
+                "res/shaders/pass.vert", "res/shaders/effect.frag");
+        
+        useShaderProgram(effectShader);
+        
+        effShader0 = GL20.glGetUniformLocation(effectShader, "sinEffShader");
+        effShader1 = GL20.glGetUniformLocation(effectShader, "cosEffShader");         
+        
+        Shaders.glUniform1i(effectShader, "uTexAccum", 0);
+        Shaders.glUniform2f(effectShader, "screenSize", w, h);
+        
         // Load debug shader
         debugShader = Shaders.loadShaderPairFromFiles(
                 "res/shaders/pass.vert", "res/shaders/gbuffer.frag");
@@ -254,6 +273,7 @@ public class Renderer {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
         
+        
         useShaderProgram(screenShader);
         
         screenQuad.draw();
@@ -263,20 +283,22 @@ public class Renderer {
     }
     
     public void guiPass() {
-        // Blit everything from accumulation buffer to frame
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, geometryBuffer);
-        GL11.glReadBuffer(accumAttachment);
-        glBlitFramebuffer(0, 0, accumTexture.width, accumTexture.height,
-                          0, 0, accumTexture.width, accumTexture.height,
-                          GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST);
-        
-        // Bind the standard shader
-        useShaderProgram(0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
         
         // Set OpenGL state
         glLoadDefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        useShaderProgram(effectShader);
+        glUpdateEffectPrams();
+        
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        screenQuad.draw();
+        
+        // Bind the standard shader
+        useShaderProgram(0);
+        
     }
     
     public void debugPass() {
@@ -333,6 +355,18 @@ public class Renderer {
         
         // Disable stencil
         GL11.glDisable(GL11.GL_STENCIL_TEST);
+    }
+    
+    public void glUpdateEffectPrams(){
+        
+        
+        sinEffShader = EffectIntensity*((float) Math.sin(Math.toRadians(j+45)));
+        cosEffShader = EffectIntensity*((float) Math.cos(Math.toRadians(3*j)));
+        
+        GL20.glUniform1f(effShader0, sinEffShader);
+        GL20.glUniform1f(effShader1, cosEffShader);
+ 
+        j++;
     }
     
     public void glUpdateLightParams(Light light) {
