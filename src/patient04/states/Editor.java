@@ -21,8 +21,6 @@ public class Editor implements State, Input.Listener {
     public Info info;
     public ToolPane tools;
     public Input controller;
-    
-    public Button[] buttons;
 
     @Override
     public void initialize() {
@@ -45,15 +43,6 @@ public class Editor implements State, Input.Listener {
         controller.addListener(this);
         controller.addListener(tools);
         controller.addListener(camera);
-        
-        buttons = new Button[13];
-        
-//        for (int i = 0; i < buttons.length; i++)
-//            buttons[i] = Button.createEditorButton(i);
-        
-        for (int i = 0; i < buttons.length; i++)
-            buttons[i] = Button.fromSheet(
-                                "buttons_editor.png", i, 66, 66, 1);
     }
 
     @Override
@@ -71,9 +60,6 @@ public class Editor implements State, Input.Listener {
         camera.setCameraMatrix();
         
         level.draw();
-        
-        for (int i = 0; i < buttons.length; i++)
-            buttons[i].draw(0, i * 2);
         
         camera.setWindowMatrix();
         

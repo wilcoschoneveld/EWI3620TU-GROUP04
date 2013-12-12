@@ -96,7 +96,7 @@ public class Camera implements Input.Listener {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         
         Matrix matrix = Matrix.projOrthographic(
-                0, 1, 1, 0, -1, 1);
+                0, viewRatio(), 1, 0, -1, 1);
         
         GL11.glLoadMatrix(matrix.toBuffer());
                 
@@ -135,5 +135,9 @@ public class Camera implements Input.Listener {
     public float viewMaxZ() {
         return position.z + HALF_VIEW * zoom
                 * Display.getHeight() / Display.getWidth();
+    }
+    
+    public float viewRatio() {
+        return (float) Display.getWidth() / Display.getHeight();
     }
 }

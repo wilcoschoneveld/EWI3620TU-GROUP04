@@ -16,6 +16,8 @@ import patient04.resources.Texture;
 public class Button {
     private final Image active, over, clicked, selected;
     
+    public float x, y, width, height;
+    
     public Button(Image active, Image over, Image clicked, Image selected) {
         this.active = active;
         this.over = over;
@@ -23,11 +25,8 @@ public class Button {
         this.selected = selected;
     }
     
-    public void draw(float x, float y) {
-        active.draw(x, y, x+1, y+1);
-        over.draw(x+2, y, x+3, y+1);
-        clicked.draw(x+4, y, x+5, y+1);
-        selected.draw(x+6, y, x+7, y+1);
+    public void draw() {
+        active.draw(x, y, x + width, y + height);
     }
     
     public static Button fromSheet(String file, int index, int w, int h, int space) {
