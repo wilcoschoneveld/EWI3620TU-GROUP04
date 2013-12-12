@@ -49,6 +49,7 @@ public class Font {
         GL11.glLoadIdentity();
         GL11.glOrtho(0, width, height, 0, -1, 1);
         
+        Texture.unbind();
         TextureImpl.unbind();
         font.drawString(
                 width / 2 - font.getWidth(str) / 2, y * height, str, color);
@@ -93,6 +94,7 @@ public class Font {
             case BOTTOM: ty -= font.getHeight(); break;
         }
         
+        Texture.unbind();
         TextureImpl.unbind();
         font.drawString(tx, ty, str);
         

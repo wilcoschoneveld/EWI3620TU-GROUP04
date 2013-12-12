@@ -27,7 +27,7 @@ public class Image {
         this.height = height;
         
         this.u0 = x / texture.width;
-        this.v0 = x / texture.height;
+        this.v0 = y / texture.height;
         this.u1 = (x + width) / texture.width;
         this.v1 = (y + height) / texture.height;
     }
@@ -38,7 +38,7 @@ public class Image {
     
     public void draw(float x0, float y0, float x1, float y1) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor3f(1, 1, 1);
+        GL11.glColor4f(1, 1, 1, 1);
         texture.bind();
         
         GL11.glBegin(GL11.GL_QUADS);

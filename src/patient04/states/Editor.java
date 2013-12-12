@@ -3,6 +3,7 @@ package patient04.states;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
+import patient04.editor.Button;
 import patient04.editor.Camera;
 import patient04.editor.Info;
 import patient04.editor.Level;
@@ -20,6 +21,8 @@ public class Editor implements State, Input.Listener {
     public Info info;
     public ToolPane tools;
     public Input controller;
+    
+    public Button[] buttons;
 
     @Override
     public void initialize() {
@@ -42,6 +45,15 @@ public class Editor implements State, Input.Listener {
         controller.addListener(this);
         controller.addListener(tools);
         controller.addListener(camera);
+        
+        buttons = new Button[13];
+        
+//        for (int i = 0; i < buttons.length; i++)
+//            buttons[i] = Button.createEditorButton(i);
+        
+        for (int i = 0; i < buttons.length; i++)
+            buttons[i] = Button.fromSheet(
+                                "buttons_editor.png", i, 66, 66, 1);
     }
 
     @Override
@@ -60,10 +72,15 @@ public class Editor implements State, Input.Listener {
         
         level.draw();
         
+        for (int i = 0; i < buttons.length; i++)
+            buttons[i].draw(0, i * 2);
+        
         camera.setWindowMatrix();
         
         tools.draw();
         info.draw();
+        
+        
     }
 
     @Override
