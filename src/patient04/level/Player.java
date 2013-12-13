@@ -90,41 +90,45 @@ public class Player extends Entity implements Input.Listener {
      * @return 
      */
     public Matrix getFirstPersonView() {
-        
         viewbobbing *= 0.9f;
         
         if(onGround)
             viewbobbing += 0.1f;
-        
+                
         Matrix matrix = new Matrix();
         
-        float leandir = 0;
         Vector leanInput = new Vector();
-        Vector lean = new Vector();
-        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leandir -= 1;
-        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leandir += 1;
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-0.5f, 0, 0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(0.5f, 0, 0);
         
-        leanInput.add(leandir, 0, 0);
-        
-        leandist *= LEAN_SPEED;  
+        leandist *= LEAN_SPEED;
+        float leanscale = 1;   
         
         if(leanInput.x != 0) {
-            lean.add(leandist, 0, 0);
             // Create head aabb
             AABB aabb2 = aabb.copy();
             aabb2.min.add(0, 1.6f,0);
-            aabb2.pos.add(lean.copy().rotate(rotation.y, 0, 1, 0));
+                        
+            aabb2.pos.add(leanInput.copy().rotate(rotation.y, 0, 1, 0));
             
             // Check if collision free
             boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
             
-            if (isFree) {
-                leandist += leanInput.x * (1 - LEAN_SPEED);
-            } else
-                leandist *= 0.90;
+            if (isFree) leandist += leanInput.x * (1 - LEAN_SPEED);
+            
+            if (!isFree) {
+                if (!Keyboard.isKeyDown(Keyboard.KEY_A) 
+                        && !Keyboard.isKeyDown(Keyboard.KEY_D)) leanscale = 0.1f;
+                else if (Keyboard.isKeyDown(Keyboard.KEY_A) 
+                        || Keyboard.isKeyDown(Keyboard.KEY_D)) {
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) leanscale = 0.2f;
+                    else leanscale = 0.5f;
+                }
+            }
         }
         
-        matrix.translate(-leandist, 0.1f, 0);   
+        matrix.rotate(leandist * leanscale, 0, 0, 1);
+        matrix.translate(-leandist * leanscale, 0.1f, 0);
         
         matrix.translate(
                 (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
@@ -169,6 +173,17 @@ public class Player extends Entity implements Input.Listener {
             acceleration.add(0, ACCEL_JUMP, 0);
             
             return Input.HANDLED;
+        }
+        
+        // Handle use key
+        if (Input.keyboardKey(Keyboard.KEY_F, true)) {
+            // Loop through useables
+            for (Useable useable2 : Level.useables) {
+                if (position.copy().min(useable2.position).length() <= 0.5f) { 
+                    useable2.Use();
+                    break;
+                }
+            }
         }
         
         return Input.UNHANDLED;

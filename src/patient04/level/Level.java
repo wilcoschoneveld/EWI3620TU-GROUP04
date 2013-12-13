@@ -29,7 +29,8 @@ public class Level {
     
     private final ArrayList<Solid> solids;
     private final ArrayList<Light> lights;
-    public final ArrayList<Entity> entities;
+    private final ArrayList<Entity> entities;
+    public static ArrayList<Useable> useables;
     
     public final HashSet<Waypoint> navpoints;
     private Waypoint navlast;
@@ -38,6 +39,7 @@ public class Level {
         this.solids = new ArrayList<>();
         this.lights = new ArrayList<>();
         this.entities = new ArrayList<>();
+        this.useables = new ArrayList<>();
         this.navpoints = new HashSet<>();
     }
     
@@ -45,6 +47,10 @@ public class Level {
         solids.add(solid);
     }
     
+    public void addUseable(Useable useable) {
+        useables.add(useable);
+    } 
+        
     public void addLight(Light light) {
         lights.add(light);
     }
@@ -114,6 +120,9 @@ public class Level {
         
         for (Entity entity : entities)
             entity.draw(renderer);
+        
+        for (Useable useable : useables) 
+            useable.draw(renderer);
     }
     
     public void drawLights(Renderer renderer) {

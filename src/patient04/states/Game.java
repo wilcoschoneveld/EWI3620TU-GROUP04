@@ -15,8 +15,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
+import patient04.level.Pickup;
 import patient04.level.Tutorial;
-import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 
@@ -60,24 +60,18 @@ public class Game implements State, Input.Listener {
         // Test objects and lights
         Solid tmp;
         Light tmpl;
+        Pickup tmp2;
         
-        tmp = new Solid();
-        tmp.model = Model.getResource("needle.obj");
-        tmp.position.set(7, 0, 8);
-        level.addSolid(tmp);
+        tmp2 = new Pickup();
+        tmp2.isNeedle();
+        tmp2.position.set(23, 0, 17);
+        level.addUseable(tmp2);
         
-        tmp = new Solid();
-        tmp.model = Model.getResource("infuus.obj");
-        tmp.position.set(8, 0, 8);
-        tmp.rotation.set(0, 230, 0);
-        level.addSolid(tmp);
-        
-        level.addNewLight().setPosition(7, 0.2f, 8)
-                .setColor(0.1f, 1f).setIntensity(3).setItemLight();
-        
-        level.addNewLight().setPosition(8, 0.2f, 8).setIntensity(3)
-                .setColor(0.3f, 1).setItemLight();
-        
+        tmp2 = new Pickup();
+        tmp2.isBag();
+        tmp2.position.set(23, 0, 20);
+        level.addUseable(tmp2);
+                
         level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)
                 .setColor(0.1f, 0).setEnvironmentLight();
         level.addNewLight().setPosition(16, 2, 10.5f).setIntensity(8)
@@ -161,7 +155,7 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
-        if(Input.keyboardKey(Keyboard.KEY_F, true)) {
+        if(Input.keyboardKey(Keyboard.KEY_L, true)) {
             // Create a new light at player position
             level.addNewLight().setColor((float) Math.random(), 0.7f)
                     .setIntensity(15).setEnvironmentLight()
@@ -207,10 +201,10 @@ public class Game implements State, Input.Listener {
         // Change to normal pass
         renderer.guiPass();
         
-        for(Entity entity : level.entities) {
-            if (entity instanceof Enemy)
-                ((Enemy) entity).draw2(renderer);
-        }
+//        for(Entity entity : level.entities) {
+//            if (entity instanceof Enemy)
+//                ((Enemy) entity).draw2(renderer);
+//        }
         
         // Debug navigation grid
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))
