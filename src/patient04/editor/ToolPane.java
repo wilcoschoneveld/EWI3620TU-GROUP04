@@ -59,7 +59,7 @@ public class ToolPane implements Input.Listener {
     
     public final Button createButton(int index) {
         Button button = Button.fromSheet(
-                "buttons_editor.png", index, 66, 66, 1);
+                "editor/buttons.png", index, 66, 66, 1);
 
         button.x = 0.05f + (index % 2)*0.08f;
         button.y = 0.05f + index * 0.04f - (index % 2)*0.04f;

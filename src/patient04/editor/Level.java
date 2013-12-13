@@ -19,7 +19,7 @@ import patient04.utilities.Input;
  * @author Wilco
  */
 public class Level implements Input.Listener {
-    private final Editor editor;
+    public final Editor editor;
     
     private final ArrayList<Element> elements;
     private Element selected;
@@ -64,11 +64,12 @@ public class Level implements Input.Listener {
         
         // Draw elements
         for (Element element : elements)
-            element.draw();
+            if (element != selected)
+                element.draw(0);
         
         // Draw selected element
         if (selected != null)
-            selected.drawSelected(0, 0.1f * editor.camera.zoom);
+            selected.draw(1);
     }
 
     @Override
@@ -84,11 +85,19 @@ public class Level implements Input.Listener {
                         mx = Math.round(mx); mz = Math.round(mz); }
                     
                     // Create a new Wall
-                    Wall wall = new Wall(mx, mz, mx + 10, mz + 10);
+                    Wall wall = new Wall(this, mx, mz, mx + 10, mz + 10);
                     
                     // Add wall to Elements list
                     elements.add(wall);
                     selected = wall;
+                }
+                break;
+            case LIGHT:
+                if (Input.mouseButton(0, true)) {
+                    Light light = new Light(this, mx, mz);
+                    
+                    elements.add(light);
+                    selected = light;
                 }
         }
         

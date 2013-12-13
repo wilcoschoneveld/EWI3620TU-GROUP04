@@ -8,12 +8,9 @@ package patient04.utilities;
 
 import javax.swing.JFileChooser;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import patient04.Main;
 
 /**
  *
