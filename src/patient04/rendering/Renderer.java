@@ -50,10 +50,11 @@ public class Renderer {
     private final int geometryShader, screenShader,
                         lightingShader, stencilShader, debugShader,
                             lightP, lightC, lightI, lightR, attC, attL, attQ,
-                                effShader0, effShader1;
+                                effShader0, effShader1, effShader2;
     
-    private float sinEffShader, cosEffShader, EffectIntensity = 0.1f;
+    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f;
     private int j = 0;
+    private boolean crazy = true, pickup = false;
     
     // Effect shaders
     private final int effectShader;
@@ -181,6 +182,7 @@ public class Renderer {
         
         effShader0 = GL20.glGetUniformLocation(effectShader, "sinEffShader");
         effShader1 = GL20.glGetUniformLocation(effectShader, "cosEffShader");         
+        effShader2 = GL20.glGetUniformLocation(effectShader, "j");
         
         Shaders.glUniform1i(effectShader, "uTexAccum", 0);
         Shaders.glUniform2f(effectShader, "screenSize", w, h);
@@ -358,15 +360,24 @@ public class Renderer {
     }
     
     public void glUpdateEffectPrams(){
+        if(crazy == true){
+            sinEffShader = EffectIntensity*((float) Math.sin(Math.toRadians(j)));
+            cosEffShader = EffectIntensity*((float) Math.cos(Math.toRadians(3*j + 90)));
         
-        
-        sinEffShader = EffectIntensity*((float) Math.sin(Math.toRadians(j+45)));
-        cosEffShader = EffectIntensity*((float) Math.cos(Math.toRadians(3*j)));
-        
-        GL20.glUniform1f(effShader0, sinEffShader);
-        GL20.glUniform1f(effShader1, cosEffShader);
- 
-        j++;
+            GL20.glUniform1f(effShader0, sinEffShader);
+            GL20.glUniform1f(effShader1, cosEffShader);
+            GL20.glUniform1f(effShader2, j);
+            j++;
+            
+            if(j == 360 && EffectIntensity < 0.1f){
+                EffectIntensity += 0.005;
+                j=0;
+            }
+        }
+    }
+    public void glSetEffectIntensity(float intensity){
+        EffectIntensity = intensity;
+        j=0;
     }
     
     public void glUpdateLightParams(Light light) {
