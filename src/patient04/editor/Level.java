@@ -6,18 +6,28 @@
 
 package patient04.editor;
 
+import java.util.ArrayList;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import patient04.editor.elements.*;
 import patient04.states.Editor;
+import patient04.utilities.Input;
 
 /**
  *
  * @author Wilco
  */
-public class Level {
+public class Level implements Input.Listener {
     private final Editor editor;
+    
+    private final ArrayList<Element> elements;
+    private Element selected;
     
     public Level(Editor editor) {
         this.editor = editor;
+        
+        elements = new ArrayList<>();
     }
     
     public void draw() {
@@ -51,5 +61,53 @@ public class Level {
         GL11.glVertex2f(minX, 0);
         GL11.glVertex2f(maxX, 0);
         GL11.glEnd();
+        
+        // Draw elements
+        for (Element element : elements)
+            element.draw();
+        
+        // Draw selected element
+        if (selected != null)
+            selected.drawSelected(0, 0.1f * editor.camera.zoom);
+    }
+
+    @Override
+    public boolean handleMouseEvent() {
+        float mx = editor.camera.convertMouseX(Mouse.getEventX());
+        float mz = editor.camera.convertMouseY(Mouse.getEventY());
+        
+        switch (editor.tools.selected) {
+            case WALL: 
+                if (Input.mouseButton(0, true)) {
+                    // Snap to grid if shift is held down
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                        mx = Math.round(mx); mz = Math.round(mz); }
+                    
+                    // Create a new Wall
+                    Wall wall = new Wall(mx, mz, mx + 10, mz + 10);
+                    
+                    // Add wall to Elements list
+                    elements.add(wall);
+                    selected = wall;
+                }
+        }
+        
+        return Input.UNHANDLED;
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+        
+        if (Input.keyboardKey(Keyboard.KEY_DELETE, true)) {
+            // If something is selected, delete it
+            if (selected != null) {
+                elements.remove(selected);
+                selected = null;
+            }
+            
+            return Input.HANDLED;
+        }
+        
+        return Input.UNHANDLED;
     }
 }

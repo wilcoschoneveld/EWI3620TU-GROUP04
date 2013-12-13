@@ -1,5 +1,6 @@
 package patient04.states;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
@@ -9,6 +10,7 @@ import patient04.editor.Info;
 import patient04.editor.Level;
 import patient04.editor.ToolPane;
 import patient04.utilities.Input;
+import patient04.utilities.Utils;
 
 /**
  *
@@ -34,6 +36,9 @@ public class Editor implements State, Input.Listener {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glEnable(GL11.GL_BLEND);
         
+        // Enable face culling
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        
         camera = new Camera();
         level = new Level(this);
         info = new Info(this);
@@ -42,6 +47,7 @@ public class Editor implements State, Input.Listener {
         controller = new Input();
         controller.addListener(this);
         controller.addListener(tools);
+        controller.addListener(level);
         controller.addListener(camera);
     }
 
@@ -65,8 +71,6 @@ public class Editor implements State, Input.Listener {
         
         tools.draw();
         info.draw();
-        
-        
     }
 
     @Override
@@ -83,6 +87,12 @@ public class Editor implements State, Input.Listener {
         if (Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             // Request state transition to main menu
             Main.requestNewState(Main.States.MAIN_MENU);
+            
+            return Input.HANDLED;
+        }
+        
+        if (Input.keyboardKey(Keyboard.KEY_F6, true)) {
+            Utils.getUserInput();
             
             return Input.HANDLED;
         }

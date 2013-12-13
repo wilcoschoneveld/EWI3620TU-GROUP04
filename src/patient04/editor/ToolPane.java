@@ -1,5 +1,7 @@
 package patient04.editor;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -17,47 +19,69 @@ public class ToolPane implements Input.Listener {
     private static final float SPEED = 0.03f;
     
     public enum Tool {
-        SELECT;
+        SELECT, START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+        ENEMY, WALL, DOOR, KEY, DELETE;
     }
     
     private final Editor editor;
     
+    private final HashMap<Tool, Button> tools;
     public Tool selected = Tool.SELECT;
+    
     private float x;
-    private boolean collapsed;
-    private final Button[] buttons;
+    private boolean open;
     
     public ToolPane(Editor editor) {
+        // Assign editor reference
         this.editor = editor;
         
+        // Set initial pane position as collapsed
         x = editor.camera.viewRatio() - MIN;
         
-        buttons = new Button[13];
+        // Create tools map
+        tools = new HashMap<>();
         
-        for (int i = 0; i < buttons.length; i++) {
-            Button button = Button.fromSheet(
-                    "buttons_editor.png", i, 66, 66, 1);
-            
-            button.x = 0.05f + (i % 2)*0.05f;
-            button.y = 0.05f*i - (i % 2)*0.05f;
-            button.width = 0.05f;
-            button.height = 0.05f;
-            
-            buttons[i] = button;
-        }
+        // Add new buttons to map
+        tools.put(Tool.START, createButton(0));
+        tools.put(Tool.END, createButton(1));
+        tools.put(Tool.WAYPOINT, createButton(2));
+        tools.put(Tool.LINK, createButton(3));
+        tools.put(Tool.LIGHT, createButton(4));
+        tools.put(Tool.NEEDLE, createButton(5));
+        tools.put(Tool.INFUSION, createButton(6));
+        tools.put(Tool.SELECT, createButton(7));
+        tools.put(Tool.ENEMY, createButton(8));
+        tools.put(Tool.WALL, createButton(9));
+        tools.put(Tool.DOOR, createButton(10));
+        tools.put(Tool.KEY, createButton(11));
+        tools.put(Tool.DELETE, createButton(12));
+    }
+    
+    public final Button createButton(int index) {
+        Button button = Button.fromSheet(
+                "buttons_editor.png", index, 66, 66, 1);
+
+        button.x = 0.05f + (index % 2)*0.08f;
+        button.y = 0.05f + index * 0.04f - (index % 2)*0.04f;
+        button.width = 0.07f;
+        button.height = 0.07f;
+
+        return button;
     }
     
     public void update() {
         float R = editor.camera.viewRatio();
+        float mx = (float) Mouse.getX() / Display.getHeight() - x;
         
-        collapsed = Mouse.getX() < x * Display.getHeight()
-                || editor.camera.mouseDrag;
+        open = mx > 0 && !editor.camera.mouseDrag;
         
-        x = Utils.clamp(x + (collapsed ? 1 : -1) * SPEED, R - MAX, R - MIN);
+        x = Utils.clamp(x + (open ? -1 : 1) * SPEED, R - MAX, R - MIN);
     }
     
     public void draw() {
         float R = editor.camera.viewRatio();
+        float mx = +(float) Mouse.getX() / Display.getHeight() - x;
+        float my = -(float) Mouse.getY() / Display.getHeight() + 1;
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         
@@ -72,18 +96,45 @@ public class ToolPane implements Input.Listener {
         
         GL11.glPushMatrix();
         GL11.glTranslatef(x, 0, 0);
-        for (Button button : buttons)
-            button.draw();
+        for (Button button : tools.values()) {
+            if (tools.get(selected) == button)
+                button.draw(Button.State.SELECTED);
+            else if (button.isInside(mx, my))
+                button.draw(Button.State.OVER);
+            else
+                button.draw(Button.State.ACTIVE);
+        }
         GL11.glPopMatrix();
     }
     
     @Override
     public boolean handleMouseEvent() {
-        if(Input.mouseButton(0, true) && !collapsed)
-            return Input.HANDLED;
+        // In this stage, 'open' is an indication of the mouse being inside
+        // the tools pane, so no need for extra checking
+        if (!open)
+            return Input.UNHANDLED;
         
-        if(Input.mouseButton(1, true) && !collapsed)
+        float mx = +(float) Mouse.getEventX() / Display.getHeight() - x;
+        float my = -(float) Mouse.getEventY() / Display.getHeight() + 1;
+        
+        if (Input.mouseButton(0, true)) {
+            // Check all buttons for click inside
+            for (Entry<Tool, Button> entry : tools.entrySet()) {
+                if (entry.getValue().isInside(mx, my)) {
+                    selected = entry.getKey();
+                    return Input.HANDLED;
+                }
+            }
+            
+            // Always handled if inside pane
             return Input.HANDLED;
+        }
+        
+        if (Input.mouseButton(1, true)) {
+            
+            // Always handled if inside pane
+            return Input.HANDLED;
+        }
         
         return Input.UNHANDLED;
     }

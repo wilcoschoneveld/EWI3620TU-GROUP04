@@ -1,20 +1,19 @@
 package patient04.states;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.resources.Image;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
+import patient04.utilities.Utils;
 
 /**
  *
  * @author Wilco
  */
 public class MainMenu implements State, Input.Listener {
-    private Image logo;
+    private Image background;
     private Input controller;
 
     @Override
@@ -25,14 +24,14 @@ public class MainMenu implements State, Input.Listener {
         // Set projection matrix
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, -1, 1);
+        GL11.glOrtho(0, 1, Utils.getDisplayRatio(), 0, -1, 1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         
         controller = new Input();
         controller.addListener(this);
         
-        logo = Image.getFromTextureResource("main_logo.png");
+        background = Image.getFromTextureResource("screen_mainmenu.png");
     }
 
     @Override
@@ -42,10 +41,11 @@ public class MainMenu implements State, Input.Listener {
 
     @Override
     public void render() {
+        float R = Utils.getDisplayRatio();
+        
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
-        logo.draw(Display.getWidth() / 2 - logo.width / 2,
-                 Display.getHeight() / 2 - logo.height / 2);
+        background.draw(0, 0, 1, R);
     }
 
     @Override
@@ -86,4 +86,16 @@ public class MainMenu implements State, Input.Listener {
         return Input.UNHANDLED;
     }
     
+//    private class Parallax {
+//        final Image image;
+//        float x, y, depth;
+//        
+//        public Parallax(Image image) {
+//            this.image = image;
+//        }
+//        
+//        public void draw(float vx, float vy) {
+//            
+//        }
+//    }
 }

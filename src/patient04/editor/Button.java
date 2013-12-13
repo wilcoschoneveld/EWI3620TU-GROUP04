@@ -16,6 +16,10 @@ import patient04.resources.Texture;
 public class Button {
     private final Image active, over, clicked, selected;
     
+    public enum State {
+        ACTIVE, OVER, CLICKED, SELECTED;
+    }
+    
     public float x, y, width, height;
     
     public Button(Image active, Image over, Image clicked, Image selected) {
@@ -25,8 +29,18 @@ public class Button {
         this.selected = selected;
     }
     
-    public void draw() {
-        active.draw(x, y, x + width, y + height);
+    public void draw(State state) {
+        switch(state) {
+            case ACTIVE: active.draw(x, y, x + width, y + height); break;
+            case OVER: over.draw(x, y, x + width, y + height); break;
+            case CLICKED: clicked.draw(x, y, x + width, y + height); break;
+            case SELECTED: selected.draw(x, y, x + width, y + height); break;
+        }
+    }
+    
+    public boolean isInside(float x, float y) {
+        return x > this.x && x < this.x + width
+            && y > this.y && y < this.y + height;
     }
     
     public static Button fromSheet(String file, int index, int w, int h, int space) {

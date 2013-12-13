@@ -6,9 +6,14 @@
 
 package patient04.utilities;
 
+import javax.swing.JFileChooser;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import patient04.Main;
 
 /**
  *
@@ -30,6 +35,28 @@ public class Utils {
     
     public static float acos(float value) {
         return (float) (Math.acos(value) * 180 / Math.PI);
+    }
+    
+    public static String getUserInput() {
+        DisplayMode old = Display.getDisplayMode();
+        
+        try {
+            DisplayMode small = new DisplayMode(0, 0);
+            Display.setDisplayMode(small);
+            
+            JFileChooser jc = new JFileChooser();
+            
+            jc.showOpenDialog(null);
+            
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                Display.setDisplayMode(old);
+            } catch(LWJGLException e) {}
+        }
+        
+        return null;
     }
     
     public static DisplayMode findDisplayMode(int width, int height) {
@@ -57,5 +84,9 @@ public class Utils {
         } catch (LWJGLException e) { e.printStackTrace(); }
         
         return candidate;
+    }
+    
+    public static float getDisplayRatio() {
+        return (float) Display.getWidth() / Display.getHeight();
     }
 }
