@@ -51,7 +51,7 @@ public class Light extends Element {
     @Override
     public void draw(int target) {
         
-        Color col = Color.getHSBColor(hue / 360, saturation, 1);
+        Color col = Color.getHSBColor(hue, saturation, 1);
         
         glCircle(x, z, radius, false,
                 new Color(col.getRed(), col.getGreen(), col.getBlue(), 128),
@@ -59,7 +59,7 @@ public class Light extends Element {
                                                                    false, 20);
         
         if (target != -1) {
-            double angle = hue * Math.PI / 180;
+            double angle = hue * 2 * Math.PI;
             
             float lx = (float) Math.sin(angle) * radius * LENGTH;
             float lz = (float) Math.cos(angle) * radius * LENGTH;
@@ -97,7 +97,7 @@ public class Light extends Element {
                 z += dz;
                 break;
             case 2:
-                hue = Utils.atan2(mx - this.x, mz - this.z);
+                hue = Utils.atan2(mx - this.x, mz - this.z) / 360f;
                 
                 float len = Utils.length(mx - this.x, mz - this.z);
                 radius = Math.max(2, len / LENGTH);
@@ -109,7 +109,7 @@ public class Light extends Element {
 
     @Override
     public int select(boolean selected, float x, float z) {
-        double angle = hue * Math.PI / 180;
+        double angle = hue * 2 * Math.PI;
 
         float lx = this.x + (float) Math.sin(angle) * radius * LENGTH;
         float lz = this.z + (float) Math.cos(angle) * radius * LENGTH;

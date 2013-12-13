@@ -13,7 +13,6 @@ import patient04.physics.AABB;
 import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
-import patient04.resources.Texture;
 
 public class Level {
     public int Color;
@@ -209,9 +208,6 @@ public class Level {
                 
                 switch (tokens[0].toLowerCase()) {
                     case "wall":
-                        
-                        float x = Float.parseFloat(tokens[1]);
-                        float z = Float.parseFloat(tokens[2]);
                         float w = Float.parseFloat(tokens[3]);
                         float h = Float.parseFloat(tokens[4]);
                         
@@ -228,12 +224,24 @@ public class Level {
                         
                         wall.aabb = new AABB(wall.position, min, max);
                         wall.model = model;
-                        wall.position.set(x, 0, z);
+                        wall.position.set(
+                                Float.parseFloat(tokens[1]), 0,
+                                Float.parseFloat(tokens[2]));
                         
                         level.addSolid(wall);
                         
                         break;
                     case "light":
+                        
+                        level.addNewLight()
+                                .setPosition(Float.parseFloat(tokens[1]),
+                                             WALL_HEIGHT * 2 / 3,
+                                             Float.parseFloat(tokens[2]))
+                                .setColor(Float.parseFloat(tokens[3]),
+                                          Float.parseFloat(tokens[4]))
+                                .setIntensity(20)
+                                .setEnvironmentLight();
+                        
                         break;
                     default: // Incompatible line                        
                         Logger.error("Could not read LVL file " + file);
