@@ -128,4 +128,10 @@ public class Light extends Element {
     
     @Override
     public void release() { }
+    
+    @Override
+    public String toString() {
+        return "light " + x + " " + z + " "
+                + hue + " " + saturation + " " + radius;
+    }
 }

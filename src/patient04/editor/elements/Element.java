@@ -10,25 +10,23 @@ import java.awt.Color;
 public abstract class Element implements Comparable<Element> {
     protected int priority;
     
-    public void draw(int target) {
-        
-    };
-    
-    public void translate(int target, float dx, float dz) {
-        
-    };
-    
-    public int select(boolean selected, float x, float z) {
-        return 0;
-    };
-    
-    public void release() {
-        
-    };
+    abstract public void draw(int target);
+    abstract public void translate(int target, float dx, float dz);
+    abstract public int select(boolean selected, float x, float z);
+    abstract public void release();
     
     @Override
     public int compareTo(Element other) {
         return priority - other.priority;
+    }
+    
+    @Override
+    public String toString() {
+        return "undefined";
+    }
+    
+    public Element fromString(String str) {
+        return null;
     }
     
     public static void glCircle(float x, float y, float radius, boolean stroke,

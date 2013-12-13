@@ -10,6 +10,7 @@ import patient04.editor.Info;
 import patient04.editor.Level;
 import patient04.editor.ToolPane;
 import patient04.utilities.Input;
+import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -93,6 +94,12 @@ public class Editor implements State, Input.Listener {
         
         if (Input.keyboardKey(Keyboard.KEY_F6, true)) {
             Utils.openFileChooser();
+            
+            return Input.HANDLED;
+        }
+        
+        if (Input.keyboardKey(Keyboard.KEY_F9, true)) {
+            level.saveToFile("testlevel" + Timer.getTime() + ".lvl");
             
             return Input.HANDLED;
         }

@@ -6,6 +6,7 @@
 
 package patient04.editor;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import org.lwjgl.input.Keyboard;
@@ -170,5 +171,14 @@ public class Level implements Input.Listener {
         }
         
         return Input.UNHANDLED;
+    }
+    
+    public void saveToFile(String file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (Element element : elements) {
+                writer.write(element.toString());
+                writer.newLine();
+            }
+        } catch(IOException e) { e.printStackTrace(); }
     }
 }

@@ -131,4 +131,15 @@ public class Wall extends Element {
         vertices[2][0] = x + w / 2; vertices[2][1] = z + h / 2;
         vertices[3][0] = x + w / 2; vertices[3][1] = z - h / 2;
     }
+    
+    @Override
+    public String toString() {
+        float x = 0.5f*vertices[0][0] + 0.5f*vertices[2][0];
+        float z = 0.5f*vertices[0][1] + 0.5f*vertices[2][1];
+        
+        float w = Math.max(0.25f, Math.abs(vertices[0][0] - vertices[2][0]));
+        float h = Math.max(0.25f, Math.abs(vertices[0][1] - vertices[2][1]));
+        
+        return "wall " + x + " " + z + " " + w + " " + h;
+    }
 }
