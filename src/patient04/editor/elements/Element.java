@@ -10,12 +10,21 @@ package patient04.editor.elements;
  *
  * @author Wilco
  */
-public interface Element {
-    void draw(int target);
+public abstract class Element {
     
-    void translate(int target, float dx, float dz);
+    public void draw(int target) {
+        
+    };
     
-    int select(boolean selected, float x, float z);
+    public void translate(int target, float dx, float dz) {
+        
+    };
     
-    void release();
+    public int select(boolean selected, float x, float z) {
+        return 0;
+    };
+    
+    public void release() {
+        
+    };
 }

@@ -15,7 +15,7 @@ import patient04.resources.Texture;
  *
  * @author Wilco
  */
-public class Light implements Element {
+public class Light extends Element {
     private final Level level;
     Image image;
     
