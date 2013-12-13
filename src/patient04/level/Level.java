@@ -1,5 +1,6 @@
 package patient04.level;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.lwjgl.opengl.GL11;
@@ -12,6 +13,7 @@ import patient04.physics.AABB;
 import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
+import patient04.resources.Texture;
 
 public class Level {
     public int Color;
@@ -189,6 +191,59 @@ public class Level {
         floor.aabb = new AABB(floor.position, min, max);
         
         solids.add(floor);
+    }
+    
+    public static Level fromFile(String file) {
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            Level level = new Level();
+            
+            String line; String[] tokens;
+            
+            while ((line = reader.readLine()) != null) {
+                // Split line
+                tokens = line.split("\\s+"); 
+                
+                if(line.length() == 0 || tokens.length < 1)
+                    continue;
+                
+                switch (tokens[0].toLowerCase()) {
+                    case "wall":
+                        
+                        float x = Float.parseFloat(tokens[1]);
+                        float z = Float.parseFloat(tokens[2]);
+                        float w = Float.parseFloat(tokens[3]);
+                        float h = Float.parseFloat(tokens[4]);
+                        
+                        Vector min = new Vector(-w/2, 0, -h/2);
+                        Vector max = new Vector(w/2, WALL_HEIGHT, h/2);
+                        
+                        Model model =
+                                Model.buildWall(min, max, "wall_hospital.png");
+                        
+                        model.compileBuffers();
+                        model.releaseRawData();
+                        
+                        Solid wall = new Solid();
+                        
+                        wall.aabb = new AABB(wall.position, min, max);
+                        wall.model = model;
+                        wall.position.set(x, 0, z);
+                        
+                        level.addSolid(wall);
+                        
+                        break;
+                    case "light":
+                        break;
+                    default: // Incompatible line                        
+                        Logger.error("Could not read LVL file " + file);
+                        Logger.error("Invalid line > " + line);
+                        return null;
+                }
+            }
+            
+            return level;
+        } catch(IOException e) { e.printStackTrace(); return null; }
     }
     
     public static Level defaultLevel(String textureFile) {
