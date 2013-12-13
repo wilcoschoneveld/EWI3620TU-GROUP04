@@ -6,7 +6,6 @@
 
 package patient04.editor.elements;
 
-import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 import patient04.resources.Image;
 import patient04.resources.Texture;
@@ -31,6 +30,8 @@ public class Light extends Element {
         this.x = x;
         this.z = z;
         this.radius = 10;
+        
+        priority = 2;
     }
 
     @Override
@@ -40,36 +41,7 @@ public class Light extends Element {
         if (target != -1)
             size *= 2;
         
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        
-        GL11.glPushMatrix();
-        GL11.glTranslatef(x, z, 0);
-        GL11.glScalef(radius, radius, 0);
-        
-        float lcos = (float) Math.cos(-0.1f * 3.141592f);
-        float lsin = (float) Math.sin(-0.1f * 3.141592f);
-        
-        float lx = 1, ly = 0;
-        
-        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-        
-        GL11.glColor4f(1, 1, 0, 0.5f);
-        GL11.glVertex2f(0, 0);        
-        
-        GL11.glColor4f(1, 1, 0, 0.05f);
-        GL11.glVertex2f(1, 0);
-        
-        for (int i = 0; i < 20; i++) {
-            float tp = lx;
-            lx = lcos * lx - lsin * ly;
-            ly = lsin * tp + lcos * ly;
-            
-            GL11.glVertex2f(lx, ly);
-        }
-        
-        GL11.glEnd();
-        
-        GL11.glPopMatrix();
+        glCircle(x, z, radius, false, 20);
         
         image.draw(x - size, z - size, x + size, z + size);
     }    

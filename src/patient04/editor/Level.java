@@ -7,6 +7,7 @@
 package patient04.editor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -63,6 +64,9 @@ public class Level implements Input.Listener {
         GL11.glVertex2f(minX, 0);
         GL11.glVertex2f(maxX, 0);
         GL11.glEnd();
+        
+        // Sort elements for drawing
+        Collections.sort(elements);
         
         // Draw elements
         for (Element element : elements)

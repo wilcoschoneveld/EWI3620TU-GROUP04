@@ -25,6 +25,8 @@ public class Wall extends Element {
         vertices[1][0] = xmin; vertices[1][1] = zmax;
         vertices[2][0] = xmax; vertices[2][1] = zmax;
         vertices[3][0] = xmax; vertices[3][1] = zmin;
+        
+        priority = 1;
     }
     
     @Override
@@ -49,7 +51,7 @@ public class Wall extends Element {
                 
                 // Draw corner vertex
                 GL11.glBegin(target==i+2 ? GL11.GL_QUADS : GL11.GL_LINE_LOOP);
-
+                
                 GL11.glColor3f(1, 1, 1);
                 GL11.glVertex2f(x - size, z - size);
                 GL11.glVertex2f(x - size, z + size);
@@ -117,22 +119,12 @@ public class Wall extends Element {
     }
     
     @Override
-    public void release() {
-//        float xmin = Math.min(vertices[0][0], vertices[2][0]);
-//        float xmax = Math.max(vertices[0][0], vertices[2][0]);
-//        float zmin = Math.min(vertices[0][1], vertices[2][1]);
-//        float zmax = Math.max(vertices[0][1], vertices[2][1]);
-//        
-//        vertices[0][0] = xmin; vertices[0][1] = zmin;
-//        vertices[1][0] = xmin; vertices[1][1] = zmax;
-//        vertices[2][0] = xmax; vertices[2][1] = zmax;
-//        vertices[3][0] = xmax; vertices[3][1] = zmin;
-        
+    public void release() {        
         float x = 0.5f*vertices[0][0] + 0.5f*vertices[2][0];
         float z = 0.5f*vertices[0][1] + 0.5f*vertices[2][1];
         
-        float w = Math.max(0.2f, Math.abs(vertices[0][0] - vertices[2][0]));
-        float h = Math.max(0.2f, Math.abs(vertices[0][1] - vertices[2][1]));
+        float w = Math.max(0.25f, Math.abs(vertices[0][0] - vertices[2][0]));
+        float h = Math.max(0.25f, Math.abs(vertices[0][1] - vertices[2][1]));
         
         vertices[0][0] = x - w / 2; vertices[0][1] = z - h / 2;
         vertices[1][0] = x - w / 2; vertices[1][1] = z + h / 2;
