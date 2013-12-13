@@ -33,6 +33,10 @@ public class Utils {
         return (float) (Math.acos(value) * 180 / Math.PI);
     }
     
+    public static float length(float dx, float dy) {
+        return (float) Math.sqrt(dx*dx + dy*dy);
+    }
+    
     public static String getUserInput() {
         DisplayMode old = Display.getDisplayMode();
         

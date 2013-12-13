@@ -80,6 +80,15 @@ public class Level implements Input.Listener {
 
     @Override
     public boolean handleMouseEvent() {
+        if (Input.mouseButton(0, false)) {
+            target = 0;
+
+            if (selected != null)
+                selected.release();
+            
+            return Input.HANDLED;
+        }
+        
         float mdx = editor.camera.convertMouseD(+Mouse.getEventDX());
         float mdy = editor.camera.convertMouseD(-Mouse.getEventDY());
         
@@ -113,15 +122,7 @@ public class Level implements Input.Listener {
                     selected = null;
                     
                     return Input.HANDLED;
-                }
-                
-                if (Input.mouseButton(0, false)) {
-                    target = 0;
-                    
-                    if (selected != null)
-                        selected.release();
-                }
-                
+                }                
                 break;
             case WALL: 
                 if (Input.mouseButton(0, true)) {
@@ -139,13 +140,6 @@ public class Level implements Input.Listener {
                     
                     return Input.HANDLED;
                 }
-                
-                if (Input.mouseButton(0, false)) {
-                    target = 0;
-                    
-                    if (selected != null)
-                        selected.release();
-                }
                 break;
             case LIGHT:
                 if (Input.mouseButton(0, true)) {
@@ -153,6 +147,7 @@ public class Level implements Input.Listener {
                     
                     elements.add(light);
                     selected = light;
+                    target = 2;
                     
                     return Input.HANDLED;
                 }
