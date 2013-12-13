@@ -1,6 +1,7 @@
 package patient04.editor.elements;
 
 import org.lwjgl.opengl.GL11;
+import java.awt.Color;
 
 /**
  *
@@ -30,7 +31,8 @@ public abstract class Element implements Comparable<Element> {
         return priority - other.priority;
     }
     
-    public static void glCircle(float x, float y, float radius, boolean clockwise, int segments) {
+    public static void glCircle(float x, float y, float radius, boolean stroke,
+            Color inner, Color outer, boolean clockwise, int segments) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         
         GL11.glPushMatrix();
@@ -43,12 +45,19 @@ public abstract class Element implements Comparable<Element> {
         
         float lx = 1, ly = 0;
         
-        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+        if (stroke)
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+        else {
+            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+            
+            float[] cI = inner.getComponents(null);
+            GL11.glColor4f(cI[0], cI[1], cI[2], cI[3]);
+            
+            GL11.glVertex2f(0, 0);    
+        }
         
-        GL11.glColor4f(1, 1, 0, 0.5f);
-        GL11.glVertex2f(0, 0);        
-        
-        GL11.glColor4f(1, 1, 0, 0.05f);
+        float[] cO = outer.getComponents(null);
+        GL11.glColor4f(cO[0], cO[1], cO[2], cO[3]);
         
         GL11.glVertex2f(1, 0);
         
@@ -62,7 +71,8 @@ public abstract class Element implements Comparable<Element> {
             GL11.glVertex2f(lx, ly);
         }
         
-        GL11.glVertex2f(1, 0);
+        if (!stroke)
+            GL11.glVertex2f(1, 0);
         
         GL11.glEnd();
         

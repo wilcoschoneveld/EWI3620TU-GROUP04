@@ -6,6 +6,8 @@
 
 package patient04.editor.elements;
 
+import java.awt.Color;
+import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 import patient04.resources.Image;
 import patient04.resources.Texture;
@@ -14,11 +16,14 @@ import patient04.resources.Texture;
  *
  * @author Wilco
  */
-public class Light extends Element {
+public class Light extends Element {    
     private final Level level;
     Image image;
     
     public float x, z;
+    
+    public float hue;
+    public float saturation;
     public float radius;
     
     public Light(Level level, float x, float z) {
@@ -29,7 +34,10 @@ public class Light extends Element {
         
         this.x = x;
         this.z = z;
-        this.radius = 10;
+        
+        hue = (float) Math.random() * 360f;
+        saturation = 1f;
+        radius = 5 + (float) Math.random() * 10f;
         
         priority = 2;
     }
@@ -38,10 +46,37 @@ public class Light extends Element {
     public void draw(int target) {
         float size = level.editor.camera.zoom * 0.5f;
         
-        if (target != -1)
-            size *= 2;
+        Color col = Color.getHSBColor(hue / 360, saturation, 1);
         
-        glCircle(x, z, radius, false, 20);
+        glCircle(x, z, radius, false,
+                new Color(col.getRed(), col.getGreen(), col.getBlue(), 128),
+                new Color(col.getRed(), col.getGreen(), col.getBlue(), 20),
+                                                                   false, 20);
+        
+        if (target != -1) {
+            double angle = hue * Math.PI / 180;
+            
+            float length = 1 + level.editor.camera.zoom * radius * 0.1f;
+            
+            float lx = (float) Math.sin(angle) * length;
+            float lz = (float) Math.cos(angle) * length;
+            
+            GL11.glLineWidth(3);
+            
+            GL11.glColor3f(1, 1, 1);
+            GL11.glBegin(GL11.GL_LINES);
+            GL11.glVertex2f(x, z);
+            GL11.glVertex2f(x + lx, z + lz);
+            GL11.glEnd();
+            
+            glCircle(x + lx, z + lz, level.editor.camera.zoom * 0.12f,
+                                            false, col, col, false, 20);
+            
+            glCircle(x + lx, z + lz, level.editor.camera.zoom * 0.12f,
+                                    true, null, Color.WHITE, false, 20);
+            
+            GL11.glLineWidth(1);
+        }
         
         image.draw(x - size, z - size, x + size, z + size);
     }    
@@ -53,7 +88,7 @@ public class Light extends Element {
     }
 
     @Override
-    public int select(boolean selected, float x, float z) {
+    public int select(boolean selected, float x, float z) {        
         float dx = x - this.x;
         float dz = z - this.z;
         float r = level.editor.camera.zoom * 0.5f;
