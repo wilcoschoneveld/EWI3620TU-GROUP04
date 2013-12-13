@@ -22,7 +22,9 @@ public class Level implements Input.Listener {
     public final Editor editor;
     
     private final ArrayList<Element> elements;
+    
     private Element selected;
+    private int target;
     
     public Level(Editor editor) {
         this.editor = editor;
@@ -65,19 +67,58 @@ public class Level implements Input.Listener {
         // Draw elements
         for (Element element : elements)
             if (element != selected)
-                element.draw(0);
+                element.draw(-1);
         
         // Draw selected element
         if (selected != null)
-            selected.draw(1);
+            selected.draw(target);
     }
 
     @Override
     public boolean handleMouseEvent() {
+        float mdx = editor.camera.convertMouseD(+Mouse.getEventDX());
+        float mdy = editor.camera.convertMouseD(-Mouse.getEventDY());
+        
+        if ((mdx != 0 || mdy != 0)
+                && !editor.camera.mouseDrag
+                && selected != null
+                && target > 0)
+            selected.translate(target, mdx, mdy);
+        
         float mx = editor.camera.convertMouseX(Mouse.getEventX());
         float mz = editor.camera.convertMouseY(Mouse.getEventY());
         
         switch (editor.tools.selected) {
+            case SELECT:
+                if (Input.mouseButton(0, true)) {
+                    // Loop through all elements
+                    for (Element element : elements) {
+                        // Try to select element
+                        target = element.select(selected == element, mx, mz);
+                        
+                        // If there is a result
+                        if (target > 0) {
+                            // Set selected as element
+                            selected = element;
+                            
+                            return Input.HANDLED;
+                        }
+                    }
+                    
+                    // Set selected to null if still here
+                    selected = null;
+                    
+                    return Input.HANDLED;
+                }
+                
+                if (Input.mouseButton(0, false)) {
+                    target = 0;
+                    
+                    if (selected != null)
+                        selected.release();
+                }
+                
+                break;
             case WALL: 
                 if (Input.mouseButton(0, true)) {
                     // Snap to grid if shift is held down
@@ -85,11 +126,21 @@ public class Level implements Input.Listener {
                         mx = Math.round(mx); mz = Math.round(mz); }
                     
                     // Create a new Wall
-                    Wall wall = new Wall(this, mx, mz, mx + 10, mz + 10);
+                    Wall wall = new Wall(this, mx, mz, mx, mz);
                     
                     // Add wall to Elements list
                     elements.add(wall);
                     selected = wall;
+                    target = 2;
+                    
+                    return Input.HANDLED;
+                }
+                
+                if (Input.mouseButton(0, false)) {
+                    target = 0;
+                    
+                    if (selected != null)
+                        selected.release();
                 }
                 break;
             case LIGHT:
@@ -98,7 +149,10 @@ public class Level implements Input.Listener {
                     
                     elements.add(light);
                     selected = light;
+                    
+                    return Input.HANDLED;
                 }
+                break;
         }
         
         return Input.UNHANDLED;

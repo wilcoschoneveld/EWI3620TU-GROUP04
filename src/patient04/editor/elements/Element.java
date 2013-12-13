@@ -11,9 +11,11 @@ package patient04.editor.elements;
  * @author Wilco
  */
 public interface Element {
-    void draw(int selected);
+    void draw(int target);
     
-    void translate(int selected, float dx, float dz);
+    void translate(int target, float dx, float dz);
     
-    int select(float x, float z);
+    int select(boolean selected, float x, float z);
+    
+    void release();
 }

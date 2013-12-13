@@ -34,8 +34,11 @@ public class Light implements Element {
     }
 
     @Override
-    public void draw(int selected) {
+    public void draw(int target) {
         float size = level.editor.camera.zoom * 0.5f;
+        
+        if (target != -1)
+            size *= 2;
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         
@@ -72,13 +75,23 @@ public class Light implements Element {
     }    
 
     @Override
-    public void translate(int selected, float dx, float dz) {
+    public void translate(int target, float dx, float dz) {
+        x += dx;
+        z += dz;        
     }
 
     @Override
-    public int select(float x, float z) {
+    public int select(boolean selected, float x, float z) {
+        float dx = x - this.x;
+        float dz = z - this.z;
+        float r = level.editor.camera.zoom * 0.5f;
         
+        if (dx * dx + dz * dz < r * r)
+            return 1;
         
         return 0;
     }
+    
+    @Override
+    public void release() { }
 }
