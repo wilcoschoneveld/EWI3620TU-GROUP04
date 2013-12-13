@@ -37,7 +37,7 @@ public class Light extends Element {
         
         hue = (float) Math.random() * 360f;
         saturation = 1f;
-        radius = 5 + (float) Math.random() * 10f;
+        radius = 3 + (float) Math.random() * 3f;
         
         priority = 2;
     }
@@ -56,7 +56,7 @@ public class Light extends Element {
         if (target != -1) {
             double angle = hue * Math.PI / 180;
             
-            float length = 1 + level.editor.camera.zoom * radius * 0.1f;
+            float length = 1 + level.editor.camera.zoom * radius * 0.2f;
             
             float lx = (float) Math.sin(angle) * length;
             float lz = (float) Math.cos(angle) * length;
