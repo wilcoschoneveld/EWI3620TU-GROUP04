@@ -37,7 +37,7 @@ public class Utils {
         return (float) Math.sqrt(dx*dx + dy*dy);
     }
     
-    public static String getUserInput() {
+    public static String openFileChooser() {
         DisplayMode old = Display.getDisplayMode();
         
         try {
@@ -46,7 +46,7 @@ public class Utils {
             
             JFileChooser jc = new JFileChooser();
             
-            jc.showOpenDialog(null);
+            jc.showSaveDialog(null);
             
         } catch (LWJGLException e) {
             e.printStackTrace();

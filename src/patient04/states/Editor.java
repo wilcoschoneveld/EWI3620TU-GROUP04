@@ -92,7 +92,7 @@ public class Editor implements State, Input.Listener {
         }
         
         if (Input.keyboardKey(Keyboard.KEY_F6, true)) {
-            Utils.getUserInput();
+            Utils.openFileChooser();
             
             return Input.HANDLED;
         }

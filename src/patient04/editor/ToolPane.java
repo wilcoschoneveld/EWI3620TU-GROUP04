@@ -2,6 +2,7 @@ package patient04.editor;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -141,6 +142,22 @@ public class ToolPane implements Input.Listener {
 
     @Override
     public boolean handleKeyboardEvent() {
+        
+        if (Input.keyboardKey(Keyboard.KEY_V, true)) {
+            selected = Tool.SELECT;
+            return Input.HANDLED;
+        }
+        
+        if (Input.keyboardKey(Keyboard.KEY_W, true)) {
+            selected = Tool.WALL;
+            return Input.HANDLED;
+        }
+        
+        if (Input.keyboardKey(Keyboard.KEY_L, true)) {
+            selected = Tool.LIGHT;
+            return Input.HANDLED;
+        }
+        
         return Input.UNHANDLED;
     }
 }

@@ -70,12 +70,11 @@ public class Level implements Input.Listener {
         
         // Draw elements
         for (Element element : elements)
-            if (element != selected)
-                element.draw(-1);
+            element.draw(element == selected ? target : -1);
         
         // Draw selected element
-        if (selected != null)
-            selected.draw(target);
+//        if (selected != null)
+//            selected.draw(target);
     }
 
     @Override
