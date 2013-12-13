@@ -50,9 +50,9 @@ public class Renderer {
     private final int geometryShader, screenShader,
                         lightingShader, stencilShader, debugShader,
                             lightP, lightC, lightI, lightR, attC, attL, attQ,
-                                effShader0, effShader1, effShader2;
+                                effShader0, effShader1, effShader2, effShader3;
     
-    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f;
+    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f , dX = 0;
     private int j = 0;
     private boolean crazy = true, pickup = false;
     
@@ -87,7 +87,8 @@ public class Renderer {
         positionTexture = new Texture(w, h, GL_RGBA16F_ARB);
         normalTexture = new Texture(w, h, GL_RGBA16F_ARB);
         diffuseTexture = new Texture(w, h, GL11.GL_RGBA8);
-        accumTexture = new Texture(w, h, GL11.GL_RGBA8);
+        accumTexture = new Texture(w, h, GL11.GL_RGBA8, null,
+                                    GL11.GL_LINEAR, GL11.GL_LINEAR);
         
         // Create new attachable render buffer
         depthStencilBuffer = glGenRenderbuffers();
@@ -182,7 +183,8 @@ public class Renderer {
         
         effShader0 = GL20.glGetUniformLocation(effectShader, "sinEffShader");
         effShader1 = GL20.glGetUniformLocation(effectShader, "cosEffShader");         
-        effShader2 = GL20.glGetUniformLocation(effectShader, "j");
+        effShader2 = GL20.glGetUniformLocation(effectShader, "dX");
+        effShader3 = GL20.glGetUniformLocation(effectShader, "EffectIntensity");
         
         Shaders.glUniform1i(effectShader, "uTexAccum", 0);
         Shaders.glUniform2f(effectShader, "screenSize", w, h);
@@ -361,15 +363,16 @@ public class Renderer {
     
     public void glUpdateEffectPrams(){
         if(crazy == true){
-            sinEffShader = EffectIntensity*((float) Math.sin(Math.toRadians(j)));
-            cosEffShader = EffectIntensity*((float) Math.cos(Math.toRadians(3*j + 90)));
-        
+            sinEffShader = (float) Math.sin(Math.toRadians(j));
+            cosEffShader = (float) Math.cos(Math.toRadians(3*j + 90));
+            dX = (float) Math.sin(Math.toRadians(j));
             GL20.glUniform1f(effShader0, sinEffShader);
             GL20.glUniform1f(effShader1, cosEffShader);
-            GL20.glUniform1f(effShader2, j);
+            GL20.glUniform1f(effShader2, dX);
+            GL20.glUniform1f(effShader3,EffectIntensity );
             j++;
             
-            if(j == 360 && EffectIntensity < 0.1f){
+            if(j == 360 && EffectIntensity < 0.4f){
                 EffectIntensity += 0.005;
                 j=0;
             }
