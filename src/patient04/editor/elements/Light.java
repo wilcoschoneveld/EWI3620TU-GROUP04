@@ -43,16 +43,25 @@ public class Light implements Element {
         GL11.glTranslatef(x, z, 0);
         GL11.glScalef(radius, radius, 0);
         
+        float lcos = (float) Math.cos(-0.1f * 3.141592f);
+        float lsin = (float) Math.sin(-0.1f * 3.141592f);
+        
+        float lx = 1, ly = 0;
+        
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
         
         GL11.glColor4f(1, 1, 0, 0.5f);
-        GL11.glVertex2f(0, 0);
-        GL11.glColor4f(1, 1, 0, 0.1f);
+        GL11.glVertex2f(0, 0);        
         
-        for (int i = 0; i < 37; i++) {
-            GL11.glVertex2f(
-                    (float) Math.sin(Math.PI * i / 18), 
-                    (float) Math.cos(Math.PI * i / 18));
+        GL11.glColor4f(1, 1, 0, 0.05f);
+        GL11.glVertex2f(1, 0);
+        
+        for (int i = 0; i < 20; i++) {
+            float tp = lx;
+            lx = lcos * lx - lsin * ly;
+            ly = lsin * tp + lcos * ly;
+            
+            GL11.glVertex2f(lx, ly);
         }
         
         GL11.glEnd();
@@ -68,6 +77,8 @@ public class Light implements Element {
 
     @Override
     public int select(float x, float z) {
+        
+        
         return 0;
     }
 }
