@@ -37,8 +37,10 @@ public abstract class Element implements Comparable<Element> {
     
     public static void glAttribute(float x, float z, float angle,
                                      float length, float radius, Color color) {
-            float lx = (float) Math.sin(angle) * length;
-            float lz = (float) Math.cos(angle) * length;
+            float lx = (float) +Math.cos(angle) * length;
+            float lz = (float) -Math.sin(angle) * length;
+            
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
             
             GL11.glLineWidth(3);
             

@@ -43,54 +43,12 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        //level = Level.defaultLevel("wall_hospital.png");
-        level = Level.fromFile("testlevel15822370.lvl");
+        level = Level.fromFile("testlevel20541333.lvl");
         level.generateFloor("floor_hospital.png");
-        level.testPath();
         
         // Add player to level
         player = new Player(level);
-        //player.setPosition(1.5f * Level.WALL_HEIGHT, 0f, 1.5f*Level.WALL_HEIGHT);
-        //player.setRotation(0, -135, 0);
         level.addEntity(player);
-        
-        Solid tmp = new Solid();
-        tmp.model = Model.getResource("elevatordoors.obj");
-        tmp.position.set(0, 0, 0);
-        tmp.rotation.set(0, 180, 0);
-        tmp.aabb = new AABB(tmp.position,
-            new Vector(-1f, 0, -0.1f), new Vector(1f, Level.WALL_HEIGHT, 0.1f));
-        level.addSolid(tmp);
-//        
-        // Test objects and lights
-//        Solid tmp;
-//        Light tmpl;
-//        
-//        tmp = new Solid();
-//        tmp.model = Model.getResource("needle.obj");
-//        tmp.position.set(7, 0, 8);
-//        level.addSolid(tmp);
-//        
-//        tmp = new Solid();
-//        tmp.model = Model.getResource("infuus.obj");
-//        tmp.position.set(8, 0, 8);
-//        tmp.rotation.set(0, 230, 0);
-//        level.addSolid(tmp);
-//        
-        level.addNewLight().setPosition(7, 0.2f, 8)
-                .setColor(0.1f, 1f).setIntensity(3).setItemLight();
-        
-        level.addNewLight().setPosition(8, 0.2f, 8).setIntensity(3)
-                .setColor(0.3f, 1).setItemLight();
-        
-        level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)
-                .setColor(0.1f, 0).setEnvironmentLight();
-        level.addNewLight().setPosition(16, 2, 10.5f).setIntensity(8)
-                .setColor(0.6f, 0.2f).setEnvironmentLight();
-        level.addNewLight().setPosition(7, 2, 22).setIntensity(15)
-                .setColor(0.4f, 0.2f).setEnvironmentLight();
-        level.addNewLight().setPosition(13, 2, 4.5f).setIntensity(10)
-                .setColor(0.9f, 0.2f).setEnvironmentLight();
         
         // Pauser
         pauser = new Pauser();
@@ -107,24 +65,6 @@ public class Game implements State, Input.Listener {
         controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
-        
-//        Enemy tmpe;
-//        
-//        tmpe = new Enemy(level);
-//        tmpe.setPosition(5, 0, 5);
-//        tmpe.selectNearestWaypoint();
-//        level.addEntity(tmpe);
-//        
-//        tmpe = new Enemy(level);
-//        tmpe.setPosition(10, 0, 12);
-//        tmpe.selectNearestWaypoint();
-//        level.addEntity(tmpe);
-//        
-//        tmpe = new Enemy(level);
-//        tmpe.setPosition(26, 0, 4.5f);
-//        tmpe.setRotation(0, 180, 0);
-//        tmpe.selectNearestWaypoint();
-//        level.addEntity(tmpe);
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.lwjgl.opengl.GL11;
+import patient04.enemies.Enemy;
 
 import patient04.resources.Model;
 import patient04.enemies.Waypoint;
@@ -46,9 +47,9 @@ public class Level {
         solids.add(solid);
     }
     
-    public void addLight(Light light) {
-        lights.add(light);
-    }
+//    public void addLight(Light light) {
+//        lights.add(light);
+//    }
     
     public Light addNewLight() {
         Light light = new Light();
@@ -242,6 +243,17 @@ public class Level {
                                           Float.parseFloat(tokens[4]))
                                 .setIntensity(Float.parseFloat(tokens[5]) * 5)
                                 .setEnvironmentLight();
+                        
+                        break;
+                    case "enemy":
+                        Enemy enemy = new Enemy(level);
+                        
+                        enemy.setPosition(Float.parseFloat(tokens[1]), 0,
+                                           Float.parseFloat(tokens[2]));
+                        
+                        enemy.setRotation(0, Float.parseFloat(tokens[3]), 0);
+                        
+                        level.addEntity(enemy);
                         
                         break;
                     default: // Incompatible line                        

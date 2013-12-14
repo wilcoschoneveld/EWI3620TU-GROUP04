@@ -52,6 +52,18 @@ public class Enemy extends Entity {
     
     @Override
     public void update(float dt) {
+        Vector tmp = new Vector(0.5f, 1.5f, 0);
+        
+        tmp.rotate(rotation.y, 0, 1, 0);
+        tmp.add(position);
+        
+        light.setPosition(tmp.x, tmp.y, tmp.z);
+        
+        super.update(dt);
+        
+        if (nextWaypoint == null)
+            return;
+        
         if((time += dt) >= 1)
             time -= 1;
         
@@ -81,15 +93,6 @@ public class Enemy extends Entity {
             
             nextflicker = (float) Math.random() * 0.2f;
         }
-        
-        Vector tmp = new Vector(0.5f, 1.5f, 0);
-        
-        tmp.rotate(rotation.y, 0, 1, 0);
-        tmp.add(position);
-        
-        light.setPosition(tmp.x, tmp.y, tmp.z);
-        
-        super.update(dt);
     }
     
     public void selectNearestWaypoint() {

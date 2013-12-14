@@ -144,19 +144,17 @@ public class ToolPane implements Input.Listener {
     @Override
     public boolean handleKeyboardEvent() {
         
-        if (Input.keyboardKey(Keyboard.KEY_V, true)) {
-            selected = Tool.SELECT;
-            return Input.HANDLED;
-        }
+        //        SELECT, START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+        // ENEMY, WALL, DOOR, KEY, DELETE;
         
-        if (Input.keyboardKey(Keyboard.KEY_W, true)) {
-            selected = Tool.WALL;
-            return Input.HANDLED;
-        }
-        
-        if (Input.keyboardKey(Keyboard.KEY_L, true)) {
-            selected = Tool.LIGHT;
-            return Input.HANDLED;
+        if (Keyboard.getEventKeyState()) {
+            switch(Keyboard.getEventKey()) {
+                case Keyboard.KEY_V: selected = Tool.SELECT; return true;
+                case Keyboard.KEY_L: selected = Tool.LIGHT; return true;
+                case Keyboard.KEY_W: selected = Tool.WALL; return true;
+                case Keyboard.KEY_E: selected = Tool.ENEMY; return true;
+                case Keyboard.KEY_S: selected = Tool.START; return true;
+            }
         }
         
         return Input.UNHANDLED;

@@ -35,7 +35,7 @@ public class Wall extends Element {
         // Disable culling and textures
         GL11.glDisable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor3f(1, 0, 0);
+        GL11.glColor3f(0.7f, 0.7f, 0.6f);
         
         // Draw wall
         GL11.glBegin(GL11.GL_QUADS);

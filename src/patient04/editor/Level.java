@@ -105,6 +105,7 @@ public class Level implements Input.Listener {
         switch (editor.tools.selected) {
             case SELECT:
                 if (Input.mouseButton(0, true)) {
+                    
                     // Loop through all elements
                     for (Element element : elements) {
                         // Try to select element
@@ -159,6 +160,17 @@ public class Level implements Input.Listener {
                     
                     elements.add(enemy);
                     selected = enemy;
+                    target = 2;
+                    
+                    return Input.HANDLED;
+                }
+                break;
+            case WAYPOINT:
+                if (Input.mouseButton(0, true)) {
+                    Waypoint waypoint = new Waypoint(this, mx, mz);
+                    
+                    elements.add(waypoint);
+                    selected = waypoint;
                     target = 1;
                     
                     return Input.HANDLED;
@@ -240,6 +252,16 @@ public class Level implements Input.Listener {
                         light.radius =      Float.parseFloat(tokens[5]);
                         
                         level.elements.add(light);
+                        
+                        break;
+                    case "enemy":
+                        Enemy enemy = new Enemy(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        enemy.rotation = Float.parseFloat(tokens[3]);
+                        
+                        level.elements.add(enemy);
                         
                         break;
                     default: // Incompatible line                        

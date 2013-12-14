@@ -76,9 +76,9 @@ public class Light extends Element {
                 z += dz;
                 break;
             case 2:
-                hue = Utils.atan2(mx - this.x, mz - this.z) / 360f;
+                hue = Utils.atan2(z - mz, mx - x) / 360f;
                 
-                float len = Utils.length(mx - this.x, mz - this.z);
+                float len = Utils.length(z - mz, mx - x);
                 radius = Math.max(2, len / LENGTH);
                 
                 break;
@@ -88,14 +88,16 @@ public class Light extends Element {
 
     @Override
     public int select(boolean selected, float x, float z) {
-        double angle = hue * 2 * Math.PI;
+        if (selected) {
+            double angle = hue * 2 * Math.PI;
 
-        float lx = this.x + (float) Math.sin(angle) * radius * LENGTH;
-        float lz = this.z + (float) Math.cos(angle) * radius * LENGTH;
-        float lr = level.editor.camera.zoom * BALL;
-        
-        if ((x-lx) * (x-lx) + (z-lz) * (z-lz) < lr * lr)
-            return 2;
+            float lx = this.x + (float) +Math.cos(angle) * radius * LENGTH;
+            float lz = this.z + (float) -Math.sin(angle) * radius * LENGTH;
+            float lr = level.editor.camera.zoom * BALL;
+
+            if ((x-lx) * (x-lx) + (z-lz) * (z-lz) < lr * lr)
+                return 2;
+        }
         
         float r = level.editor.camera.zoom * 0.5f;
         
