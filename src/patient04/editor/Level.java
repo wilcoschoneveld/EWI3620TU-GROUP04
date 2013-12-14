@@ -27,7 +27,7 @@ public class Level implements Input.Listener {
     private final ArrayList<Element> elements;
     
     private Element selected;
-    private int target;
+    protected int target = 0;
     
     public Level(Editor editor) {
         this.editor = editor;
@@ -153,6 +153,16 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
+            case ENEMY:
+                if (Input.mouseButton(0, true)) {
+                    Enemy enemy = new Enemy(this, mx, mz);
+                    
+                    elements.add(enemy);
+                    selected = enemy;
+                    target = 1;
+                    
+                    return Input.HANDLED;
+                }
         }
         
         return Input.UNHANDLED;

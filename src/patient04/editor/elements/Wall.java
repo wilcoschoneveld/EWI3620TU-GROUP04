@@ -14,12 +14,11 @@ import patient04.editor.Level;
  * @author Wilco
  */
 public class Wall extends Element {
-    private final Level level;
     
     public float[][] vertices = new float[4][2];
     
     public Wall(Level level, float xmin, float zmin, float xmax, float zmax) {
-        this.level = level;
+        super(level);
         
         vertices[0][0] = xmin; vertices[0][1] = zmin;
         vertices[1][0] = xmin; vertices[1][1] = zmax;

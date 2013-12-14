@@ -8,7 +8,6 @@ package patient04.editor.elements;
 
 import java.awt.Color;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 import patient04.resources.Image;
 import patient04.resources.Texture;
@@ -23,8 +22,7 @@ public class Light extends Element {
     private static final float LENGTH = 0.7f;
     private static final float BALL = 0.13f;
     
-    private final Level level;
-    Image image;
+    private final Image image;
     
     public float x, z;
     
@@ -33,7 +31,7 @@ public class Light extends Element {
     public float radius;
     
     public Light(Level level, float x, float z) {
-        this.level = level;
+        super(level);
         
         image = new Image(
                 Texture.getResource("editor/elements.png"), 0, 0, 64, 64);
@@ -45,7 +43,7 @@ public class Light extends Element {
         radius = 2f;
         saturation = 1f;
         
-        priority = 2;
+        priority = 10;
     }
 
     @Override

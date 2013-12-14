@@ -2,18 +2,24 @@ package patient04.editor.elements;
 
 import org.lwjgl.opengl.GL11;
 import java.awt.Color;
+import patient04.editor.Level;
 
 /**
  *
  * @author Wilco
  */
 public abstract class Element implements Comparable<Element> {
+    protected final Level level;
     protected int priority;
     
     abstract public void draw(int target);
     abstract public void translate(int target, float dx, float dz);
     abstract public int select(boolean selected, float x, float z);
     abstract public void release();
+    
+    public Element(Level level) {
+        this.level = level;
+    }
     
     @Override
     public int compareTo(Element other) {

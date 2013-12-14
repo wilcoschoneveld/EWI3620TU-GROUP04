@@ -72,9 +72,10 @@ public class ToolPane implements Input.Listener {
     
     public void update() {
         float R = editor.camera.viewRatio();
-        float mx = (float) Mouse.getX() / Display.getHeight() - x;
         
-        open = mx > 0 && !editor.camera.mouseDrag;
+        open = (float) Mouse.getX() / Display.getHeight() > x 
+                && !editor.camera.mouseDrag
+                && editor.level.target == 0;
         
         x = Utils.clamp(x + (open ? -1 : 1) * SPEED, R - MAX, R - MIN);
     }
