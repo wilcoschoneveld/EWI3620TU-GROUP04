@@ -7,6 +7,7 @@ import patient04.math.Vector;
  * @author Wilco
  */
 public class AABB {
+    private static final float epsilon = 0.00001f;
     public final Vector pos, min, max;
     
     public AABB(Vector pos, Vector min, Vector max) {
@@ -75,7 +76,7 @@ public class AABB {
      * @param delta Vector with desired delta movement
      * @param axis 0, 1, 2 for X, Y, Z respectively
      */
-    public void sweepAlongAxis(AABB o, Vector delta, int axis) {
+    public void sweepAlongAxis(AABB o, Vector delta, int axis) {        
         if(axis != 0 && (o.pos.x + o.min.x >= pos.x + max.x ||
                          o.pos.x + o.max.x <= pos.x + min.x)) return;
         if(axis != 1 && (o.pos.y + o.min.y >= pos.y + max.y ||
@@ -88,24 +89,24 @@ public class AABB {
             case 0:
                 if(delta.x > 0 && pos.x + max.x <= o.pos.x + o.min.x &&
                         (tmp = o.pos.x + o.min.x - pos.x - max.x) < delta.x) {
-                    delta.x = tmp; return; }
+                    delta.x = tmp - epsilon; return; }
                 if(delta.x < 0 && pos.x + min.x >= o.pos.x + o.max.x &&
                         (tmp = o.pos.x + o.max.x - pos.x - min.x) > delta.x) {
-                    delta.x = tmp; return; }
+                    delta.x = tmp + epsilon; return; }
             case 1:
                 if(delta.y > 0 && pos.y + max.y <= o.pos.y + o.min.y &&
                         (tmp = o.pos.y + o.min.y - pos.y - max.y) < delta.y) {
-                    delta.y = tmp; return; }
+                    delta.y = tmp - epsilon; return; }
                 if(delta.y < 0 && pos.y + min.y >= o.pos.y + o.max.y &&
                         (tmp = o.pos.y + o.max.y - pos.y - min.y) > delta.y) {
-                    delta.y = tmp; return; }
+                    delta.y = tmp + epsilon; return; }
             case 2:
                 if(delta.z > 0 && pos.z + max.z <= o.pos.z + o.min.z &&
                         (tmp = o.pos.z + o.min.z - pos.z - max.z) < delta.z) {
-                    delta.z = tmp; return; }
+                    delta.z = tmp - epsilon; return; }
                 if(delta.z < 0 && pos.z + min.z >= o.pos.z + o.max.z &&
                         (tmp = o.pos.z + o.max.z - pos.z - min.z) > delta.z) {
-                    delta.z = tmp; }
+                    delta.z = tmp + epsilon; }
         }
     }
     

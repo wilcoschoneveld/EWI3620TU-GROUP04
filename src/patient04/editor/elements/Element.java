@@ -29,6 +29,28 @@ public abstract class Element implements Comparable<Element> {
         return null;
     }
     
+    public static void glAttribute(float x, float z, float angle,
+                                     float length, float radius, Color color) {
+            float lx = (float) Math.sin(angle) * length;
+            float lz = (float) Math.cos(angle) * length;
+            
+            GL11.glLineWidth(3);
+            
+            GL11.glColor3f(1, 1, 1);
+            GL11.glBegin(GL11.GL_LINES);
+            GL11.glVertex2f(x, z);
+            GL11.glVertex2f(x + lx, z + lz);
+            GL11.glEnd();
+            
+            glCircle(x + lx, z + lz, radius,
+                                            false, color, color, false, 20);
+            
+            glCircle(x + lx, z + lz, radius,
+                                    true, null, Color.WHITE, false, 20);
+            
+            GL11.glLineWidth(1);
+    }
+    
     public static void glCircle(float x, float y, float radius, boolean stroke,
             Color inner, Color outer, boolean clockwise, int segments) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);

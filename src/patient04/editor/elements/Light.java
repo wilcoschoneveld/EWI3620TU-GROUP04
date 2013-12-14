@@ -58,28 +58,9 @@ public class Light extends Element {
                 new Color(col.getRed(), col.getGreen(), col.getBlue(), 5),
                                                                    false, 20);
         
-        if (target != -1) {
-            double angle = hue * 2 * Math.PI;
-            
-            float lx = (float) Math.sin(angle) * radius * LENGTH;
-            float lz = (float) Math.cos(angle) * radius * LENGTH;
-            
-            GL11.glLineWidth(3);
-            
-            GL11.glColor3f(1, 1, 1);
-            GL11.glBegin(GL11.GL_LINES);
-            GL11.glVertex2f(x, z);
-            GL11.glVertex2f(x + lx, z + lz);
-            GL11.glEnd();
-            
-            glCircle(x + lx, z + lz, level.editor.camera.zoom * BALL,
-                                            false, col, col, false, 20);
-            
-            glCircle(x + lx, z + lz, level.editor.camera.zoom * BALL,
-                                    true, null, Color.WHITE, false, 20);
-            
-            GL11.glLineWidth(1);
-        }
+        if (target != -1)
+            glAttribute(x, z, hue * 2 * (float) Math.PI,
+                        radius * LENGTH, level.editor.camera.zoom * BALL, col);
         
         float size = level.editor.camera.zoom * SIZE;
         

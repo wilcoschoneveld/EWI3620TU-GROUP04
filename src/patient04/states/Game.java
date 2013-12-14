@@ -16,7 +16,8 @@ import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
-import patient04.rendering.Light;
+import patient04.math.Vector;
+import patient04.physics.AABB;
 import patient04.utilities.Input;
 
 
@@ -53,6 +54,14 @@ public class Game implements State, Input.Listener {
         //player.setRotation(0, -135, 0);
         level.addEntity(player);
         
+        Solid tmp = new Solid();
+        tmp.model = Model.getResource("elevatordoors.obj");
+        tmp.position.set(0, 0, 0);
+        tmp.rotation.set(0, 180, 0);
+        tmp.aabb = new AABB(tmp.position,
+            new Vector(-1f, 0, -0.1f), new Vector(1f, Level.WALL_HEIGHT, 0.1f));
+        level.addSolid(tmp);
+//        
         // Test objects and lights
 //        Solid tmp;
 //        Light tmpl;
@@ -68,20 +77,20 @@ public class Game implements State, Input.Listener {
 //        tmp.rotation.set(0, 230, 0);
 //        level.addSolid(tmp);
 //        
-//        level.addNewLight().setPosition(7, 0.2f, 8)
-//                .setColor(0.1f, 1f).setIntensity(3).setItemLight();
-//        
-//        level.addNewLight().setPosition(8, 0.2f, 8).setIntensity(3)
-//                .setColor(0.3f, 1).setItemLight();
-//        
-//        level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)
-//                .setColor(0.1f, 0).setEnvironmentLight();
-//        level.addNewLight().setPosition(16, 2, 10.5f).setIntensity(8)
-//                .setColor(0.6f, 0.2f).setEnvironmentLight();
-//        level.addNewLight().setPosition(7, 2, 22).setIntensity(15)
-//                .setColor(0.4f, 0.2f).setEnvironmentLight();
-//        level.addNewLight().setPosition(13, 2, 4.5f).setIntensity(10)
-//                .setColor(0.9f, 0.2f).setEnvironmentLight();
+        level.addNewLight().setPosition(7, 0.2f, 8)
+                .setColor(0.1f, 1f).setIntensity(3).setItemLight();
+        
+        level.addNewLight().setPosition(8, 0.2f, 8).setIntensity(3)
+                .setColor(0.3f, 1).setItemLight();
+        
+        level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)
+                .setColor(0.1f, 0).setEnvironmentLight();
+        level.addNewLight().setPosition(16, 2, 10.5f).setIntensity(8)
+                .setColor(0.6f, 0.2f).setEnvironmentLight();
+        level.addNewLight().setPosition(7, 2, 22).setIntensity(15)
+                .setColor(0.4f, 0.2f).setEnvironmentLight();
+        level.addNewLight().setPosition(13, 2, 4.5f).setIntensity(10)
+                .setColor(0.9f, 0.2f).setEnvironmentLight();
         
         // Pauser
         pauser = new Pauser();
@@ -98,7 +107,7 @@ public class Game implements State, Input.Listener {
         controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
-//        
+        
 //        Enemy tmpe;
 //        
 //        tmpe = new Enemy(level);

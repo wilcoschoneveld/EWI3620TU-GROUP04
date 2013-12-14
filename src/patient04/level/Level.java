@@ -26,7 +26,7 @@ public class Level {
     public static final Vector FRICTION_AIR = new Vector(0.98f, 0.98f, 0.98f);
     
     // Wall height
-    public static final float WALL_HEIGHT = 3;
+    public static final float WALL_HEIGHT = 3f;
     
     private final ArrayList<Solid> solids;
     private final ArrayList<Light> lights;
@@ -102,7 +102,7 @@ public class Level {
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
         
-        for (Solid obj : solids)
+        for (Solid obj : solids) 
             if(broadphase.intersects(obj.aabb))
                 aabbs.add(obj.aabb);
 
@@ -178,7 +178,7 @@ public class Level {
             return;
         }
         
-        Vector min = new Vector(xmin, -0.1f, zmin);
+        Vector min = new Vector(xmin, -1f, zmin);
         Vector max = new Vector(xmax, 0, zmax);
         
         Solid floor = new Solid();
