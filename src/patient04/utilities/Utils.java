@@ -6,6 +6,7 @@
 
 package patient04.utilities;
 
+import java.io.File;
 import javax.swing.JFileChooser;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -37,7 +38,34 @@ public class Utils {
         return (float) Math.sqrt(dx*dx + dy*dy);
     }
     
-    public static String openFileChooser() {
+    public static File showOpenDialog() {
+        DisplayMode old = Display.getDisplayMode();
+        
+        File file = null;
+        
+        try {
+            DisplayMode small = new DisplayMode(0, 0);
+            Display.setDisplayMode(small);
+            
+            JFileChooser jc = new JFileChooser();
+            
+            int res = jc.showOpenDialog(null);
+            
+            if (res == JFileChooser.APPROVE_OPTION)
+                file = jc.getSelectedFile();
+            
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                Display.setDisplayMode(old);
+            } catch(LWJGLException e) {}
+        }
+        
+        return file;
+    }
+    
+    public static File showSaveDialog() {
         DisplayMode old = Display.getDisplayMode();
         
         try {

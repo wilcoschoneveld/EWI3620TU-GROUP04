@@ -22,6 +22,13 @@ public class Input {
         listeners.add(listener);
     }
     
+    public void changeListener(Listener oldL, Listener newL) {
+        int i = listeners.indexOf(oldL);
+        
+        if (i != -1)
+            listeners.set(i, newL);
+    }
+    
     public void processInput() {
         // Handle mouse events
         while(Mouse.next()) {

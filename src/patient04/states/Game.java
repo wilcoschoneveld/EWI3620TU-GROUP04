@@ -43,7 +43,7 @@ public class Game implements State, Input.Listener {
         
         // Create a new maze and player
         //level = Level.defaultLevel("wall_hospital.png");
-        level = Level.fromFile("testlevel20543716.lvl");
+        level = Level.fromFile("testlevel2912157.lvl");
         level.generateFloor("floor_hospital.png");
         level.testPath();
         

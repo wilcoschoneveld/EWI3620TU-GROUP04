@@ -207,6 +207,7 @@ public class Level {
                     continue;
                 
                 switch (tokens[0].toLowerCase()) {
+                    case "camera": break;
                     case "wall":
                         float w = Float.parseFloat(tokens[3]);
                         float h = Float.parseFloat(tokens[4]);
@@ -239,7 +240,7 @@ public class Level {
                                              Float.parseFloat(tokens[2]))
                                 .setColor(Float.parseFloat(tokens[3]),
                                           Float.parseFloat(tokens[4]))
-                                .setIntensity(20)
+                                .setIntensity(Float.parseFloat(tokens[5]) * 5)
                                 .setEnvironmentLight();
                         
                         break;

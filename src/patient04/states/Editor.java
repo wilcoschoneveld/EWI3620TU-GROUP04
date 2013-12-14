@@ -1,10 +1,9 @@
 package patient04.states;
 
-import org.lwjgl.Sys;
+import java.io.File;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
-import patient04.editor.Button;
 import patient04.editor.Camera;
 import patient04.editor.Info;
 import patient04.editor.Level;
@@ -93,7 +92,16 @@ public class Editor implements State, Input.Listener {
         }
         
         if (Input.keyboardKey(Keyboard.KEY_F6, true)) {
-            Utils.openFileChooser();
+            File load = Utils.showOpenDialog();
+            
+            // Store old level
+            Level old = level;
+            
+            // Load level from file
+            level = Level.loadFromFile(this, load);
+            
+            // Set controller
+            controller.changeListener(old, level);
             
             return Input.HANDLED;
         }

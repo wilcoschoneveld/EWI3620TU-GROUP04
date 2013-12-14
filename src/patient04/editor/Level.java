@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 import patient04.editor.elements.*;
 import patient04.states.Editor;
 import patient04.utilities.Input;
+import patient04.utilities.Logger;
 
 /**
  *
@@ -175,10 +176,71 @@ public class Level implements Input.Listener {
     
     public void saveToFile(String file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(editor.camera.toString());
+            writer.newLine();
+            
             for (Element element : elements) {
                 writer.write(element.toString());
                 writer.newLine();
             }
         } catch(IOException e) { e.printStackTrace(); }
+    }
+    
+    public static Level loadFromFile(Editor editor, File file) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            
+            Level level = new Level(editor);
+            
+            String line; String[] tokens;
+            
+            while ((line = reader.readLine()) != null) {
+                // Split line
+                tokens = line.split("\\s+"); 
+                
+                if(line.length() == 0 || tokens.length < 1)
+                    continue;
+                
+                switch (tokens[0].toLowerCase()) {
+                    case "camera":
+                        editor.camera.position.x = Float.parseFloat(tokens[1]);
+                        editor.camera.position.z = Float.parseFloat(tokens[2]);
+                        editor.camera.zoom = Float.parseFloat(tokens[3]);
+                        
+                        break;
+                    case "wall":
+                        float x = Float.parseFloat(tokens[1]);
+                        float z = Float.parseFloat(tokens[2]);
+                        float w = Float.parseFloat(tokens[3]);
+                        float h = Float.parseFloat(tokens[4]);
+                        
+                        Wall wall = new Wall(level,
+                                x - w / 2, z - h / 2,
+                                x + w / 2, z + h / 2);
+                        
+                        level.elements.add(wall);
+                        
+                        break;
+                    case "light":
+                        Light light = new Light(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        light.hue =         Float.parseFloat(tokens[3]);
+                        light.saturation =  Float.parseFloat(tokens[4]);
+                        light.radius =      Float.parseFloat(tokens[5]);
+                        
+                        level.elements.add(light);
+                        
+                        break;
+                    default: // Incompatible line                        
+                        Logger.error("Could not read LVL file " + file);
+                        Logger.error("Invalid line > " + line);
+                        return null;
+                }
+            }
+            
+            return level;
+            
+        } catch(IOException e) { e.printStackTrace(); return null; }
     }
 }

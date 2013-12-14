@@ -140,4 +140,9 @@ public class Camera implements Input.Listener {
     public float viewRatio() {
         return (float) Display.getWidth() / Display.getHeight();
     }
+    
+    @Override
+    public String toString() {
+        return "camera " + position.x + " " + position.z + " " + zoom;
+    }
 }
