@@ -52,42 +52,34 @@ public class Enemy extends Entity {
     
     @Override
     public void update(float dt) {
-        Vector tmp = new Vector(0.5f, 1.5f, 0);
-        
-        tmp.rotate(rotation.y, 0, 1, 0);
-        tmp.add(position);
-        
-        light.setPosition(tmp.x, tmp.y, tmp.z);
-        
         super.update(dt);
         
-        if (nextWaypoint == null)
-            return;
+        if (nextWaypoint != null) {
+            if(nextWaypoint.position.copy().min(position).length() < 0.5)
+                selectNextWaypoint();
+            
+            Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
+            Vector towaypoint = nextWaypoint.position
+                                             .copy().min(position).normalize();
+            
+            float tmpsign = Utils.sign(direction.cross(towaypoint).y);
+            float tmpdot = Utils.clamp(direction.dot(towaypoint), 0, 1);
+            float tmpangle = (float) Utils.acos(tmpdot);
+            
+            float tmpdelta = Math.min(tmpangle, SPEED_ROTATE * dt);
+            
+            direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
+            
+            
+            acceleration.add(direction);
+            rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
+        }
         
+        // Animation (TODO: redo this with distanceMoved )
         if((time += dt) >= 1)
             time -= 1;
         
-        if(nextWaypoint.position.copy().min(position).length() < 0.5) {
-            selectNextWaypoint();
-        }
-        
-        Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
-        Vector towaypoint = nextWaypoint.position
-                                         .copy().min(position).normalize();
-        
-        float tmpsign = Utils.sign(direction.cross(towaypoint).y);
-        float tmpdot = Utils.clamp(direction.dot(towaypoint), 0, 1);
-        float tmpangle = (float) Utils.acos(tmpdot);
-        
-        float tmpdelta = Math.min(tmpangle, SPEED_ROTATE * dt);
-        
-        direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
-        
-        acceleration.add(direction);
-        
-        rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
-        
-        // Light
+        // Light flickering
         if((nextflicker -= dt) <= 0) { 
             light.setIntensity(11 + (float) Math.random() * 2f);
             
@@ -108,7 +100,7 @@ public class Enemy extends Entity {
         }
     }
     
-    public void selectNextWaypoint() {
+    public void selectNextWaypoint() {        
         // Get the number of neighbors to choose from
         int neighborsNum = nextWaypoint.neighbors.size();
         
@@ -171,7 +163,14 @@ public class Enemy extends Entity {
     }
     
     @Override
-    public void drawLight(Renderer renderer) {        
+    public void drawLight(Renderer renderer) {
+        Vector tmp = new Vector(0.5f, 1.5f, 0);
+        
+        tmp.rotate(rotation.y, 0, 1, 0);
+        tmp.add(position);
+        
+        light.setPosition(tmp.x, tmp.y, tmp.z);
+        
         light.draw(renderer);
     }
 }
