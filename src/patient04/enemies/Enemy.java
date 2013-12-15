@@ -88,16 +88,20 @@ public class Enemy extends Entity {
     }
     
     public void selectNearestWaypoint() {
-        float currentDist = Float.MAX_VALUE;
+        // Set waypoint selection distance to maximum value
+        float currentDist = 10;
         
-        for (Waypoint waypoint : level.navpoints) {
+        // Loop through all waypoints to find nearest
+        for (Waypoint waypoint : level.waypoints) {
             float tmpdist = waypoint.position.copy().min(position).length();
             if(tmpdist < currentDist) {
-                prevWaypoint = null;
                 nextWaypoint = waypoint;
                 currentDist = tmpdist;
             }
         }
+        
+        // Set previous waypoint to null
+        prevWaypoint = null;
     }
     
     public void selectNextWaypoint() {        

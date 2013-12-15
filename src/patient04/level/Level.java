@@ -33,14 +33,14 @@ public class Level {
     private final ArrayList<Light> lights;
     private final ArrayList<Entity> entities;
     
-    public final HashSet<Waypoint> navpoints;
+    public final HashSet<Waypoint> waypoints;
     private Waypoint navlast;
     
     public Level() {
         this.solids = new ArrayList<>();
         this.lights = new ArrayList<>();
         this.entities = new ArrayList<>();
-        this.navpoints = new HashSet<>();
+        this.waypoints = new HashSet<>();
     }
     
     public void addSolid(Solid solid) {
@@ -63,7 +63,7 @@ public class Level {
     
     public Waypoint addWaypoint(Waypoint waypoint) {
         navlast = waypoint;
-        navpoints.add(waypoint);
+        waypoints.add(waypoint);
         
         return waypoint;
     }
@@ -134,7 +134,7 @@ public class Level {
         renderer.glUpdateModelMatrix(null);
         
         GL11.glBegin(GL11.GL_LINES);
-        for(Waypoint wp : navpoints) {
+        for(Waypoint wp : waypoints) {
             for(Waypoint np : wp.neighbors) {
                 GL11.glColor4f(0, 1, 0, 0.3f);
                 GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);
@@ -252,6 +252,7 @@ public class Level {
                                            Float.parseFloat(tokens[2]));
                         
                         enemy.setRotation(0, Float.parseFloat(tokens[3]), 0);
+                        enemy.selectNearestWaypoint();
                         
                         level.addEntity(enemy);
                         

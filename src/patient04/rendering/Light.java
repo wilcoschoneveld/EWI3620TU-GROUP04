@@ -35,8 +35,6 @@ public class Light {
         // Set position vector
         position.set(x, y, z);
         
-        System.out.println("wtf " + position);
-        
         return this;
     }
     
