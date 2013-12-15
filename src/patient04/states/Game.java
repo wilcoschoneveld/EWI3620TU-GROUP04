@@ -2,7 +2,6 @@ package patient04.states;
 
 import org.lwjgl.input.Keyboard;
 import patient04.Main;
-import patient04.level.Solid;
 import patient04.resources.Texture;
 import patient04.level.Player;
 import patient04.utilities.Timer;
@@ -13,11 +12,8 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import patient04.enemies.Enemy;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
-import patient04.math.Vector;
-import patient04.physics.AABB;
 import patient04.utilities.Input;
 
 
