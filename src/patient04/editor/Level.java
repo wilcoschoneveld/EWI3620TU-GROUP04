@@ -175,6 +175,20 @@ public class Level implements Input.Listener {
                     
                     return Input.HANDLED;
                 }
+            case START:
+                if (Input.mouseButton(0, true)) {
+                    Start start = new Start(this, mx, mz);
+                    
+                    for (int i = 0; i < elements.size(); i++)
+                        if (elements.get(i) instanceof Start)
+                            elements.remove(i--);
+                    
+                    elements.add(start);
+                    selected = start;
+                    target = 1;
+                    
+                    return Input.HANDLED;
+                }
         }
         
         return Input.UNHANDLED;
@@ -270,6 +284,18 @@ public class Level implements Input.Listener {
                                 Float.parseFloat(tokens[2]));
                         
                         level.elements.add(waypoint);
+                        
+                        break;
+                    case "start":
+                        Start start = new Start(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        for (int i = 0; i < level.elements.size(); i++)
+                            if (level.elements.get(i) instanceof Start)
+                                level.elements.remove(i--);
+                        
+                        level.elements.add(start);
                         
                         break;
                     default: // Incompatible line                        

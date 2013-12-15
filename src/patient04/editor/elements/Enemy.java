@@ -12,7 +12,7 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class Enemy extends Element {
-    private static final float SIZE = 0.5f;
+    private static final float SIZE = 0.6f;
     
     private final Image image;
     
@@ -40,7 +40,7 @@ public class Enemy extends Element {
                     level.editor.camera.zoom * 0.1f, Color.WHITE);
         }
         
-        float size = level.editor.camera.zoom * SIZE;
+        float size = SIZE * level.editor.camera.zoom;
         image.draw(x - size, z - size, x + size, z + size);
     }
 

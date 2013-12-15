@@ -15,9 +15,7 @@ import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
 
-public class Level {
-    public int Color;
-    
+public class Level {   
     // Gravity vectors
     public static final Vector GRAVITY = new Vector(0, -1, 0);
     
@@ -35,6 +33,8 @@ public class Level {
     
     public final HashSet<Waypoint> waypoints;
     private Waypoint navlast;
+    
+    public final Vector startPoint = new Vector();
     
     public Level() {
         this.solids = new ArrayList<>();
@@ -263,6 +263,11 @@ public class Level {
                                 Float.parseFloat(tokens[2])));
                         
                         level.addWaypoint(waypoint);
+                        
+                        break;
+                    case "start":
+                        level.startPoint.set(Float.parseFloat(tokens[1]), 0,
+                                             Float.parseFloat(tokens[2]));
                         
                         break;
                     default: // Incompatible line                        
