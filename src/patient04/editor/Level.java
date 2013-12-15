@@ -264,6 +264,14 @@ public class Level implements Input.Listener {
                         level.elements.add(enemy);
                         
                         break;
+                    case "waypoint":
+                        Waypoint waypoint = new Waypoint(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        level.elements.add(waypoint);
+                        
+                        break;
                     default: // Incompatible line                        
                         Logger.error("Could not read LVL file " + file);
                         Logger.error("Invalid line > " + line);

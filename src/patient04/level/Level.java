@@ -257,6 +257,14 @@ public class Level {
                         level.addEntity(enemy);
                         
                         break;
+                    case "waypoint":
+                        Waypoint waypoint = new Waypoint(new Vector(
+                                Float.parseFloat(tokens[1]), 0,
+                                Float.parseFloat(tokens[2])));
+                        
+                        level.addWaypoint(waypoint);
+                        
+                        break;
                     default: // Incompatible line                        
                         Logger.error("Could not read LVL file " + file);
                         Logger.error("Invalid line > " + line);

@@ -54,10 +54,13 @@ public class Enemy extends Entity {
     public void update(float dt) {
         super.update(dt);
         
-        if (nextWaypoint != null) {
-            if(nextWaypoint.position.copy().min(position).length() < 0.5)
+        // If close to target waypoint, select new target
+        if (nextWaypoint != null && 
+                     nextWaypoint.position.copy().min(position).length() < 0.5)
                 selectNextWaypoint();
-            
+        
+        // Move towards next waypoint
+        if (nextWaypoint != null) {
             Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
             Vector towaypoint = nextWaypoint.position
                                              .copy().min(position).normalize();
@@ -107,6 +110,12 @@ public class Enemy extends Entity {
     public void selectNextWaypoint() {        
         // Get the number of neighbors to choose from
         int neighborsNum = nextWaypoint.neighbors.size();
+        
+        // If the waypoint has no neighbors, stop movement
+        if (neighborsNum == 0) {
+            nextWaypoint = null;
+            return; 
+        }
         
         // Variable for selecting neighbor
         int index;
@@ -168,13 +177,15 @@ public class Enemy extends Entity {
     
     @Override
     public void drawLight(Renderer renderer) {
+        // Find light position
         Vector tmp = new Vector(0.5f, 1.5f, 0);
-        
         tmp.rotate(rotation.y, 0, 1, 0);
         tmp.add(position);
         
+        // Set light position
         light.setPosition(tmp.x, tmp.y, tmp.z);
         
+        // Draw light
         light.draw(renderer);
     }
 }

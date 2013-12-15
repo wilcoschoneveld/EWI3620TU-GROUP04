@@ -56,4 +56,9 @@ public class Waypoint extends Element {
     @Override
     public void release() {
     }
+    
+    @Override
+    public String toString() {
+        return "waypoint " + x + " " + z;
+    }
 }
