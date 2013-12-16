@@ -60,6 +60,10 @@ public class Renderer {
     // Matrices
     public Matrix projection, view;
     
+    // Frustum
+    public final Frustum frustum;
+    public int drawperframe = 0;
+    
     public Renderer() {
         // Enable depth testing and backface culling
         glLoadDefaults();
@@ -182,6 +186,9 @@ public class Renderer {
         // Unbind shader program
         useShaderProgram(0);
         
+        // Frustum
+        frustum = new Frustum();
+        
         Logger.log("Renderer loaded");
     }
     
@@ -277,6 +284,9 @@ public class Renderer {
         // Set OpenGL state
         glLoadDefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        System.out.println(drawperframe);
+        drawperframe = 0;
     }
     
     public void debugPass() {
@@ -317,6 +327,9 @@ public class Renderer {
             GL11.glLoadMatrix(view.copy().multiply(model).toBuffer());
         else
             GL11.glLoadMatrix(view.toBuffer());
+        
+        // Update frustum
+        frustum.update(projection, view, model);
     }
     
     public final void glLoadDefaults() {

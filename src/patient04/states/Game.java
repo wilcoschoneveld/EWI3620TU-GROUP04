@@ -135,9 +135,6 @@ public class Game implements State, Input.Listener {
             renderer.lightingPass();
 
             level.drawLights(renderer);
-        
-            // Change to normal pass
-            renderer.guiPass();
         }
         
         // Change to normal pass

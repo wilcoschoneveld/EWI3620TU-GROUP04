@@ -89,19 +89,25 @@ public class Light {
     public float getLinear() { return linear; }
     public float getQuadratic() { return quadratic; }
     
-    public void draw(Renderer renderer) {        
+    public void draw(Renderer renderer) {
         // Set modelview matrix
         Matrix matrix = new Matrix();
         matrix.translate(position.x, position.y, position.z);                
         matrix.scale(radius, radius, radius);
         
-        renderer.pointLightFirstPass();
         renderer.glUpdateModelMatrix(matrix);
+        
+        // Test frustum
+        if (!renderer.frustum.isInside(null, 0))
+            return;
+        
+        renderer.pointLightFirstPass();
         model.draw();
         
         renderer.pointLightSecondPass();
-        renderer.glUpdateModelMatrix(matrix);
         renderer.glUpdateLightParams(this);
         model.draw();
+        
+        renderer.drawperframe++;
     }
 }
