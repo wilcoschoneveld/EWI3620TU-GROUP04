@@ -271,6 +271,15 @@ public class Level {
                                              Float.parseFloat(tokens[2]));
                         
                         break;
+                    case "exit":
+                        Elevator elevator = new Elevator(
+                                    new Vector(Float.parseFloat(tokens[1]), 0,
+                                               Float.parseFloat(tokens[2])),
+                                    Integer.parseInt(tokens[3]));
+                        
+                        level.addSolid(elevator);
+                        
+                        break;                        
                     default: // Incompatible line                        
                         Logger.error("Could not read LVL file " + file);
                         Logger.error("Invalid line > " + line);

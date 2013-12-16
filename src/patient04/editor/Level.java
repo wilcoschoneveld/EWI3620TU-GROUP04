@@ -195,10 +195,6 @@ public class Level implements Input.Listener {
                 if (Input.mouseButton(0, true)) {
                     Exit exit = new Exit(this, mx, mz);
                     
-                    for (int i = 0; i < elements.size(); i++)
-                        if (elements.get(i) instanceof Exit)
-                            elements.remove(i--);
-                    
                     elements.add(exit);
                     selected = exit;
                     target = 2;
@@ -322,10 +318,6 @@ public class Level implements Input.Listener {
                                 Float.parseFloat(tokens[2]));
                         
                         exit.rotation = Float.parseFloat(tokens[3]) * 90;
-                        
-                        for (int i = 0; i < level.elements.size(); i++)
-                            if (level.elements.get(i) instanceof Exit)
-                                level.elements.remove(i--);
                         
                         level.elements.add(exit);
                         

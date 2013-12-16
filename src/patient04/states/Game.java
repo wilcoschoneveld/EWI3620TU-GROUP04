@@ -12,8 +12,10 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import patient04.level.Elevator;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
+import patient04.math.Vector;
 import patient04.utilities.Input;
 
 
@@ -39,7 +41,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel15730003.lvl");
+        level = Level.fromFile("testlevel19629395.lvl");
         level.generateFloor("floor_hospital.png");
         
         // Add player to level
