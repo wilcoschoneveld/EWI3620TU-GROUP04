@@ -39,7 +39,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel2578292.lvl");
+        level = Level.fromFile("testlevel961937.lvl");
         level.generateFloor("floor_hospital.png");
         
         // Add player to level
@@ -47,7 +47,8 @@ public class Game implements State, Input.Listener {
         level.addEntity(player);
        
         // Set player at start point
-        player.position.set(level.startPoint);
+        player.setPosition(level.startPoint.x, 0, level.startPoint.z);
+        player.setRotation(0, level.startPoint.y - 90, 0);
         
         // Pauser
         pauser = new Pauser();

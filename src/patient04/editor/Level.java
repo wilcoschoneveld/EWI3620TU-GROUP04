@@ -166,7 +166,7 @@ public class Level implements Input.Listener {
                 }
                 break;
             case WAYPOINT:
-                if (Input.mouseButton(0, true)) {
+                if (Input.mouseButton(0, true)) {                    
                     Waypoint waypoint = new Waypoint(this, mx, mz);
                     
                     elements.add(waypoint);
@@ -185,7 +185,7 @@ public class Level implements Input.Listener {
                     
                     elements.add(start);
                     selected = start;
-                    target = 1;
+                    target = 2;
                     
                     return Input.HANDLED;
                 }
@@ -290,6 +290,8 @@ public class Level implements Input.Listener {
                         Start start = new Start(level,
                                 Float.parseFloat(tokens[1]),
                                 Float.parseFloat(tokens[2]));
+                        
+                        start.rotation = Float.parseFloat(tokens[3]);
                         
                         for (int i = 0; i < level.elements.size(); i++)
                             if (level.elements.get(i) instanceof Start)

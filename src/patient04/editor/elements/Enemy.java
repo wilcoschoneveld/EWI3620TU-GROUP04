@@ -36,7 +36,7 @@ public class Enemy extends Element {
         
         if (target != -1) {
             glAttribute(x, z, rotation * (float) Math.PI / 180,
-                    level.editor.camera.zoom * 2,
+                    level.editor.camera.zoom,
                     level.editor.camera.zoom * 0.1f, Color.WHITE);
         }
         
@@ -64,9 +64,9 @@ public class Enemy extends Element {
     public int select(boolean selected, float x, float z) {
         if (selected) {            
             float lx = this.x + (float) Math.cos(rotation * Math.PI / 180)
-                                            * level.editor.camera.zoom * 2;
+                                                    * level.editor.camera.zoom;
             float lz = this.z + (float) -Math.sin(rotation * Math.PI / 180)
-                                            * level.editor.camera.zoom * 2;
+                                                    * level.editor.camera.zoom;
             
             float lr = level.editor.camera.zoom * 0.5f;
         

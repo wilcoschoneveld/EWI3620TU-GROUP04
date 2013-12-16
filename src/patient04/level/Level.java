@@ -266,7 +266,8 @@ public class Level {
                         
                         break;
                     case "start":
-                        level.startPoint.set(Float.parseFloat(tokens[1]), 0,
+                        level.startPoint.set(Float.parseFloat(tokens[1]),
+                                             Float.parseFloat(tokens[3]),
                                              Float.parseFloat(tokens[2]));
                         
                         break;
