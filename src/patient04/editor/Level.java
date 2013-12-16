@@ -175,6 +175,7 @@ public class Level implements Input.Listener {
                     
                     return Input.HANDLED;
                 }
+                break;
             case START:
                 if (Input.mouseButton(0, true)) {
                     Start start = new Start(this, mx, mz);
@@ -185,6 +186,21 @@ public class Level implements Input.Listener {
                     
                     elements.add(start);
                     selected = start;
+                    target = 2;
+                    
+                    return Input.HANDLED;
+                }
+                break;
+            case EXIT:
+                if (Input.mouseButton(0, true)) {
+                    Exit exit = new Exit(this, mx, mz);
+                    
+                    for (int i = 0; i < elements.size(); i++)
+                        if (elements.get(i) instanceof Exit)
+                            elements.remove(i--);
+                    
+                    elements.add(exit);
+                    selected = exit;
                     target = 2;
                     
                     return Input.HANDLED;
@@ -298,6 +314,20 @@ public class Level implements Input.Listener {
                                 level.elements.remove(i--);
                         
                         level.elements.add(start);
+                        
+                        break;
+                    case "exit":
+                        Exit exit = new Exit(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        exit.rotation = Float.parseFloat(tokens[3]) * 90;
+                        
+                        for (int i = 0; i < level.elements.size(); i++)
+                            if (level.elements.get(i) instanceof Exit)
+                                level.elements.remove(i--);
+                        
+                        level.elements.add(exit);
                         
                         break;
                     default: // Incompatible line                        

@@ -20,7 +20,7 @@ public class ToolPane implements Input.Listener {
     private static final float SPEED = 0.03f;
     
     public enum Tool {
-        SELECT, START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+        SELECT, START, EXIT, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
         ENEMY, WALL, DOOR, KEY, DELETE;
     }
     
@@ -44,7 +44,7 @@ public class ToolPane implements Input.Listener {
         
         // Add new buttons to map
         tools.put(Tool.START, createButton(0));
-        tools.put(Tool.END, createButton(1));
+        tools.put(Tool.EXIT, createButton(1));
         tools.put(Tool.WAYPOINT, createButton(2));
         tools.put(Tool.LINK, createButton(3));
         tools.put(Tool.LIGHT, createButton(4));
