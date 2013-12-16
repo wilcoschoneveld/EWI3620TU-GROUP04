@@ -29,9 +29,7 @@ void main() {
 
         vec4 aDiffuse = texture2D(uTexDiffuse, pixelCoord);
 
-        float intensity = 0.01 * lightIntensity * lightIntensity;
-
-        gl_FragColor = aDiffuse * lightColor * intensity * fragDot /
+        gl_FragColor = aDiffuse * lightColor * lightIntensity * fragDot /
                 (falloffConstant + falloffLinear * lightDistance
                         + falloffQuadratic * lightDistance * lightDistance);
     } else {

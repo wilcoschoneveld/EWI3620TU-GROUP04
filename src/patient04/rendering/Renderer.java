@@ -349,14 +349,14 @@ public class Renderer {
         GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);
     }
     
-    public void glUpdateLightParams(Light light) {
+    public void glUpdateLightParams(Light light, float fade) {
         // Upload light position
         Vector pos = light.getPosition().copy().premultiply(view);
         
         // Update light values
         GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
         GL20.glUniform4(lightC, light.getColor());
-        GL20.glUniform1f(lightI, light.getIntensity());
+        GL20.glUniform1f(lightI, light.getIntensity() * fade);
         GL20.glUniform1f(lightR, light.getRadius());
         
         // Update light attenuation model

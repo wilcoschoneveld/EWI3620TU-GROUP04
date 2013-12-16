@@ -34,7 +34,7 @@ public class Game implements State, Input.Listener {
         renderer = new Renderer();
         
         renderer.projection = Matrix.projPerspective(
-               70, (float) Display.getWidth() / Display.getHeight(), .1f, 15);
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 30);
         
         // Create a new timer
         timer = new Timer();

@@ -40,10 +40,10 @@ public class Light {
     
     public final Light setIntensity(float intensity) {
         // Set intensity
-        this.intensity = intensity;
+        this.intensity = intensity * 0.1f;
         
         // Set radius 
-       radius = (float) Math.sqrt(10 * intensity);
+       radius = (float) Math.sqrt(15 * intensity);
        
        return this;
     }
@@ -105,7 +105,7 @@ public class Light {
         model.draw();
         
         renderer.pointLightSecondPass();        
-        renderer.glUpdateLightParams(this);
+        renderer.glUpdateLightParams(this, 1);
         model.draw();
     }
 }
