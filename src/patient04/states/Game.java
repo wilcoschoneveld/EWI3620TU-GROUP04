@@ -39,7 +39,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel961937.lvl");
+        level = Level.fromFile("testlevel15730003.lvl");
         level.generateFloor("floor_hospital.png");
         
         // Add player to level
