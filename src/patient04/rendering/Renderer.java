@@ -1,6 +1,7 @@
 package patient04.rendering;
 
 import java.nio.IntBuffer;
+import org.lwjgl.opengl.ARBDepthClamp;
 
 import static org.lwjgl.opengl.ARBFramebufferObject.*;
 import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
@@ -245,6 +246,7 @@ public class Renderer {
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
+        GL11.glEnable(ARBDepthClamp.GL_DEPTH_CLAMP);
         
         // Clear the buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -342,6 +344,9 @@ public class Renderer {
         
         // Disable stencil
         GL11.glDisable(GL11.GL_STENCIL_TEST);
+        
+        // Disable depth clamp
+        GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);
     }
     
     public void glUpdateLightParams(Light light) {

@@ -95,6 +95,8 @@ public final class Main {
                 GLContext.getCapabilities().GL_ARB_framebuffer_object);
         Logger.debug("ARB texture float: " +
                 GLContext.getCapabilities().GL_ARB_texture_float);
+        Logger.debug("ARB depth clamp: " +
+                GLContext.getCapabilities().GL_ARB_depth_clamp);
         Logger.debug("NPOT textures: " +
                 GLContext.getCapabilities().GL_ARB_texture_non_power_of_two);
         
