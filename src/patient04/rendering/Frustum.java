@@ -14,7 +14,7 @@ import patient04.math.Vector;
  * @author Wilco
  */
 public class Frustum {
-    private final Plane[] planes;
+    public final Plane[] planes;
     
     public Frustum() {
         planes = new Plane[6];
@@ -69,7 +69,7 @@ public class Frustum {
         return true;
     }
     
-    private class Plane {
+    public class Plane {
         private final Vector normal;
         private final float distance;
         

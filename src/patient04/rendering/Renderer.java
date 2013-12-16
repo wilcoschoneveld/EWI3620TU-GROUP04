@@ -62,7 +62,6 @@ public class Renderer {
     
     // Frustum
     public final Frustum frustum;
-    public int drawperframe = 0;
     
     public Renderer() {
         // Enable depth testing and backface culling
@@ -284,9 +283,6 @@ public class Renderer {
         // Set OpenGL state
         glLoadDefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        
-        System.out.println(drawperframe);
-        drawperframe = 0;
     }
     
     public void debugPass() {

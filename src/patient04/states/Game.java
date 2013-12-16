@@ -12,10 +12,8 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import patient04.level.Elevator;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
-import patient04.math.Vector;
 import patient04.utilities.Input;
 
 
@@ -34,8 +32,9 @@ public class Game implements State, Input.Listener {
     public void initialize() {        
         // Create a new Renderer
         renderer = new Renderer();
+        
         renderer.projection = Matrix.projPerspective(
-               70, (float) Display.getWidth() / Display.getHeight(), .1f, 100);
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 50);
         
         // Create a new timer
         timer = new Timer();

@@ -43,7 +43,7 @@ public class Light {
         this.intensity = intensity;
         
         // Set radius 
-       radius = (float) Math.sqrt(20 * intensity);
+       radius = (float) Math.sqrt(10 * intensity);
        
        return this;
     }
@@ -97,17 +97,15 @@ public class Light {
         
         renderer.glUpdateModelMatrix(matrix);
         
-        // Test frustum
-        if (!renderer.frustum.isInside(null, 0))
+        // Discard if not in frustum (-1 due to radius scaling)
+        if (!renderer.frustum.isInside(null, -1f)) 
             return;
         
         renderer.pointLightFirstPass();
         model.draw();
         
-        renderer.pointLightSecondPass();
+        renderer.pointLightSecondPass();        
         renderer.glUpdateLightParams(this);
         model.draw();
-        
-        renderer.drawperframe++;
     }
 }
