@@ -53,7 +53,7 @@ public class Renderer {
                                 effShader0, effShader1, effShader2, effShader3;
     
     private float sinEffShader, cosEffShader, EffectIntensity = 0.0f , dX = 0;
-    private int j = 0;
+    private short j = 0;
     private boolean crazy = true, pickup = false;
     
     // Effect shaders
@@ -286,7 +286,7 @@ public class Renderer {
         GL11.glCullFace(GL11.GL_FRONT);
     }
     
-    public void guiPass() {
+    public void guiPass(int timeWithoutMedicine) {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
         
@@ -295,7 +295,7 @@ public class Renderer {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         
         useShaderProgram(effectShader);
-        glUpdateEffectPrams();
+        glUpdateEffectPrams(timeWithoutMedicine);
         
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         screenQuad.draw();
@@ -361,26 +361,27 @@ public class Renderer {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
     
-    public void glUpdateEffectPrams(){
+    public void glUpdateEffectPrams(int timeWithoutMedicine){
         if(crazy == true){
-            sinEffShader = (float) Math.sin(Math.toRadians(j));
-            cosEffShader = (float) Math.cos(Math.toRadians(3*j + 90));
-            dX = (float) Math.sin(Math.toRadians(j));
+            
+            sinEffShader = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
+            cosEffShader = (float) Math.cos(Math.toRadians(3*timeWithoutMedicine) +90);
+            dX = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
+                        
             GL20.glUniform1f(effShader0, sinEffShader);
             GL20.glUniform1f(effShader1, cosEffShader);
             GL20.glUniform1f(effShader2, dX);
-            GL20.glUniform1f(effShader3,EffectIntensity );
-            j++;
+            GL20.glUniform1f(effShader3, EffectIntensity);
             
-            if(j == 360 && EffectIntensity < 0.4f){
+            // the modulus indicates how fast the effect increases and the smaller then 0.4 is the max intenisty of the effect;
+            if(timeWithoutMedicine % 180 == 0 && EffectIntensity < 0.4f){
                 EffectIntensity += 0.005;
-                j=0;
             }
         }
     }
-    public void glSetEffectIntensity(float intensity){
-        EffectIntensity = intensity;
-        j=0;
+    
+    public void glResetEffectIntensity(){
+        EffectIntensity = 0.0f;
     }
     
     public void glUpdateLightParams(Light light) {

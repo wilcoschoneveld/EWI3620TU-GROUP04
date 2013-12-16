@@ -170,8 +170,11 @@ public class Game implements State, Input.Listener {
         }
         
         // Change to normal pass
-        renderer.guiPass();
+        renderer.guiPass(player.timeWithoutMedicine);
         
+        //renderer.glUpdateEffectPrams(player.timeWithoutMedicine);
+
+                
         // Debug navigation grid
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))
             level.drawNavPoints(renderer);

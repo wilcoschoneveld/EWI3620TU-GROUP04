@@ -27,7 +27,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_AIR = 0.1f;
     public static final float ACCEL_JUMP = 0.5f;
     
-    public float timeWithoutMedicine = 0f;
+    public int timeWithoutMedicine = 0;
 
     /** Constructs a new player.
      * 
@@ -44,7 +44,7 @@ public class Player extends Entity implements Input.Listener {
     @Override
     public void update(float dt) {
         // Update time without medicine
-        timeWithoutMedicine += dt;
+        timeWithoutMedicine++;
         
         // Define a new movement vector
         Vector moveInput = new Vector();
