@@ -33,6 +33,6 @@ void main() {
                 (falloffConstant + falloffLinear * lightDistance
                         + falloffQuadratic * lightDistance * lightDistance);
     } else {
-        //gl_FragColor = vec4(0);
+        gl_FragColor = vec4(0);
     }
 }
