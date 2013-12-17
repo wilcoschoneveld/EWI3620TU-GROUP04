@@ -16,6 +16,7 @@ import patient04.editor.elements.*;
 import patient04.states.Editor;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
+import patient04.utilities.Utils;
 
 /**
  *
@@ -198,6 +199,18 @@ public class Level implements Input.Listener {
                     elements.add(exit);
                     selected = exit;
                     target = 2;
+                    
+                    return Input.HANDLED;
+                }
+            case KEY:
+                if (Input.mouseButton(0, true)) {
+                    File load = Utils.showOpenDialog();
+                    
+                    Prop prop = new Prop(this, mx, mz, load.getName());
+                    
+                    elements.add(prop);
+                    selected = prop;
+                    target = 0;
                     
                     return Input.HANDLED;
                 }

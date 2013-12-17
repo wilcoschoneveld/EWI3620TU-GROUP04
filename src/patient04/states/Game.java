@@ -45,7 +45,7 @@ public class Game implements State, Input.Listener {
         level = Level.fromFile("testlevel5601443.lvl");
         level.generateFloor("floor_hospital.png");
         
-        Prop prop = new Prop("bed.obj", 1);
+        Prop prop = new Prop("chair.obj", 1);
         prop.position.set(-17, 0, -4);
         level.addSolid(prop);
         
