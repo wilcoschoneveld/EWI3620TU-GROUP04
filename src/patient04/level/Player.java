@@ -29,7 +29,8 @@ public class Player extends Entity implements Input.Listener {
     
     public int timeWithoutMedicine = 0;
     public Vector lastPosition, lastRotation;
-    public int fallRotate = -90;
+    public int fallRotate = 0;
+    private boolean fallingGameOver = false;
     /** Constructs a new player.
      * 
      * @param level 
@@ -70,9 +71,10 @@ public class Player extends Entity implements Input.Listener {
             
             // Normalize and scale to speed
             moveInput.normalize().scale(speed);
-            
+
             // Add movement input to acceleration
-            acceleration.add(moveInput);
+            if(!fallingGameOver)
+                acceleration.add(moveInput);
         }
         
         // Update remaining entity
@@ -81,6 +83,7 @@ public class Player extends Entity implements Input.Listener {
     
     /** Obtain the view matrix.
      * 
+     * @param theEnd
      * @return 
      */
     public Matrix getFirstPersonView(float theEnd) {
@@ -108,19 +111,27 @@ public class Player extends Entity implements Input.Listener {
             boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
         }
 
-        if(theEnd < 0.4f && EYEHEIGHT > 0.5*EYEHEIGHT + 0.1f){
+        if(theEnd < 0.3f && EYEHEIGHT > 0.7*EYEHEIGHT + 0.1f){
+                fallingGameOver = true;
                 EYEHEIGHT -= 0.1f;
-                matrix.rotate(-lastRotation.x, 1, 0, 0);
-                matrix.rotate(-lastRotation.y, 0, 1, 0);
-                
+                matrix.rotate(-rotation.x, 1, 0, 0);
+                matrix.rotate(-rotation.y, 0, 1, 0);
+                matrix.rotate(1,-fallRotate, 1, 0);
                 matrix.translate(
-                    -lastPosition.x,
-                    -lastPosition.y - 0.5f*EYEHEIGHT,
-                    -lastPosition.z);
+                    -position.x,
+                    -position.y - EYEHEIGHT,
+                    -position.z);
 
-                matrix.rotate(0, 0, (float) Math.toRadians(fallRotate),0);
-                fallRotate -= 10;
-
+                fallRotate += 5;
+        }
+        else if(theEnd < 0.3f){
+                matrix.rotate(-rotation.x, 1, 0, 0);
+                matrix.rotate(-rotation.y, 0, 1, 0);
+                matrix.rotate(1,-fallRotate,1, 0);
+                matrix.translate(
+                    -position.x,
+                    -position.y - EYEHEIGHT,
+                    -position.z);
         }
         else{
             matrix.translate(
@@ -137,9 +148,6 @@ public class Player extends Entity implements Input.Listener {
                 -position.x,
                 -position.y - EYEHEIGHT,
                 -position.z);
-           
-            lastPosition = position;
-            lastRotation = rotation;
         }
         
         return matrix;
