@@ -189,6 +189,7 @@ public class Level {
         floor.model.releaseRawData();
         
         floor.aabb = new AABB(floor.position, min, max);
+        floor.culling = false;
         
         solids.add(floor);
     }
@@ -229,6 +230,7 @@ public class Level {
                         wall.position.set(
                                 Float.parseFloat(tokens[1]), 0,
                                 Float.parseFloat(tokens[2]));
+                        wall.culling = false;
                         
                         level.addSolid(wall);
                         
@@ -299,57 +301,10 @@ public class Level {
                 }
             }
             
+            // Generate floor
+            level.generateFloor("floor_hospital.png");
+            
             return level;
         } catch(IOException e) { e.printStackTrace(); return null; }
-    }
-    
-    public static Level defaultLevel(String textureFile) {
-        Level level = new Level();
-        
-        byte[][] maze =
-           {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 1, 0, 1, 1, 1, 1},
-            {1, 0, 1, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 1, 0, 1, 0, 1, 0, 0, 1},
-            {1, 0, 1, 0, 1, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 1, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 1, 1, 1, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
-        
-        // Create the wall model
-        Vector min = new Vector(-0.5f, -0.5f, -0.5f).scale(WALL_HEIGHT);
-        Vector max = new Vector(0.5f, 0.5f, 0.5f).scale(WALL_HEIGHT);
-        Model blockModel = Model.buildWall(min, max, textureFile);
-        
-        // Render the display list
-        blockModel.compileBuffers();
-        blockModel.releaseRawData();
-        
-        // Loop through to maze
-        for(int x = 0; x < maze[0].length; x++) {
-            for(int y = 0; y < maze.length; y++) {
-                if(maze[y][x] != 1) continue;
-                
-                // Start building a new box
-                Solid obj = new Solid();
-                
-                obj.model = blockModel;
-                
-                // Create AABB
-                obj.aabb = new AABB(obj.position, min, max);
-                
-                // Set model position
-                obj.position.set(
-                        WALL_HEIGHT * (x + 0.5f), WALL_HEIGHT * 0.5f,
-                        WALL_HEIGHT * (y + 0.5f));
-                
-                // Build the box and add to list
-                level.solids.add(obj);
-            }
-        }
-        
-        return level;
     }
 }

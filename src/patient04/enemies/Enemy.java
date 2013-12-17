@@ -7,6 +7,7 @@ import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
+import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -77,11 +78,11 @@ public class Enemy extends Entity {
             
             acceleration.add(direction);
             rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
+            
+            // Animation (TODO: redo this with distanceMoved )
+            if((time += dt) >= 1)
+                time -= 1;
         }
-        
-        // Animation (TODO: redo this with distanceMoved )
-        if((time += dt) >= 1)
-            time -= 1;
         
         // Light flickering
         if((nextflicker -= dt) <= 0) { 
@@ -171,8 +172,8 @@ public class Enemy extends Entity {
         // Update modelview matrix
         renderer.glUpdateModelMatrix(matrix);
         
-        // Discard if outside frustum (converted to AABB?)
-        if (!renderer.frustum.isInside(null, -2)) 
+        // Discard if outside frustum
+        if (renderer.frustum.isOutside(aabb, -0.1f))
             return;
         
         // Draw model

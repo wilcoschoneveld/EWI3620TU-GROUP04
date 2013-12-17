@@ -17,13 +17,13 @@ import patient04.resources.Model;
  * @author Wilco
  */
 public class Solid {
-    public Vector position;
-    public Vector rotation;
-    public Vector scale;
+    public final Vector position;
+    public final Vector rotation;
+    public final Vector scale;
     
     public AABB aabb;
-    
     public Model model;
+    public boolean culling = true;
     
     public Solid() {
         position = new Vector();
@@ -55,6 +55,10 @@ public class Solid {
         
         // Update modelview matrix
         renderer.glUpdateModelMatrix(matrix);
+        
+        // Discard if outside frustum
+        if (culling && renderer.frustum.isOutside(aabb, 0))
+            return;
         
         // Draw model
         model.draw();

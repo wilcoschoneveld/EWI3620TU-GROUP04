@@ -100,7 +100,7 @@ public class Light {
         renderer.glUpdateModelMatrix(matrix);
         
         // Discard if not in frustum (-1 due to radius scaling)
-        if (!renderer.frustum.isInside(null, -1)) 
+        if (renderer.frustum.isOutside((Vector) null, -1)) 
             return;
         
         renderer.pointLightFirstPass();
