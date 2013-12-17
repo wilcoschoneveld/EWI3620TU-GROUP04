@@ -72,7 +72,7 @@ public class Player extends Entity implements Input.Listener {
             // Normalize and scale to speed
             moveInput.normalize().scale(speed);
 
-            // Add movement input to acceleration
+            // Add movement input to acceleration and when you collapse that you can't move anymore
             if(!fallingGameOver)
                 acceleration.add(moveInput);
         }
@@ -116,7 +116,9 @@ public class Player extends Entity implements Input.Listener {
                 EYEHEIGHT -= 0.1f;
                 matrix.rotate(-rotation.x, 1, 0, 0);
                 matrix.rotate(-rotation.y, 0, 1, 0);
-                matrix.rotate(1,-fallRotate, 1, 0);
+                // tilts the screen to the right so it looks like you collapse on the ground on your side.
+                matrix.rotate(fallRotate, (float) Math.sin(Math.toRadians(rotation.y)),0, (float) Math.cos(Math.toRadians(rotation.y)));
+                
                 matrix.translate(
                     -position.x,
                     -position.y - EYEHEIGHT,
@@ -127,7 +129,9 @@ public class Player extends Entity implements Input.Listener {
         else if(theEnd < 0.3f){
                 matrix.rotate(-rotation.x, 1, 0, 0);
                 matrix.rotate(-rotation.y, 0, 1, 0);
-                matrix.rotate(1,-fallRotate,1, 0);
+                
+                matrix.rotate(fallRotate, (float) Math.sin(Math.toRadians(rotation.y)),0, (float) Math.cos(Math.toRadians(rotation.y)));
+                
                 matrix.translate(
                     -position.x,
                     -position.y - EYEHEIGHT,

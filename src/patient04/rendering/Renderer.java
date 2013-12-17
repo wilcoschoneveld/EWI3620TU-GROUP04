@@ -363,7 +363,7 @@ public class Renderer {
     }
     
     public void glUpdateEffectPrams(int timeWithoutMedicine){
-        if(crazy == true){
+        if(crazy == true){  
             
             EffectIntensity = 0.45f;
             
@@ -378,7 +378,7 @@ public class Renderer {
             GL20.glUniform1f(effShader4, theEnd);
             
             // the modulus indicates how fast the effect increases and the smaller then 0.4 is the max intenisty of the effect;
-            if(timeWithoutMedicine % 10 == 0 && EffectIntensity <= 0.4f){
+            if(timeWithoutMedicine % 45 == 0 && EffectIntensity <= 0.4f){
                 EffectIntensity += 0.01;
             }
             
