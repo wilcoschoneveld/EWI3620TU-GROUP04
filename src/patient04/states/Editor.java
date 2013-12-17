@@ -94,6 +94,10 @@ public class Editor implements State, Input.Listener {
         if (Input.keyboardKey(Keyboard.KEY_F6, true)) {
             File load = Utils.showOpenDialog();
             
+            // Do nothin'
+            if (load == null)
+                return Input.HANDLED;
+            
             // Store old level
             Level old = level;
             

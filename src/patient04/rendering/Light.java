@@ -26,6 +26,7 @@ public class Light {
     public Light() {
         position = new Vector();
         model = Model.getResource("lightPoint.obj");
+        model.releaseRawData();
         
         setColor(0, 0);
         setIntensity(10);
@@ -105,7 +106,7 @@ public class Light {
         renderer.pointLightFirstPass();
         model.draw();
         
-        float d = (renderer.frustum.planes[5].distance(null) - 0.5f) * radius / 3;
+        float d = (renderer.frustum.planes[5].distance(null) - 0.5f) * radius / 5;
         
         renderer.pointLightSecondPass();        
         renderer.glUpdateLightParams(this, Utils.clamp(d, 0, 1));

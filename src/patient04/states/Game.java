@@ -13,8 +13,10 @@ import patient04.rendering.Renderer;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.level.Pauser;
+import patient04.level.Prop;
 import patient04.level.Tutorial;
 import patient04.utilities.Input;
+import patient04.utilities.Logger;
 
 
 public class Game implements State, Input.Listener {
@@ -34,14 +36,18 @@ public class Game implements State, Input.Listener {
         renderer = new Renderer();
         
         renderer.projection = Matrix.projPerspective(
-               70, (float) Display.getWidth() / Display.getHeight(), .1f, 20);
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 30);
         
         // Create a new timer
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel19629395.lvl");
+        level = Level.fromFile("testlevel5601443.lvl");
         level.generateFloor("floor_hospital.png");
+        
+        Prop prop = new Prop("bed.obj", 1);
+        prop.position.set(-17, 0, -4);
+        level.addSolid(prop);
         
         // Add player to level
         player = new Player(level);
@@ -110,6 +116,8 @@ public class Game implements State, Input.Listener {
                     .setPosition(player.position.x,
                                  player.position.y + 2,
                                  player.position.z);
+            
+            Logger.debug("Light placed at: " + player.position);
             
             return Input.HANDLED;
         }

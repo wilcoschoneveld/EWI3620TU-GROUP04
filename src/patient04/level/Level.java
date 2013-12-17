@@ -273,9 +273,10 @@ public class Level {
                         break;
                     case "exit":
                         Elevator elevator = new Elevator(
-                                    new Vector(Float.parseFloat(tokens[1]), 0,
-                                               Float.parseFloat(tokens[2])),
-                                    Integer.parseInt(tokens[3]));
+                                                Integer.parseInt(tokens[3]));
+                        
+                        elevator.position.set(Float.parseFloat(tokens[1]), 0,
+                                              Float.parseFloat(tokens[2]));
                         
                         level.addSolid(elevator);
                         

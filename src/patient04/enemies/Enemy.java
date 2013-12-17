@@ -43,6 +43,7 @@ public class Enemy extends Entity {
             file += String.format("%06d.obj", i+1);
             
             anim_walking[i] = Model.getResource(file);
+            anim_walking[i].releaseRawData();
         }
         
         light = new Light()
@@ -171,7 +172,7 @@ public class Enemy extends Entity {
         renderer.glUpdateModelMatrix(matrix);
         
         // Discard if outside frustum (converted to AABB?)
-        if (!renderer.frustum.isInside(null, -2f)) 
+        if (!renderer.frustum.isInside(null, -2)) 
             return;
         
         // Draw model
