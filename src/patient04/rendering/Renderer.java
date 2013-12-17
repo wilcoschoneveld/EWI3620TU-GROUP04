@@ -50,11 +50,10 @@ public class Renderer {
     private final int geometryShader, screenShader,
                         lightingShader, stencilShader, debugShader,
                             lightP, lightC, lightI, lightR, attC, attL, attQ,
-                                effShader0, effShader1, effShader2, effShader3;
+                                effShader0, effShader1, effShader2, effShader3, effShader4;
     
-    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f , dX = 0;
-    private short j = 0;
-    private boolean crazy = true, pickup = false;
+    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f , dX = 0, theEnd = 1.0f;
+    private boolean crazy = true;
     
     // Effect shaders
     private final int effectShader;
@@ -185,6 +184,7 @@ public class Renderer {
         effShader1 = GL20.glGetUniformLocation(effectShader, "cosEffShader");         
         effShader2 = GL20.glGetUniformLocation(effectShader, "dX");
         effShader3 = GL20.glGetUniformLocation(effectShader, "EffectIntensity");
+        effShader4 = GL20.glGetUniformLocation(effectShader, "theEnd");
         
         Shaders.glUniform1i(effectShader, "uTexAccum", 0);
         Shaders.glUniform2f(effectShader, "screenSize", w, h);
@@ -363,21 +363,32 @@ public class Renderer {
     
     public void glUpdateEffectPrams(int timeWithoutMedicine){
         if(crazy == true){
-            
             sinEffShader = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
-            cosEffShader = (float) Math.cos(Math.toRadians(3*timeWithoutMedicine) +90);
+            cosEffShader = (float) Math.cos(Math.toRadians(timeWithoutMedicine) +90);
             dX = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
                         
             GL20.glUniform1f(effShader0, sinEffShader);
             GL20.glUniform1f(effShader1, cosEffShader);
             GL20.glUniform1f(effShader2, dX);
             GL20.glUniform1f(effShader3, EffectIntensity);
+            GL20.glUniform1f(effShader4, theEnd);
             
             // the modulus indicates how fast the effect increases and the smaller then 0.4 is the max intenisty of the effect;
-            if(timeWithoutMedicine % 180 == 0 && EffectIntensity < 0.4f){
-                EffectIntensity += 0.005;
+            if(timeWithoutMedicine % 10 == 0 && EffectIntensity <= 0.4f){
+                EffectIntensity += 0.01;
+            }
+            
+            if( theEnd >0.0f && timeWithoutMedicine % 10 == 0 && EffectIntensity >= 0.4f){
+                theEnd-= 0.01f;
+                if(theEnd <=0.05){
+                    // game over
+                    System.out.println("GameOver");
+                }
             }
         }
+    }
+    public void glSetCrazy(boolean setCrazy){
+        crazy = setCrazy;
     }
     
     public void glResetEffectIntensity(){

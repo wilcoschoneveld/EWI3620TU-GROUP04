@@ -6,6 +6,7 @@ uniform float sinEffShader;
 uniform float cosEffShader;
 uniform float dX;
 uniform float EffectIntensity;
+uniform float theEnd;
 
 void main(){
     vec2 pixelCoord = gl_FragCoord.xy / screenSize;
@@ -19,7 +20,7 @@ void main(){
     vec4 aAccum = texture2D(uTexAccum, pixelCoord);
     
     // Changes colors of the screen
-    gl_FragColor = (aAccum - (1 - length(pixelCoord - 0.5))*
+    gl_FragColor = theEnd*(aAccum - (1 - length(pixelCoord - 0.5))*
             vec4(EffectIntensity*sinEffShader,EffectIntensity* cosEffShader,EffectIntensity*EffectIntensity*cosEffShader*sinEffShader , 1.0 ));
     
 
