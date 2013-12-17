@@ -25,7 +25,7 @@ public class Light {
     
     public Light() {
         position = new Vector();
-        model = Model.getResource("lightPoint.obj");
+        model = Model.getResource("lighting/lightPoint.obj");
         model.releaseRawData();
         
         setColor(0, 0);

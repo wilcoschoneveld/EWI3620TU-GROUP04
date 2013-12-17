@@ -93,8 +93,8 @@ public class Level implements Input.Listener {
             return Input.HANDLED;
         }
         
-        float mdx = editor.camera.convertMouseD(+Mouse.getEventDX());
-        float mdy = editor.camera.convertMouseD(-Mouse.getEventDY());
+        float mdx = editor.camera.convertWindowD(+Mouse.getEventDX());
+        float mdy = editor.camera.convertWindowD(-Mouse.getEventDY());
         
         if ((mdx != 0 || mdy != 0)
                 && !editor.camera.mouseDrag
@@ -102,8 +102,8 @@ public class Level implements Input.Listener {
                 && target > 0)
             selected.translate(target, mdx, mdy);
         
-        float mx = editor.camera.convertMouseX(Mouse.getEventX());
-        float mz = editor.camera.convertMouseY(Mouse.getEventY());
+        float mx = editor.camera.convertWindowX(Mouse.getEventX());
+        float mz = editor.camera.convertWindowY(Mouse.getEventY());
         
         switch (editor.tools.selected) {
             case SELECT:
@@ -345,9 +345,11 @@ public class Level implements Input.Listener {
                     case "prop":
                         Prop prop = new Prop(level,
                                 Float.parseFloat(tokens[2]),
-                                Float.parseFloat(tokens[3]), tokens[1]);
+                                Float.parseFloat(tokens[4]), tokens[1]);
                         
-                        prop.angle = Integer.parseInt(tokens[4]);
+                        prop.angle = Integer.parseInt(tokens[5]);
+                        
+                        level.elements.add(prop);
                         
                         break;
                     default: // Incompatible line                        

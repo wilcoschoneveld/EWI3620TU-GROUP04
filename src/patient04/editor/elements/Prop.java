@@ -21,9 +21,10 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class Prop extends Element {
-    public final String name;
-    public final Vector[] bounds;
+    private final String name;
+    private final Vector[] bounds;
     private final Font fntProp;
+    private final float[] color;
     
     public float x, z;
     public int angle;
@@ -38,6 +39,10 @@ public class Prop extends Element {
         this.bounds = Model.getResource(modelFile).getBounds();
         
         fntProp = Font.getResource("Verdana", Font.BOLD, 10);
+        
+        float hue = (name.toLowerCase().charAt(0) - 97) / 25f;
+        
+        color = Color.getHSBColor(hue, 1, 1).getComponents(null);
     }
 
     @Override
@@ -50,7 +55,7 @@ public class Prop extends Element {
         }
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor3f(0.3f, 0.5f, 1f);
+        GL11.glColor3f(color[0], color[1], color[2]);
         GL11.glBegin(GL11.GL_QUADS);
         
         switch (angle) {
@@ -80,12 +85,15 @@ public class Prop extends Element {
                 break;
         }
         GL11.glEnd();
+        
+        fntProp.draw(level.editor.camera.convertWorldX(x),
+                     level.editor.camera.convertWorldZ(z), name);
     }
 
     @Override
     public void translate(int target, float dx, float dz) {
-        float mx = level.editor.camera.convertMouseX(Mouse.getEventX());
-        float mz = level.editor.camera.convertMouseY(Mouse.getEventY());
+        float mx = level.editor.camera.convertWindowX(Mouse.getEventX());
+        float mz = level.editor.camera.convertWindowY(Mouse.getEventY());
         
         switch (target) {
             case 1:
@@ -138,6 +146,6 @@ public class Prop extends Element {
     
     @Override
     public String toString() {
-        return "prop " + name + " " + x + " " + z + " " + angle;
+        return "prop " + name + " " + x + " 0 " + z + " " + angle;
     }
 }

@@ -41,7 +41,7 @@ public class Light extends Element {
         
         hue = 0f;
         radius = 2f;
-        saturation = 1f;
+        saturation = 0.5f;
         
         priority = 10;
     }
@@ -67,8 +67,8 @@ public class Light extends Element {
 
     @Override
     public void translate(int target, float dx, float dz) {
-        float mx = level.editor.camera.convertMouseX(Mouse.getEventX());
-        float mz = level.editor.camera.convertMouseY(Mouse.getEventY());
+        float mx = level.editor.camera.convertWindowX(Mouse.getEventX());
+        float mz = level.editor.camera.convertWindowY(Mouse.getEventY());
         
         switch (target) {
             case 1:

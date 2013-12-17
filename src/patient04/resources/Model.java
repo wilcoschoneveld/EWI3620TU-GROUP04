@@ -6,7 +6,6 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -24,7 +23,6 @@ public class Model {
     // Static resource managing variables
     private static final String defaultModelLocation = "res/models/";
     private static final HashMap<String, Model> models = new HashMap<>();
-    private static final HashSet<String> mtlfiles = new HashSet<>();
     
     // Raw data
     private ArrayList<Vector> vertices;
@@ -292,7 +290,6 @@ public class Model {
         }
         
         models.clear();
-        mtlfiles.clear();
     }
     
     /** Loads an OBJ model from a given file.
@@ -410,11 +407,7 @@ public class Model {
      * 
      * @param f MTL file.
      */
-    private void loadMTL(String f) {
-        // If MTL was already loaded once
-        if(mtlfiles.contains(f))
-            return;
-        
+    private void loadMTL(String f) {        
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             // Material variables
             Material material = new Material();
@@ -482,9 +475,6 @@ public class Model {
             // Add material to model if loaded
             if(!materialName.isEmpty())
                 materials.put(materialName, material);
-            
-            // Add MTL file to loaded list
-            mtlfiles.add(f);
             
             Logger.debug("Succesfully loaded " + f);
         } catch(Exception e) {

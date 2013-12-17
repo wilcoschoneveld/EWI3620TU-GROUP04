@@ -8,6 +8,8 @@ import patient04.editor.Camera;
 import patient04.editor.Info;
 import patient04.editor.Level;
 import patient04.editor.ToolPane;
+import patient04.resources.Model;
+import patient04.resources.Texture;
 import patient04.utilities.Input;
 import patient04.utilities.Timer;
 import patient04.utilities.Utils;
@@ -75,6 +77,8 @@ public class Editor implements State, Input.Listener {
 
     @Override
     public void destroy() {
+        Model.disposeResources();
+        Texture.disposeResources();
     }
 
     @Override

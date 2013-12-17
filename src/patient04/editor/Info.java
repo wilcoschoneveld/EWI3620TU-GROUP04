@@ -28,7 +28,7 @@ public class Info {
     public void draw() {
         fntInfo.draw(0.02f, 0.02f, "Mouse location: " +
                 String.format(Locale.US, "x = %.2f, z = %.2f",
-                        editor.camera.convertMouseX(Mouse.getX()),
-                        editor.camera.convertMouseY(Mouse.getY())));
+                        editor.camera.convertWindowX(Mouse.getX()),
+                        editor.camera.convertWindowY(Mouse.getY())));
     }
 }

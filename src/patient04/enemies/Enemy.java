@@ -39,7 +39,7 @@ public class Enemy extends Entity {
         anim_walking = new Model[23];
         
         for(int i = 0; i < anim_walking.length; i++) {
-            String file = "nurseWalking/nurseV4.1_";
+            String file = "nurse/walking";
             file += String.format("%06d.obj", i+1);
             
             anim_walking[i] = Model.getResource(file);

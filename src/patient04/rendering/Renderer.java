@@ -69,7 +69,7 @@ public class Renderer {
         glLoadDefaults();
         
         // Load full screen quad
-        screenQuad = Model.getResource("lightDirectional.obj");
+        screenQuad = Model.getResource("lighting/lightDirectional.obj");
         
         // Enable client states
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);

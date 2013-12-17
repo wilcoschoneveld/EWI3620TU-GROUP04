@@ -283,10 +283,11 @@ public class Level {
                         break;
                     case "prop":
                         Prop prop = new Prop(tokens[1],
-                                      (Integer.parseInt(tokens[4]) + 1) % 4);
+                                      (Integer.parseInt(tokens[5]) + 1) % 4);
                         
-                        prop.position.set(Float.parseFloat(tokens[2]), 0,
-                                          Float.parseFloat(tokens[3]));
+                        prop.position.set(Float.parseFloat(tokens[2]),
+                                          Float.parseFloat(tokens[3]),
+                                          Float.parseFloat(tokens[4]));
                         
                         level.addSolid(prop);
                         

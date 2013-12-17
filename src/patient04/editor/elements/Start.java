@@ -47,8 +47,8 @@ public class Start extends Element {
 
     @Override
     public void translate(int target, float dx, float dz) {
-        float mx = level.editor.camera.convertMouseX(Mouse.getEventX());
-        float mz = level.editor.camera.convertMouseY(Mouse.getEventY());
+        float mx = level.editor.camera.convertWindowX(Mouse.getEventX());
+        float mz = level.editor.camera.convertWindowY(Mouse.getEventY());
         
         switch (target) {
             case 1:

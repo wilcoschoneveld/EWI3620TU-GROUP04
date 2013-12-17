@@ -54,7 +54,7 @@ public class Camera implements Input.Listener {
         // If mouse movement has occured
         if ((dx != 0 || dy != 0) && mouseDrag) {            
             // Adjust camera position if dragging
-            position.add(convertMouseD(-dx), 0, convertMouseD(dy));
+            position.add(convertWindowD(-dx), 0, convertWindowD(dy));
             
             return Input.HANDLED;
         }
@@ -103,20 +103,28 @@ public class Camera implements Input.Listener {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
     
-    public float convertMouseX(float x) {
+    public float convertWindowX(float x) {
         return 2 * zoom * HALF_VIEW *
                 (x / Display.getWidth() - 0.5f)
                 + position.x;
     }
     
-    public float convertMouseY(float y) {
+    public float convertWindowY(float y) {
         return 2 * zoom * HALF_VIEW *
                 ((-y + Display.getHeight() * 0.5f) / Display.getWidth())
                 + position.z;
     }
     
-    public float convertMouseD(float d) {
+    public float convertWindowD(float d) {
         return 2 * zoom * HALF_VIEW * d / Display.getWidth();
+    }
+    
+    public float convertWorldX(float x) {
+        return (x - position.x) / (2 * zoom * HALF_VIEW) + 0.5f;
+    }
+    
+    public float convertWorldZ(float z) {
+        return (z - position.z) / (2 * zoom * HALF_VIEW / viewRatio()) + 0.5f;
     }
     
     public float viewMinX() {
