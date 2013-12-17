@@ -262,20 +262,27 @@ public class Model {
         // Check if model is already loaded
         Model model = models.get(modelFile);
         
-        // If model does not exist
-        if(model == null) {
+        // If model exist already, return
+        if(model != null)
+            return model;
+        
+        // Try to load the model
+        try {
             // Load an OBJ from file
             model = loadOBJFromFile(defaultModelLocation + modelFile);
-            
+
             // Compile model and release raw data
             model.compileBuffers();
-            
+
             // Store loaded model
             models.put(modelFile, model);
-        }
-        
-        // Return model
-        return model;
+
+            // Return model
+            return model;
+        } catch (Exception e) {
+            Logger.error("Could not load " + modelFile);
+            return null;
+        }        
     }
     
     /** Deletes all loaded models from memory. */

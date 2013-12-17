@@ -9,10 +9,12 @@ package patient04.editor;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import javax.swing.JOptionPane;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.elements.*;
+import patient04.resources.Model;
 import patient04.states.Editor;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
@@ -204,13 +206,18 @@ public class Level implements Input.Listener {
                 }
             case KEY:
                 if (Input.mouseButton(0, true)) {
-                    File load = Utils.showOpenDialog();
+                    //File load = Utils.showOpenDialog();
+                    //Prop prop = new Prop(this, mx, mz, load.getName());
                     
-                    Prop prop = new Prop(this, mx, mz, load.getName());
+                    String s = (String) JOptionPane.showInputDialog(
+                            "Enter a model name:");
                     
-                    elements.add(prop);
-                    selected = prop;
-                    target = 0;
+                    if (s != null && Model.getResource(s + ".obj") != null) {
+                        Prop prop = new Prop(this, mx, mz, s + ".obj");
+                        elements.add(prop);
+                        selected = prop;
+                        target = 0;
+                    }
                     
                     return Input.HANDLED;
                 }
@@ -333,6 +340,14 @@ public class Level implements Input.Listener {
                         exit.rotation = Float.parseFloat(tokens[3]) * 90;
                         
                         level.elements.add(exit);
+                        
+                        break;
+                    case "prop":
+                        Prop prop = new Prop(level,
+                                Float.parseFloat(tokens[2]),
+                                Float.parseFloat(tokens[3]), tokens[1]);
+                        
+                        prop.angle = Integer.parseInt(tokens[4]);
                         
                         break;
                     default: // Incompatible line                        

@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 import static patient04.editor.elements.Element.glAttribute;
 import patient04.math.Vector;
+import patient04.resources.Font;
 import patient04.resources.Model;
 import patient04.utilities.Utils;
 
@@ -22,6 +23,7 @@ import patient04.utilities.Utils;
 public class Prop extends Element {
     public final String name;
     public final Vector[] bounds;
+    private final Font fntProp;
     
     public float x, z;
     public int angle;
@@ -34,6 +36,8 @@ public class Prop extends Element {
         
         this.name = modelFile;
         this.bounds = Model.getResource(modelFile).getBounds();
+        
+        fntProp = Font.getResource("Verdana", Font.BOLD, 10);
     }
 
     @Override
@@ -41,13 +45,14 @@ public class Prop extends Element {
         
         if (target != -1) {
             glAttribute(x, z, angle * (float) Math.PI / 2,
-                    level.editor.camera.zoom,
+                    level.editor.camera.zoom * (bounds[1].x + 0.5f),
                     level.editor.camera.zoom * 0.1f, Color.WHITE);
         }
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(0.3f, 0.5f, 1f);
         GL11.glBegin(GL11.GL_QUADS);
+        
         switch (angle) {
             case 0:
                 GL11.glVertex2f(x + bounds[0].x, z + bounds[0].z);
@@ -56,10 +61,22 @@ public class Prop extends Element {
                 GL11.glVertex2f(x + bounds[1].x, z + bounds[0].z);
                 break;
             case 1:
-                GL11.glVertex2f(x + bounds[0].z, z + bounds[1].x);
-                GL11.glVertex2f(x + bounds[0].z, z + bounds[0].x);
-                GL11.glVertex2f(x + bounds[1].z, z + bounds[0].x);
-                GL11.glVertex2f(x + bounds[1].z, z + bounds[1].x);
+                GL11.glVertex2f(x + bounds[0].z, z - bounds[1].x);
+                GL11.glVertex2f(x + bounds[0].z, z - bounds[0].x);
+                GL11.glVertex2f(x + bounds[1].z, z - bounds[0].x);
+                GL11.glVertex2f(x + bounds[1].z, z - bounds[1].x);
+                break;
+            case 2:
+                GL11.glVertex2f(x - bounds[1].x, z - bounds[1].z);
+                GL11.glVertex2f(x - bounds[1].x, z - bounds[0].z);
+                GL11.glVertex2f(x - bounds[0].x, z - bounds[0].z);
+                GL11.glVertex2f(x - bounds[0].x, z - bounds[1].z);
+                break;
+            case 3:
+                GL11.glVertex2f(x - bounds[1].z, z + bounds[0].x);
+                GL11.glVertex2f(x - bounds[1].z, z + bounds[1].x);
+                GL11.glVertex2f(x - bounds[0].z, z + bounds[1].x);
+                GL11.glVertex2f(x - bounds[0].z, z + bounds[0].x);
                 break;
         }
         GL11.glEnd();
@@ -84,11 +101,10 @@ public class Prop extends Element {
 
     @Override
     public int select(boolean selected, float x, float z) {
-        if (selected) {            
-            float lx = this.x + (float) Math.cos(angle * Math.PI / 4)
-                                                    * level.editor.camera.zoom;
-            float lz = this.z + (float) -Math.sin(angle * Math.PI / 4)
-                                                    * level.editor.camera.zoom;
+        if (selected) {
+            float len = level.editor.camera.zoom * (bounds[1].x + 0.5f); 
+            float lx = this.x + (float) Math.cos(angle * Math.PI / 2) * len;
+            float lz = this.z + (float) -Math.sin(angle * Math.PI / 2) * len;
             
             float lr = level.editor.camera.zoom * 0.5f;
         
@@ -96,8 +112,21 @@ public class Prop extends Element {
                 return 2;
         }
         
-        if (x > this.x - 0.6f && x < this.x + 0.6f
-         && z > this.z - 0.6f && z < this.z + 0.6f)
+        float xmin = 0, xmax = 0, zmin = 0, zmax = 0;
+        
+        switch (angle) {
+            case 0: xmin =  bounds[0].x; xmax =  bounds[1].x;
+                    zmin =  bounds[0].z; zmax =  bounds[1].z; break;
+            case 1: xmin =  bounds[0].z; xmax =  bounds[1].z;
+                    zmin = -bounds[1].x; zmax = -bounds[0].x; break;
+            case 2: xmin = -bounds[1].x; xmax = -bounds[0].x;
+                    zmin = -bounds[1].z; zmax = -bounds[0].z; break;
+            case 3: xmin = -bounds[1].z; xmax = -bounds[0].z;
+                    zmin =  bounds[0].x; zmax =  bounds[1].x; break;
+        }
+        
+        if (x > this.x + xmin && x < this.x + xmax
+         && z > this.z + zmin && z < this.z + zmax)
             return 1;
         
         return 0;
@@ -105,5 +134,10 @@ public class Prop extends Element {
 
     @Override
     public void release() {
+    }
+    
+    @Override
+    public String toString() {
+        return "prop " + name + " " + x + " " + z + " " + angle;
     }
 }

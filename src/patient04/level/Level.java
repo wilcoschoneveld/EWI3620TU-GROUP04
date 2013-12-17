@@ -280,7 +280,17 @@ public class Level {
                         
                         level.addSolid(elevator);
                         
-                        break;                        
+                        break;
+                    case "prop":
+                        Prop prop = new Prop(tokens[1],
+                                      (Integer.parseInt(tokens[4]) + 1) % 4);
+                        
+                        prop.position.set(Float.parseFloat(tokens[2]), 0,
+                                          Float.parseFloat(tokens[3]));
+                        
+                        level.addSolid(prop);
+                        
+                        break;
                     default: // Incompatible line                        
                         Logger.error("Could not read LVL file " + file);
                         Logger.error("Invalid line > " + line);
