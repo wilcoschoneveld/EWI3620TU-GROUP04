@@ -32,15 +32,8 @@ public class Pickup extends Solid implements Useable {
         light.setPosition(x, y + 0.2f, z);
     }
     
-    @Override
     public void Use() {
-        if (this instanceof Healthbag) {
-            Level.useables.remove(this);
-        }
         
-        if (this instanceof Needle) {
-            Level.useables.remove(this);
-        }
     }
     
     @Override

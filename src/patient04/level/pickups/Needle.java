@@ -6,6 +6,7 @@
 
 package patient04.level.pickups;
 
+import patient04.level.Level;
 import patient04.resources.Model;
 
 /**
@@ -19,5 +20,10 @@ public class Needle extends Pickup {
         
         this.model = Model.getResource("needle.obj");
         light.setColor(0.1f, 1f).setIntensity(3).setItemLight();
+    }
+    
+    @Override
+    public void Use() {
+        Level.useables.remove(this);
     }
 }

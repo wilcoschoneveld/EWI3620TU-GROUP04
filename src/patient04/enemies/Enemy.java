@@ -2,7 +2,6 @@ package patient04.enemies;
 
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
-import patient04.Main;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;

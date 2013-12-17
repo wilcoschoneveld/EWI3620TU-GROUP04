@@ -6,6 +6,7 @@
 
 package patient04.level.pickups;
 
+import patient04.level.Level;
 import patient04.resources.Model;
 
 /**
@@ -19,6 +20,11 @@ public class Healthbag extends Pickup {
         
         this.model = Model.getResource("infuus.obj");
         light.setColor(0.3f, 1).setIntensity(3).setItemLight();
+    }
+    
+    @Override
+    public void Use() {
+//        Level.useables.remove(this);
     }
     
 }

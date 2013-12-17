@@ -8,7 +8,6 @@ import org.lwjgl.input.Mouse;
 import patient04.math.Matrix;
 import patient04.physics.AABB;
 import patient04.utilities.Input;
-import patient04.utilities.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
