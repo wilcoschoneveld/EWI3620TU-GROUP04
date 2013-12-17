@@ -155,7 +155,7 @@ public class Game implements State, Input.Listener {
     public void render() {
         if(!pauser.isPaused()) {
             // Set view matrix
-            renderer.view = player.getFirstPersonView();
+            renderer.view = player.getFirstPersonView(renderer.theEnd);
 
             // Change to geometry pass
             renderer.geometryPass();
@@ -171,9 +171,6 @@ public class Game implements State, Input.Listener {
         
         // Change to normal pass
         renderer.guiPass(player.timeWithoutMedicine);
-        
-        //renderer.glUpdateEffectPrams(player.timeWithoutMedicine);
-
                 
         // Debug navigation grid
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))

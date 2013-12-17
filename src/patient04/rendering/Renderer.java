@@ -52,7 +52,8 @@ public class Renderer {
                             lightP, lightC, lightI, lightR, attC, attL, attQ,
                                 effShader0, effShader1, effShader2, effShader3, effShader4;
     
-    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f , dX = 0, theEnd = 1.0f;
+    private float sinEffShader, cosEffShader, EffectIntensity = 0.0f , dX = 0;
+    public float  theEnd = 1.0f;
     private boolean crazy = true;
     
     // Effect shaders
@@ -363,6 +364,9 @@ public class Renderer {
     
     public void glUpdateEffectPrams(int timeWithoutMedicine){
         if(crazy == true){
+            
+            EffectIntensity = 0.45f;
+            
             sinEffShader = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
             cosEffShader = (float) Math.cos(Math.toRadians(timeWithoutMedicine) +90);
             dX = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
@@ -380,7 +384,7 @@ public class Renderer {
             
             if( theEnd >0.0f && timeWithoutMedicine % 10 == 0 && EffectIntensity >= 0.4f){
                 theEnd-= 0.01f;
-                if(theEnd <=0.05){
+                if(theEnd <=0.2){
                     // game over
                     System.out.println("GameOver");
                 }

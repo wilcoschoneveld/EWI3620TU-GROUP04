@@ -19,7 +19,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float HEIGHT = 1.8f;
 
     // Determines where the camera is located
-    public static final float EYEHEIGHT = 1.7f;
+    public static float EYEHEIGHT = 1.7f;
     
     // Movement acceleration
     public static final float ACCEL_WALKING = 1f;
@@ -28,7 +28,8 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_JUMP = 0.5f;
     
     public int timeWithoutMedicine = 0;
-
+    public Vector lastPosition, lastRotation;
+    public int fallRotate = -90;
     /** Constructs a new player.
      * 
      * @param level 
@@ -82,7 +83,7 @@ public class Player extends Entity implements Input.Listener {
      * 
      * @return 
      */
-    public Matrix getFirstPersonView() {
+    public Matrix getFirstPersonView(float theEnd) {
         
         viewbobbing *= 0.9f;
         
@@ -106,20 +107,40 @@ public class Player extends Entity implements Input.Listener {
             // Check if collision free
             boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
         }
-        
-        matrix.translate(
-                (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
-                (float)  Math.cos(distanceMoved * 6) * 0.05f * viewbobbing, 0);
-        matrix.rotate(
-                (float) -Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
-                0, 0, 1);
-        
-        matrix.rotate(-rotation.x, 1, 0, 0);
-        matrix.rotate(-rotation.y, 0, 1, 0);
-        matrix.translate(
+
+        if(theEnd < 0.4f && EYEHEIGHT > 0.5*EYEHEIGHT + 0.1f){
+                EYEHEIGHT -= 0.1f;
+                matrix.rotate(-lastRotation.x, 1, 0, 0);
+                matrix.rotate(-lastRotation.y, 0, 1, 0);
+                
+                matrix.translate(
+                    -lastPosition.x,
+                    -lastPosition.y - 0.5f*EYEHEIGHT,
+                    -lastPosition.z);
+
+                matrix.rotate(0, 0, (float) Math.toRadians(fallRotate),0);
+                fallRotate -= 10;
+
+        }
+        else{
+            matrix.translate(
+                    (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
+                    (float)  Math.cos(distanceMoved * 6) * 0.05f * viewbobbing, 0);
+            matrix.rotate(
+                    (float) -Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
+                    0, 0, 1);
+
+            matrix.rotate(-rotation.x, 1, 0, 0);
+            matrix.rotate(-rotation.y, 0, 1, 0);
+
+            matrix.translate(
                 -position.x,
                 -position.y - EYEHEIGHT,
                 -position.z);
+           
+            lastPosition = position;
+            lastRotation = rotation;
+        }
         
         return matrix;
     }
