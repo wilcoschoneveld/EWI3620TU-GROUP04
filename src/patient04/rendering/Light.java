@@ -6,6 +6,7 @@ import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
 import patient04.utilities.Buffers;
+import patient04.utilities.Utils;
 
 /**
  *
@@ -98,14 +99,16 @@ public class Light {
         renderer.glUpdateModelMatrix(matrix);
         
         // Discard if not in frustum (-1 due to radius scaling)
-        if (!renderer.frustum.isInside(null, -1f)) 
+        if (!renderer.frustum.isInside(null, -1)) 
             return;
         
         renderer.pointLightFirstPass();
         model.draw();
         
+        float d = (renderer.frustum.planes[5].distance(null) - 0.5f) * radius / 3;
+        
         renderer.pointLightSecondPass();        
-        renderer.glUpdateLightParams(this, 1);
+        renderer.glUpdateLightParams(this, Utils.clamp(d, 0, 1));
         model.draw();
     }
 }
