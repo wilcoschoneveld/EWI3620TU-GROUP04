@@ -6,7 +6,6 @@
 
 package patient04.level.pickups;
 
-import patient04.level.Level;
 import patient04.level.Solid;
 import patient04.level.Useable;
 import patient04.rendering.Light;
@@ -32,6 +31,7 @@ public class Pickup extends Solid implements Useable {
         light.setPosition(x, y + 0.2f, z);
     }
     
+    @Override
     public void Use() {
         
     }

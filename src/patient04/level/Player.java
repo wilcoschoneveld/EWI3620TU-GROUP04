@@ -97,12 +97,11 @@ public class Player extends Entity implements Input.Listener {
         Matrix matrix = new Matrix();
         
         Vector leanInput = new Vector();
-        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-0.5f, 0, 0);
-        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(0.5f, 0, 0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-1, 0, 0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(1, 0, 0);
         
         leandist *= LEAN_SPEED;
-        float leanscale = 1;   
-        
+                
         if(leanInput.x != 0) {
             // Create head aabb
             AABB aabb2 = aabb.copy();
@@ -113,21 +112,13 @@ public class Player extends Entity implements Input.Listener {
             // Check if collision free
             boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
             
-            if (isFree) leandist += leanInput.x * (1 - LEAN_SPEED);
-            
-            if (!isFree) {
-                if (!Keyboard.isKeyDown(Keyboard.KEY_A) 
-                        && !Keyboard.isKeyDown(Keyboard.KEY_D)) leanscale = 0.1f;
-                else if (Keyboard.isKeyDown(Keyboard.KEY_A) 
-                        || Keyboard.isKeyDown(Keyboard.KEY_D)) {
-                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) leanscale = 0.2f;
-                    else leanscale = 0.5f;
-                }
-            }
+            if (leandist < 1)
+                if (isFree) leandist += leanInput.x * (1 - LEAN_SPEED);
+            if (!isFree) leandist *= 0.7; 
         }
         
-        matrix.rotate(leandist * leanscale, 0, 0, 1);
-        matrix.translate(-leandist * leanscale, 0.1f, 0);
+        matrix.rotate(leandist, 0, 0, 1);
+        matrix.translate(-leandist, 0.1f, 0);
         
         matrix.translate(
                 (float)  Math.cos(distanceMoved * 3) * 0.05f * viewbobbing,
