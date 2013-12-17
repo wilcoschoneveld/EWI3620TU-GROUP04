@@ -58,7 +58,7 @@ public class Prop extends Element {
             case 1:
                 GL11.glVertex2f(x + bounds[0].z, z + bounds[1].x);
                 GL11.glVertex2f(x + bounds[0].z, z + bounds[0].x);
-                GL11.glVertex2f(x + bounds[1].z, z + bounds[0].z);
+                GL11.glVertex2f(x + bounds[1].z, z + bounds[0].x);
                 GL11.glVertex2f(x + bounds[1].z, z + bounds[1].x);
                 break;
         }
@@ -96,8 +96,8 @@ public class Prop extends Element {
                 return 2;
         }
         
-        if (x > this.x - 1 && x < this.x + 1
-         && z > this.z - 1 && z < this.z + 1)
+        if (x > this.x - 0.6f && x < this.x + 0.6f
+         && z > this.z - 0.6f && z < this.z + 0.6f)
             return 1;
         
         return 0;
