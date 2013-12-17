@@ -59,4 +59,12 @@ public class Solid {
         // Draw model
         model.draw();
     }
+    
+    public void drawLight(Renderer renderer) {
+        
+    }
+    
+    public Vector getPosition() {
+        return position;
+    }
 }

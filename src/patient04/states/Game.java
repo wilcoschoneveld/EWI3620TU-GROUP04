@@ -15,8 +15,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.enemies.Enemy;
 import patient04.level.Pauser;
-import patient04.level.Pickup;
+import patient04.level.pickups.Pickup;
 import patient04.level.Tutorial;
+import patient04.level.pickups.Healthbag;
+import patient04.level.pickups.Needle;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 
@@ -62,14 +64,12 @@ public class Game implements State, Input.Listener {
         Light tmpl;
         Pickup tmp2;
         
-        tmp2 = new Pickup();
-        tmp2.isNeedle();
-        tmp2.position.set(23, 0, 17);
+        tmp2 = new Needle();
+        tmp2.setPosition(23, 0, 17);
         level.addUseable(tmp2);
         
-        tmp2 = new Pickup();
-        tmp2.isBag();
-        tmp2.position.set(23, 0, 20);
+        tmp2 = new Healthbag();
+        tmp2.setPosition(23, 0, 20);
         level.addUseable(tmp2);
                 
         level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)

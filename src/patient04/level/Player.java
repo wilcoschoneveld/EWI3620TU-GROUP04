@@ -179,7 +179,7 @@ public class Player extends Entity implements Input.Listener {
         if (Input.keyboardKey(Keyboard.KEY_F, true)) {
             // Loop through useables
             for (Useable useable2 : Level.useables) {
-                if (position.copy().min(useable2.position).length() <= 0.5f) { 
+                if (position.copy().min(useable2.getPosition()).length() <= 0.5f) { 
                     useable2.Use();
                     break;
                 }

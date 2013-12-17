@@ -6,18 +6,20 @@
 
 package patient04.level;
 
+import patient04.math.Vector;
+import patient04.rendering.Renderer;
+
 /**
  *
  * @author Bart
  */
-public class Useable extends Solid{
+public interface Useable{
     
-    public Useable() {
-        super();
-    }
+    public void Use(); 
     
-    public void Use() {
-        if (this instanceof Pickup)
-            Level.useables.remove(this);
-    }
+    public void draw(Renderer renderer);
+    
+    public void drawLight(Renderer renderer);
+    
+    public Vector getPosition();
 }

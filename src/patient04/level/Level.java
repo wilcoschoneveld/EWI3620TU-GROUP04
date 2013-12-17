@@ -131,6 +131,9 @@ public class Level {
         
         for (Entity entity : entities)
             entity.drawLight(renderer);
+        
+        for (Useable useable : useables)
+            useable.drawLight(renderer);
     }
     
     public void drawNavPoints(Renderer renderer) {
