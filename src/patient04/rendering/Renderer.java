@@ -363,10 +363,7 @@ public class Renderer {
     }
     
     public void glUpdateEffectPrams(int timeWithoutMedicine){
-        if(crazy == true){  
-            
-            EffectIntensity = 0.45f;
-            
+        if(crazy == true){              
             sinEffShader = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
             cosEffShader = (float) Math.cos(Math.toRadians(timeWithoutMedicine) +90);
             dX = (float) Math.sin(Math.toRadians(timeWithoutMedicine));
