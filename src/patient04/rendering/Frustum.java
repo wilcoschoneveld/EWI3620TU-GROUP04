@@ -21,8 +21,12 @@ public class Frustum {
     }
     
     public void update(Matrix projection, Matrix view, Matrix model) {
-        // Define the combined MVP matrix
-        Matrix M = projection.copy().multiply(view).multiply(model);
+        // Define the combined VP matrix
+        Matrix M = projection.copy().multiply(view);
+        
+        // Multiply with the model matrix
+        if (model != null)
+            M.multiply(model);
         
         // Left clipping plane
         planes[0] = new Plane(M.val[Matrix.m30] + M.val[Matrix.m00],
