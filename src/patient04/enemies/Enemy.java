@@ -170,6 +170,10 @@ public class Enemy extends Entity {
         // Update modelview matrix
         renderer.glUpdateModelMatrix(matrix);
         
+        // Discard if outside frustum (converted to AABB?)
+        if (!renderer.frustum.isInside(null, -2f)) 
+            return;
+        
         // Draw model
         int frame = (int) (time * 23);
         anim_walking[frame].draw();
