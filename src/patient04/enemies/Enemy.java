@@ -28,7 +28,6 @@ public class Enemy extends Entity {
     private final Light light;
     private float nextflicker;
     
-    private float time;
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
 
@@ -50,7 +49,7 @@ public class Enemy extends Entity {
                 .setColor(0.15f, 0.6f)
                 .setEnvironmentLight();
         
-        time = (float) Math.random();
+        distanceMoved = (float) Math.random();
     }
     
     @Override
@@ -79,10 +78,6 @@ public class Enemy extends Entity {
             
             acceleration.add(direction);
             rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
-            
-            // Animation (TODO: redo this with distanceMoved )
-            if((time += dt) >= 1)
-                time -= 1;
         }
         
         // Light flickering
@@ -177,8 +172,10 @@ public class Enemy extends Entity {
         if (renderer.frustum.isOutside(aabb, -0.1f))
             return;
         
+        // Calculate animation frame
+        int frame = (int) ((distanceMoved % 1) * 23);
+        
         // Draw model
-        int frame = (int) (time * 23);
         anim_walking[frame].draw();
     }
     

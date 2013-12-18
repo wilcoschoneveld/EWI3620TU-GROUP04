@@ -14,6 +14,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
+import patient04.math.Vector;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
 
@@ -104,14 +105,14 @@ public class Game implements State, Input.Listener {
         }
         
         if(Input.keyboardKey(Keyboard.KEY_F, true)) {
+            Vector position = player.getPosition().add(0, 2, 0);
+            
             // Create a new light at player position
             level.addNewLight().setColor((float) Math.random(), 0.7f)
                     .setIntensity(15).setEnvironmentLight()
-                    .setPosition(player.position.x,
-                                 player.position.y + 2,
-                                 player.position.z);
+                    .setPosition(position.x, position.y, position.z);
             
-            Logger.debug("Light placed at: " + player.position);
+            Logger.debug("Light placed at: " + position);
             
             return Input.HANDLED;
         }
