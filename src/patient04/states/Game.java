@@ -11,7 +11,9 @@ import patient04.math.Matrix;
 import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
+import patient04.Sound.Sound;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
 import patient04.utilities.Input;
@@ -28,6 +30,8 @@ public class Game implements State, Input.Listener {
     private Timer timer;
     private Level level;
     private Player player;
+    private Sound gameSound;
+    private final int diffSounds = 3;
     
     @Override
     public void initialize() {        
@@ -66,6 +70,22 @@ public class Game implements State, Input.Listener {
         controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
+        
+        // Initialize sound
+        gameSound = new Sound(diffSounds);
+        
+        // set the different sounds
+        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
+        gameSound.addSound("HeartMonitor.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+        
+        // set position of the sound 2
+        gameSound.setSourcePos(2, 10, 0, 10);
+        
+        // play the different sounds
+        gameSound.playSound(0);
+        gameSound.playSound(1);
+        gameSound.playSound(2);
     }
 
     @Override
@@ -80,6 +100,7 @@ public class Game implements State, Input.Listener {
         
         // Handle keyboard and mouse events
         controller.processInput();
+        
         
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
