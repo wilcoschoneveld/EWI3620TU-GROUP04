@@ -7,7 +7,6 @@ import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
-import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -50,6 +49,8 @@ public class Enemy extends Entity {
         light = new Light()
                 .setColor(0.15f, 0.6f)
                 .setEnvironmentLight();
+        
+        time = (float) Math.random();
     }
     
     @Override

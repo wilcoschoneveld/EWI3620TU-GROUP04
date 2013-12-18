@@ -24,7 +24,7 @@ public class Waypoint extends Element {
         this.x = x;
         this.z = z;
         
-        priority = 2;
+        priority = 6;
     }
 
     @Override

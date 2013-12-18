@@ -43,6 +43,8 @@ public class Prop extends Element {
         float hue = (name.toLowerCase().charAt(0) - 97) / 25f;
         
         color = Color.getHSBColor(hue, 1, 1).getComponents(null);
+        
+        priority = 3;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class Prop extends Element {
         
         if (target != -1) {
             glAttribute(x, z, angle * (float) Math.PI / 2,
-                    level.editor.camera.zoom * (bounds[1].x + 0.5f),
+                    level.editor.camera.zoom * 0.5f + bounds[1].x,
                     level.editor.camera.zoom * 0.1f, Color.WHITE);
         }
         
@@ -110,7 +112,7 @@ public class Prop extends Element {
     @Override
     public int select(boolean selected, float x, float z) {
         if (selected) {
-            float len = level.editor.camera.zoom * (bounds[1].x + 0.5f); 
+            float len = level.editor.camera.zoom * 0.5f + bounds[1].x;
             float lx = this.x + (float) Math.cos(angle * Math.PI / 2) * len;
             float lz = this.z + (float) -Math.sin(angle * Math.PI / 2) * len;
             

@@ -29,7 +29,7 @@ public class Start extends Element {
         this.x = x;
         this.z = z;
         
-        priority = 5;
+        priority = 4;
     }
 
     @Override

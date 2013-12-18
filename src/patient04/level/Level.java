@@ -243,7 +243,7 @@ public class Level {
                                              Float.parseFloat(tokens[2]))
                                 .setColor(Float.parseFloat(tokens[3]),
                                           Float.parseFloat(tokens[4]))
-                                .setIntensity(Float.parseFloat(tokens[5]) * 5)
+                                .setIntensity(Float.parseFloat(tokens[5]) * 7)
                                 .setEnvironmentLight();
                         
                         break;

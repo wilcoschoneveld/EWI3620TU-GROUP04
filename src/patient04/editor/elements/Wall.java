@@ -6,6 +6,7 @@
 
 package patient04.editor.elements;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 
