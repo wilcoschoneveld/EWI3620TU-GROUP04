@@ -64,11 +64,16 @@ public class Sound {
    }
    
    public int addSound(String soundName, float pitch, float gain , int looping){        // looping = AL10.AL_TRUE/AL10.AL_FALSE       
-       String locationFile = defaultSoundLocation + soundName;
-       System.out.println(locationFile + "    " + index);
-       sound = WaveData.create(locationFile);
+       //String locationFile = defaultSoundLocation + soundName;
        
-       //System.out.println(index + "index");
+       sound = WaveData.create(soundName);
+       
+       System.out.println( buffer.get(index));       
+       System.out.println( sound.format);
+       System.out.println( sound.data);
+       System.out.println( sound.samplerate);
+
+       
        AL10.alBufferData(buffer.get(index), sound.format, sound.data, sound.samplerate);
        
        // Dispose the WaveData
