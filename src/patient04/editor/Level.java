@@ -206,10 +206,13 @@ public class Level implements Input.Listener {
                 }
             case KEY:
                 if (Input.mouseButton(0, true)) {
-                    //File load = Utils.showOpenDialog();
-                    //Prop prop = new Prop(this, mx, mz, load.getName());
+                    String s;
                     
-                    String s = (String) JOptionPane.showInputDialog(
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
+                            selected instanceof Prop)
+                        s = ((Prop) selected).name.replace(".obj", ""); 
+                    else
+                        s = (String) JOptionPane.showInputDialog(
                             "Enter a model name:");
                     
                     if (s != null && Model.getResource(s + ".obj") != null) {

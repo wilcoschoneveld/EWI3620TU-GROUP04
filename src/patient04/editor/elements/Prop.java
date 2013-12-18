@@ -21,7 +21,7 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class Prop extends Element {
-    private final String name;
+    public final String name;
     private final Vector[] bounds;
     private final Font fntProp;
     private final float[] color;
