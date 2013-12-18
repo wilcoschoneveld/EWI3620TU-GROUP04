@@ -108,7 +108,9 @@ public class Light extends Element {
     }
     
     @Override
-    public void release() { }
+    public boolean release() {
+        return true;
+    }
     
     @Override
     public String toString() {

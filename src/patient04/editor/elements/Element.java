@@ -15,7 +15,7 @@ public abstract class Element implements Comparable<Element> {
     abstract public void draw(int target);
     abstract public void translate(int target, float dx, float dz);
     abstract public int select(boolean selected, float x, float z);
-    abstract public void release();
+    abstract public boolean release();
     
     public Element(Level level) {
         this.level = level;
