@@ -72,20 +72,21 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // Initialize sound
-        gameSound = new Sound(diffSounds);
+        gameSound = new Sound(1);
         
         // set the different sounds
-        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
-        gameSound.addSound("HeartMonitor.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+//        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
+//       // gameSound.addSound("HeartMonitor.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+//        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
         
         // set position of the sound 2
-        gameSound.setSourcePos(2, 10, 0, 10);
+//        gameSound.setSourcePos(2, 10, 0, 10);
         
         // play the different sounds
         gameSound.playSound(0);
-        gameSound.playSound(1);
-        gameSound.playSound(2);
+//        gameSound.playSound(1);
+//        gameSound.playSound(2);
     }
 
     @Override
