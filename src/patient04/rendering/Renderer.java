@@ -47,7 +47,7 @@ public class Renderer {
             lightI, lightR, attC, attL, attQ;
     
     // Effect shader locations
-    private final int effectShader, effLevel, effSin, effCos;
+    private final int effectShader, effLevel, effSin, effCos, effColor;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -168,6 +168,7 @@ public class Renderer {
         effLevel = GL20.glGetUniformLocation(effectShader, "effectLevel");
         effSin = GL20.glGetUniformLocation(effectShader, "effectSin");
         effCos = GL20.glGetUniformLocation(effectShader, "effectCos");
+        effColor = GL20.glGetUniformLocation(effectShader, "effectColor");
         
         // Bind uniform variables
         Shaders.glUniform1i(effectShader, "uTexAccum", 0);
@@ -220,17 +221,25 @@ public class Renderer {
     }
     
     private void updateEffectParams(Player player) {
-        
+        // Determine the effect level
         float level = Math.max(0, 1 - 1.25f*player.medicineLevel);
         
+        // Upload the effect level
         GL20.glUniform1f(effLevel, level);
         
+        // Determine the period (TODO variable of effect level?)
         float period = 3000;
         
+        // Determine the angle
         double angle = (Timer.getTime() % period) * 2 * Math.PI / period;
-                
-        GL20.glUniform1f(effSin, (float) Math.sin(angle));
-        GL20.glUniform1f(effCos, (float) Math.cos(angle));
+        float sin = (float) Math.sin(angle), cos = (float) Math.cos(angle);
+        
+        // Upload the sine and cosine values to the shader
+        GL20.glUniform1f(effSin, sin);
+        GL20.glUniform1f(effCos, cos);
+        
+        // Upload the effect color to the shader
+        GL20.glUniform4f(effColor, sin, cos, sin * cos, 1);
     }
     
     private void glUpdateProjectionMatrix() {

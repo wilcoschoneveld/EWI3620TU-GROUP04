@@ -5,7 +5,7 @@ uniform vec2 screenSize;
 uniform float effectLevel;
 uniform float effectSin;
 uniform float effectCos;
-
+uniform vec4 effectColor;
 
 uniform sampler2D uTexAccum;
 uniform sampler2D uTexDiffuse;
@@ -20,8 +20,7 @@ void main() {
 
     vec4 aAccum = texture2D(uTexAccum, pixelCoord);
     
-    gl_FragColor += aAccum;
-    gl_FragColor += 0.2 * effectLevel * vec4(effectSin, effectCos, effectSin*effectCos, 1);
+    gl_FragColor += aAccum + 0.2 * effectLevel * effectColor;
 
     if (effectLevel > 1)
         gl_FragColor -= (effectLevel - 1) * 2;
