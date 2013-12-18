@@ -26,7 +26,8 @@ public class Sound {
     private FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
     private FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f});
     private FloatBuffer listenerOri = BufferUtils.createFloatBuffer(6).put(new float[] {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f});
-
+    
+    private String defaultSoundLocation = "res/sounds/";
     private WaveData sound;
     
     private int index;
@@ -63,7 +64,9 @@ public class Sound {
    }
    
    public int addSound(String soundName, float pitch, float gain , int looping){        // looping = AL10.AL_TRUE/AL10.AL_FALSE       
-       sound = WaveData.create(soundName);
+       String locationFile = defaultSoundLocation + soundName;
+       System.out.println(locationFile + "    " + index);
+       sound = WaveData.create(locationFile);
        
        //System.out.println(index + "index");
        AL10.alBufferData(buffer.get(index), sound.format, sound.data, sound.samplerate);
