@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL20;
 
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
+import patient04.level.Player;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
@@ -19,6 +20,7 @@ import patient04.resources.Texture;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 import patient04.utilities.Shaders;
+import patient04.utilities.Timer;
 
 /**
  * 
@@ -45,7 +47,7 @@ public class Renderer {
             lightI, lightR, attC, attL, attQ;
     
     // Effect shader locations
-    private final int effectShader;
+    private final int effectShader, effLevel, effSin, effCos;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -78,7 +80,7 @@ public class Renderer {
         positionTexture = new Texture(w, h, GL_RGBA16F_ARB);
         normalTexture = new Texture(w, h, GL_RGBA16F_ARB);
         diffuseTexture = new Texture(w, h, GL11.GL_RGBA8);
-        accumTexture = new Texture(w, h, GL11.GL_RGBA8);
+        accumTexture = new Texture(w, h, GL11.GL_RGBA8, GL11.GL_LINEAR);
         
         // Create new attachable render buffer
         depthStencilBuffer = glGenRenderbuffers();
@@ -162,6 +164,11 @@ public class Renderer {
         // Bind the effects shader
         useShaderProgram(effectShader);
         
+        // Obtain uniform variable locations
+        effLevel = GL20.glGetUniformLocation(effectShader, "effectLevel");
+        effSin = GL20.glGetUniformLocation(effectShader, "effectSin");
+        effCos = GL20.glGetUniformLocation(effectShader, "effectCos");
+        
         // Bind uniform variables
         Shaders.glUniform1i(effectShader, "uTexAccum", 0);
         Shaders.glUniform1i(effectShader, "uTexDiffuse", 1);
@@ -196,21 +203,70 @@ public class Renderer {
         }
     }
     
-    public void dispose() {
-        // Delete the framebuffers
-        glDeleteFramebuffers(geometryBuffer);
-        glDeleteRenderbuffers(depthStencilBuffer);
+    public void updateLightParams(Light light, float fade) {
+        // Upload light position
+        Vector pos = light.getPosition().copy().premultiply(view);
         
-        // Delete the textures
-        positionTexture.dispose();
-        normalTexture.dispose();
-        diffuseTexture.dispose();
-        accumTexture.dispose();
+        // Update light values
+        GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
+        GL20.glUniform4(lightC, light.getColor());
+        GL20.glUniform1f(lightI, light.getIntensity() * fade);
+        GL20.glUniform1f(lightR, light.getRadius());
         
-        // Delete the shaders
-        GL20.glDeleteProgram(geometryShader);
-        GL20.glDeleteProgram(lightingShader);
-        GL20.glDeleteProgram(debugShader);
+        // Update light attenuation model
+        GL20.glUniform1f(attC, light.getConstant());
+        GL20.glUniform1f(attL, light.getLinear());
+        GL20.glUniform1f(attQ, light.getQuadratic());
+    }
+    
+    private void updateEffectParams(Player player) {
+        
+        float level = Math.max(0, 1 - 1.25f*player.medicineLevel);
+        
+        GL20.glUniform1f(effLevel, level);
+        
+        float period = 3000;
+        
+        double angle = (Timer.getTime() % period) * 2 * Math.PI / period;
+                
+        GL20.glUniform1f(effSin, (float) Math.sin(angle));
+        GL20.glUniform1f(effCos, (float) Math.cos(angle));
+    }
+    
+    private void glUpdateProjectionMatrix() {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadMatrix(projection.toBuffer());
+    }
+    
+    public void glUpdateModelMatrix(Matrix model) {
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        
+        if(model != null)
+            GL11.glLoadMatrix(view.copy().multiply(model).toBuffer());
+        else
+            GL11.glLoadMatrix(view.toBuffer());
+        
+        // Update frustum
+        frustum.update(projection, view, model);
+    }
+    
+    public final void glLoadDefaults() {
+        // Enable depth testing
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
+                
+        // Set back-face culling
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
+        
+        // Disable blending
+        GL11.glDisable(GL11.GL_BLEND);
+        
+        // Disable stencil
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        
+        // Disable depth clamp
+        GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);
     }
     
     public void geometryPass() {
@@ -262,7 +318,30 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
     }
     
-    public void guiPass() {
+    public void pointLightFirstPass() {
+        useShaderProgram(stencilShader);
+        
+        GL11.glDrawBuffer(0);
+        
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0);
+        
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+    }
+    
+    public void pointLightSecondPass() {
+        useShaderProgram(lightingShader);
+        
+        GL11.glDrawBuffer(accumAttachment);
+        
+        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
+        
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+    }
+    
+    public void guiPass(Player player) {
         // Bind the application-provided framebuffer
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         
@@ -278,6 +357,9 @@ public class Renderer {
         
         // Bind the effect shader
         useShaderProgram(effectShader);
+        
+        // Setup effects
+        updateEffectParams(player);
         
         // Draw a full screen quad
         screenQuad.draw();
@@ -312,78 +394,20 @@ public class Renderer {
         screenQuad.draw();
     }
     
-    private void glUpdateProjectionMatrix() {
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadMatrix(projection.toBuffer());
-    }
-    
-    public void glUpdateModelMatrix(Matrix model) {
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    public void dispose() {
+        // Delete the framebuffers
+        glDeleteFramebuffers(geometryBuffer);
+        glDeleteRenderbuffers(depthStencilBuffer);
         
-        if(model != null)
-            GL11.glLoadMatrix(view.copy().multiply(model).toBuffer());
-        else
-            GL11.glLoadMatrix(view.toBuffer());
+        // Delete the textures
+        positionTexture.dispose();
+        normalTexture.dispose();
+        diffuseTexture.dispose();
+        accumTexture.dispose();
         
-        // Update frustum
-        frustum.update(projection, view, model);
-    }
-    
-    public final void glLoadDefaults() {
-        // Enable depth testing
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
-                
-        // Set back-face culling
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
-        
-        // Disable blending
-        GL11.glDisable(GL11.GL_BLEND);
-        
-        // Disable stencil
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
-        
-        // Disable depth clamp
-        GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);
-    }
-    
-    public void glUpdateLightParams(Light light, float fade) {
-        // Upload light position
-        Vector pos = light.getPosition().copy().premultiply(view);
-        
-        // Update light values
-        GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
-        GL20.glUniform4(lightC, light.getColor());
-        GL20.glUniform1f(lightI, light.getIntensity() * fade);
-        GL20.glUniform1f(lightR, light.getRadius());
-        
-        // Update light attenuation model
-        GL20.glUniform1f(attC, light.getConstant());
-        GL20.glUniform1f(attL, light.getLinear());
-        GL20.glUniform1f(attQ, light.getQuadratic());
-    }
-    
-    public void pointLightFirstPass() {
-        useShaderProgram(stencilShader);
-        
-        GL11.glDrawBuffer(0);
-        
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0);
-        
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-    }
-    
-    public void pointLightSecondPass() {
-        useShaderProgram(lightingShader);
-        
-        GL11.glDrawBuffer(accumAttachment);
-        
-        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
-        
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        // Delete the shaders
+        GL20.glDeleteProgram(geometryShader);
+        GL20.glDeleteProgram(lightingShader);
+        GL20.glDeleteProgram(debugShader);
     }
 }

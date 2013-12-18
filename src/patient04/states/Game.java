@@ -35,7 +35,7 @@ public class Game implements State, Input.Listener {
         renderer = new Renderer();
         
         renderer.projection = Matrix.projPerspective(
-               70, (float) Display.getWidth() / Display.getHeight(), .1f, 30);
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 50);
         
         // Create a new timer
         timer = new Timer();
@@ -138,8 +138,8 @@ public class Game implements State, Input.Listener {
             level.drawLights(renderer);
         }
         
-        // Change to normal pass
-        renderer.guiPass();
+        // Do a gui pass
+        renderer.guiPass(player);
         
         // Debug navigation grid
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))

@@ -16,7 +16,7 @@ void main() {
     vec4 colorA = texture2D(uTexAccum, pixelCoord);
 
     if(pixelCoord.x > 1 && pixelCoord.y > 1) {
-        gl_FragColor = colorP;
+        gl_FragColor = colorP * 0.4;
     } else if(pixelCoord.x > 1 && pixelCoord.y < 1) {
         gl_FragColor = colorA;
     } else if(pixelCoord.x < 1 && pixelCoord.y > 1) {

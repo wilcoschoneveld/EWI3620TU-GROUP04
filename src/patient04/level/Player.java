@@ -31,8 +31,9 @@ public class Player extends Entity implements Input.Listener {
 
     // Player variables
     private float viewBobbing = 0;
-    private float medicineLevel = 1;
     private float viewHeight = EYE_HEIGHT;
+    public float medicineLevel = 1;
+    public boolean injecting = false;
     
     /** Constructs a new player.
      * 
@@ -49,7 +50,11 @@ public class Player extends Entity implements Input.Listener {
     @Override
     public void update(float dt) {
         // Use some medicine
-        medicineLevel -= MEDICINE_USE_RATE * dt;
+        if (injecting) {
+            medicineLevel += MEDICINE_USE_RATE * 10 * dt;
+            if (medicineLevel > 1) injecting = false;
+        } else
+            medicineLevel -= MEDICINE_USE_RATE * dt;
         
         // Define a new movement vector
         Vector moveInput = new Vector();
@@ -99,7 +104,7 @@ public class Player extends Entity implements Input.Listener {
         Matrix matrix = new Matrix();
         
         // Drop to ground if player has no more medicine
-        if (medicineLevel < 0)
+        if (medicineLevel <= 0)
             viewHeight = Math.max(viewHeight - 0.03f, 0.25f);
             
         // Calculate view bobbing
@@ -123,8 +128,6 @@ public class Player extends Entity implements Input.Listener {
         return matrix;
     }
     
-    
-
     @Override
     public boolean handleMouseEvent() {
         // Poll for mouse movement
@@ -154,7 +157,7 @@ public class Player extends Entity implements Input.Listener {
         
         // Handle self injection (TODO: REMOVE)
         if (Input.keyboardKey(Keyboard.KEY_G, true)) {
-            medicineLevel = 1;
+            injecting = true;
             
             return Input.HANDLED;
         }
