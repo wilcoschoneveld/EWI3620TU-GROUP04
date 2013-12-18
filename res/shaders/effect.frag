@@ -21,6 +21,7 @@ void main() {
     vec4 aAccum = texture2D(uTexAccum, pixelCoord);
     
     gl_FragColor += aAccum;
+    gl_FragColor += 0.2 * effectLevel * vec4(effectSin, effectCos, effectSin*effectCos, 1);
 
     if (effectLevel > 1)
         gl_FragColor -= (effectLevel - 1) * 2;

@@ -106,6 +106,8 @@ public class Player extends Entity implements Input.Listener {
         // Drop to ground if player has no more medicine
         if (medicineLevel <= 0)
             viewHeight = Math.max(viewHeight - 0.03f, 0.25f);
+        else
+            viewHeight = Math.min(viewHeight + 0.03f, EYE_HEIGHT);
             
         // Calculate view bobbing
         viewBobbing = viewBobbing * 0.9f + (onGround ? 0.1f : 0);
