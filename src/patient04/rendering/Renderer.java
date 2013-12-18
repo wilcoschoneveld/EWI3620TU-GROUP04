@@ -375,14 +375,13 @@ public class Renderer {
             GL20.glUniform1f(effShader4, theEnd);
             
             // the modulus indicates how fast the effect increases and the smaller then 0.4 is the max intenisty of the effect;
-            if(timeWithoutMedicine % 45 == 0 && EffectIntensity <= 0.4f){
+            if(timeWithoutMedicine % 45 == 0 && EffectIntensity <= 0.3f){
                 EffectIntensity += 0.01;
             }
             
-            if( theEnd >0.0f && timeWithoutMedicine % 10 == 0 && EffectIntensity >= 0.4f){
+            if( theEnd >0.0f && timeWithoutMedicine % 10 == 0 && EffectIntensity >= 0.3f){
                 theEnd-= 0.01f;
-                if(theEnd <=0.2){
-                    // game over
+                if(theEnd <=0.1){
                     System.out.println("GameOver");
                 }
             }

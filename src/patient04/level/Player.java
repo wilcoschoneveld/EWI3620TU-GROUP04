@@ -111,7 +111,8 @@ public class Player extends Entity implements Input.Listener {
             boolean isFree = level.getCollisionBoxes(aabb2).isEmpty();
         }
 
-        if(theEnd < 0.3f && EYEHEIGHT > 0.7*EYEHEIGHT + 0.1f){
+        if(theEnd < 0.2f){
+            if(theEnd < 0.2f && EYEHEIGHT > 0.7*EYEHEIGHT + 0.1f){
                 fallingGameOver = true;
                 EYEHEIGHT -= 0.1f;
                 matrix.rotate(-rotation.x, 1, 0, 0);
@@ -125,8 +126,8 @@ public class Player extends Entity implements Input.Listener {
                     -position.z);
 
                 fallRotate += 5;
-        }
-        else if(theEnd < 0.3f){
+            }
+            else{
                 matrix.rotate(-rotation.x, 1, 0, 0);
                 matrix.rotate(-rotation.y, 0, 1, 0);
                 
@@ -136,6 +137,7 @@ public class Player extends Entity implements Input.Listener {
                     -position.x,
                     -position.y - EYEHEIGHT,
                     -position.z);
+            }
         }
         else{
             matrix.translate(
