@@ -265,7 +265,6 @@ public class Level {
                         
                         level.addWaypoint(waypoint);
                         
-                        System.out.println("waypoint");
                         break;
                     case "start":
                         level.startPoint.set(Float.parseFloat(tokens[1]),

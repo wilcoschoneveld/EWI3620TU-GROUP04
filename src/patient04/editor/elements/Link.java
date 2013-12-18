@@ -98,8 +98,6 @@ public class Link extends Element {
         if (getLinks(level.elements, one, two).size() > 1)
             return false;
         
-        System.out.println("connected!" + Timer.getTime());
-        
         return true;
     }
     

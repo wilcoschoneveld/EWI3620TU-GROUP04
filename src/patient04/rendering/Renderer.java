@@ -21,11 +21,6 @@ import patient04.utilities.Logger;
 import patient04.utilities.Shaders;
 
 /**
- * TODO List:
- * - Full screen
- * - Frustum culling
- * - Diffuse color to shader for models
- * - Modelview matrix from ENEMy to Entity?
  * 
  * @author Wilco
  */
@@ -36,21 +31,21 @@ public class Renderer {
                             diffuseAttachment = GL_COLOR_ATTACHMENT2,
                             accumAttachment = GL_COLOR_ATTACHMENT3;
     
-    // Static geometry pass draw buffer list
+    // Geometry pass draw buffer list
     public static final IntBuffer gPassDrawBuffers = Buffers.createIntBuffer(
             positionAttachment, normalAttachment, diffuseAttachment);
     
-    // Geometry pass texture objects
+    // Geometry/Lighting buffer textures
     private final Texture
             positionTexture, normalTexture, diffuseTexture, accumTexture;
 
-    // Geometry frame buffer object
-    private final int geometryBuffer, depthStencilBuffer;
+    // Geometry/Lighting shader locations
+    private final int geometryBuffer, depthStencilBuffer, geometryShader, 
+            lightingShader, stencilShader, debugShader, lightP, lightC,
+            lightI, lightR, attC, attL, attQ;
     
-    // Shaders
-    private final int geometryShader, screenShader,
-                        lightingShader, stencilShader, debugShader,
-                            lightP, lightC, lightI, lightR, attC, attL, attQ;
+    // Effect shader locations
+    private final int effectShader;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -160,15 +155,17 @@ public class Renderer {
         GL20.glStencilOpSeparate(GL11.GL_BACK,
                 GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
         
-        screenShader = Shaders.loadShaderPairFromFiles(
-                "res/shaders/pass.vert", "res/shaders/ambient.frag");
+        // Load the effects shader
+        effectShader = Shaders.loadShaderPairFromFiles(
+                "res/shaders/pass.vert", "res/shaders/effect.frag");
         
-        useShaderProgram(screenShader);
+        // Bind the effects shader
+        useShaderProgram(effectShader);
         
-        Shaders.glUniform1i(screenShader, "uTexPosition", 0);
-        Shaders.glUniform1i(screenShader, "uTexNormal", 1);
-        Shaders.glUniform1i(screenShader, "uTexDiffuse", 2);
-        Shaders.glUniform2f(screenShader, "screenSize", w, h);
+        // Bind uniform variables
+        Shaders.glUniform1i(effectShader, "uTexAccum", 0);
+        Shaders.glUniform1i(effectShader, "uTexDiffuse", 1);
+        Shaders.glUniform2f(effectShader, "screenSize", w, h);
         
         // Load debug shader
         debugShader = Shaders.loadShaderPairFromFiles(
@@ -235,16 +232,18 @@ public class Renderer {
     }
     
     public void lightingPass() {
-        // Bind the window provided buffer object
+        // Bind the geometry buffer
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
         GL11.glDrawBuffer(accumAttachment);
         
         // Set OpenGL state
         glLoadDefaults();
         glUpdateProjectionMatrix();
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glCullFace(GL11.GL_FRONT);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
         GL11.glEnable(ARBDepthClamp.GL_DEPTH_CLAMP);
         
@@ -261,30 +260,30 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
-        
-        useShaderProgram(screenShader);
-        
-        screenQuad.draw();
-        
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glCullFace(GL11.GL_FRONT);
     }
     
     public void guiPass() {
-        // Blit everything from accumulation buffer to frame
+        // Bind the application-provided framebuffer
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, geometryBuffer);
-        GL11.glReadBuffer(accumAttachment);
-        glBlitFramebuffer(0, 0, accumTexture.width, accumTexture.height,
-                          0, 0, accumTexture.width, accumTexture.height,
-                          GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST);
-        
-        // Bind the standard shader
-        useShaderProgram(0);
         
         // Set OpenGL state
         glLoadDefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        // Bind accumulation and diffuse texture
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
+        
+        // Bind the effect shader
+        useShaderProgram(effectShader);
+        
+        // Draw a full screen quad
+        screenQuad.draw();
+        
+        // Bind the standard shader
+        useShaderProgram(0);
     }
     
     public void debugPass() {

@@ -99,15 +99,12 @@ public class Enemy extends Entity {
         
         // Loop through all waypoints to find nearest
         for (Waypoint waypoint : level.waypoints) {
-            System.out.println("one");
             float tmpdist = waypoint.position.copy().min(position).length();
             if(tmpdist < currentDist) {
                 nextWaypoint = waypoint;
                 currentDist = tmpdist;
             }
         }
-        
-        System.out.println(nextWaypoint);
         
         // Set previous waypoint to null
         prevWaypoint = null;
