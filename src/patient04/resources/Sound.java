@@ -15,6 +15,7 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
 import patient04.utilities.Buffers;
+import patient04.utilities.Logger;
 
 /**
  *
@@ -47,6 +48,9 @@ public class Sound {
         // generate openAL buffers
         AL10.alGenBuffers(buffer);
         AL10.alGenSources(source);
+        
+        if (AL10.alGetError() != AL10.AL_NO_ERROR)
+            Logger.error("OpenAL initialization error!");
     }
     
     public static Sound getManager() {
@@ -81,7 +85,7 @@ public class Sound {
     }
     
     public Short newShort(String name) {
-        return new Short(name, 1.0f, 1.0f, AL10.AL_FALSE);
+        return new Short(name, 1.0f, 0.2f, AL10.AL_FALSE);
     }
     
     public final class Short {
@@ -111,9 +115,10 @@ public class Sound {
                 setSourcePosition(0, 0, 0);
                 setSourceVelocity(0, 0, 0);
                 
-                currentloc++;
+                if (AL10.alGetError() != AL10.AL_NO_ERROR)
+                    Logger.error("OpenAL sound load error! " + loc);
                 
-                System.out.println("index: " + bufferpos);
+                currentloc++;
             } catch(Exception e) {
                 e.printStackTrace();
                 bufferpos = -1;

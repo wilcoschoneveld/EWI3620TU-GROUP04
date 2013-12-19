@@ -45,7 +45,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel16632365.lvl");
+        level = Level.fromFile("testlevel2537675.lvl");
         
         // Pre-initialize sound
         Sound.getManager();
@@ -73,23 +73,6 @@ public class Game implements State, Input.Listener {
         controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
-        
-        // 
-        
-//        
-//        gameSound = new Sound(3);
-//        
-//        // set the different sounds
-//        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
-//        gameSound.addSound("HeartMonitor.wav", 1.0f, 0.5f, AL10.AL_TRUE);
-//        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-//        
-//        // set position of the sound 2
-//        gameSound.setSourcePos(1, 2.5f, 0, 0.8f);
-//        //gameSound.setSourcePos(2, 10, 0, 10);
-//        // play the different sounds
-//        gameSound.playSound(1);
-       // gameSound.playSound(2);
     }
 
     @Override
