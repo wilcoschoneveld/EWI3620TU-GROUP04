@@ -2,6 +2,7 @@ package patient04;
 
 import patient04.utilities.Logger;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -75,11 +76,12 @@ public final class Main {
         // Create a new DisplayMode
         DisplayMode dm = Utils.findDisplayMode(desiredWidth, desiredHeight);
 
-        // Try to create a game window
+        // Try to create a game window and sound
         try {
             Display.setDisplayMode(dm);
             Display.setFullscreen(fullscreen);
             Display.create();
+            AL.create();
         } catch (LWJGLException e) {
             System.exit(0);
         }
@@ -143,8 +145,9 @@ public final class Main {
         if (currentState != null)
             currentState.destroy();
         
-        // Destroy the display
+        // Destroy the display and sound
         Display.destroy();
+        AL.destroy();
         
         Logger.log("Application succesfully destroyed!");
     }

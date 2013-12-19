@@ -12,10 +12,10 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import patient04.resources.Sound;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
 import patient04.math.Vector;
+import patient04.resources.Sound;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
 
@@ -30,7 +30,6 @@ public class Game implements State, Input.Listener {
     private Timer timer;
     private Level level;
     private Player player;
-    public Sound gameSound;
     private final int diffSounds = 3;
     
     @Override
@@ -43,9 +42,6 @@ public class Game implements State, Input.Listener {
         
         // Create a new timer
         timer = new Timer();
-        
-        // Pre-initialize sound
-        Sound.getManager();
         
         // Create a new maze and player
         level = Level.fromFile("testlevel16632365.lvl");       
@@ -75,9 +71,8 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // TODO remove
-        Sound.Short tmp = Sound.getManager().newShort("monitor.wav", 1, 0.1f, true);
-        tmp.setSourcePosition(7.3f, 1f, 5.4f);
-        tmp.play();
+        Sound.getResource("monitor.wav").setGain(0.1f)
+                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
     }
 
     @Override
@@ -174,12 +169,10 @@ public class Game implements State, Input.Listener {
         // Delete renderer
         renderer.dispose();
         
-        // clean up sound
-        Sound.getManager().destroy();
-        
         // Clean up textures and models
         Texture.disposeResources();
         Model.disposeResources();
+        Sound.disposeResources();
         
         // Un-grab mouse
         Mouse.setGrabbed(false);

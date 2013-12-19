@@ -37,7 +37,7 @@ public class Player extends Entity implements Input.Listener {
     public boolean injecting = false;
     
     private float lastMoved;
-    private final Sound.Short stepSound;
+    private final Sound.Source stepSound;
     
     /** Constructs a new player.
      * 
@@ -46,7 +46,7 @@ public class Player extends Entity implements Input.Listener {
     public Player(Level level) {
         super(level, WIDTH, HEIGHT);
         
-        stepSound = Sound.getManager().newShort("step.wav", 1, 0.4f, false);
+        stepSound = Sound.getResource("step.wav").setGain(0.2f);
         lastMoved = distanceMoved;
     }
     
@@ -57,12 +57,9 @@ public class Player extends Entity implements Input.Listener {
     @Override
     public void update(float dt) {
         // Set sound listener location
-        Sound.getManager().setListenerPosition(
-                            position.x, position.y + viewHeight, position.z);
-        Sound.getManager().setListenerVelocity(
-                            velocity.x, velocity.y, velocity.z);
-        Sound.getManager().setListenerOrientation(
-                            rotation.x, rotation.y, rotation.z);
+        Sound.setListenerPosition(position.x, position.y+viewHeight, position.z);
+        Sound.setListenerVelocity(velocity.x, velocity.y, velocity.z);
+        Sound.setListenerOrientation(rotation.x, rotation.y, rotation.z);
         
         // Use some medicine
         if (injecting) {
@@ -109,7 +106,7 @@ public class Player extends Entity implements Input.Listener {
         // Step sound
         if (distanceMoved - lastMoved > 1f) {
             // set sound position
-            stepSound.setSourcePosition(position.x, position.y, position.z);
+            stepSound.setPosition(position.x, position.y, position.z);
             
             // play sound
             stepSound.play();

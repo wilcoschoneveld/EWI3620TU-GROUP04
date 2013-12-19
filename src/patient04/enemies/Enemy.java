@@ -27,7 +27,7 @@ public class Enemy extends Entity {
     private final Model[] anim_walking;
     
     private float lastMoved;
-    private final Sound.Short stepSound;
+    private final Sound.Source stepSound;
     
     private final Light light;
     private float nextflicker;
@@ -56,7 +56,7 @@ public class Enemy extends Entity {
         distanceMoved = (float) Math.random();
         lastMoved = distanceMoved;
         
-        stepSound = Sound.getManager().newShort("step.wav", 1, 0.8f, false);
+        stepSound = Sound.getResource("step.wav").setGain(0.8f);
     }
     
     @Override
@@ -97,7 +97,7 @@ public class Enemy extends Entity {
         // Step sound
         if (distanceMoved - lastMoved > 0.5f) {
             // set sound position
-            stepSound.setSourcePosition(position.x, position.y, position.z);
+            stepSound.setPosition(position.x, position.y, position.z);
             
             // play sound
             stepSound.play();
