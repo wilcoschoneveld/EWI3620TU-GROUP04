@@ -14,7 +14,6 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
-import patient04.math.Vector;
 import patient04.utilities.Buffers;
 
 /**
@@ -23,7 +22,7 @@ import patient04.utilities.Buffers;
  */
 public class Sound {
     private static Sound soundManager;
-    private static final int MAXBUFFERS = 10;
+    private static final int MAXBUFFERS = 2;
     private static final String defaultSoundLocation = "res/sounds/";
     
     private final IntBuffer buffer;
@@ -61,7 +60,7 @@ public class Sound {
         AL10.alListener3f(AL10.AL_POSITION, x, y, z);
     }
     
-    public void setListenerOrientation( float rotationy){
+    public void setListenerOrientation(float rotationy) {
         // convert the y-rotation to a vector in the direction you are looking at
         float x = (float) -Math.sin(Math.toRadians(rotationy));
         float z = (float) -Math.cos(Math.toRadians(rotationy));
@@ -78,7 +77,7 @@ public class Sound {
        AL10.alDeleteBuffers(buffer);
        AL.destroy();
         
-        soundManager = null;
+       soundManager = null;
     }
     
     public Short newShort(String name) {
@@ -110,9 +109,11 @@ public class Sound {
                 
                 // set initial source position
                 setSourcePosition(0, 0, 0);
-                setSourceVelocity(0.4f, 0.4f, 0.4f);
+                setSourceVelocity(0, 0, 0);
                 
                 currentloc++;
+                
+                System.out.println("index: " + bufferpos);
             } catch(Exception e) {
                 e.printStackTrace();
                 bufferpos = -1;
