@@ -123,12 +123,10 @@ public class Enemy extends Entity {
                 && Utils.acos(direction.copy().normalize()
                         .dot(toPlayer.normalize())) <= (85-7*dist) 
                 && lineOfSight(target)) {
-            System.out.println("Gepakt"); 
             Main.requestNewState(Main.States.MAIN_MENU);
             gepakt = true;
         }
-                                        
-        //System.out.println("");
+                                   
         super.update(dt);
     }
     
