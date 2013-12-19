@@ -48,7 +48,7 @@ public class Player extends Entity implements Input.Listener {
     public Player(Level level) {
         super(level, WIDTH, HEIGHT);
         
-        stepSound = Sound.getManager().newShort("walk.wav");
+        stepSound = Sound.getManager().newShort("step.wav");
         lastMoved = distanceMoved;
     }
     
@@ -61,7 +61,10 @@ public class Player extends Entity implements Input.Listener {
         // Set sound listener location
         Sound.getManager().setListenerPosition(
                             position.x, position.y + viewHeight, position.z);
-        Sound.getManager().setListenerOrientation(rotation.y);
+        Sound.getManager().setListenerVelocity(
+                            velocity.x, velocity.y, velocity.z);
+        Sound.getManager().setListenerOrientation(
+                            rotation.x, rotation.y, rotation.z);
         
         // Use some medicine
         if (injecting) {

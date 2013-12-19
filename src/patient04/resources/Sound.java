@@ -14,6 +14,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
+import patient04.math.Vector;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 
@@ -23,7 +24,7 @@ import patient04.utilities.Logger;
  */
 public class Sound {
     private static Sound soundManager;
-    private static final int MAXBUFFERS = 2;
+    private static final int MAXBUFFERS = 5;
     private static final String defaultSoundLocation = "res/sounds/";
     
     private final IntBuffer buffer;
@@ -64,6 +65,21 @@ public class Sound {
         AL10.alListener3f(AL10.AL_POSITION, x, y, z);
     }
     
+    public void setListenerVelocity(float x, float y, float z) {
+        AL10.alListener3f(AL10.AL_VELOCITY, x, y, z);
+    }
+    
+    public void setListenerOrientation(float x, float y, float z) {
+        Vector tmp = new Vector(0, 0, -1);
+        
+        tmp.rotate(y, 0, 1, 0);
+        tmp.rotate(x, 1, 0, 0);
+        tmp.rotate(z, 0, 0, 1);
+        
+        AL10.alListener(AL10.AL_ORIENTATION,
+                      Buffers.createFloatBuffer(tmp.x, tmp.y, tmp.z, 0, 1, 0));
+    }
+    
     public void setListenerOrientation(float rotationy) {
         // convert the y-rotation to a vector in the direction you are looking at
         float x = (float) -Math.sin(Math.toRadians(rotationy));
@@ -85,7 +101,11 @@ public class Sound {
     }
     
     public Short newShort(String name) {
-        return new Short(name, 1.0f, 0.2f, AL10.AL_FALSE);
+        return new Short(name, 1.0f, 0.8f, AL10.AL_FALSE);
+    }
+    
+    public Short newShort(String name, float pitch, float gain, boolean looping) {
+        return new Short(name, pitch, gain, looping ? AL10.AL_TRUE : AL10.AL_FALSE);
     }
     
     public final class Short {
