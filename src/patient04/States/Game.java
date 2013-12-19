@@ -72,7 +72,7 @@ public class Game implements State {
         testModel.releaseRawData();
         
         // initialize sound
-        gameSound = new Sound(diffSounds);
+        gameSound = new Sound();
         
         // set the the different sounds 
         gameSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE); // sound 0
@@ -83,7 +83,7 @@ public class Game implements State {
         gameSound.setSourcePos(2, 10, 0, 10);
         
         // play the different sounds
-        gameSound.playSound(0);
+        // gameSound.playSound(0);
         gameSound.playSound(2);
     }
 

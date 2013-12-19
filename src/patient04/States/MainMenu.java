@@ -30,7 +30,7 @@ public class MainMenu implements State {
         GL11.glLoadIdentity();
         
         logo = Texture.loadResource("main_logo.png");
-        mainSound = new Sound(1);
+        mainSound = new Sound();
         mainSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE);
         mainSound.playSound(0);
     }
