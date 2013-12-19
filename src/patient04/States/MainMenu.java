@@ -5,7 +5,6 @@ import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
-import patient04.Sound.Sound;
 import patient04.textures.Texture;
 import patient04.utilities.Inputs;
 
@@ -15,7 +14,6 @@ import patient04.utilities.Inputs;
  */
 public class MainMenu implements State {
     private Texture logo;
-    private Sound mainSound;
     
     @Override
     public void initialize() {
@@ -30,9 +28,6 @@ public class MainMenu implements State {
         GL11.glLoadIdentity();
         
         logo = Texture.loadResource("main_logo.png");
-        mainSound = new Sound();
-        mainSound.addSound("test.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-        mainSound.playSound(0);
     }
 
     @Override
@@ -78,7 +73,6 @@ public class MainMenu implements State {
     @Override
     public void destroy() {
         Texture.releaseAll();
-        mainSound.destroy();
     }
     
 }
