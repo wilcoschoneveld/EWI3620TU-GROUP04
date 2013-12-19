@@ -90,19 +90,20 @@ public class Level {
     }
     
     public void testPath() {
-        Waypoint wpA = addWaypoint(new Vector(5, 0, 4.5f), null);
-        addWaypoint(new Vector(5, 0, 13), null);
-        addWaypoint(new Vector(5, 0, 22), null);
-        addWaypoint(new Vector(10, 0, 22), null);
-        Waypoint wpE = addWaypoint(new Vector(10, 0, 10), null);
-        Waypoint wpB = addWaypoint(new Vector(10, 0, 4.5f), null);
-        Waypoint wpC = addWaypoint(new Vector(17, 0, 4.5f), null);
-        addWaypoint(new Vector(25, 0, 4.5f), null);
-        Waypoint wpD = addWaypoint(new Vector(16.5f, 0, 10.5f), wpC);
-        addWaypoint(new Vector(16.5f, 0, 18), null);
-        
-        Waypoint.link(wpA, wpB);
-        Waypoint.link(wpD, wpE);
+        addWaypoint(new Vector(23, 0, 14), null);
+//        Waypoint wpA = addWaypoint(new Vector(5, 0, 4.5f), null);
+//        addWaypoint(new Vector(5, 0, 13), null);
+//        addWaypoint(new Vector(5, 0, 22), null);
+//        addWaypoint(new Vector(10, 0, 22), null);
+//        Waypoint wpE = addWaypoint(new Vector(10, 0, 10), null);
+//        Waypoint wpB = addWaypoint(new Vector(10, 0, 4.5f), null);
+//        Waypoint wpC = addWaypoint(new Vector(17, 0, 4.5f), null);
+//        addWaypoint(new Vector(25, 0, 4.5f), null);
+//        Waypoint wpD = addWaypoint(new Vector(16.5f, 0, 10.5f), wpC);
+//        addWaypoint(new Vector(16.5f, 0, 18), null);
+//        
+//        Waypoint.link(wpA, wpB);
+//        Waypoint.link(wpD, wpE);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {

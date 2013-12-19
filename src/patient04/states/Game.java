@@ -19,6 +19,8 @@ import patient04.level.pickups.Pickup;
 import patient04.level.Tutorial;
 import patient04.level.pickups.Healthbag;
 import patient04.level.pickups.Needle;
+import patient04.math.Vector;
+import patient04.physics.AABB;
 import patient04.rendering.Light;
 import patient04.utilities.Input;
 
@@ -53,24 +55,22 @@ public class Game implements State, Input.Listener {
         
         // Add player to level
         player = new Player(level);
-        player.setPosition(23, 0, 14);
-        player.setRotation(0, -180, 0);
+        player.setPosition(15, 0, 23);
+        player.setRotation(0, 180, 0);
         level.addEntity(player);
         
         level.addNewLight().setColor(0, 0).setEnvironmentLight().setIntensity(20).setPosition(24.5f, 4, 22f);
         
         // Test objects and lights
-        Solid tmp;
-        Light tmpl;
-        Pickup tmp2;
+        Pickup tmp;
         
-        tmp2 = new Needle();
-        tmp2.setPosition(23, 0, 17);
-        level.addUseable(tmp2);
+        tmp = new Needle();
+        tmp.setPosition(23, 0, 17);
+        level.addUseable(tmp);
         
-        tmp2 = new Healthbag();
-        tmp2.setPosition(23, 0, 20);
-        level.addUseable(tmp2);
+        tmp = new Healthbag();
+        tmp.setPosition(23, 0, 20);
+        level.addUseable(tmp);
                 
         level.addNewLight().setPosition(25, 2, 4.5f).setIntensity(15)
                 .setColor(0.1f, 0).setEnvironmentLight();
@@ -80,6 +80,16 @@ public class Game implements State, Input.Listener {
                 .setColor(0.4f, 0.2f).setEnvironmentLight();
         level.addNewLight().setPosition(13, 2, 4.5f).setIntensity(10)
                 .setColor(0.9f, 0.2f).setEnvironmentLight();
+        
+        // draw box
+        Vector min = new Vector(-1f, -1f, -1f).scale(1.5f);
+        Vector max = new Vector(1f, 1f, 1f).scale(1.5f);
+        Model blockModel = Model.buildWall(min, max, "wall_hospital.png");
+        Solid tmps = new Solid();
+        tmps.model = blockModel;
+        tmps.position = new Vector(23, 0, 15);
+        tmps.aabb = new AABB(tmps.position, min, max);
+        level.addSolid(tmps);
         
         // Pauser
         pauser = new Pauser();
@@ -115,6 +125,13 @@ public class Game implements State, Input.Listener {
         tmpe = new Enemy(level);
         tmpe.setPosition(26, 0, 4.5f);
         tmpe.setRotation(0, 180, 0);
+        tmpe.selectNearestWaypoint();
+        tmpe.target = player;
+        level.addEntity(tmpe);
+        
+        tmpe = new Enemy(level);
+        tmpe.setPosition(23, 0, 12);
+        tmpe.setRotation(0, -180, 0);
         tmpe.selectNearestWaypoint();
         tmpe.target = player;
         level.addEntity(tmpe);

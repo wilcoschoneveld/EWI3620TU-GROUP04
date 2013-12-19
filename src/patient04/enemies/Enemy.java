@@ -147,6 +147,9 @@ public class Enemy extends Entity {
         // Get the number of neighbors to choose from
         int neighborsNum = nextWaypoint.neighbors.size();
         
+        if (neighborsNum < 1)
+            return;
+        
         // Variable for selecting neighbor
         int index;
         

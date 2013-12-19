@@ -107,6 +107,7 @@ public abstract class Entity {
         
         // Obtain broadphase box
         AABB broadphase = aabb.copy().expand(delta);
+        broadphase.min.add(0, 1.5f, 0);
         
         // Get possible line of sight blockers
         ArrayList<AABB> aabbs = level.getCollisionBoxes(broadphase);
