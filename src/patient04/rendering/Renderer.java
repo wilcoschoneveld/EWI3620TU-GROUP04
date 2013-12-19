@@ -228,7 +228,7 @@ public class Renderer {
         GL20.glUniform1f(effLevel, level);
         
         // Determine the period (TODO variable of effect level?)
-        float period = 3000;
+        float period = 5000;
         
         // Determine the angle
         double angle = (Timer.getTime() % period) * 2 * Math.PI / period;
