@@ -9,7 +9,6 @@ package patient04.level.pickups;
 import patient04.level.Solid;
 import patient04.level.Useable;
 import patient04.rendering.Light;
-import patient04.rendering.Renderer;
 
 /**
  *
@@ -32,12 +31,7 @@ public class Pickup extends Solid implements Useable {
     }
     
     @Override
-    public void Use() {
+    public void use() {
         
-    }
-    
-    @Override
-    public void drawLight(Renderer renderer) {
-        light.draw(renderer);
     }
 }

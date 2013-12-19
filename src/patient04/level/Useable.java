@@ -15,8 +15,7 @@ import patient04.rendering.Renderer;
  */
 public interface Useable{
     
-    public void Use(); 
+    public void use(); 
     public void draw(Renderer renderer);
-    public void drawLight(Renderer renderer);
     public Vector getPosition();
 }

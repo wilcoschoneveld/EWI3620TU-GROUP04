@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import patient04.resources.Model;
 import patient04.enemies.Waypoint;
+import patient04.level.pickups.Pickup;
 import patient04.rendering.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;
@@ -133,7 +134,10 @@ public class Level {
             entity.drawLight(renderer);
         
         for (Useable useable : useables)
-            useable.drawLight(renderer);
+            if (useable instanceof Pickup) {
+                Pickup pickup = (Pickup) useable;
+                pickup.drawLight(renderer);
+            }
     }
     
     public void drawNavPoints(Renderer renderer) {

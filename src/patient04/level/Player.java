@@ -170,7 +170,7 @@ public class Player extends Entity implements Input.Listener {
             // Loop through useables
             for (Useable useable2 : Level.useables) {
                 if (position.copy().min(useable2.getPosition()).length() <= 0.5f) { 
-                    useable2.Use();
+                    useable2.use();
                     break;
                 }
             }

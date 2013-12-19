@@ -7,6 +7,7 @@
 package patient04.level.pickups;
 
 import patient04.level.Level;
+import patient04.rendering.Renderer;
 import patient04.resources.Model;
 
 /**
@@ -23,8 +24,12 @@ public class Healthbag extends Pickup {
     }
     
     @Override
-    public void Use() {
-//        Level.useables.remove(this);
+    public void use() {
+        Level.useables.remove(this);
     }
     
+    @Override
+    public void drawLight(Renderer renderer) {
+        light.draw(renderer);
+    }
 }
