@@ -1,8 +1,0 @@
-camera 0.0 0.0 1.0
-waypoint 2.4843752 -3.21875
-waypoint -2.9687498 -3.0625
-waypoint -5.109375 3.046875
-waypoint 3.9218745 2.78125
-link 0 1
-link 1 2
-link 2 3

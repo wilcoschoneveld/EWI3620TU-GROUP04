@@ -48,7 +48,7 @@ public class Game implements State, Input.Listener {
         Sound.getManager();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel2537675.lvl");       
+        level = Level.fromFile("testlevel16632365.lvl");       
 
         // Add player to level
         player = new Player(level);
@@ -73,6 +73,11 @@ public class Game implements State, Input.Listener {
         controller.addListener(tutorial);
         controller.addListener(this);
         controller.addListener(player);
+        
+        // TODO remove
+        Sound.Short tmp = Sound.getManager().newShort("monitor.wav", 1, 0.1f, true);
+        tmp.setSourcePosition(7.3f, 1f, 5.4f);
+        tmp.play();
     }
 
     @Override

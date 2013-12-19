@@ -7,7 +7,6 @@
 package patient04.resources;
 
 import java.io.*;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -70,27 +69,16 @@ public class Sound {
     }
     
     public void setListenerOrientation(float x, float y, float z) {
+        // Create a new vector pointing in the negative z direction
         Vector tmp = new Vector(0, 0, -1);
         
-        tmp.rotate(y, 0, 1, 0);
-        tmp.rotate(x, 1, 0, 0);
-        tmp.rotate(z, 0, 0, 1);
+        // Rotate the vector according to orientation
+        tmp.rotate(y, 0, 1, 0).rotate(x, 1, 0, 0).rotate(z, 0, 0, 1);
         
+        // Upload the vector to openAL
         AL10.alListener(AL10.AL_ORIENTATION,
-                      Buffers.createFloatBuffer(tmp.x, tmp.y, tmp.z, 0, 1, 0));
+            Buffers.createFloatBuffer(tmp.x, tmp.y, tmp.z, 0, 1, 0));
     }
-    
-    public void setListenerOrientation(float rotationy) {
-        // convert the y-rotation to a vector in the direction you are looking at
-        float x = (float) -Math.sin(Math.toRadians(rotationy));
-        float z = (float) -Math.cos(Math.toRadians(rotationy));
-        
-        // create a floatbuffer
-        FloatBuffer buf = Buffers.createFloatBuffer(x, 0, z, 0, 1, 0);
-        
-        // set Listeners orientation
-        AL10.alListener(AL10.AL_ORIENTATION, buf);
-   }
     
     public void destroy() {
        AL10.alDeleteSources(source);
@@ -130,10 +118,6 @@ public class Sound {
                 AL10.alSourcei(source.get(bufferpos), AL10.AL_LOOPING, looping);
                 AL10.alSourcef(source.get(bufferpos), AL10.AL_PITCH, pitch);
                 AL10.alSourcef(source.get(bufferpos), AL10.AL_GAIN, gain);
-                
-                // set initial source position
-                setSourcePosition(0, 0, 0);
-                setSourceVelocity(0, 0, 0);
                 
                 if (AL10.alGetError() != AL10.AL_NO_ERROR)
                     Logger.error("OpenAL sound load error! " + loc);

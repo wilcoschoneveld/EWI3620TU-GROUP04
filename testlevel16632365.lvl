@@ -14,7 +14,7 @@ prop bed.obj -3.864335 0 2.697743 2
 prop crate.obj -3.911741 0 -2.1375492 0
 prop cardboardBoxSmall.obj 10.019479 0 2.5487325 1
 prop medicinecabinet.obj 3.633147 0 -2.3257544 2
-prop bartpicture.obj 5.9215074 0 -2.675469 2
+prop bartpicture.obj 5.9215074 1.4 -2.675469 2
 prop cardboardBoxMedium.obj 8.549883 0 3.6240652 0
 prop medicinelocker.obj 9.996088 0 0.56894875 1
 prop smalltable.obj 9.580303 0 3.3890564 0

@@ -39,8 +39,6 @@ public class Player extends Entity implements Input.Listener {
     private float lastMoved;
     private final Sound.Short stepSound;
     
-    
-    
     /** Constructs a new player.
      * 
      * @param level 
@@ -48,7 +46,7 @@ public class Player extends Entity implements Input.Listener {
     public Player(Level level) {
         super(level, WIDTH, HEIGHT);
         
-        stepSound = Sound.getManager().newShort("step.wav");
+        stepSound = Sound.getManager().newShort("step.wav", 1, 0.4f, false);
         lastMoved = distanceMoved;
     }
     
