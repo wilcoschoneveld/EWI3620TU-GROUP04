@@ -106,7 +106,7 @@ public class Player extends Entity implements Input.Listener {
         }
         
         // Step sound
-        if (distanceMoved - lastMoved > 0.5f) {
+        if (distanceMoved - lastMoved > 1f) {
             // set sound position
             stepSound.setSourcePosition(position.x, position.y, position.z);
             

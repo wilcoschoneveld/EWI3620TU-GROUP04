@@ -6,6 +6,7 @@
 
 package patient04.resources;
 
+import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -85,30 +86,37 @@ public class Sound {
     }
     
     public final class Short {
-        Vector position;
         int bufferpos;
         
-        public Short(String soundName, float pitch, float gain, int looping) {        // looping = AL10.AL_TRUE/AL10.AL_FALSE       
-            //String locationFile = defaultSoundLocation + soundName;
-
-            WaveData sound = WaveData.create(soundName);
+        public Short(String soundName, float pitch, float gain, int looping) {
+            String loc = defaultSoundLocation + soundName;
             
-            bufferpos = currentloc++;
+            try {
+                bufferpos = currentloc;
+                
+                WaveData sound = WaveData.create(
+                    new BufferedInputStream(new FileInputStream(loc)));
 
-            AL10.alBufferData(buffer.get(bufferpos),sound.format, sound.data, sound.samplerate);
-
-            // Dispose the WaveData
-            sound.dispose();
-
-            // sound properties
-            AL10.alSourcei(source.get(bufferpos), AL10.AL_BUFFER, buffer.get(bufferpos));
-            AL10.alSourcei(source.get(bufferpos), AL10.AL_LOOPING, looping);
-            AL10.alSourcef(source.get(bufferpos), AL10.AL_PITCH, pitch);
-            AL10.alSourcef(source.get(bufferpos), AL10.AL_GAIN, gain);
-
-            // set initial source position
-            setSourcePosition(0, 0, 0);
-            setSourceVelocity(0.4f, 0.4f, 0.4f);
+                AL10.alBufferData(buffer.get(bufferpos),
+                                sound.format, sound.data, sound.samplerate);
+                
+                sound.dispose();
+                
+                AL10.alSourcei(source.get(bufferpos), AL10.AL_BUFFER,
+                                                         buffer.get(bufferpos));
+                AL10.alSourcei(source.get(bufferpos), AL10.AL_LOOPING, looping);
+                AL10.alSourcef(source.get(bufferpos), AL10.AL_PITCH, pitch);
+                AL10.alSourcef(source.get(bufferpos), AL10.AL_GAIN, gain);
+                
+                // set initial source position
+                setSourcePosition(0, 0, 0);
+                setSourceVelocity(0.4f, 0.4f, 0.4f);
+                
+                currentloc++;
+            } catch(Exception e) {
+                e.printStackTrace();
+                bufferpos = -1;
+            }
         }
         
         public void play() {
