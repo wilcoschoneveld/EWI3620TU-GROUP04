@@ -222,7 +222,7 @@ public class Renderer {
     
     private void updateEffectParams(Player player) {
         // Determine the effect level
-        float level = Math.max(0, 1 - 1.25f*player.medicineLevel);
+        float level = Math.max(0, 1 - player.medicineLevel * 1.40f);
         
         // Upload the effect level
         GL20.glUniform1f(effLevel, level);

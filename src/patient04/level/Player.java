@@ -26,7 +26,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_JUMP = 0.5f;
     
     // Patient treatment
-    public static final float MEDICINE_USE_RATE = 0.05f; // per second
+    public static final float MEDICINE_USE_RATE = 0.01f; // per second
     public static final float MEDICINE_CAN_RUN = 0.5f;
     public static final float MEDICINE_CAN_MOVE = 0.01f;
 
