@@ -79,7 +79,7 @@ public class Sound {
         buffers.clear();
     }
 
-    public static Integer createBuffer(String wavFile) {
+    private static Integer createBuffer(String wavFile) {
         // Define file location
         String file = defaultSoundLocation + wavFile;
 
