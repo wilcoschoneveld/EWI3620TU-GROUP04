@@ -18,7 +18,6 @@ import patient04.resources.Model;
 import patient04.states.Editor;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
-import patient04.utilities.Utils;
 
 /**
  *
@@ -27,7 +26,7 @@ import patient04.utilities.Utils;
 public class Level implements Input.Listener {
     public final Editor editor;
     
-    private final ArrayList<Element> elements;
+    public final ArrayList<Element> elements;
     
     private Element selected;
     protected int target = 0;
@@ -76,10 +75,6 @@ public class Level implements Input.Listener {
         // Draw elements
         for (Element element : elements)
             element.draw(element == selected ? target : -1);
-        
-        // Draw selected element
-//        if (selected != null)
-//            selected.draw(target);
     }
 
     @Override
@@ -87,8 +82,10 @@ public class Level implements Input.Listener {
         if (Input.mouseButton(0, false)) {
             target = 0;
 
-            if (selected != null)
-                selected.release();
+            if (selected != null && !selected.release()) {
+                elements.remove(selected);
+                selected = null;
+            }
             
             return Input.HANDLED;
         }
@@ -172,6 +169,14 @@ public class Level implements Input.Listener {
                 if (Input.mouseButton(0, true)) {                    
                     Waypoint waypoint = new Waypoint(this, mx, mz);
                     
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
+                            selected instanceof Waypoint) {
+                        Link link = new Link(this, 0, 0);
+                        link.one = (Waypoint) selected;
+                        link.two = waypoint;
+                        elements.add(link);
+                    }
+                    
                     elements.add(waypoint);
                     selected = waypoint;
                     target = 1;
@@ -204,6 +209,7 @@ public class Level implements Input.Listener {
                     
                     return Input.HANDLED;
                 }
+                break;
             case KEY:
                 if (Input.mouseButton(0, true)) {
                     String s;
@@ -224,6 +230,20 @@ public class Level implements Input.Listener {
                     
                     return Input.HANDLED;
                 }
+                break;
+            case LINK:
+                if (Input.mouseButton(0, true)) {
+                    Link link = new Link(this, mx, mz);
+                    
+                    if (link.one != null) {
+                        elements.add(link);
+                        selected = link;
+                        target = 1;
+                    }
+                    
+                    return Input.HANDLED;
+                }
+                break;
         }
         
         return Input.UNHANDLED;
@@ -235,7 +255,18 @@ public class Level implements Input.Listener {
         if (Input.keyboardKey(Keyboard.KEY_DELETE, true)) {
             // If something is selected, delete it
             if (selected != null) {
+                
+                // Remove connected links if waypoint
+                if (selected instanceof Waypoint) {
+                    Waypoint wp = (Waypoint) selected;
+                    for (Link link : Link.getLinks(elements, wp, null))
+                        elements.remove(link);
+                }
+                
+                // Remove element
                 elements.remove(selected);
+                
+                // Unselect element
                 selected = null;
             }
             
@@ -259,10 +290,12 @@ public class Level implements Input.Listener {
     
     public static Level loadFromFile(Editor editor, File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            
             Level level = new Level(editor);
             
             String line; String[] tokens;
+            
+            // Temporary waypoints list
+            ArrayList<Waypoint> waypoints = new ArrayList<>();
             
             while ((line = reader.readLine()) != null) {
                 // Split line
@@ -319,6 +352,7 @@ public class Level implements Input.Listener {
                                 Float.parseFloat(tokens[2]));
                         
                         level.elements.add(waypoint);
+                        waypoints.add(waypoint);
                         
                         break;
                     case "start":
@@ -353,6 +387,15 @@ public class Level implements Input.Listener {
                         prop.angle = Integer.parseInt(tokens[5]);
                         
                         level.elements.add(prop);
+                        
+                        break;
+                    case "link":
+                        Link link = new Link(level, 0, 0);
+                        
+                        link.one = waypoints.get(Integer.parseInt(tokens[1]));
+                        link.two = waypoints.get(Integer.parseInt(tokens[2]));
+                        
+                        level.elements.add(link);
                         
                         break;
                     default: // Incompatible line                        

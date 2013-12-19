@@ -1,12 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.editor.elements;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 
@@ -119,7 +112,7 @@ public class Wall extends Element {
     }
     
     @Override
-    public void release() {        
+    public boolean release() {        
         float x = 0.5f*vertices[0][0] + 0.5f*vertices[2][0];
         float z = 0.5f*vertices[0][1] + 0.5f*vertices[2][1];
         
@@ -130,6 +123,8 @@ public class Wall extends Element {
         vertices[1][0] = x - w / 2; vertices[1][1] = z + h / 2;
         vertices[2][0] = x + w / 2; vertices[2][1] = z + h / 2;
         vertices[3][0] = x + w / 2; vertices[3][1] = z - h / 2;
+        
+        return true;
     }
     
     @Override

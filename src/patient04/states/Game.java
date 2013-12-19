@@ -11,9 +11,8 @@ import patient04.math.Matrix;
 import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
-import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
-import patient04.Sound.Sound;
+import patient04.resources.Sound;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
 import patient04.math.Vector;
@@ -40,13 +39,16 @@ public class Game implements State, Input.Listener {
         renderer = new Renderer();
         
         renderer.projection = Matrix.projPerspective(
-               70, (float) Display.getWidth() / Display.getHeight(), .1f, 30);
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 50);
         
         // Create a new timer
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel9602408.lvl");
+        level = Level.fromFile("testlevel16632365.lvl");
+        
+        // Pre-initialize sound
+        Sound.getManager();
         
         // Add player to level
         player = new Player(level);
@@ -72,19 +74,21 @@ public class Game implements State, Input.Listener {
         controller.addListener(this);
         controller.addListener(player);
         
-        // Initialize sound
-        gameSound = new Sound(3);
+        // 
         
-        // set the different sounds
-        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
-        gameSound.addSound("HeartMonitor.wav", 1.0f, 0.5f, AL10.AL_TRUE);
-        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-        
-        // set position of the sound 2
-        gameSound.setSourcePos(1, 2.5f, 0, 0.8f);
-        //gameSound.setSourcePos(2, 10, 0, 10);
-        // play the different sounds
-        gameSound.playSound(1);
+//        
+//        gameSound = new Sound(3);
+//        
+//        // set the different sounds
+//        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
+//        gameSound.addSound("HeartMonitor.wav", 1.0f, 0.5f, AL10.AL_TRUE);
+//        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+//        
+//        // set position of the sound 2
+//        gameSound.setSourcePos(1, 2.5f, 0, 0.8f);
+//        //gameSound.setSourcePos(2, 10, 0, 10);
+//        // play the different sounds
+//        gameSound.playSound(1);
        // gameSound.playSound(2);
     }
 
@@ -100,21 +104,6 @@ public class Game implements State, Input.Listener {
         
         // Handle keyboard and mouse events
         controller.processInput();
-        
-        // Play sound with every step the player takes
-        if (Keyboard.isKeyDown(Keyboard.KEY_W) == true || Keyboard.isKeyDown(Keyboard.KEY_A) == true || Keyboard.isKeyDown(Keyboard.KEY_D) == true || Keyboard.isKeyDown(Keyboard.KEY_S) == true ){
-            if( Math.abs( Math.cos(3*player.getDistanceMoved())) > 0.95){
-                gameSound.playSound(0);
-            }
-        }
-        
-        // update Listeners position and orientation
-        gameSound.setListenerPos(player.position.x, player.position.y, player.position.z);
-        gameSound.setListenerOri(player.getRotation().y);
-        
-        
-        // Play a sound with every step a enemy takes
-        
         
         // Update game dynamics if the game is not paused
         if(!pauser.isPaused()) {
@@ -139,14 +128,14 @@ public class Game implements State, Input.Listener {
         }
         
         if(Input.keyboardKey(Keyboard.KEY_F, true)) {
+            Vector position = player.getPosition().add(0, 2, 0);
+            
             // Create a new light at player position
             level.addNewLight().setColor((float) Math.random(), 0.7f)
                     .setIntensity(15).setEnvironmentLight()
-                    .setPosition(player.position.x,
-                                 player.position.y + 2,
-                                 player.position.z);
+                    .setPosition(position.x, position.y, position.z);
             
-            Logger.debug("Light placed at: " + player.position);
+            Logger.debug("Light placed at: " + position);
             
             return Input.HANDLED;
         }
@@ -173,8 +162,8 @@ public class Game implements State, Input.Listener {
             level.drawLights(renderer);
         }
         
-        // Change to normal pass
-        renderer.guiPass();
+        // Do a gui pass
+        renderer.guiPass(player);
         
         // Debug navigation grid
         if(Keyboard.isKeyDown(Keyboard.KEY_Q))
@@ -198,7 +187,7 @@ public class Game implements State, Input.Listener {
         renderer.dispose();
         
         // clean up sound
-        gameSound.destroy();
+        Sound.getManager().destroy();
         
         // Clean up textures and models
         Texture.disposeResources();

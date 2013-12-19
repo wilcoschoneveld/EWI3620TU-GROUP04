@@ -29,7 +29,11 @@ public class Texture {
     public final int height;
     
     public Texture(int width, int height, int format) {
-        this(width, height, format, null, GL11.GL_NEAREST, GL11.GL_NEAREST);
+        this(width, height, format, GL11.GL_NEAREST);
+    }
+    
+    public Texture(int width, int height, int format, int filter) {
+        this(width, height, format, null, filter, filter);
     }
     
     public Texture(int width, int height, int format, ByteBuffer buffer,

@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL20;
 
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
+import patient04.level.Player;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;
@@ -19,13 +20,9 @@ import patient04.resources.Texture;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 import patient04.utilities.Shaders;
+import patient04.utilities.Timer;
 
 /**
- * TODO List:
- * - Full screen
- * - Frustum culling
- * - Diffuse color to shader for models
- * - Modelview matrix from ENEMy to Entity?
  * 
  * @author Wilco
  */
@@ -36,21 +33,21 @@ public class Renderer {
                             diffuseAttachment = GL_COLOR_ATTACHMENT2,
                             accumAttachment = GL_COLOR_ATTACHMENT3;
     
-    // Static geometry pass draw buffer list
+    // Geometry pass draw buffer list
     public static final IntBuffer gPassDrawBuffers = Buffers.createIntBuffer(
             positionAttachment, normalAttachment, diffuseAttachment);
     
-    // Geometry pass texture objects
+    // Geometry/Lighting buffer textures
     private final Texture
             positionTexture, normalTexture, diffuseTexture, accumTexture;
 
-    // Geometry frame buffer object
-    private final int geometryBuffer, depthStencilBuffer;
+    // Geometry/Lighting shader locations
+    private final int geometryBuffer, depthStencilBuffer, geometryShader, 
+            lightingShader, stencilShader, debugShader, lightP, lightC,
+            lightI, lightR, attC, attL, attQ;
     
-    // Shaders
-    private final int geometryShader, screenShader,
-                        lightingShader, stencilShader, debugShader,
-                            lightP, lightC, lightI, lightR, attC, attL, attQ;
+    // Effect shader locations
+    private final int effectShader, effLevel, effSin, effCos, effColor;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -83,7 +80,7 @@ public class Renderer {
         positionTexture = new Texture(w, h, GL_RGBA16F_ARB);
         normalTexture = new Texture(w, h, GL_RGBA16F_ARB);
         diffuseTexture = new Texture(w, h, GL11.GL_RGBA8);
-        accumTexture = new Texture(w, h, GL11.GL_RGBA8);
+        accumTexture = new Texture(w, h, GL11.GL_RGBA8, GL11.GL_LINEAR);
         
         // Create new attachable render buffer
         depthStencilBuffer = glGenRenderbuffers();
@@ -160,15 +157,23 @@ public class Renderer {
         GL20.glStencilOpSeparate(GL11.GL_BACK,
                 GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
         
-        screenShader = Shaders.loadShaderPairFromFiles(
-                "res/shaders/pass.vert", "res/shaders/ambient.frag");
+        // Load the effects shader
+        effectShader = Shaders.loadShaderPairFromFiles(
+                "res/shaders/pass.vert", "res/shaders/effect.frag");
         
-        useShaderProgram(screenShader);
+        // Bind the effects shader
+        useShaderProgram(effectShader);
         
-        Shaders.glUniform1i(screenShader, "uTexPosition", 0);
-        Shaders.glUniform1i(screenShader, "uTexNormal", 1);
-        Shaders.glUniform1i(screenShader, "uTexDiffuse", 2);
-        Shaders.glUniform2f(screenShader, "screenSize", w, h);
+        // Obtain uniform variable locations
+        effLevel = GL20.glGetUniformLocation(effectShader, "effectLevel");
+        effSin = GL20.glGetUniformLocation(effectShader, "effectSin");
+        effCos = GL20.glGetUniformLocation(effectShader, "effectCos");
+        effColor = GL20.glGetUniformLocation(effectShader, "effectColor");
+        
+        // Bind uniform variables
+        Shaders.glUniform1i(effectShader, "uTexAccum", 0);
+        Shaders.glUniform1i(effectShader, "uTexDiffuse", 1);
+        Shaders.glUniform2f(effectShader, "screenSize", w, h);
         
         // Load debug shader
         debugShader = Shaders.loadShaderPairFromFiles(
@@ -199,118 +204,42 @@ public class Renderer {
         }
     }
     
-    public void dispose() {
-        // Delete the framebuffers
-        glDeleteFramebuffers(geometryBuffer);
-        glDeleteRenderbuffers(depthStencilBuffer);
+    public void updateLightParams(Light light, float fade) {
+        // Upload light position
+        Vector pos = light.getPosition().copy().premultiply(view);
         
-        // Delete the textures
-        positionTexture.dispose();
-        normalTexture.dispose();
-        diffuseTexture.dispose();
-        accumTexture.dispose();
+        // Update light values
+        GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
+        GL20.glUniform4(lightC, light.getColor());
+        GL20.glUniform1f(lightI, light.getIntensity() * fade);
+        GL20.glUniform1f(lightR, light.getRadius());
         
-        // Delete the shaders
-        GL20.glDeleteProgram(geometryShader);
-        GL20.glDeleteProgram(lightingShader);
-        GL20.glDeleteProgram(debugShader);
+        // Update light attenuation model
+        GL20.glUniform1f(attC, light.getConstant());
+        GL20.glUniform1f(attL, light.getLinear());
+        GL20.glUniform1f(attQ, light.getQuadratic());
     }
     
-    public void geometryPass() {
-        // Bind the geometry frame buffer object
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
-        GL20.glDrawBuffers(gPassDrawBuffers);
+    private void updateEffectParams(Player player) {
+        // Determine the effect level
+        float level = Math.max(0, 1 - 1.25f*player.medicineLevel);
         
-        // Set OpenGL state
-        glLoadDefaults();
-        glUpdateProjectionMatrix();
-        GL11.glDepthMask(true);
+        // Upload the effect level
+        GL20.glUniform1f(effLevel, level);
         
-        // Clear the buffer
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        // Determine the period (TODO variable of effect level?)
+        float period = 3000;
         
-        // Bind the geometry shader
-        useShaderProgram(geometryShader);
+        // Determine the angle
+        double angle = (Timer.getTime() % period) * 2 * Math.PI / period;
+        float sin = (float) Math.sin(angle), cos = (float) Math.cos(angle);
         
-    }
-    
-    public void lightingPass() {
-        // Bind the window provided buffer object
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
-        GL11.glDrawBuffer(accumAttachment);
+        // Upload the sine and cosine values to the shader
+        GL20.glUniform1f(effSin, sin);
+        GL20.glUniform1f(effCos, cos);
         
-        // Set OpenGL state
-        glLoadDefaults();
-        glUpdateProjectionMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
-        GL11.glEnable(ARBDepthClamp.GL_DEPTH_CLAMP);
-        
-        // Clear the buffer
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        
-        // Be nice and clear Texture cache
-        Texture.unbind();
-        
-        // Bind the GBuffer textures to TEXTURE0,1,etc..
-        GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
-        
-        useShaderProgram(screenShader);
-        
-        screenQuad.draw();
-        
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glCullFace(GL11.GL_FRONT);
-    }
-    
-    public void guiPass() {
-        // Blit everything from accumulation buffer to frame
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, geometryBuffer);
-        GL11.glReadBuffer(accumAttachment);
-        glBlitFramebuffer(0, 0, accumTexture.width, accumTexture.height,
-                          0, 0, accumTexture.width, accumTexture.height,
-                          GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST);
-        
-        // Bind the standard shader
-        useShaderProgram(0);
-        
-        // Set OpenGL state
-        glLoadDefaults();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-    }
-    
-    public void debugPass() {
-        // Bind the window provided buffer object
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        
-        glLoadDefaults();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        
-        useShaderProgram(debugShader);
-        
-        Texture.unbind();
-        
-        // Bind the GBuffer textures to TEXTURE0,1,etc..
-        GL13.glActiveTexture(GL13.GL_TEXTURE3);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
-        
-        screenQuad.draw();
+        // Upload the effect color to the shader
+        GL20.glUniform4f(effColor, sin, cos, sin * cos, 1);
     }
     
     private void glUpdateProjectionMatrix() {
@@ -349,20 +278,53 @@ public class Renderer {
         GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);
     }
     
-    public void glUpdateLightParams(Light light, float fade) {
-        // Upload light position
-        Vector pos = light.getPosition().copy().premultiply(view);
+    public void geometryPass() {
+        // Bind the geometry frame buffer object
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
+        GL20.glDrawBuffers(gPassDrawBuffers);
         
-        // Update light values
-        GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);
-        GL20.glUniform4(lightC, light.getColor());
-        GL20.glUniform1f(lightI, light.getIntensity() * fade);
-        GL20.glUniform1f(lightR, light.getRadius());
+        // Set OpenGL state
+        glLoadDefaults();
+        glUpdateProjectionMatrix();
+        GL11.glDepthMask(true);
         
-        // Update light attenuation model
-        GL20.glUniform1f(attC, light.getConstant());
-        GL20.glUniform1f(attL, light.getLinear());
-        GL20.glUniform1f(attQ, light.getQuadratic());
+        // Clear the buffer
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        
+        // Bind the geometry shader
+        useShaderProgram(geometryShader);
+        
+    }
+    
+    public void lightingPass() {
+        // Bind the geometry buffer
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
+        GL11.glDrawBuffer(accumAttachment);
+        
+        // Set OpenGL state
+        glLoadDefaults();
+        glUpdateProjectionMatrix();
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glCullFace(GL11.GL_FRONT);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+        GL11.glDepthMask(false);
+        GL11.glEnable(ARBDepthClamp.GL_DEPTH_CLAMP);
+        
+        // Clear the buffer
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        
+        // Be nice and clear Texture cache
+        Texture.unbind();
+        
+        // Bind the GBuffer textures to TEXTURE0,1,etc..
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
     }
     
     public void pointLightFirstPass() {
@@ -386,5 +348,75 @@ public class Renderer {
         
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
+    }
+    
+    public void guiPass(Player player) {
+        // Bind the application-provided framebuffer
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        
+        // Set OpenGL state
+        glLoadDefaults();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        // Bind accumulation and diffuse texture
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
+        
+        // Bind the effect shader
+        useShaderProgram(effectShader);
+        
+        // Setup effects
+        updateEffectParams(player);
+        
+        // Draw a full screen quad
+        screenQuad.draw();
+        
+        // Bind the standard shader
+        useShaderProgram(0);
+    }
+    
+    public void debugPass() {
+        // Bind the window provided buffer object
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        
+        glLoadDefaults();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        
+        useShaderProgram(debugShader);
+        
+        Texture.unbind();
+        
+        // Bind the GBuffer textures to TEXTURE0,1,etc..
+        GL13.glActiveTexture(GL13.GL_TEXTURE3);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
+        
+        screenQuad.draw();
+    }
+    
+    public void dispose() {
+        // Delete the framebuffers
+        glDeleteFramebuffers(geometryBuffer);
+        glDeleteRenderbuffers(depthStencilBuffer);
+        
+        // Delete the textures
+        positionTexture.dispose();
+        normalTexture.dispose();
+        diffuseTexture.dispose();
+        accumTexture.dispose();
+        
+        // Delete the shaders
+        GL20.glDeleteProgram(geometryShader);
+        GL20.glDeleteProgram(lightingShader);
+        GL20.glDeleteProgram(debugShader);
     }
 }

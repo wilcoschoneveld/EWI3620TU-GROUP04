@@ -2,7 +2,6 @@ package patient04.level;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import org.lwjgl.opengl.GL11;
 import patient04.enemies.Enemy;
 
@@ -31,7 +30,7 @@ public class Level {
     private final ArrayList<Light> lights;
     private final ArrayList<Entity> entities;
     
-    public final HashSet<Waypoint> waypoints;
+    public final ArrayList<Waypoint> waypoints;
     private Waypoint navlast;
     
     public final Vector startPoint = new Vector();
@@ -40,7 +39,7 @@ public class Level {
         this.solids = new ArrayList<>();
         this.lights = new ArrayList<>();
         this.entities = new ArrayList<>();
-        this.waypoints = new HashSet<>();
+        this.waypoints = new ArrayList<>();
     }
     
     public void addSolid(Solid solid) {
@@ -292,6 +291,12 @@ public class Level {
                                           Float.parseFloat(tokens[4]));
                         
                         level.addSolid(prop);
+                        
+                        break;
+                    case "link":
+                        Waypoint.link(
+                            level.waypoints.get(Integer.parseInt(tokens[1])),
+                            level.waypoints.get(Integer.parseInt(tokens[2])));
                         
                         break;
                     default: // Incompatible line                        

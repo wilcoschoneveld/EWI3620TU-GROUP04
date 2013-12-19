@@ -28,7 +28,7 @@ public class Enemy extends Element {
         this.x = x;
         this.z = z;
         
-        priority = 3;
+        priority = 8;
     }
 
     @Override
@@ -85,7 +85,8 @@ public class Enemy extends Element {
     }
 
     @Override
-    public void release() {
+    public boolean release() {
+        return true;
     }
     
     @Override

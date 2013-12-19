@@ -7,6 +7,7 @@ import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
+import patient04.resources.Sound;
 import patient04.utilities.Utils;
 
 /**
@@ -25,10 +26,12 @@ public class Enemy extends Entity {
     
     private final Model[] anim_walking;
     
+    private float lastMoved;
+    private final Sound.Short stepSound;
+    
     private final Light light;
     private float nextflicker;
-    public boolean EnemyStep = false;
-    private float time;
+    
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
 
@@ -44,15 +47,16 @@ public class Enemy extends Entity {
             
             anim_walking[i] = Model.getResource(file);
             anim_walking[i].releaseRawData();
-            
-            EnemyStep = i == anim_walking.length-1;
         }
         
         light = new Light()
                 .setColor(0.15f, 0.6f)
                 .setEnvironmentLight();
         
-        time = (float) Math.random();
+        distanceMoved = (float) Math.random();
+        lastMoved = distanceMoved;
+        
+        stepSound = Sound.getManager().newShort("walk.wav");
     }
     
     @Override
@@ -81,10 +85,6 @@ public class Enemy extends Entity {
             
             acceleration.add(direction);
             rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
-            
-            // Animation (TODO: redo this with distanceMoved )
-            if((time += dt) >= 1)
-                time -= 1;
         }
         
         // Light flickering
@@ -92,6 +92,18 @@ public class Enemy extends Entity {
             light.setIntensity(11 + (float) Math.random() * 2f);
             
             nextflicker = (float) Math.random() * 0.2f;
+        }
+        
+        // Step sound
+        if (distanceMoved - lastMoved > 0.5f) {
+            // set sound position
+            stepSound.setSourcePosition(position.x, position.y, position.z);
+            
+            // play sound
+            stepSound.play();
+            
+            // set last moved
+            lastMoved = distanceMoved;
         }
     }
     
@@ -179,8 +191,10 @@ public class Enemy extends Entity {
         if (renderer.frustum.isOutside(aabb, -0.1f))
             return;
         
+        // Calculate animation frame
+        int frame = (int) ((distanceMoved % 1) * 23);
+        
         // Draw model
-        int frame = (int) (time * 23);
         anim_walking[frame].draw();
     }
     

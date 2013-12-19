@@ -109,7 +109,7 @@ public class Light {
         float d = (renderer.frustum.planes[5].distance(null) - 0.5f) * radius / 5;
         
         renderer.pointLightSecondPass();        
-        renderer.glUpdateLightParams(this, Utils.clamp(d, 0, 1));
+        renderer.updateLightParams(this, Utils.clamp(d, 0, 1));
         model.draw();
     }
 }

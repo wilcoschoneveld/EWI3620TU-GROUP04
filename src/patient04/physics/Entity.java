@@ -12,7 +12,7 @@ import patient04.rendering.Renderer;
 public abstract class Entity {
     protected final Level level;
     
-    public final Vector position;
+    protected final Vector position;
     protected final Vector velocity;
     protected final Vector rotation;
     protected final Vector acceleration;
@@ -38,10 +38,9 @@ public abstract class Entity {
                 new Vector( width / 2, height,  width / 2));
     }
     
-    public void update(float dt) {
-        Vector gravity = Level.GRAVITY.copy().scale(dt);
-        
-        acceleration.add(gravity);
+    public void update(float dt) {        
+        // Update with gravity
+        acceleration.add(Level.GRAVITY.copy().scale(dt));
     }
     
     public void integrate() {
@@ -91,8 +90,16 @@ public abstract class Entity {
         acceleration.set(0, 0, 0);
     }
     
+    public Vector getPosition() {
+        return position.copy();
+    }
+    
     public void setPosition(float x, float y, float z) {
         position.set(x, y, z);
+    }
+    
+    public Vector getRotation() {
+        return rotation.copy();
     }
     
     public void setRotation(float x, float y, float z) { 
