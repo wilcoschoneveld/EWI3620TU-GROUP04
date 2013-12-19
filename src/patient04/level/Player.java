@@ -149,4 +149,12 @@ public class Player extends Entity implements Input.Listener {
         
         return Input.UNHANDLED;
     }
+    
+    public float getDistanceMoved(){
+        return distanceMoved;
+    }
+    
+    public Vector getRotation(){
+        return rotation;
+    }
 }

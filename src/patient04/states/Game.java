@@ -16,6 +16,7 @@ import org.lwjgl.opengl.Display;
 import patient04.Sound.Sound;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
+import patient04.math.Vector;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
 
@@ -30,7 +31,7 @@ public class Game implements State, Input.Listener {
     private Timer timer;
     private Level level;
     private Player player;
-    private Sound gameSound;
+    public Sound gameSound;
     private final int diffSounds = 3;
     
     @Override
@@ -72,21 +73,19 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // Initialize sound
-        gameSound = new Sound(1);
+        gameSound = new Sound(3);
         
         // set the different sounds
-        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-//        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
-//       // gameSound.addSound("HeartMonitor.wav", 1.0f, 1.0f, AL10.AL_TRUE);
-//        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
+        gameSound.addSound("walk.wav", 1.0f, 1.0f, AL10.AL_FALSE);
+        gameSound.addSound("HeartMonitor.wav", 1.0f, 0.5f, AL10.AL_TRUE);
+        gameSound.addSound("defibrillator.wav", 1.0f, 1.0f, AL10.AL_TRUE);
         
         // set position of the sound 2
-//        gameSound.setSourcePos(2, 10, 0, 10);
-        
+        gameSound.setSourcePos(1, 2.5f, 0, 0.8f);
+        //gameSound.setSourcePos(2, 10, 0, 10);
         // play the different sounds
-        gameSound.playSound(0);
-//        gameSound.playSound(1);
-//        gameSound.playSound(2);
+        gameSound.playSound(1);
+       // gameSound.playSound(2);
     }
 
     @Override
@@ -101,6 +100,20 @@ public class Game implements State, Input.Listener {
         
         // Handle keyboard and mouse events
         controller.processInput();
+        
+        // Play sound with every step the player takes
+        if (Keyboard.isKeyDown(Keyboard.KEY_W) == true || Keyboard.isKeyDown(Keyboard.KEY_A) == true || Keyboard.isKeyDown(Keyboard.KEY_D) == true || Keyboard.isKeyDown(Keyboard.KEY_S) == true ){
+            if( Math.abs( Math.cos(3*player.getDistanceMoved())) > 0.95){
+                gameSound.playSound(0);
+            }
+        }
+        
+        // update Listeners position and orientation
+        gameSound.setListenerPos(player.position.x, player.position.y, player.position.z);
+        gameSound.setListenerOri(player.getRotation().y);
+        
+        
+        // Play a sound with every step a enemy takes
         
         
         // Update game dynamics if the game is not paused
@@ -183,6 +196,9 @@ public class Game implements State, Input.Listener {
         
         // Delete renderer
         renderer.dispose();
+        
+        // clean up sound
+        gameSound.destroy();
         
         // Clean up textures and models
         Texture.disposeResources();

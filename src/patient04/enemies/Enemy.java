@@ -27,7 +27,7 @@ public class Enemy extends Entity {
     
     private final Light light;
     private float nextflicker;
-    
+    public boolean EnemyStep = false;
     private float time;
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
@@ -44,6 +44,8 @@ public class Enemy extends Entity {
             
             anim_walking[i] = Model.getResource(file);
             anim_walking[i].releaseRawData();
+            
+            EnemyStep = i == anim_walking.length-1;
         }
         
         light = new Light()

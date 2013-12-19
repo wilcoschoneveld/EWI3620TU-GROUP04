@@ -37,9 +37,8 @@ public class Sound {
        NUM_BUFFERS = num;
        index = 0;
 
-              // initialize OpenAl and clear the error bit.
+       // initialize OpenAl and clear the error bit.
        try{
-          // AL.create(null, 15, 22050, true);
            AL.create();
        } catch (LWJGLException e){
            e.printStackTrace();
@@ -64,15 +63,9 @@ public class Sound {
    }
    
    public int addSound(String soundName, float pitch, float gain , int looping){        // looping = AL10.AL_TRUE/AL10.AL_FALSE       
-       //String locationFile = defaultSoundLocation + soundName;
+       String locationFile = defaultSoundLocation + soundName;
        
        sound = WaveData.create(soundName);
-       
-       System.out.println( buffer.get(index));       
-       System.out.println( sound.format);
-       System.out.println( sound.data);
-       System.out.println( sound.samplerate);
-
        
        AL10.alBufferData(buffer.get(index), sound.format, sound.data, sound.samplerate);
        
