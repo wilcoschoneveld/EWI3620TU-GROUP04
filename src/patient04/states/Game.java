@@ -14,6 +14,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
+import patient04.level.elements.Door;
 import patient04.level.elements.Infusion;
 import patient04.level.elements.Needle;
 import patient04.level.elements.Pickup;
@@ -74,19 +75,23 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // TODO remove
-        Pickup p = new Needle();
+        Pickup p = new Needle(level);
         p.position.set(2.23f, 0, 1.375f);
         level.addUsable(p);
         
         // TODO remove
-        Pickup p3 = new Infusion();
+        Pickup p3 = new Infusion(level);
         p3.position.set(-0.3f, 0, 0.8f);
         level.addUsable(p3);
         
         // TODO remove
-        Pickup p2 = new Infusion();
+        Pickup p2 = new Infusion(level);
         p2.position.set(-0.8f, 0, 0.8f);
         level.addUsable(p2);
+        
+        Door door = new Door(0);
+        door.position.set(-4.5f, 0, 0.8f);
+        level.addUsable(door);
         
         // TODO remove
         Sound.getResource("monitor.wav").setGain(0.1f)

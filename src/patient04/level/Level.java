@@ -84,6 +84,10 @@ public class Level {
         for (Solid obj : solids) 
             if(broadphase.intersects(obj.aabb))
                 aabbs.add(obj.aabb);
+        
+        for (Usable usable : usables)
+            if(broadphase.intersects(usable.getAABB()))
+                aabbs.add(usable.getAABB());
 
         return aabbs;
     }

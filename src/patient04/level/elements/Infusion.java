@@ -6,6 +6,7 @@
 
 package patient04.level.elements;
 
+import patient04.level.Level;
 import patient04.resources.Model;
 
 /**
@@ -14,8 +15,8 @@ import patient04.resources.Model;
  */
 public class Infusion extends Pickup {
     
-    public Infusion() {
-        super();
+    public Infusion(Level level) {
+        super(level);
         
         model = Model.getResource("infuus.obj");
         
@@ -25,5 +26,7 @@ public class Infusion extends Pickup {
     @Override
     public void use(Player player) {
         player.injecting = true;
+        
+        super.use(player);
     }
 }

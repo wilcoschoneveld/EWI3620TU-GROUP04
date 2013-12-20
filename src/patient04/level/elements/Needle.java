@@ -1,5 +1,6 @@
 package patient04.level.elements;
 
+import patient04.level.Level;
 import patient04.resources.Model;
 
 /**
@@ -8,8 +9,8 @@ import patient04.resources.Model;
  */
 public class Needle extends Pickup {
     
-    public Needle() {
-        super();
+    public Needle(Level level) {
+        super(level);
         
         model = Model.getResource("needle.obj");
         

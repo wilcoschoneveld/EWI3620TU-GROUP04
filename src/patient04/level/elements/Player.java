@@ -220,9 +220,6 @@ public class Player extends Entity implements Input.Listener {
             if (candidate != null) {
                 // Use the item
                 candidate.use(this);
-                
-                // Remove usable from level
-                level.removeUsable(candidate);
             }
         }
         
