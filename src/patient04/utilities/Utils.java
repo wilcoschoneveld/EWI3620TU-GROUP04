@@ -6,11 +6,16 @@
 
 package patient04.utilities;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 
 /**
  *
@@ -116,5 +121,23 @@ public class Utils {
     
     public static float getDisplayRatio() {
         return (float) Display.getWidth() / Display.getHeight();
+    }
+    
+    public static void bufferToPNG(String file, int w, int h, ByteBuffer buf) {
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                int i = (x + (w * y)) * 4;
+		int r = buf.get(i) & 0xFF;
+		int g = buf.get(i + 1) & 0xFF;
+		int b = buf.get(i + 2) & 0xFF;
+		img.setRGB(x, h-(y+1), (0xFF<<24)|(r<<16)|(g<<8)|b);
+            }
+        }
+        
+        try {
+            ImageIO.write(img, "PNG", new File(file + ".png"));
+        } catch(IOException e) { e.printStackTrace(); }
     }
 }

@@ -1,6 +1,9 @@
 package patient04.rendering;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.text.SimpleDateFormat;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBDepthClamp;
 
 import static org.lwjgl.opengl.ARBFramebufferObject.*;
@@ -21,6 +24,7 @@ import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 import patient04.utilities.Shaders;
 import patient04.utilities.Timer;
+import patient04.utilities.Utils;
 
 /**
  * 
@@ -358,6 +362,8 @@ public class Renderer {
         glLoadDefaults();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         
+        Texture.unbind();
+        
         // Bind accumulation and diffuse texture
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
@@ -401,6 +407,37 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
         
         screenQuad.draw();
+    }
+    
+    public void makeScreenshots() {
+        int w = Display.getWidth(), h = Display.getHeight();
+        
+        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy HH.mm.ss");
+        String time = df.format(java.util.Calendar.getInstance().getTime());
+        
+        ByteBuffer buf = BufferUtils.createByteBuffer(w * h * 4);
+        
+        GL11.glReadBuffer(GL11.GL_FRONT);
+        GL11.glReadPixels(0, 0, w, h, GL11.GL_RGBA, 5121, buf);
+        Utils.bufferToPNG(time + " full", w, h, buf); buf.rewind();
+        
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);
+        Utils.bufferToPNG(time + " position", w, h, buf); buf.rewind();
+        
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);
+        Utils.bufferToPNG(time + " normal", w, h, buf); buf.rewind();
+        
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);
+        Utils.bufferToPNG(time + " diffuse", w, h, buf); buf.rewind();
+        
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);
+        Utils.bufferToPNG(time + " accum", w, h, buf); buf.rewind();
+        
+        Texture.unbind();
     }
     
     public void dispose() {

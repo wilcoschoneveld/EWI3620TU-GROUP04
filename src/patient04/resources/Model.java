@@ -393,7 +393,8 @@ public class Model {
             }
             
             // Return the model
-            Logger.debug("Succesfully loaded " + f);
+            Logger.debug("Succesfully loaded " + f +
+                                    " / vertices: " + model.vertices.size());
             return model;
         } catch(Exception e) {
             // Error in loading file

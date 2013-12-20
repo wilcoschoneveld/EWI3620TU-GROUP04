@@ -136,6 +136,10 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
+        if(Input.keyboardKey(Keyboard.KEY_F12, true)) {
+            renderer.makeScreenshots();
+        }
+        
         // Unhandled event
         return Input.UNHANDLED;
     }
