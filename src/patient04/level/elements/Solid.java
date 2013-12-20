@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package patient04.level;
+package patient04.level.elements;
 
 import patient04.rendering.Renderer;
 import patient04.math.Matrix;

@@ -1,8 +1,5 @@
-package patient04.level.pickups;
+package patient04.level.elements;
 
-import patient04.level.Player;
-import patient04.level.Solid;
-import patient04.level.Usable;
 import patient04.math.Vector;
 import patient04.rendering.Light;
 import patient04.rendering.Renderer;

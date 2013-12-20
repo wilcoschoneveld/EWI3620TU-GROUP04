@@ -1,4 +1,4 @@
-package patient04.level.pickups;
+package patient04.level.elements;
 
 import patient04.resources.Model;
 

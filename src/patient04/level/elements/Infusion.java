@@ -4,9 +4,8 @@
  * and open the template in the editor.
  */
 
-package patient04.level.pickups;
+package patient04.level.elements;
 
-import patient04.level.Player;
 import patient04.resources.Model;
 
 /**

@@ -1,12 +1,16 @@
 package patient04.level;
 
+import patient04.level.elements.Usable;
+import patient04.level.elements.Solid;
+import patient04.level.elements.Prop;
+import patient04.level.elements.Elevator;
 import java.io.*;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
-import patient04.enemies.Enemy;
+import patient04.level.elements.Enemy;
 
 import patient04.resources.Model;
-import patient04.enemies.Waypoint;
+import patient04.level.elements.Waypoint;
 import patient04.rendering.Renderer;
 import patient04.utilities.Logger;
 import patient04.physics.AABB;

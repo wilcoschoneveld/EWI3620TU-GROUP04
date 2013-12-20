@@ -1,4 +1,4 @@
-package patient04.enemies;
+package patient04.level.elements;
 
 import java.util.ArrayList;
 import patient04.math.Vector;

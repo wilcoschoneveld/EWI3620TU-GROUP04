@@ -1,5 +1,6 @@
-package patient04.enemies;
+package patient04.level.elements;
 
+import patient04.level.elements.Waypoint;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;

@@ -1,10 +1,12 @@
-package patient04.level;
+package patient04.level.elements;
 
+import patient04.level.elements.Usable;
 import patient04.math.Vector;
 import patient04.physics.Entity;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
