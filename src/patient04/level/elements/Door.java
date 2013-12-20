@@ -18,7 +18,6 @@ import patient04.resources.Model;
 public class Door extends Prop implements Usable {
     
     private final Model[] anim_open;
-    private boolean open = false;
 
     public Door(int angle) {
         super("door/metaldoor_000001.obj", angle);
@@ -37,20 +36,19 @@ public class Door extends Prop implements Usable {
 
     @Override
     public void use(Player player) {
-        // TODO check if player is on correct side
         Vector toPlayer = player.getPosition().copy().min(position);
         Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);
         
-        if (toPlayer.dot(normal) > 0)
-            open = true;
+        if (toPlayer.dot(normal) > 0) {
+            model = anim_open[5];
+            aabb = null;
+        }
+        
+        // TODO change AABB 
     }
     
     @Override
     public void draw(Renderer renderer) {
-        if (open)
-            model = anim_open[5];
-        else
-            model = anim_open[0];
         
         super.draw(renderer);
     }
