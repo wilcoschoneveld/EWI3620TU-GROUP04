@@ -32,7 +32,6 @@ public class Level {
     private final ArrayList<Usable> usables;
     
     public final ArrayList<Waypoint> waypoints;
-    
     public final Vector startPoint = new Vector();
     
     public Level() {
@@ -49,6 +48,14 @@ public class Level {
     
     public void addUsable(Usable usable) {
         usables.add(usable);
+    }
+    
+    public void removeUsable(Usable usable) {
+        usables.remove(usable);
+    }
+    
+    public ArrayList<Usable> getUsables() {
+        return usables;
     }
     
     public Light addNewLight() {

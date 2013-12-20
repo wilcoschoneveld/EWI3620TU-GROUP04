@@ -79,6 +79,11 @@ public class Game implements State, Input.Listener {
         level.addUsable(p);
         
         // TODO remove
+        Pickup p3 = new Infusion();
+        p3.position.set(-0.3f, 0, 0.8f);
+        level.addUsable(p3);
+        
+        // TODO remove
         Pickup p2 = new Infusion();
         p2.position.set(-0.8f, 0, 0.8f);
         level.addUsable(p2);

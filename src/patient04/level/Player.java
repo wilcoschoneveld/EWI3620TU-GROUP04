@@ -8,6 +8,7 @@ import org.lwjgl.input.Mouse;
 import patient04.math.Matrix;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
+import patient04.utilities.Utils;
 
 /**
  *
@@ -186,6 +187,41 @@ public class Player extends Entity implements Input.Listener {
             injecting = true;
             
             return Input.HANDLED;
+        }
+        
+        // Handle use key
+        if (Input.keyboardKey(Keyboard.KEY_F, true)) {
+            // Usable candidate
+            Usable candidate = null;
+            
+            // Selection variables
+            float angledist = 30 + 10*2.5f;
+            
+            // Loop through level usables
+            for (Usable usable : level.getUsables()) {
+                Vector toUsable = usable.getLocation().copy()
+                      .min(position).min(0, viewHeight, 0);
+                Vector lookTo = new Vector(0, 0, -1)
+                      .rotate(rotation.x, 1, 0, 0).rotate(rotation.y, 0, 1, 0);
+                float distance = toUsable.length();
+                float angle = Utils.acos(lookTo.dot(toUsable.normalize()));
+                
+                System.out.println("distance " + distance + " / angle " + angle);
+                
+                if (distance < 2.5f && angle + 10*distance < angledist) {
+                    candidate = usable;
+                    angledist = angle + 10*distance;
+                }
+            }
+            
+            // If candidate was found
+            if (candidate != null) {
+                // Use the item
+                candidate.use(this);
+                
+                // Remove usable from level
+                level.removeUsable(candidate);
+            }
         }
         
         return Input.UNHANDLED;
