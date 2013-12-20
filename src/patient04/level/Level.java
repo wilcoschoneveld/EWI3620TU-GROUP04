@@ -30,8 +30,8 @@ public class Level {
     private final ArrayList<Light> lights;
     private final ArrayList<Entity> entities;
     private final ArrayList<Usable> usables;
+    
     public final ArrayList<Waypoint> waypoints;
-    private Waypoint navlast;
     
     public final Vector startPoint = new Vector();
     
@@ -62,42 +62,9 @@ public class Level {
     }
     
     public Waypoint addWaypoint(Waypoint waypoint) {
-        navlast = waypoint;
         waypoints.add(waypoint);
         
         return waypoint;
-    }
-    
-    public Waypoint addWaypoint(Vector position) {
-        return addWaypoint(new Waypoint(position));
-    }
-    
-    public Waypoint addWaypoint(Vector position, Waypoint linkTo) {
-        Waypoint waypoint = new Waypoint(position);
-        
-        if(linkTo != null) {
-            Waypoint.link(waypoint, linkTo);
-        } else if(navlast != null) {
-            Waypoint.link(waypoint, navlast);
-        }
-        
-        return addWaypoint(waypoint);
-    }
-    
-    public void testPath() {
-        Waypoint wpA = addWaypoint(new Vector(5, 0, 4.5f), null);
-        addWaypoint(new Vector(5, 0, 13), null);
-        addWaypoint(new Vector(5, 0, 22), null);
-        addWaypoint(new Vector(10, 0, 22), null);
-        Waypoint wpE = addWaypoint(new Vector(10, 0, 10), null);
-        Waypoint wpB = addWaypoint(new Vector(10, 0, 4.5f), null);
-        Waypoint wpC = addWaypoint(new Vector(17, 0, 4.5f), null);
-        addWaypoint(new Vector(25, 0, 4.5f), null);
-        Waypoint wpD = addWaypoint(new Vector(16.5f, 0, 10.5f), wpC);
-        addWaypoint(new Vector(16.5f, 0, 18), null);
-        
-        Waypoint.link(wpA, wpB);
-        Waypoint.link(wpD, wpE);
     }
     
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
