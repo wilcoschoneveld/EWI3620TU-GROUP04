@@ -43,31 +43,20 @@ public class Utils {
         return (float) Math.sqrt(dx*dx + dy*dy);
     }
     
-    public static File showOpenDialog() {
-        DisplayMode old = Display.getDisplayMode();
-        
-        File file = null;
-        
-        try {
-            DisplayMode small = new DisplayMode(0, 0);
-            Display.setDisplayMode(small);
-            
+    public static File showOpenDialog() {        
+        try {            
             JFileChooser jc = new JFileChooser();
             
             int res = jc.showOpenDialog(null);
             
             if (res == JFileChooser.APPROVE_OPTION)
-                file = jc.getSelectedFile();
+                return jc.getSelectedFile();
             
-        } catch (LWJGLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                Display.setDisplayMode(old);
-            } catch(LWJGLException e) {}
         }
         
-        return file;
+        return null;
     }
     
     public static File showSaveDialog() {
