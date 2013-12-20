@@ -2,6 +2,7 @@ package patient04.states;
 
 import java.io.File;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.editor.Camera;
@@ -28,6 +29,9 @@ public class Editor implements State, Input.Listener {
 
     @Override
     public void initialize() {
+        // Go out of fullscreen
+        try { Display.setFullscreen(false); } catch(Exception e) { };
+        
         // Set OpenGL clear color
         GL11.glClearColor(0, 0, 0, 0);
         
@@ -79,6 +83,9 @@ public class Editor implements State, Input.Listener {
     public void destroy() {
         Model.disposeResources();
         Texture.disposeResources();
+        
+        // Go back to fullscreen
+        try { Display.setFullscreen(Main.fullscreen); } catch(Exception e) { };        
     }
 
     @Override
