@@ -130,7 +130,7 @@ public class Frustum {
          * @return 
          */
         public float distance(float x, float y, float z) {
-            return normal.dot(new Vector(x, y, z)) + distance;
+            return normal.x * x + normal.y * y + normal.z * z + distance;
         }
     }
 }
