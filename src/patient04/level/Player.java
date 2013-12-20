@@ -46,7 +46,7 @@ public class Player extends Entity implements Input.Listener {
     public Player(Level level) {
         super(level, WIDTH, HEIGHT);
         
-        stepSound = Sound.getResource("step.wav").setGain(0.2f);
+        stepSound = Sound.getResource("step.wav").setGain(0.4f);
         lastMoved = distanceMoved;
     }
     

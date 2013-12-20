@@ -14,7 +14,7 @@ void main() {
     vec2 pixelCoord = gl_FragCoord.xy / screenSize;
 
     gl_FragColor = texture2D(uTexDiffuse, pixelCoord) *
-                                                   (0.05 + effectLevel * 0.05);
+                                                   (0.01 + effectLevel * 0.05);
 
     float offsetX = 0.01 * effectLevel * pow(sin(pixelCoord.x * 3.141592), 0.5)
                                 * cos(effectSin * pixelCoord.y * 4 * 3.141592);

@@ -12,7 +12,7 @@ import patient04.utilities.Utils;
  *
  * @author Wilco
  */
-public class Light {
+public final class Light {
     public static final float falloffConstant = 0;
     public static final float falloffLinear = 0;
     public static final float falloffQuadratic = 0;
@@ -33,14 +33,13 @@ public class Light {
         setEnvironmentLight();
     }
     
-    public final Light setPosition(float x, float y, float z) {
-        // Set position vector
+    public Light setPosition(float x, float y, float z) {
         position.set(x, y, z);
         
         return this;
     }
     
-    public final Light setIntensity(float intensity) {
+    public Light setIntensity(float intensity) {
         // Set intensity
         this.intensity = intensity * 0.1f;
         
@@ -57,7 +56,7 @@ public class Light {
         return this;
     }
     
-    public final Light setColor(float hue, float saturation) {
+    public Light setColor(float hue, float saturation) {
         // Set color
         color = Buffers.createFloatBuffer(
                 Color.getHSBColor(hue, saturation, 1).getComponents(null));
@@ -74,7 +73,7 @@ public class Light {
         return this;
     }
     
-    public final Light setEnvironmentLight() {
+    public Light setEnvironmentLight() {
         // Set attenuation model
         constant = 1;
         linear = 0f;
@@ -106,7 +105,8 @@ public class Light {
         renderer.pointLightFirstPass();
         model.draw();
         
-        float d = (renderer.frustum.planes[5].distance(null) - 0.5f) * radius / 5;
+        float d = (renderer.frustum.planes[5].distance(null) - 0.5f)
+                                                                 * radius / 5;
         
         renderer.pointLightSecondPass();        
         renderer.updateLightParams(this, Utils.clamp(d, 0, 1));

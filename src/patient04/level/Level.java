@@ -29,7 +29,7 @@ public class Level {
     private final ArrayList<Solid> solids;
     private final ArrayList<Light> lights;
     private final ArrayList<Entity> entities;
-    
+    private final ArrayList<Usable> usables;
     public final ArrayList<Waypoint> waypoints;
     private Waypoint navlast;
     
@@ -40,15 +40,16 @@ public class Level {
         this.lights = new ArrayList<>();
         this.entities = new ArrayList<>();
         this.waypoints = new ArrayList<>();
+        this.usables = new ArrayList<>();
     }
     
     public void addSolid(Solid solid) {
         solids.add(solid);
     }
     
-//    public void addLight(Light light) {
-//        lights.add(light);
-//    }
+    public void addUsable(Usable usable) {
+        usables.add(usable);
+    }
     
     public Light addNewLight() {
         Light light = new Light();
@@ -115,6 +116,9 @@ public class Level {
         
         for (Entity entity : entities)
             entity.draw(renderer);
+        
+        for (Usable usable : usables)
+            usable.draw(renderer);
     }
     
     public void drawLights(Renderer renderer) {
@@ -123,6 +127,9 @@ public class Level {
         
         for (Entity entity : entities)
             entity.drawLight(renderer);
+        
+        for (Usable usable : usables)
+            usable.drawLight(renderer);
     }
     
     public void drawNavPoints(Renderer renderer) {
@@ -242,7 +249,7 @@ public class Level {
                                              Float.parseFloat(tokens[2]))
                                 .setColor(Float.parseFloat(tokens[3]),
                                           Float.parseFloat(tokens[4]))
-                                .setIntensity(Float.parseFloat(tokens[5]) * 7)
+                                .setIntensity(Float.parseFloat(tokens[5]) * 5)
                                 .setEnvironmentLight();
                         
                         break;

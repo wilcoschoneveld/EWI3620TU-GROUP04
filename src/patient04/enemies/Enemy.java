@@ -56,7 +56,7 @@ public class Enemy extends Entity {
         distanceMoved = (float) Math.random();
         lastMoved = distanceMoved;
         
-        stepSound = Sound.getResource("step.wav").setGain(0.8f);
+        stepSound = Sound.getResource("step.wav").setGain(1f);
     }
     
     @Override

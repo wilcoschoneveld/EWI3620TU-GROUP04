@@ -14,6 +14,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
+import patient04.level.pickups.Infusion;
+import patient04.level.pickups.Needle;
+import patient04.level.pickups.Pickup;
 import patient04.math.Vector;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
@@ -71,6 +74,16 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // TODO remove
+        Pickup p = new Needle();
+        p.position.set(2.23f, 0, 1.375f);
+        level.addUsable(p);
+        
+        // TODO remove
+        Pickup p2 = new Infusion();
+        p2.position.set(-0.8f, 0, 0.8f);
+        level.addUsable(p2);
+        
+        // TODO remove
         Sound.getResource("monitor.wav").setGain(0.1f)
                 .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
     }
@@ -110,7 +123,7 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
-        if(Input.keyboardKey(Keyboard.KEY_F, true)) {
+        if(Input.keyboardKey(Keyboard.KEY_L, true)) {
             Vector position = player.getPosition().add(0, 2, 0);
             
             // Create a new light at player position
