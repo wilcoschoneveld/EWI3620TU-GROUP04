@@ -29,4 +29,6 @@ void main() {
 
     if (effectLevel > 1)
         gl_FragColor -= (effectLevel - 1) * 2;
+
+    gl_FragColor -= pow(length(pixelCoord - 0.5), 4);
 }
