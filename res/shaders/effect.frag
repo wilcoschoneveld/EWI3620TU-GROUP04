@@ -31,4 +31,7 @@ void main() {
         gl_FragColor -= (effectLevel - 1) * 2;
 
     gl_FragColor -= pow(length(pixelCoord - 0.5), 4);
+
+    //float value = (gl_FragColor.x * 0.8 + gl_FragColor.y * 1.5 + gl_FragColor.z * 1.3) / 3;
+    //gl_FragColor = vec4(value, value, value, 0);
 }

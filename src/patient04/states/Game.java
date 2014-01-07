@@ -34,7 +34,6 @@ public class Game implements State, Input.Listener {
     private Timer timer;
     private Level level;
     private Player player;
-    private final int diffSounds = 3;
     
     @Override
     public void initialize() {        
@@ -48,7 +47,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel16632365.lvl");       
+        level = Level.fromFile("testlevel16632365.lvl");
 
         // Add player to level
         player = new Player(level);
@@ -185,7 +184,8 @@ public class Game implements State, Input.Listener {
             tutorial.draw();
         }
         
-        //renderer.debugPass();
+        if (Keyboard.isKeyDown(Keyboard.KEY_B))
+            renderer.debugPass();
     }
     
     @Override
