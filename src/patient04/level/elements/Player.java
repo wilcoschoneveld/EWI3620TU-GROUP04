@@ -120,6 +120,25 @@ public class Player extends Entity implements Input.Listener {
             else viewLean = Math.min(0, viewLean + LEAN_SPEED);
         }
         
+        // Check lean
+        if (viewLean != 0) {
+            AABB head = aabb.copy();
+            head.min.add(0, 1.4f, 0);
+
+            Vector leanDir = new Vector(viewLean, 0, 0)
+                                    .rotate(rotation.y, 0, 1, 0).normalize();
+
+            head.pos.add(leanDir.copy().scale(Math.abs(viewLean)));
+
+            boolean isFree;
+            while (viewLean != 0 &&
+                  (isFree = level.getCollisionBoxes(head).isEmpty()) == false) {
+                head.pos.min(leanDir.copy().scale(LEAN_SPEED));
+                if (viewLean > 0) viewLean = Math.max(0, viewLean - LEAN_SPEED);
+                else viewLean = Math.min(0, viewLean + LEAN_SPEED);
+            }
+        }
+        
 //        // If lean input is given
 //        if (leanInput.length() > 0) {
 //            // Update desired leaning
@@ -245,8 +264,6 @@ public class Player extends Entity implements Input.Listener {
                       .rotate(rotation.x, 1, 0, 0).rotate(rotation.y, 0, 1, 0);
                 float distance = toUsable.length();
                 float angle = Utils.acos(lookTo.dot(toUsable.normalize()));
-                
-                System.out.println("distance " + distance + " / angle " + angle);
                 
                 if (distance < 2.5f && angle + 10*distance < angledist) {
                     candidate = usable;
