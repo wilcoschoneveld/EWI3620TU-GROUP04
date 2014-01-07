@@ -29,7 +29,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_JUMP = 0.5f;
     
     // Leaning
-    public static final float LEAN_MAX = 0.7f;
+    public static final float LEAN_MAX = 0.5f;
     public static final float LEAN_SPEED = 0.03f;
     
     // Patient treatment
@@ -172,8 +172,8 @@ public class Player extends Entity implements Input.Listener {
         Matrix matrix = new Matrix();
         
         // Leaning
-        matrix.rotate(viewLean*15, 0, 0, 1);
-        matrix.translate(-viewLean, 0, 0);
+        matrix.rotate(viewLean*20, 0, 0, 1);
+        matrix.translate(-viewLean, Math.abs(viewLean*0.1f), 0);
         
         // Bobbing
         matrix.translate(
