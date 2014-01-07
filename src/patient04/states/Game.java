@@ -176,7 +176,7 @@ public class Game implements State, Input.Listener {
         renderer.guiPass(player);
         
         // Debug navigation grid
-        if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+        if(Keyboard.isKeyDown(Keyboard.KEY_P))
             level.drawNavPoints(renderer);
         
         if(pauser.isPaused()) {
