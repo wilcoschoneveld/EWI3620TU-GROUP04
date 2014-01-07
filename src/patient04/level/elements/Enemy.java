@@ -79,19 +79,7 @@ public class Enemy extends Entity {
         if (nextWaypoint != null && target.spotter == null) {
             Vector towaypoint = nextWaypoint.position
                                              .copy().min(position).normalize();
-            
-            // Check if player is in sight
-            Vector toplayer = target.getPosition().copy().min(position);
-            float dist = toplayer.length();
-            
-            if (dist <= SIGHT_DIST 
-                && Utils.acos(direction.copy().normalize()
-                        .dot(toplayer.normalize())) <= (85-7*dist) 
-                && lineOfSight(target)) {
-                target.spotter = this;
-                towaypoint = toplayer;
-            }
-            
+                        
             float tmpsign = Utils.sign(direction.cross(towaypoint).y);
             float tmpdot = Utils.clamp(direction.dot(towaypoint), 0, 1);
             float tmpangle = (float) Utils.acos(tmpdot);
@@ -101,9 +89,7 @@ public class Enemy extends Entity {
             direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
             
             rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
-            
-            if (target.spotter == null)
-                acceleration.add(direction);
+            acceleration.add(direction);
         }
         
         // Light flickering
@@ -127,7 +113,6 @@ public class Enemy extends Entity {
         
         Vector toPlayer = target.getPosition().copy().min(position);
         float dist = toPlayer.length();
-        // Check if player is in sight
         
         if (dist <= SIGHT_DIST 
                 && Utils.acos(direction.copy().normalize()
