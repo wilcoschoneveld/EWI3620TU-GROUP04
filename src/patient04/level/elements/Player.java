@@ -39,6 +39,8 @@ public class Player extends Entity implements Input.Listener {
     public float medicineLevel = 1;
     public boolean injecting = false;
     
+    public Enemy spotter = null;
+    
     private float lastMoved;
     private final Sound.Source stepSource;
     
@@ -65,17 +67,19 @@ public class Player extends Entity implements Input.Listener {
         Sound.setListenerOrientation(rotation.x, rotation.y, rotation.z);
         
         // Use some medicine
-        if (injecting) {
-            medicineLevel += MEDICINE_USE_RATE * 10 * dt;
-            if (medicineLevel > 1) injecting = false;
-        } else
-            medicineLevel -= MEDICINE_USE_RATE * dt;
+        if (spotter == null) {
+            if (injecting) {
+                medicineLevel += MEDICINE_USE_RATE * 10 * dt;
+                if (medicineLevel > 1) injecting = false;
+            } else
+                medicineLevel -= MEDICINE_USE_RATE * dt;
+        }
         
         // Define a new movement vector
         Vector moveInput = new Vector();
         
         // Handle input
-        if (medicineLevel > MEDICINE_CAN_MOVE) {
+        if (medicineLevel > MEDICINE_CAN_MOVE && spotter == null) {
             if(Keyboard.isKeyDown(Keyboard.KEY_W)) moveInput.add(0, 0, -1);
             if(Keyboard.isKeyDown(Keyboard.KEY_S)) moveInput.add(0, 0, 1);
             if(Keyboard.isKeyDown(Keyboard.KEY_A)) moveInput.add(-1, 0, 0);
@@ -116,6 +120,19 @@ public class Player extends Entity implements Input.Listener {
             
             // set last moved
             lastMoved = distanceMoved;
+        }
+        
+        if (spotter != null) {
+            Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
+            Vector toSpotter = spotter.getPosition().copy().min(position);
+            float tmpsign = Utils.sign(direction.cross(toSpotter).y);
+            float tmpdot = Utils.clamp(direction.dot(toSpotter), 0, 1);
+            float tmpangle = (float) Utils.acos(tmpdot);
+            
+            float tmpdelta = Math.min(tmpangle, 10f * dt);
+            
+            direction.rotate(tmpdelta, 0, tmpsign, 0).scale(dt);
+            rotation.set(0, Utils.atan2(-toSpotter.x, -toSpotter.z), 0);
         }
         
         // Update remaining entity
@@ -163,7 +180,8 @@ public class Player extends Entity implements Input.Listener {
         int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();
         
         // Update the camera orientation from mouse movement
-        if ((dx != 0 || dy != 0) && medicineLevel > MEDICINE_CAN_MOVE) {
+        if ((dx != 0 || dy != 0) && medicineLevel > MEDICINE_CAN_MOVE 
+                                                        && spotter == null) {
             rotation.y -= 0.1 * Mouse.getEventDX();
             rotation.x += 0.1 * Mouse.getEventDY();
             if (rotation.x > 90) rotation.x = 90;

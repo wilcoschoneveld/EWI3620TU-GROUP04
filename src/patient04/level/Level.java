@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import patient04.level.elements.Enemy;
+import patient04.level.elements.Player;
 
 import patient04.resources.Model;
 import patient04.level.elements.Waypoint;
@@ -70,6 +71,18 @@ public class Level {
     
     public void addEntity(Entity entity) {
         entities.add(entity);
+    }
+    
+    public Player newPlayer() {
+        Player player = new Player(this);
+
+        addEntity(player);
+
+        for (Entity entity : entities)
+            if (entity instanceof Enemy)
+                ((Enemy) entity).target = player;
+
+        return player;
     }
     
     public Waypoint addWaypoint(Waypoint waypoint) {

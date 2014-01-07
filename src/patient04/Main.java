@@ -12,8 +12,8 @@ import patient04.utilities.Utils;
 
 public final class Main {
     // Window dimensions
-    public static final int desiredWidth = 1280;
-    public static final int desiredHeight = 800;
+    public static final int desiredWidth = 800;
+    public static final int desiredHeight = 500;
     public static final boolean fullscreen = false;
     public static final boolean vsyncEnabled = true;
     
