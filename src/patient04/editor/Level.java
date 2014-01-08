@@ -394,6 +394,22 @@ public class Level implements Input.Listener {
                         waypoints.add(waypoint);
                         
                         break;
+                    case "infusion":
+                        Infusion infusion = new Infusion(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        level.elements.add(infusion);
+                        
+                        break;
+                    case "needle":
+                        Needle needle = new Needle(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        level.elements.add(needle);
+                        
+                        break;
                     case "start":
                         Start start = new Start(level,
                                 Float.parseFloat(tokens[1]),

@@ -22,7 +22,7 @@ public class Needle extends Element {
         this.x = x;
         this.z = z;
         
-        priority = 2;
+        priority = 4;
     }
 
     @Override

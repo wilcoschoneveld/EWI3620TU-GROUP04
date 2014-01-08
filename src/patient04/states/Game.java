@@ -47,7 +47,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel16632365.lvl");
+        level = Level.fromFile("testlevel28589277.lvl");
 
         // Add player to level
         player = new Player(level);
@@ -74,20 +74,6 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // TODO remove
-        Pickup p = new Needle(level);
-        p.position.set(2.23f, 0, 1.375f);
-        level.addUsable(p);
-        
-        // TODO remove
-        Pickup p3 = new Infusion(level);
-        p3.position.set(-0.3f, 0, 0.8f);
-        level.addUsable(p3);
-        
-        // TODO remove
-        Pickup p2 = new Infusion(level);
-        p2.position.set(-0.8f, 0, 0.8f);
-        level.addUsable(p2);
-        
         Door door = new Door(0);
         door.position.set(-3f, 0, 0.8f);
         level.addUsable(door);
