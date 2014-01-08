@@ -10,6 +10,7 @@ import patient04.math.Matrix;
 import patient04.physics.AABB;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
+import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -154,17 +155,19 @@ public class Player extends Entity implements Input.Listener {
             lastMoved = distanceMoved;
         }
         
+        // If there is a spotter
         if (spotter != null) {
-            Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
-            Vector toSpotter = spotter.getPosition().copy().min(position);
-            float tmpsign = Utils.sign(direction.cross(toSpotter).y);
-            float tmpdot = Utils.clamp(direction.dot(toSpotter), 0, 1);
-            float tmpangle = (float) Utils.acos(tmpdot);
+            // Rotate towards spotter (y angle)
+            Vector dS = spotter.getPosition().copy().min(position).normalize();
+            Vector dY = new Vector(0,0,-1).rotate(rotation.y,0,1,0).normalize();
+            float tmpSign = Utils.sign(dY.cross(dS).y);            
+            float tmpAngle = Utils.acos(Utils.clamp(dY.dot(dS), -1, 1));
+            dY.rotate(Math.min(tmpAngle, 200*dt), 0, tmpSign, 0);
+            rotation.y = Utils.atan2(-dY.x, -dY.z);
             
-            float tmpdelta = Math.min(tmpangle, 10f * dt);
-            
-            direction.rotate(tmpdelta, 0, tmpsign, 0).scale(dt);
-            rotation.set(0, Utils.atan2(-toSpotter.x, -toSpotter.z), 0);
+            // Rotate towards spotter (x angle)
+            if (rotation.x > 0) rotation.x = Math.max(0, rotation.x - 100*dt);
+            else                rotation.x = Math.min(0, rotation.x + 100*dt);
         }
         
         // Update remaining entity

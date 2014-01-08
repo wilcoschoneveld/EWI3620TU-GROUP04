@@ -187,7 +187,7 @@ public class Level {
         
         floor.model = Model.buildFloor(min, max, textureFile);
         floor.model.compileBuffers();
-        floor.model.releaseRawData();
+        //floor.model.releaseRawData();
         
         floor.aabb = new AABB(floor.position, min, max);
         floor.culling = false;
