@@ -39,6 +39,24 @@ public class AABB {
         return this;
     }
     
+    /** Rotates AABB by a given angle.
+     * 
+     * @param angle
+     * @param x
+     * @param y
+     * @param z
+     * @return 
+     */
+    public AABB rotate(float angle, float x, float y, float z) {
+        Vector a = min.copy().rotate(angle, x, y, z);
+        Vector b = max.copy().rotate(angle, x, y, z);
+        
+        min.set(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.min(a.z, b.z));
+        max.set(Math.max(a.x, b.x), Math.max(a.y, b.y), Math.max(a.z, b.z));
+        
+        return this;
+    }
+    
     /** Expands AABB with delta size in delta direction.
      * 
      * @param delta

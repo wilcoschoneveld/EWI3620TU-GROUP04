@@ -10,6 +10,7 @@ import patient04.rendering.Renderer;
  */
 public interface Usable {
     void use(Player player);
+    void update(float dt);
     void draw(Renderer renderer);
     void drawLight(Renderer renderer);
     Vector getLocation();

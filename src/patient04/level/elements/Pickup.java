@@ -54,4 +54,9 @@ public class Pickup extends Solid implements Usable {
         for (AABB something : level.getCollisionBoxes(check))
             position.y = Math.max(position.y, something.max.y);
     }
+
+    @Override
+    public void update(float dt) {
+        
+    }
 }

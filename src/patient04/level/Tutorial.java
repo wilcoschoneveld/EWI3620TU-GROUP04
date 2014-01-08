@@ -30,13 +30,13 @@ public class Tutorial implements Input.Listener {
         switch(stage) {
             case 0: hint = "Use the mouse to look around..."; break;
             case 1: hint = "Press W,A,S,D to move around..."; break;
+            case 2: hint = "F can be used to grab medicine or open doors..."; break;
         }
         
         if (hint == null) return;
         
         fntHints.setColor(1, 1, 1, alpha);
         fntHints.drawCentered(0.7f, hint);
-
     }
 
     @Override
@@ -66,7 +66,15 @@ public class Tutorial implements Input.Listener {
             
             return Input.UNHANDLED;
         }
+        
+        // Check for use key
+        if (stage == 2 && Input.keyboardKey(Keyboard.KEY_F, true)) {
+            stage = 3;
+            alpha = -1f;
             
+            return Input.UNHANDLED;
+        }
+        
         return Input.UNHANDLED;
     }
 }

@@ -73,7 +73,7 @@ public class Game implements State, Input.Listener {
         
         // TODO remove
         Door door = new Door(0);
-        door.position.set(-3f, 0, 0.8f);
+        door.position.set(-2f, 0, 0.8f);
         level.addUsable(door);
         
         // TODO remove

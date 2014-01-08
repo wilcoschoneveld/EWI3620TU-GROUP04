@@ -147,6 +147,9 @@ public class Level {
         for (Entity entity : entities)
             entity.update(dt);
         
+        for (Usable usable : usables)
+            usable.update(dt);
+                
         for (Entity entity : entities)
             entity.integrate();
     }

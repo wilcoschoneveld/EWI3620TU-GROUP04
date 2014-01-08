@@ -5,6 +5,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import patient04.Main;
+import patient04.resources.Font;
 import patient04.utilities.Input;
 
 /**
@@ -13,6 +14,8 @@ import patient04.utilities.Input;
  */
 public class Pauser implements Input.Listener {
     private boolean paused;
+    
+    private final Font fnt = Font.getResource("Lucida Sans Unicode", 0, 25);
     
     /** Gets the pause state.
      * 
@@ -54,7 +57,7 @@ public class Pauser implements Input.Listener {
         if(!paused)
             return Input.UNHANDLED;
         
-        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
+        if(Input.keyboardKey(Keyboard.KEY_RETURN, true)) {
             // Unpause game
             setPaused(false);
             
@@ -62,7 +65,7 @@ public class Pauser implements Input.Listener {
         }
         
         // TODO: remove this response
-        if(Input.keyboardKey(Keyboard.KEY_RETURN, true)) {
+        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             // Request transition to main menu
             Main.requestNewState(Main.States.MAIN_MENU);
             
@@ -92,5 +95,9 @@ public class Pauser implements Input.Listener {
         GL11.glVertex2f(1, 1);
         GL11.glVertex2f(-1, 1);
         GL11.glEnd();
+        
+        fnt.setColor(1, 1, 1, 0.3f);
+        fnt.drawCentered(0.4f, "Press ESCAPE again to give up");
+        fnt.drawCentered(0.5f, "Hit ENTER to keep trying");
     }
 }

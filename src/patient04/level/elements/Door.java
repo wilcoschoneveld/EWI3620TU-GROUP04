@@ -6,6 +6,7 @@
 
 package patient04.level.elements;
 
+import patient04.level.Level;
 import patient04.math.Vector;
 import patient04.physics.AABB;
 import patient04.rendering.Renderer;
@@ -18,6 +19,7 @@ import patient04.resources.Model;
 public class Door extends Prop implements Usable {
     
     private final Model[] anim_open;
+    private float timer = 0;
 
     public Door(int angle) {
         super("door/metaldoor_000000.obj", angle);
@@ -40,11 +42,23 @@ public class Door extends Prop implements Usable {
         Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);
         
         if (toPlayer.dot(normal) > 0) {
-            model = anim_open[5];
-            aabb = null;
+            timer = 0.01f;
+            
+            // TODO create new AABB
+            Vector min = new Vector(-0.8f, 0, -1.35f),
+                   max = new Vector(-0.5f, Level.WALL_HEIGHT, 0.05f);
+        
+            aabb = new AABB(this.position, min, max);
+            aabb.rotate(rotation.y, 0, 1, 0);
         }
         
         // TODO change AABB 
+    }
+    
+    @Override
+    public void update(float dt) {
+        if (timer > 0)
+            model = anim_open[(int) Math.min(timer += 30*dt, 5)];
     }
     
     @Override

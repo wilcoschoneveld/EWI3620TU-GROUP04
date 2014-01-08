@@ -57,7 +57,7 @@ public class Solid {
         renderer.glUpdateModelMatrix(matrix);
         
         // Discard if outside frustum
-        if (culling && renderer.frustum.isOutside(aabb, -1))
+        if (culling && renderer.frustum.isOutside(aabb, -1.2f))
             return;
         
         // Draw model

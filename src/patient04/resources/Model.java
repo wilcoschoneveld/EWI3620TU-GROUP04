@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import patient04.level.Level;
 import patient04.math.Vector;
+import patient04.physics.AABB;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
 
@@ -165,25 +166,45 @@ public class Model {
      * 
      * @return minimum bounding box as an array of 2 vectors.
      */
-    public Vector[] getBounds() {
-        // Create bounding vectors
-        Vector[] bounds = { new Vector(), new Vector() };
+//    public Vector[] getBounds() {
+//        // Create bounding vectors
+//        Vector[] bounds = { new Vector(), new Vector() };
+//        
+//        // Loop through all the vertices
+//        for (Vector vertex : vertices) {
+//            
+//            // Find minimum bound
+//            bounds[0].x = Math.min(bounds[0].x, vertex.x);
+//            bounds[0].y = Math.min(bounds[0].y, vertex.y);
+//            bounds[0].z = Math.min(bounds[0].z, vertex.z);
+//            
+//            // Find maximum bound
+//            bounds[1].x = Math.max(bounds[1].x, vertex.x);
+//            bounds[1].y = Math.max(bounds[1].y, vertex.y);
+//            bounds[1].z = Math.max(bounds[1].z, vertex.z);
+//        }
+//        
+//        return bounds;
+//    }
+    
+    /** Constructs minimum bounding box.
+     * 
+     * @param position
+     * @return 
+     */
+    public AABB getBoundingBox(Vector position) {
+        Vector min = new Vector(), max = new Vector();
         
-        // Loop through all the vertices
-        for (Vector vertex : vertices) {
-            
-            // Find minimum bound
-            bounds[0].x = Math.min(bounds[0].x, vertex.x);
-            bounds[0].y = Math.min(bounds[0].y, vertex.y);
-            bounds[0].z = Math.min(bounds[0].z, vertex.z);
-            
-            // Find maximum bound
-            bounds[1].x = Math.max(bounds[1].x, vertex.x);
-            bounds[1].y = Math.max(bounds[1].y, vertex.y);
-            bounds[1].z = Math.max(bounds[1].z, vertex.z);
+        for (Vector v : vertices) {
+            min.set(Math.min(min.x, v.x),
+                    Math.min(min.y, v.y),
+                    Math.min(min.z, v.z));
+            max.set(Math.max(max.x, v.x),
+                    Math.max(max.y, v.y),
+                    Math.max(max.z, v.z));
         }
         
-        return bounds;
+        return new AABB(position, min, max);
     }
     
     /** Requests a group with a given name. This will return the existing group
