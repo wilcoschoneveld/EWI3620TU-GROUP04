@@ -1,5 +1,7 @@
 package patient04.level.elements;
 
+import patient04.Main.States;
+import static patient04.Main.requestNewState;
 import patient04.level.elements.Waypoint;
 import patient04.level.Level;
 import patient04.math.Matrix;
@@ -9,6 +11,7 @@ import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
 import patient04.resources.Sound;
+import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -35,6 +38,8 @@ public class Enemy extends Entity {
     
     public Waypoint prevWaypoint;
     public Waypoint nextWaypoint;
+    
+    public Player target;
 
     public Enemy(Level level) {
         super(level, WIDTH, HEIGHT);
@@ -69,12 +74,12 @@ public class Enemy extends Entity {
                      nextWaypoint.position.copy().min(position).length() < 0.5)
                 selectNextWaypoint();
         
+        Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
         // Move towards next waypoint
-        if (nextWaypoint != null) {
-            Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
+        if (nextWaypoint != null && target.spotter == null) {
             Vector towaypoint = nextWaypoint.position
                                              .copy().min(position).normalize();
-            
+                        
             float tmpsign = Utils.sign(direction.cross(towaypoint).y);
             float tmpdot = Utils.clamp(direction.dot(towaypoint), -1, 1);
             float tmpangle = (float) Utils.acos(tmpdot);
@@ -83,9 +88,8 @@ public class Enemy extends Entity {
             
             direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
             
-            
-            acceleration.add(direction);
             rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
+            acceleration.add(direction);
         }
         
         // Light flickering
@@ -106,6 +110,25 @@ public class Enemy extends Entity {
             // set last moved
             lastMoved += 0.5f;
         }
+        
+        Vector toPlayer = target.getPosition().copy().min(position);
+        float dist = toPlayer.length();
+        
+        if (dist <= SIGHT_DIST 
+                && Utils.acos(direction.copy().normalize()
+                        .dot(toPlayer.normalize())) <= (85-7*dist) 
+                && lineOfSight(target)) {
+            target.spotter = this;
+            float tmpsign = Utils.sign(direction.cross(toPlayer).y);
+            float tmpdot = Utils.clamp(direction.dot(toPlayer), -1, 1);
+            float tmpangle = (float) Utils.acos(tmpdot);
+            
+            float tmpdelta = Math.min(tmpangle, 50f * dt);
+            
+            direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
+            rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
+        }
+        
     }
     
     public void selectNearestWaypoint() {

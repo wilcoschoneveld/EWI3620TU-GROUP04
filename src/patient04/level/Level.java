@@ -68,6 +68,18 @@ public class Level {
         entities.add(entity);
     }
     
+    public Player newPlayer() {
+        Player player = new Player(this);
+
+        addEntity(player);
+
+        for (Entity entity : entities)
+            if (entity instanceof Enemy)
+                ((Enemy) entity).target = player;
+
+        return player;
+    }
+    
     public Waypoint addWaypoint(Waypoint waypoint) {
         waypoints.add(waypoint);
         
@@ -170,7 +182,7 @@ public class Level {
         
         floor.model = Model.buildFloor(min, max, textureFile);
         floor.model.compileBuffers();
-        floor.model.releaseRawData();
+        //floor.model.releaseRawData();
         
         floor.aabb = new AABB(floor.position, min, max);
         floor.culling = false;

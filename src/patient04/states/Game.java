@@ -15,9 +15,6 @@ import org.lwjgl.opengl.Display;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
 import patient04.level.elements.Door;
-import patient04.level.elements.Infusion;
-import patient04.level.elements.Needle;
-import patient04.level.elements.Pickup;
 import patient04.math.Vector;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
@@ -50,8 +47,9 @@ public class Game implements State, Input.Listener {
         level = Level.fromFile("testlevel29507478.lvl");
 
         // Add player to level
-        player = new Player(level);
-        level.addEntity(player);
+        //player = new Player(level);
+        //level.addEntity(player);
+        player = level.newPlayer();
        
         // Set player at start point
         player.setPosition(level.startPoint.x, 0, level.startPoint.z);
