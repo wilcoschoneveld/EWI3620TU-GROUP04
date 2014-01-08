@@ -1,14 +1,9 @@
 package patient04.level;
 
-import patient04.level.elements.Usable;
-import patient04.level.elements.Solid;
-import patient04.level.elements.Prop;
-import patient04.level.elements.Elevator;
+import patient04.level.elements.*;
 import java.io.*;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
-import patient04.level.elements.Enemy;
-import patient04.level.elements.Player;
 
 import patient04.resources.Model;
 import patient04.level.elements.Waypoint;
@@ -295,6 +290,26 @@ public class Level {
                         level.addSolid(prop);
                         
                         break;
+                    case "needle":
+                        Pickup needle = new Needle(level);
+                        
+                        needle.position.set(Float.parseFloat(tokens[1]), 0,
+                                            Float.parseFloat(tokens[2]));
+                        needle.setProperAltitude();
+                        
+                        level.addUsable(needle);
+                        
+                        break;
+                    case "infusion":
+                        Pickup infusion = new Infusion(level);
+                        
+                        infusion.position.set(Float.parseFloat(tokens[1]), 0,
+                                              Float.parseFloat(tokens[2]));
+                        infusion.setProperAltitude();
+                        
+                        level.addUsable(infusion);
+                        
+                        break;      
                     case "link":
                         Waypoint.link(
                             level.waypoints.get(Integer.parseInt(tokens[1])),

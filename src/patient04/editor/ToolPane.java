@@ -15,13 +15,13 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class ToolPane implements Input.Listener {
-    private static final float MIN = 0.05f;
-    private static final float MAX = 0.3f;
+    private static final float MIN = 0.03f;
+    private static final float MAX = 0.25f;
     private static final float SPEED = 0.03f;
     
     public enum Tool {
-        SELECT, START, EXIT, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
-        ENEMY, WALL, DOOR, KEY, DELETE;
+        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+        SELECT, ENEMY,WALL, DOOR, MODEL, DELETE, SOUND;
     }
     
     private final Editor editor;
@@ -44,7 +44,7 @@ public class ToolPane implements Input.Listener {
         
         // Add new buttons to map
         tools.put(Tool.START, createButton(0));
-        tools.put(Tool.EXIT, createButton(1));
+        tools.put(Tool.END, createButton(1));
         tools.put(Tool.WAYPOINT, createButton(2));
         tools.put(Tool.LINK, createButton(3));
         tools.put(Tool.LIGHT, createButton(4));
@@ -54,8 +54,9 @@ public class ToolPane implements Input.Listener {
         tools.put(Tool.ENEMY, createButton(8));
         tools.put(Tool.WALL, createButton(9));
         tools.put(Tool.DOOR, createButton(10));
-        tools.put(Tool.KEY, createButton(11));
+        tools.put(Tool.MODEL, createButton(11));
         tools.put(Tool.DELETE, createButton(12));
+        tools.put(Tool.SOUND, createButton(13));
     }
     
     public final Button createButton(int index) {
@@ -144,8 +145,8 @@ public class ToolPane implements Input.Listener {
     @Override
     public boolean handleKeyboardEvent() {
         
-        //        SELECT, START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
-        // ENEMY, WALL, DOOR, KEY, DELETE;
+//        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+//        SELECT, ENEMY,WALL, DOOR, MODEL, DELETE, SOUND;
         
         if (Keyboard.getEventKeyState()) {
             switch(Keyboard.getEventKey()) {

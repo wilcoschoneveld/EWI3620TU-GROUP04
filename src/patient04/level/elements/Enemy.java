@@ -48,7 +48,7 @@ public class Enemy extends Entity {
         anim_walking = new Model[23];
         
         for(int i = 0; i < anim_walking.length; i++) {
-            String file = "nurse/walking";
+            String file = "nurse/walking_";
             file += String.format("%06d.obj", i+1);
             
             anim_walking[i] = Model.getResource(file);
@@ -56,7 +56,7 @@ public class Enemy extends Entity {
         }
         
         light = new Light()
-                .setColor(0.15f, 0.6f)
+                .setColor(0.15f, 1f)
                 .setEnvironmentLight();
         
         distanceMoved = (float) Math.random();
@@ -225,7 +225,7 @@ public class Enemy extends Entity {
     @Override
     public void drawLight(Renderer renderer) {
         // Find light position
-        Vector tmp = new Vector(0.5f, 1.5f, 0);
+        Vector tmp = new Vector(0.5f, 0.94f, -0.14f);
         tmp.rotate(rotation.y, 0, 1, 0);
         tmp.add(position);
         

@@ -20,14 +20,14 @@ public class Door extends Prop implements Usable {
     private final Model[] anim_open;
 
     public Door(int angle) {
-        super("door/metaldoor_000001.obj", angle);
+        super("door/metaldoor_000000.obj", angle);
         
         // Load animation/model
-        anim_open = new Model[9];
+        anim_open = new Model[6];
         
         for(int i = 0; i < anim_open.length; i++) {
             String file = "door/metaldoor_";
-            file += String.format("%06d.obj", i+1);
+            file += String.format("%06d.obj", i);
             
             anim_open[i] = Model.getResource(file);
             anim_open[i].releaseRawData();
@@ -49,7 +49,6 @@ public class Door extends Prop implements Usable {
     
     @Override
     public void draw(Renderer renderer) {
-        
         super.draw(renderer);
     }
 

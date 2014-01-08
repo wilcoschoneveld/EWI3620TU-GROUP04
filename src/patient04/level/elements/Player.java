@@ -30,7 +30,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float ACCEL_JUMP = 0.5f;
     
     // Leaning
-    public static final float LEAN_MAX = 0.7f;
+    public static final float LEAN_MAX = 0.5f;
     public static final float LEAN_SPEED = 0.03f;
     
     // Patient treatment
@@ -125,23 +125,24 @@ public class Player extends Entity implements Input.Listener {
             else viewLean = Math.min(0, viewLean + LEAN_SPEED);
         }
         
-//        // If lean input is given
-//        if (leanInput.length() > 0) {
-//            // Update desired leaning
-//            viewLean += leanInput.x * 0.05f;
-//            
-//            // Create head aabb
-//            AABB head = aabb.copy();
-//            head.min.add(0, 1.6f,0);
-//            
-//            // Add lean distance
-//            head.pos.add(new Vector(viewLean,0,0).rotate(rotation.y, 0, 1, 0));
-//            
-//            // Check if collision free
-//            boolean isFree = level.getCollisionBoxes(head).isEmpty();
-//            
-//            if (!isFree) viewLean = 0;
-//        }
+        // Check for collisions while leaning
+        if (viewLean != 0) {
+            AABB head = aabb.copy();
+            head.min.add(0, 1.4f, 0);
+
+            Vector leanDir = new Vector(viewLean, 0, 0)
+                                    .rotate(rotation.y, 0, 1, 0).normalize();
+
+            head.pos.add(leanDir.copy().scale(Math.abs(viewLean)));
+
+            boolean isFree;
+            while (viewLean != 0 &&
+                  (isFree = level.getCollisionBoxes(head).isEmpty()) == false) {
+                head.pos.min(leanDir.copy().scale(LEAN_SPEED / 2));
+                if (viewLean > 0) viewLean = Math.max(0, viewLean - LEAN_SPEED / 2);
+                else viewLean = Math.min(0, viewLean + LEAN_SPEED / 2);
+            }
+        }
         
         // Step sound
         if (distanceMoved - lastMoved > 1f) {
@@ -192,8 +193,8 @@ public class Player extends Entity implements Input.Listener {
         Matrix matrix = new Matrix();
         
         // Leaning
-        matrix.rotate(viewLean*15, 0, 0, 1);
-        matrix.translate(-viewLean, 0, 0);
+        matrix.rotate(viewLean*20, 0, 0, 1);
+        matrix.translate(-viewLean, Math.abs(viewLean*0.1f), 0);
         
         // Bobbing
         matrix.translate(
@@ -266,8 +267,6 @@ public class Player extends Entity implements Input.Listener {
                       .rotate(rotation.x, 1, 0, 0).rotate(rotation.y, 0, 1, 0);
                 float distance = toUsable.length();
                 float angle = Utils.acos(lookTo.dot(toUsable.normalize()));
-                
-                System.out.println("distance " + distance + " / angle " + angle);
                 
                 if (distance < 2.5f && angle + 10*distance < angledist) {
                     candidate = usable;

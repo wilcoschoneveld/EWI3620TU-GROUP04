@@ -165,6 +165,28 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
+            case NEEDLE:
+                if (Input.mouseButton(0, true)) {
+                    Needle needle = new Needle(this, mx, mz);
+                    
+                    elements.add(needle);
+                    selected = needle;
+                    target = 1;
+                    
+                    return Input.HANDLED;
+                }
+                break;
+            case INFUSION:
+                if (Input.mouseButton(0, true)) {
+                    Infusion infusion = new Infusion(this, mx, mz);
+                    
+                    elements.add(infusion);
+                    selected = infusion;
+                    target = 1;
+                    
+                    return Input.HANDLED;
+                }
+                break;
             case WAYPOINT:
                 if (Input.mouseButton(0, true)) {                    
                     Waypoint waypoint = new Waypoint(this, mx, mz);
@@ -199,7 +221,7 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
-            case EXIT:
+            case END:
                 if (Input.mouseButton(0, true)) {
                     Exit exit = new Exit(this, mx, mz);
                     
@@ -210,7 +232,7 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
-            case KEY:
+            case MODEL:
                 if (Input.mouseButton(0, true)) {
                     String s;
                     
@@ -244,27 +266,44 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
+            case DELETE:
+                if (Input.mouseButton(0, true)) {
+                    Element delete = null;
+                    
+                    for (Element element : elements)
+                        if (element.select(false, mx, mz) > 0)
+                            delete = element;
+                    
+                    if (delete != null)
+                        removeElement(delete);
+                    
+                    return Input.HANDLED;
+                }
+                break;
         }
         
         return Input.UNHANDLED;
     }
+    
+    public void removeElement(Element element) {
+        // Remove connected links if waypoint
+        if (element instanceof Waypoint) {
+            Waypoint wp = (Waypoint) element;
+            for (Link link : Link.getLinks(elements, wp, null))
+                elements.remove(link);
+        }
+
+        // Remove element
+        elements.remove(element);
+    }
 
     @Override
     public boolean handleKeyboardEvent() {
-        
         if (Input.keyboardKey(Keyboard.KEY_DELETE, true)) {
             // If something is selected, delete it
             if (selected != null) {
-                
-                // Remove connected links if waypoint
-                if (selected instanceof Waypoint) {
-                    Waypoint wp = (Waypoint) selected;
-                    for (Link link : Link.getLinks(elements, wp, null))
-                        elements.remove(link);
-                }
-                
                 // Remove element
-                elements.remove(selected);
+                removeElement(selected);
                 
                 // Unselect element
                 selected = null;
@@ -353,6 +392,22 @@ public class Level implements Input.Listener {
                         
                         level.elements.add(waypoint);
                         waypoints.add(waypoint);
+                        
+                        break;
+                    case "infusion":
+                        Infusion infusion = new Infusion(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        level.elements.add(infusion);
+                        
+                        break;
+                    case "needle":
+                        Needle needle = new Needle(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        level.elements.add(needle);
                         
                         break;
                     case "start":

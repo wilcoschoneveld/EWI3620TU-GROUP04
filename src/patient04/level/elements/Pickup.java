@@ -20,6 +20,9 @@ public class Pickup extends Solid implements Usable {
         this.level = level;
         
         light = new Light().setItemLight().setIntensity(2);
+        
+        // Set random rotation
+        rotation.y = (float) (Math.random() * 360);
     }
 
     @Override
@@ -42,5 +45,13 @@ public class Pickup extends Solid implements Usable {
     @Override
     public AABB getAABB() {
         return null;
+    }
+    
+    public void setProperAltitude() {
+        AABB check = new AABB(position, new Vector(-0.2f, 0, -0.2f),
+                                        new Vector(0.2f, 100, 0.2f));
+        
+        for (AABB something : level.getCollisionBoxes(check))
+            position.y = Math.max(position.y, something.max.y);
     }
 }
