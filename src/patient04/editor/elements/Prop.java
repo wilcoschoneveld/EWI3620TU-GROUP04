@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.editor.elements;
 
 import java.awt.Color;
@@ -12,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
 import static patient04.editor.elements.Element.glAttribute;
 import patient04.math.Vector;
+import patient04.physics.AABB;
 import patient04.resources.Font;
 import patient04.resources.Model;
 import patient04.utilities.Utils;
@@ -36,7 +31,9 @@ public class Prop extends Element {
         this.z = z;
         
         this.name = modelFile;
-        this.bounds = Model.getResource(modelFile).getBounds();
+        
+        AABB tmp = Model.getResource(modelFile).getBoundingBox(new Vector());
+        this.bounds = new Vector[] {tmp.min, tmp.max};
         
         fntProp = Font.getResource("Verdana", Font.BOLD, 10);
         
