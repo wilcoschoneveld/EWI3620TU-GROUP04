@@ -15,13 +15,13 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class ToolPane implements Input.Listener {
-    private static final float MIN = 0.05f;
-    private static final float MAX = 0.3f;
+    private static final float MIN = 0.03f;
+    private static final float MAX = 0.25f;
     private static final float SPEED = 0.03f;
     
     public enum Tool {
-        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION, SELECT, ENEMY,
-        WALL, DOOR, MODEL, DELETE, SOUND;
+        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+        SELECT, ENEMY,WALL, DOOR, MODEL, DELETE, SOUND;
     }
     
     private final Editor editor;
@@ -145,8 +145,8 @@ public class ToolPane implements Input.Listener {
     @Override
     public boolean handleKeyboardEvent() {
         
-        //        SELECT, START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
-        // ENEMY, WALL, DOOR, KEY, DELETE;
+//        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
+//        SELECT, ENEMY,WALL, DOOR, MODEL, DELETE, SOUND;
         
         if (Keyboard.getEventKeyState()) {
             switch(Keyboard.getEventKey()) {
