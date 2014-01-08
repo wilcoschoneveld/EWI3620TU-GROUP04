@@ -123,7 +123,7 @@ public class Enemy extends Entity {
             float tmpdot = Utils.clamp(direction.dot(toPlayer), -1, 1);
             float tmpangle = (float) Utils.acos(tmpdot);
             
-            float tmpdelta = Math.min(tmpangle, 50f * dt);
+            float tmpdelta = Math.min(tmpangle, 200f * dt);
             
             direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);
             rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);
