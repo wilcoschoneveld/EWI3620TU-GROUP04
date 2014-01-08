@@ -217,7 +217,7 @@ public class Level {
                         Vector max = new Vector(w/2, WALL_HEIGHT, h/2);
                         
                         Model model =
-                                Model.buildWall(min, max, "wall_hospital.png");
+                                Model.buildWall(min, max, "level/wall.png");
                         
                         model.compileBuffers();
                         model.releaseRawData();
@@ -327,7 +327,7 @@ public class Level {
             }
             
             // Generate floor
-            level.generateFloor("floor_hospital.png");
+            level.generateFloor("level/floor.png");
             
             return level;
         } catch(IOException e) { e.printStackTrace(); return null; }

@@ -31,7 +31,7 @@ public class MainMenu implements State, Input.Listener {
         controller = new Input();
         controller.addListener(this);
         
-        background = Image.getFromTextureResource("screen_mainmenu.png");
+        background = Image.getFromTextureResource("menu/main.png");
     }
 
     @Override

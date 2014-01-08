@@ -3,7 +3,7 @@ package patient04.states;
 import org.lwjgl.input.Keyboard;
 import patient04.Main;
 import patient04.resources.Texture;
-import patient04.level.elements.Player;
+import patient04.level.Player;
 import patient04.utilities.Timer;
 import patient04.level.Level;
 import patient04.resources.Model;
@@ -14,7 +14,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
-import patient04.level.elements.Door;
 import patient04.math.Vector;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
@@ -44,11 +43,9 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel29507478.lvl");
+        level = Level.fromFile("testlevel47910090.lvl");
 
         // Add player to level
-        //player = new Player(level);
-        //level.addEntity(player);
         player = level.newPlayer();
        
         // Set player at start point
@@ -72,9 +69,9 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // TODO remove
-        Door door = new Door(0);
-        door.position.set(-2f, 0, 0.8f);
-        level.addUsable(door);
+//        Door door = new Door(0);
+//        door.position.set(-2f, 0, 0.8f);
+//        level.addUsable(door);
         
         // TODO remove
         Sound.getResource("monitor.wav").setGain(0.1f)

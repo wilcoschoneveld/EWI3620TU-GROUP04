@@ -6,6 +6,7 @@
 
 package patient04.level.elements;
 
+import patient04.level.Player;
 import patient04.level.Level;
 import patient04.resources.Model;
 
@@ -18,7 +19,7 @@ public class Infusion extends Pickup {
     public Infusion(Level level) {
         super(level);
         
-        model = Model.getResource("infuus.obj");
+        model = Model.getResource("pickups/infuus.obj");
         
         light.setColor(0.3f, 1);
     }

@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL20;
 
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
-import patient04.level.elements.Player;
+import patient04.level.Player;
 import patient04.math.Matrix;
 import patient04.math.Vector;
 import patient04.resources.Model;

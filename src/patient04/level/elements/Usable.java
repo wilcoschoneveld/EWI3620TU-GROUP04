@@ -1,5 +1,6 @@
 package patient04.level.elements;
 
+import patient04.level.Player;
 import patient04.math.Vector;
 import patient04.physics.AABB;
 import patient04.rendering.Renderer;

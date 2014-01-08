@@ -1,4 +1,4 @@
-package patient04.level.elements;
+package patient04.level;
 
 import patient04.math.Vector;
 import patient04.physics.Entity;
@@ -6,6 +6,8 @@ import patient04.physics.Entity;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import patient04.level.Level;
+import patient04.level.elements.Enemy;
+import patient04.level.elements.Usable;
 import patient04.math.Matrix;
 import patient04.physics.AABB;
 import patient04.resources.Sound;

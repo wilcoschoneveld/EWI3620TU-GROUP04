@@ -1,5 +1,6 @@
 package patient04.level.elements;
 
+import patient04.level.Player;
 import patient04.Main.States;
 import static patient04.Main.requestNewState;
 import patient04.level.elements.Waypoint;

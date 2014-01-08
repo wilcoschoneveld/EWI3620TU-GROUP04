@@ -1,5 +1,5 @@
-# Blender MTL File: 'table2.blend'
-# Material Count: 2
+# Blender MTL File: 'dinnertable.blend'
+# Material Count: 3
 
 newmtl Leg
 Ns 96.078431
@@ -20,3 +20,13 @@ Ni 1.000000
 d 1.000000
 illum 2
 map_Kd metaltexture3.png
+
+newmtl Metal.001
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.496735 0.503494
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd metaltexture4.png

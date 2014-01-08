@@ -106,6 +106,9 @@ public class Level implements Input.Listener {
             case SELECT:
                 if (Input.mouseButton(0, true)) {
                     
+                    // Reverse elements
+                    Collections.reverse(elements);
+                    
                     // Loop through all elements
                     for (Element element : elements) {
                         // Try to select element
@@ -116,12 +119,18 @@ public class Level implements Input.Listener {
                             // Set selected as element
                             selected = element;
                             
+                            // Reverse again
+                            Collections.reverse(elements);
+                            
                             return Input.HANDLED;
                         }
                     }
                     
                     // Set selected to null if still here
                     selected = null;
+                    
+                    // Reverse again
+                    Collections.reverse(elements);
                     
                     return Input.HANDLED;
                 }                

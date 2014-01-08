@@ -9,7 +9,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd leaves.png
+map_Kd leaves2.png
 
 newmtl Pottery
 Ns 96.078431
@@ -19,7 +19,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd pottery.png
+map_Kd metaltexture3.png
 
 newmtl Soil
 Ns 96.078431
