@@ -199,7 +199,7 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
-            case EXIT:
+            case END:
                 if (Input.mouseButton(0, true)) {
                     Exit exit = new Exit(this, mx, mz);
                     
@@ -210,7 +210,7 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
-            case KEY:
+            case MODEL:
                 if (Input.mouseButton(0, true)) {
                     String s;
                     

@@ -23,7 +23,7 @@ public class Door extends Prop implements Usable {
         super("door/metaldoor_000001.obj", angle);
         
         // Load animation/model
-        anim_open = new Model[9];
+        anim_open = new Model[5];
         
         for(int i = 0; i < anim_open.length; i++) {
             String file = "door/metaldoor_";
@@ -40,7 +40,7 @@ public class Door extends Prop implements Usable {
         Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);
         
         if (toPlayer.dot(normal) > 0) {
-            model = anim_open[5];
+            model = anim_open[4];
             aabb = null;
         }
         

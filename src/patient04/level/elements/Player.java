@@ -120,7 +120,7 @@ public class Player extends Entity implements Input.Listener {
             else viewLean = Math.min(0, viewLean + LEAN_SPEED);
         }
         
-        // Check lean
+        // Check for collisions while leaning
         if (viewLean != 0) {
             AABB head = aabb.copy();
             head.min.add(0, 1.4f, 0);
@@ -133,29 +133,11 @@ public class Player extends Entity implements Input.Listener {
             boolean isFree;
             while (viewLean != 0 &&
                   (isFree = level.getCollisionBoxes(head).isEmpty()) == false) {
-                head.pos.min(leanDir.copy().scale(LEAN_SPEED));
-                if (viewLean > 0) viewLean = Math.max(0, viewLean - LEAN_SPEED);
-                else viewLean = Math.min(0, viewLean + LEAN_SPEED);
+                head.pos.min(leanDir.copy().scale(LEAN_SPEED / 2));
+                if (viewLean > 0) viewLean = Math.max(0, viewLean - LEAN_SPEED / 2);
+                else viewLean = Math.min(0, viewLean + LEAN_SPEED / 2);
             }
         }
-        
-//        // If lean input is given
-//        if (leanInput.length() > 0) {
-//            // Update desired leaning
-//            viewLean += leanInput.x * 0.05f;
-//            
-//            // Create head aabb
-//            AABB head = aabb.copy();
-//            head.min.add(0, 1.6f,0);
-//            
-//            // Add lean distance
-//            head.pos.add(new Vector(viewLean,0,0).rotate(rotation.y, 0, 1, 0));
-//            
-//            // Check if collision free
-//            boolean isFree = level.getCollisionBoxes(head).isEmpty();
-//            
-//            if (!isFree) viewLean = 0;
-//        }
         
         // Step sound
         if (distanceMoved - lastMoved > 1f) {

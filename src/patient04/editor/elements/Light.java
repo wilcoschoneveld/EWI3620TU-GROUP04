@@ -18,7 +18,7 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class Light extends Element {
-    private static final float SIZE = 0.2f;
+    private static final float SIZE = 0.4f;
     private static final float LENGTH = 0.7f;
     private static final float BALL = 0.13f;
     
