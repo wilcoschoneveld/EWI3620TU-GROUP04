@@ -76,7 +76,7 @@ public class Enemy extends Entity {
                                              .copy().min(position).normalize();
             
             float tmpsign = Utils.sign(direction.cross(towaypoint).y);
-            float tmpdot = Utils.clamp(direction.dot(towaypoint), 0, 1);
+            float tmpdot = Utils.clamp(direction.dot(towaypoint), -1, 1);
             float tmpangle = (float) Utils.acos(tmpdot);
             
             float tmpdelta = Math.min(tmpangle, SPEED_ROTATE * dt);
