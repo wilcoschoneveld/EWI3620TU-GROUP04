@@ -14,12 +14,14 @@ public class Pickup extends Solid implements Usable {
     protected final Level level;
     protected final Light light;
     
+    private float timer = (float) Math.random() * 5;
+    
     public Pickup(Level level) {
         super();
         
         this.level = level;
         
-        light = new Light().setItemLight().setIntensity(2);
+        light = new Light().setItemLight();
         
         // Set random rotation
         rotation.y = (float) (Math.random() * 360);
@@ -29,6 +31,13 @@ public class Pickup extends Solid implements Usable {
     public void use(Player player) {
         // Remove self from level
         level.removeUsable(this);
+    }
+    
+    @Override
+    public void update(float dt) {
+        timer += (2 + Math.random())*dt;
+        
+        light.setIntensity(1.2f + 0.6f * (float) Math.cos(timer));
     }
     
     @Override
@@ -53,10 +62,5 @@ public class Pickup extends Solid implements Usable {
         
         for (AABB something : level.getCollisionBoxes(check))
             position.y = Math.max(position.y, something.max.y);
-    }
-
-    @Override
-    public void update(float dt) {
-        
     }
 }
