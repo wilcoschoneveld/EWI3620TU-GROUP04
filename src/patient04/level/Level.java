@@ -282,6 +282,15 @@ public class Level {
                         level.addSolid(elevator);
                         
                         break;
+                    case "door":
+                        Door door = new Door(Integer.parseInt(tokens[3]) + 2);
+                        
+                        door.position.set(Float.parseFloat(tokens[1]), 0,
+                                          Float.parseFloat(tokens[2]));
+                        
+                        level.addUsable(door);
+                        
+                        break;
                     case "prop":
                         Prop prop = new Prop(tokens[1],
                                       (Integer.parseInt(tokens[5]) + 1) % 4);

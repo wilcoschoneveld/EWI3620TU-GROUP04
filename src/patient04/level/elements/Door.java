@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.level.elements;
 
 import patient04.level.Player;
@@ -33,7 +27,6 @@ public class Door extends Prop implements Usable {
             file += String.format("%06d.obj", i);
             
             anim_open[i] = Model.getResource(file);
-            anim_open[i].releaseRawData();
         }
     }
 

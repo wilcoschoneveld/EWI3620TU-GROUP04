@@ -241,6 +241,17 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 }
                 break;
+            case DOOR:
+                if (Input.mouseButton(0, true)) {
+                    Door door = new Door(this, mx, mz);
+                    
+                    elements.add(door);
+                    selected = door;
+                    target = 2;
+                    
+                    return Input.HANDLED;
+                }
+                break;
             case MODEL:
                 if (Input.mouseButton(0, true)) {
                     String s;
@@ -441,6 +452,16 @@ public class Level implements Input.Listener {
                         exit.rotation = Float.parseFloat(tokens[3]) * 90;
                         
                         level.elements.add(exit);
+                        
+                        break;
+                    case "door":
+                        Door door = new Door(level,
+                                Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]));
+                        
+                        door.rotation = Float.parseFloat(tokens[3]) * 90;
+                        
+                        level.elements.add(door);
                         
                         break;
                     case "prop":
