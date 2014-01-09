@@ -74,11 +74,6 @@ public class Game implements State, Input.Listener {
         controller.addListener(player);
         
         // TODO remove
-//        Door door = new Door(0);
-//        door.position.set(-2f, 0, 0.8f);
-//        level.addUsable(door);
-        
-        // TODO remove
 //        Sound.getResource("monitor.wav").setGain(0.1f)
 //                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
     }
@@ -100,6 +95,9 @@ public class Game implements State, Input.Listener {
         if(!pauser.isPaused()) {
             level.update(dt);
             tutorial.update(dt);
+            
+            // Also update score timer
+            Main.scoreTime += dt;
         }
     }
     

@@ -3,6 +3,7 @@ package patient04.states;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
+import patient04.resources.Font;
 import patient04.resources.Image;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
@@ -16,6 +17,7 @@ public class Scores implements State, Input.Listener {
     private Input controller;
     
     private Image background;
+    private Font fnt;
 
     @Override
     public void initialize() {
@@ -30,6 +32,8 @@ public class Scores implements State, Input.Listener {
         controller.addListener(this);
         
         background = Image.getFromTextureResource("menu/scores.png");
+        
+        fnt = Font.getResource("Lucida Sans Unicode", 0, 12);
     }
 
     @Override
@@ -42,6 +46,9 @@ public class Scores implements State, Input.Listener {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
         background.draw(0, 0, Utils.getDisplayRatio(), 1);
+        
+        fnt.draw(0.5f, 0.5f, "Game time: " + Main.scoreTime,
+                            0, Font.Align.RIGHT, Font.Align.TOP);
     }
 
     @Override

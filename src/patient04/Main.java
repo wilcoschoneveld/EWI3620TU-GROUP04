@@ -17,6 +17,9 @@ public final class Main {
     public static final boolean fullscreen = true;
     public static final boolean vsyncEnabled = true;
     
+    // Game timer for scores
+    public static float scoreTime = 0;
+    
     // Possible states
     public static enum States {
         MAIN_MENU, GAME, EDITOR, SCORES
