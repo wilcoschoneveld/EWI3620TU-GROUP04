@@ -14,12 +14,12 @@ public final class Main {
     // Window dimensions
     public static final int desiredWidth = 1280;
     public static final int desiredHeight = 800;
-    public static final boolean fullscreen = false;
+    public static final boolean fullscreen = true;
     public static final boolean vsyncEnabled = true;
     
     // Possible states
     public static enum States {
-        MAIN_MENU, GAME, EDITOR
+        MAIN_MENU, GAME, EDITOR, SCORES
     }
     
     // State machine variables
@@ -45,24 +45,20 @@ public final class Main {
         switch(state) {
             case MAIN_MENU:
                 Logger.log("Transition to Main Menu");
-                nextState = new MainMenu();
-                break;
+                return (nextState = new MainMenu());
             case GAME:
                 Logger.log("Transition to Game");
-                nextState = new Game();
-                break;
+                return (nextState = new Game());
             case EDITOR:
                 Logger.log("Transition to Editor");
-                nextState = new Editor();
-                break;
+                return (nextState = new Editor());
+            case SCORES:
+                Logger.log("Transition to High Scores");
+                return (nextState = new Scores());
             default:
                 Logger.error("Requested unknown State!");
-                nextState = null;
-                break;
+                return (nextState = null);
         }
-        
-        // return nextState for parameter purposes
-        return nextState;
     }
     
     /** Main application entry point.

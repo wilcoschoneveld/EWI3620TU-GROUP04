@@ -184,7 +184,7 @@ public class Player extends Entity implements Input.Listener {
             Game game = (Game) Main.requestNewState(Main.States.GAME);
             game.loadLevel = level.nextLevel;
         } else {
-            Main.requestNewState(Main.States.MAIN_MENU);
+            Main.requestNewState(Main.States.SCORES);
         }
     }
     
