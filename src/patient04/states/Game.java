@@ -79,8 +79,8 @@ public class Game implements State, Input.Listener {
 //        level.addUsable(door);
         
         // TODO remove
-        Sound.getResource("monitor.wav").setGain(0.1f)
-                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
+//        Sound.getResource("monitor.wav").setGain(0.1f)
+//                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
     }
 
     @Override

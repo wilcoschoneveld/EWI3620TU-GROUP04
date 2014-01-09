@@ -77,7 +77,7 @@ public class MainMenu implements State, Input.Listener {
             // Check buttons
             if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
-                game.loadLevel = "testlevel544972.lvl";
+                game.loadLevel = "testlevel13688806.lvl";
                 
             } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Main.requestNewState(Main.States.EDITOR);

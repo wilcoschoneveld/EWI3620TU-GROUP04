@@ -138,7 +138,8 @@ public class Utils {
         
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         
-        fnt.draw(0.1f, 0.9f, "Loading...", 0, Font.Align.LEFT, Font.Align.BOTTOM);
+        fnt.draw(0.1f, 0.9f, "Loading, please wait...",
+                0, Font.Align.LEFT, Font.Align.BOTTOM);
         
         Display.update();
     }

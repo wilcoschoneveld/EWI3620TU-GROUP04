@@ -282,7 +282,7 @@ public class Level {
                         elevator.position.set(Float.parseFloat(tokens[1]), 0,
                                               Float.parseFloat(tokens[2]));
                         
-                        level.addSolid(elevator);
+                        level.addUsable(elevator);
                         
                         break;
                     case "door":
@@ -329,6 +329,10 @@ public class Level {
                         Waypoint.link(
                             level.waypoints.get(Integer.parseInt(tokens[1])),
                             level.waypoints.get(Integer.parseInt(tokens[2])));
+                        
+                        break;
+                    case "nextlevel":
+                        level.nextLevel = tokens[1];
                         
                         break;
                     default: // Incompatible line                        
