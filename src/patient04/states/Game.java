@@ -12,7 +12,6 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
 import patient04.math.Vector;
@@ -23,6 +22,8 @@ import patient04.utilities.Utils;
 
 
 public class Game implements State, Input.Listener {
+    public String loadLevel = "";
+    
     private Renderer renderer;
     
     private Input controller;
@@ -47,7 +48,7 @@ public class Game implements State, Input.Listener {
         timer = new Timer();
         
         // Create a new maze and player
-        level = Level.fromFile("testlevel544972.lvl");
+        level = Level.fromFile(loadLevel);
 
         // Add player to level
         player = level.newPlayer();
@@ -78,8 +79,8 @@ public class Game implements State, Input.Listener {
 //        level.addUsable(door);
         
         // TODO remove
-        Sound.getResource("monitor.wav").setGain(0.1f)
-                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
+//        Sound.getResource("monitor.wav").setGain(0.1f)
+//                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
     }
 
     @Override
@@ -119,7 +120,9 @@ public class Game implements State, Input.Listener {
         
         
         if(Input.keyboardKey(Keyboard.KEY_R, true)) {
-            Main.requestNewState(Main.States.GAME);
+            Game game = (Game) Main.requestNewState(Main.States.GAME);
+            game.loadLevel = loadLevel;
+            
             return Input.HANDLED;
         }
         

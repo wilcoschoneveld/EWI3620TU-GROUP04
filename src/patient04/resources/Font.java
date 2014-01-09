@@ -38,9 +38,6 @@ public class Font {
     public void drawCentered(float y, String str) {
         int width = Display.getWidth(), height = Display.getHeight();
         
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
@@ -51,6 +48,10 @@ public class Font {
         
         Texture.unbind();
         TextureImpl.unbind();
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
         font.drawString(
                 width / 2 - font.getWidth(str) / 2, y * height, str, color);
         
@@ -96,6 +97,10 @@ public class Font {
         
         Texture.unbind();
         TextureImpl.unbind();
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
         font.drawString(tx, ty, str);
         
         GL11.glMatrixMode(GL11.GL_MODELVIEW);

@@ -14,7 +14,10 @@ import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
 
-public class Level {   
+public class Level {
+    // Next subsequent level
+    public String nextLevel;    
+    
     // Gravity vectors
     public static final Vector GRAVITY = new Vector(0, -1, 0);
     
@@ -279,7 +282,7 @@ public class Level {
                         elevator.position.set(Float.parseFloat(tokens[1]), 0,
                                               Float.parseFloat(tokens[2]));
                         
-                        level.addSolid(elevator);
+                        level.addUsable(elevator);
                         
                         break;
                     case "door":
@@ -326,6 +329,10 @@ public class Level {
                         Waypoint.link(
                             level.waypoints.get(Integer.parseInt(tokens[1])),
                             level.waypoints.get(Integer.parseInt(tokens[2])));
+                        
+                        break;
+                    case "nextlevel":
+                        level.nextLevel = tokens[1];
                         
                         break;
                     default: // Incompatible line                        

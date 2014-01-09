@@ -5,12 +5,14 @@ import patient04.physics.Entity;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import patient04.Main;
 import patient04.level.Level;
 import patient04.level.elements.Enemy;
 import patient04.level.elements.Usable;
 import patient04.math.Matrix;
 import patient04.physics.AABB;
 import patient04.resources.Sound;
+import patient04.states.Game;
 import patient04.utilities.Input;
 import patient04.utilities.Timer;
 import patient04.utilities.Utils;
@@ -175,6 +177,15 @@ public class Player extends Entity implements Input.Listener {
         
         // Update remaining entity
         super.update(dt);
+    }
+    
+    public void useExit() {
+        if (level.nextLevel != null) {
+            Game game = (Game) Main.requestNewState(Main.States.GAME);
+            game.loadLevel = level.nextLevel;
+        } else {
+            Main.requestNewState(Main.States.MAIN_MENU);
+        }
     }
     
     /** Obtain the view matrix.
