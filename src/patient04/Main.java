@@ -2,6 +2,7 @@ package patient04;
 
 import patient04.utilities.Logger;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -14,7 +15,7 @@ public final class Main {
     // Window dimensions
     public static final int desiredWidth = 1280;
     public static final int desiredHeight = 800;
-    public static final boolean fullscreen = true;
+    public static final boolean fullscreen = false;
     public static final boolean vsyncEnabled = true;
     
     // Game timer for scores

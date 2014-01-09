@@ -78,7 +78,7 @@ public class MainMenu implements State, Input.Listener {
             if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 // Request transition to first level
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
-                game.loadLevel = "testlevel13688806.lvl";
+                game.loadLevel = "testlevel15356474.lvl";
                 
                 // Reset score timer
                 Main.scoreTime = 0;

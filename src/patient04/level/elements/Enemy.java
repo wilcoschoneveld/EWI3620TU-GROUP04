@@ -120,6 +120,7 @@ public class Enemy extends Entity {
                         .dot(toPlayer.normalize())) <= (85-7*dist) 
                 && lineOfSight(target)) {
             target.spotter = this;
+            
             float tmpsign = Utils.sign(direction.cross(toPlayer).y);
             float tmpdot = Utils.clamp(direction.dot(toPlayer), -1, 1);
             float tmpangle = (float) Utils.acos(tmpdot);

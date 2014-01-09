@@ -7,6 +7,7 @@ import patient04.resources.Font;
 import patient04.resources.Image;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
+import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -18,6 +19,8 @@ public class Scores implements State, Input.Listener {
     
     private Image background;
     private Font fnt;
+    
+    private StringBuilder name;
 
     @Override
     public void initialize() {
@@ -33,7 +36,11 @@ public class Scores implements State, Input.Listener {
         
         background = Image.getFromTextureResource("menu/scores.png");
         
-        fnt = Font.getResource("Lucida Sans Unicode", 0, 12);
+        fnt = Font.getResource("Lucida Sans Unicode", 0, 20);
+        
+        name = new StringBuilder();
+        
+        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
@@ -48,12 +55,24 @@ public class Scores implements State, Input.Listener {
         background.draw(0, 0, Utils.getDisplayRatio(), 1);
         
         fnt.draw(0.5f, 0.5f, "Game time: " + Main.scoreTime,
-                            0, Font.Align.RIGHT, Font.Align.TOP);
+                            0, Font.Align.LEFT, Font.Align.TOP);
+        
+        if (name.length() < 10 && Timer.getTime() % 1000 < 500)
+            fnt.draw(0.6f, 0.6f, "Enter Name: " + name + '_',
+                                0, Font.Align.LEFT, Font.Align.TOP);
+        else
+            fnt.draw(0.6f, 0.6f, "Enter Name: " + name,
+                            0, Font.Align.LEFT, Font.Align.TOP);
+        
+//        fnt.draw(0.6f, 0.6f, "Enter Name: " + name + (name.length() < 10 ? '_' : ""),
+//                            0, Font.Align.LEFT, Font.Align.TOP);
     }
 
     @Override
     public void destroy() {
         Texture.disposeResources();
+        
+        Keyboard.enableRepeatEvents(false);
     }
 
     @Override
@@ -64,9 +83,48 @@ public class Scores implements State, Input.Listener {
     @Override
     public boolean handleKeyboardEvent() {
         
-        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
+        if (Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             // Request transition to main menu
             Main.requestNewState(Main.States.MAIN_MENU);
+            
+            return Input.HANDLED;
+        }
+        
+        if (Keyboard.getEventKeyState()) {
+            switch (Keyboard.getEventKey()) {
+                case Keyboard.KEY_A: name.append('A'); break;
+                case Keyboard.KEY_B: name.append('B'); break;
+                case Keyboard.KEY_C: name.append('C'); break;
+                case Keyboard.KEY_D: name.append('D'); break;
+                case Keyboard.KEY_E: name.append('E'); break;
+                case Keyboard.KEY_F: name.append('F'); break;
+                case Keyboard.KEY_G: name.append('G'); break;
+                case Keyboard.KEY_H: name.append('H'); break;
+                case Keyboard.KEY_I: name.append('I'); break;
+                case Keyboard.KEY_J: name.append('J'); break;
+                case Keyboard.KEY_K: name.append('K'); break;
+                case Keyboard.KEY_L: name.append('L'); break;
+                case Keyboard.KEY_M: name.append('M'); break;
+                case Keyboard.KEY_N: name.append('N'); break;
+                case Keyboard.KEY_O: name.append('O'); break;
+                case Keyboard.KEY_P: name.append('P'); break;
+                case Keyboard.KEY_Q: name.append('Q'); break;
+                case Keyboard.KEY_R: name.append('R'); break;
+                case Keyboard.KEY_S: name.append('S'); break;
+                case Keyboard.KEY_T: name.append('T'); break;
+                case Keyboard.KEY_U: name.append('U'); break;
+                case Keyboard.KEY_V: name.append('V'); break;
+                case Keyboard.KEY_W: name.append('W'); break;
+                case Keyboard.KEY_X: name.append('X'); break;
+                case Keyboard.KEY_Y: name.append('Y'); break;
+                case Keyboard.KEY_Z: name.append('Z'); break;
+                case Keyboard.KEY_MINUS: name.append('-'); break;
+                case Keyboard.KEY_BACK:
+                    name.setLength(Math.max(0, name.length()-1)); break;
+            }
+            
+            // Ensure maximum of 10 characters
+            name.setLength(Math.min(10, name.length()));
             
             return Input.HANDLED;
         }
