@@ -20,7 +20,7 @@ public class Needle extends Pickup {
     
     @Override
     public void use(Player player) {
-        player.medicineLevel += 0.5f;
+        player.medicineLevel += 0.3f;
         
         super.use(player);
     }

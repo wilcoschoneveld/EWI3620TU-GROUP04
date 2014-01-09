@@ -52,7 +52,7 @@ public class Door extends Prop implements Usable {
     @Override
     public void update(float dt) {
         if (timer > 0)
-            model = anim_open[(int) Math.min(timer += 30*dt, 5)];
+            model = anim_open[(int) Math.min(timer += 20*dt, 5)];
     }
     
     @Override

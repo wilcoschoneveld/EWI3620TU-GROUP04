@@ -246,6 +246,12 @@ public class Player extends Entity implements Input.Listener {
             return Input.HANDLED;
         }
         
+        if (Input.keyboardKey(Keyboard.KEY_V, true)) {
+            medicineLevel = 0.01f;
+            
+            return Input.HANDLED;
+        }
+        
         // Handle self injection (TODO: REMOVE)
         if (Input.keyboardKey(Keyboard.KEY_G, true)) {
             injecting = true;
