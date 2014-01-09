@@ -5,6 +5,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
+import patient04.resources.Font;
 import patient04.resources.Image;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
@@ -21,6 +22,9 @@ public class MainMenu implements State, Input.Listener {
 
     @Override
     public void initialize() {
+        // Preload font
+        Font.getResource("Lucida Sans Unicode", 0, 25);
+        
         // Disable depth testing
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
@@ -72,7 +76,9 @@ public class MainMenu implements State, Input.Listener {
         if (Input.mouseButton(0, false)) {
             // Check buttons
             if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {
-                Main.requestNewState(Main.States.GAME);
+                Game game = (Game) Main.requestNewState(Main.States.GAME);
+                game.loadLevel = "testlevel544972.lvl";
+                
             } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Main.requestNewState(Main.States.EDITOR);
             }

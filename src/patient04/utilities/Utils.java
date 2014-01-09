@@ -18,6 +18,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import patient04.math.Vector;
 import patient04.resources.Font;
+import patient04.resources.Texture;
 
 /**
  *

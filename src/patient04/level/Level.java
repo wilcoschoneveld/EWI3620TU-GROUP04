@@ -14,7 +14,10 @@ import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
 
-public class Level {   
+public class Level {
+    // Next subsequent level
+    public String nextLevel;    
+    
     // Gravity vectors
     public static final Vector GRAVITY = new Vector(0, -1, 0);
     
