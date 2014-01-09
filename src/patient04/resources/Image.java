@@ -6,13 +6,7 @@ import org.lwjgl.opengl.GL11;
  *
  * @author Wilco
  */
-public class Image {
-//    public static final int LEFT_ALIGN = 0;
-//    public static final int RIGHT_ALIGN = 1;
-//    public static final int TOP_ALIGN = 2;
-//    public static final int BOTTOM_ALIGN = 3;
-//    public static final int CENTER_ALIGN = 4;
-    
+public class Image {    
     private final Texture texture;
     private final float u0, v0, u1, v1;
     public final float width, height;
@@ -51,6 +45,10 @@ public class Image {
         GL11.glTexCoord2f(u1, v0);
         GL11.glVertex2f(x1, y0);
         GL11.glEnd();
+    }
+    
+    public float getRatio() {
+        return (float) width / height;
     }
     
     public static Image getFromTextureResource(String textureFile) {
