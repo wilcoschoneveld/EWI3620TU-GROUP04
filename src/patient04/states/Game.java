@@ -117,6 +117,12 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
+        
+        if(Input.keyboardKey(Keyboard.KEY_R, true)) {
+            Main.requestNewState(Main.States.GAME);
+            return Input.HANDLED;
+        }
+        
         if(Input.keyboardKey(Keyboard.KEY_L, true)) {
             Vector position = player.getPosition().add(0, 2, 0);
             
