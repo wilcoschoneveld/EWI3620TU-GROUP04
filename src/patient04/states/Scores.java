@@ -1,8 +1,10 @@
 package patient04.states;
 
+import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
+import patient04.resources.Database;
 import patient04.resources.Font;
 import patient04.resources.Image;
 import patient04.resources.Texture;
@@ -21,6 +23,9 @@ public class Scores implements State, Input.Listener {
     private Font fnt;
     
     private StringBuilder name;
+    private ArrayList<String> scores;
+    
+    private Database db;
 
     @Override
     public void initialize() {
@@ -39,8 +44,11 @@ public class Scores implements State, Input.Listener {
         fnt = Font.getResource("Lucida Sans Unicode", 0, 20);
         
         name = new StringBuilder();
-        
         Keyboard.enableRepeatEvents(true);
+        
+        db = new Database();
+        
+        scores = db.getTopTimes();
     }
 
     @Override
@@ -54,18 +62,15 @@ public class Scores implements State, Input.Listener {
         
         background.draw(0, 0, Utils.getDisplayRatio(), 1);
         
-        fnt.draw(0.5f, 0.5f, "Game time: " + Main.scoreTime,
+        fnt.draw(0.5f, 0.5f, String.format("Game time: %.2fs", Main.scoreTime),
                             0, Font.Align.LEFT, Font.Align.TOP);
         
-        if (name.length() < 10 && Timer.getTime() % 1000 < 500)
-            fnt.draw(0.6f, 0.6f, "Enter Name: " + name + '_',
-                                0, Font.Align.LEFT, Font.Align.TOP);
-        else
-            fnt.draw(0.6f, 0.6f, "Enter Name: " + name,
-                            0, Font.Align.LEFT, Font.Align.TOP);
+        fnt.draw(0.6f, 0.6f, "Enter Name: " + name +
+            ((name.length() < 10 && Timer.getTime() % 1000 < 500) ? '_' : ""),
+                                            0, Font.Align.LEFT, Font.Align.TOP);
         
-//        fnt.draw(0.6f, 0.6f, "Enter Name: " + name + (name.length() < 10 ? '_' : ""),
-//                            0, Font.Align.LEFT, Font.Align.TOP);
+        for (int i = 0; i < scores.size(); i++)
+            fnt.draw(0.6f, 0.7f, scores.get(i), i);
     }
 
     @Override
@@ -86,6 +91,16 @@ public class Scores implements State, Input.Listener {
         if (Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             // Request transition to main menu
             Main.requestNewState(Main.States.MAIN_MENU);
+            
+            return Input.HANDLED;
+        }
+        
+        if (Input.keyboardKey(Keyboard.KEY_RETURN, true) && name.length() != 0) {
+            // Update score in database
+            db.addTime(name.toString(), Main.scoreTime);
+            
+            // Retreive top times
+            scores = db.getTopTimes();
             
             return Input.HANDLED;
         }
