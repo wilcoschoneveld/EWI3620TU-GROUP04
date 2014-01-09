@@ -4,7 +4,7 @@ package patient04.utilities;
 import org.lwjgl.Sys;
 
 public class Timer {
-	private final long maxtime = 1000 / 1; //1 fps
+	private final long maxtime = 1000 / 20; //20 fps
 	private long prev = 0;
 	
 	public static long getTime() {
