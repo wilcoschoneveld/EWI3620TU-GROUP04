@@ -29,6 +29,8 @@ public class Editor implements State, Input.Listener {
 
     @Override
     public void initialize() {
+        Utils.showLoading();
+        
         // Go out of fullscreen
         try { Display.setFullscreen(false); } catch(Exception e) { };
         

@@ -17,6 +17,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import patient04.math.Vector;
+import patient04.resources.Font;
 
 /**
  *
@@ -129,5 +130,15 @@ public class Utils {
         try {
             ImageIO.write(img, "PNG", new File(file + ".png"));
         } catch(IOException e) { e.printStackTrace(); }
+    }
+    
+    public static void showLoading() {
+        Font fnt = Font.getResource("Lucida Sans Unicode", 0, 25);
+        
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        
+        fnt.draw(0.1f, 0.9f, "Loading...", 0, Font.Align.LEFT, Font.Align.BOTTOM);
+        
+        Display.update();
     }
 }

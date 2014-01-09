@@ -42,7 +42,7 @@ public class MainMenu implements State, Input.Listener {
         trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
         trees2 = new Parallax("menu/trees2.png", R - 0.4f, 0.3f, 0.5f, 0.04f);
         start = new Button("menu/start.png", "menu/start2.png", 0.3f, 0.3f, 0.6f, 0.03f);
-        editor = new Button("menu/editor.png", "menu/editor2.png", 0.7f, 0.05f, 0.6f, 0.3f);
+        editor = new Button("menu/editor.png", "menu/editor2.png", 0.7f, 0.05f, 0.6f, 0.2f);
     }
 
     @Override

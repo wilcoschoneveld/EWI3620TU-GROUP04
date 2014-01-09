@@ -12,12 +12,14 @@ import patient04.rendering.Renderer;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import patient04.level.Pauser;
 import patient04.level.Tutorial;
 import patient04.math.Vector;
 import patient04.resources.Sound;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
+import patient04.utilities.Utils;
 
 
 public class Game implements State, Input.Listener {
@@ -32,7 +34,9 @@ public class Game implements State, Input.Listener {
     private Player player;
     
     @Override
-    public void initialize() {        
+    public void initialize() {
+        Utils.showLoading();
+        
         // Create a new Renderer
         renderer = new Renderer();
         
