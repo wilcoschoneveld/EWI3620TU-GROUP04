@@ -1,11 +1,13 @@
 package patient04.editor;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import patient04.Main;
 import patient04.states.Editor;
 import patient04.utilities.Input;
 import patient04.utilities.Utils;
@@ -28,6 +30,8 @@ public class ToolPane implements Input.Listener {
     
     private final HashMap<Tool, Button> tools;
     public Tool selected = Tool.SELECT;
+    
+    private final Button newl, save, load, back;
     
     private float x;
     private boolean open;
@@ -57,6 +61,18 @@ public class ToolPane implements Input.Listener {
         tools.put(Tool.MODEL, createButton(11));
         tools.put(Tool.DELETE, createButton(12));
         tools.put(Tool.SOUND, createButton(13));
+        
+        newl = Button.fromSheet("editor/buttons3.png", 3, 124, 40, 1);
+        newl.x = 0.05f; newl.y = 0.66f; newl.width = 0.15f; newl.height = 0.05f;
+        
+        save = Button.fromSheet("editor/buttons3.png", 1, 124, 40, 1);
+        save.x = 0.05f; save.y = 0.72f; save.width = 0.15f; save.height = 0.05f;
+        
+        load = Button.fromSheet("editor/buttons3.png", 2, 124, 40, 1);
+        load.x = 0.05f; load.y = 0.78f; load.width = 0.15f; load.height = 0.05f;
+        
+        back = Button.fromSheet("editor/buttons3.png", 0, 124, 40, 1);
+        back.x = 0.05f; back.y = 0.84f; back.width = 0.15f; back.height = 0.05f;
     }
     
     public final Button createButton(int index) {
@@ -107,6 +123,12 @@ public class ToolPane implements Input.Listener {
             else
                 button.draw(Button.State.ACTIVE);
         }
+        
+        newl.draw(newl.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
+        save.draw(save.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
+        load.draw(load.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
+        back.draw(back.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
+        
         GL11.glPopMatrix();
     }
     
@@ -127,6 +149,50 @@ public class ToolPane implements Input.Listener {
                     selected = entry.getKey();
                     return Input.HANDLED;
                 }
+            }
+            
+            if (newl.isInside(mx, my)) {
+                // Store old level
+                Level old = editor.level;
+
+                // Load level from file
+                editor.level = new Level(editor);
+
+                // Set controller
+                editor.controller.changeListener(old, editor.level);
+                
+                return Input.HANDLED;
+            }
+            
+            if(load.isInside(mx, my)) {
+                File load = Utils.showOpenDialog();
+            
+                // Do nothin'
+                if (load == null)
+                    return Input.HANDLED;
+
+                // Store old level
+                Level old = editor.level;
+
+                // Load level from file
+                editor.level = Level.loadFromFile(editor, load);
+
+                // Set controller
+                editor.controller.changeListener(old, editor.level);
+                
+                return Input.HANDLED;
+            }
+            
+            if(save.isInside(mx, my)) {
+                
+                return Input.HANDLED;
+            }
+            
+            if(back.isInside(mx, my)) {
+                // Request state transition to main menu
+                Main.requestNewState(Main.States.MAIN_MENU);
+            
+                return Input.HANDLED;
             }
             
             // Always handled if inside pane

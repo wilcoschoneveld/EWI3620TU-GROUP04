@@ -483,6 +483,7 @@ public class Level implements Input.Listener {
                         level.elements.add(link);
                         
                         break;
+                    case "nextlevel": break;
                     default: // Incompatible line                        
                         Logger.error("Could not read LVL file " + file);
                         Logger.error("Invalid line > " + line);

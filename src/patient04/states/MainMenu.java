@@ -23,6 +23,8 @@ public class MainMenu implements State, Input.Listener {
 
     @Override
     public void initialize() {
+        Utils.showLoading();
+        
         // Preload font
         Font.getResource("Lucida Sans Unicode", 0, 25);
         
@@ -56,7 +58,7 @@ public class MainMenu implements State, Input.Listener {
         trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
         start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
         
-        Sound.getResource("music_sample.ogg").setLooping(true).play();
+        Sound.getResource("music.ogg").setLooping(true).play();
     }
 
     @Override

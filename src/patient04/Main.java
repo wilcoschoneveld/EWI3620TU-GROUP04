@@ -32,7 +32,7 @@ public final class Main {
     
     /** Initializes the game. */
     public static void initialize() {
-        requestNewState(States.MAIN_MENU);
+        requestNewState(States.EDITOR);
     }
     
     /** Requests a state transition.
