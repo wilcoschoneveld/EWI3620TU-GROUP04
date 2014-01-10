@@ -81,6 +81,7 @@ public final class Main {
             Display.setDisplayMode(dm);
             Display.setFullscreen(fullscreen);
             
+            Display.setTitle("Patient 04");
             Display.setIcon(new ByteBuffer[] {
                 Utils.loadIcon("res/icon16.png"),
                 Utils.loadIcon("res/icon32.png")

@@ -86,9 +86,9 @@ public class Game implements State, Input.Listener {
         float dt = timer.deltaTime() * 0.001f;
         
         // Set frame title to performance information
-        Display.setTitle(
-                String.format("Frame update time: %.3fs", dt) +
-                " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
+//        Display.setTitle(
+//                String.format("Frame update time: %.3fs", dt) +
+//                " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
         // Handle keyboard and mouse events
         controller.processInput();
