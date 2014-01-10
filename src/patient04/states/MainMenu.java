@@ -20,7 +20,6 @@ public class MainMenu implements State, Input.Listener {
     private Input controller;
     private Parallax bg, trees1, trees2, logo;
     private Button start, editor, scores;
-    private Sound.Source music;
 
     @Override
     public void initialize() {
@@ -57,7 +56,7 @@ public class MainMenu implements State, Input.Listener {
         trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
         start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
         
-        music = Sound.getResource("music_sample.ogg").setLooping(true).play();
+        Sound.getResource("music_sample.ogg").setLooping(true).play();
     }
 
     @Override
@@ -80,10 +79,7 @@ public class MainMenu implements State, Input.Listener {
 
     @Override
     public void destroy() {
-        Texture.disposeResources();
-        
-        music.stop();
-        
+        Texture.disposeResources();        
         Sound.disposeResources();
     }
 
