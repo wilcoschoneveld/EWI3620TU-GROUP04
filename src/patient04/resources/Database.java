@@ -16,7 +16,8 @@ public class Database {
             Class.forName("org.sqlite.JDBC");
             
             // Connect to database
-            Connection c = DriverManager.getConnection("jdbc:sqlite:scores.db");
+            Connection c = DriverManager.getConnection(
+                                             "jdbc:sqlite:res/scores.db");
             
             // Create a new statement
             Statement s = c.createStatement();
@@ -33,7 +34,8 @@ public class Database {
     public void addTime(String name, float time) {     
         try {
             // Connect to database
-            Connection c = DriverManager.getConnection("jdbc:sqlite:scores.db");
+            Connection c = DriverManager.getConnection(
+                                             "jdbc:sqlite:res/scores.db");
             
             // Prepare and executre an insert statement
             PreparedStatement s = c.prepareStatement(
@@ -52,7 +54,8 @@ public class Database {
         
         try {
             // Connect to database
-            Connection c = DriverManager.getConnection("jdbc:sqlite:scores.db");
+            Connection c = DriverManager.getConnection(
+                                             "jdbc:sqlite:res/scores.db");
             
             // Create a new statement
             Statement s = c.createStatement();
