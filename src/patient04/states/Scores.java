@@ -22,7 +22,7 @@ public class Scores implements State, Input.Listener {
     private Input controller;
     
     private Image background;
-    private Font fnt;
+    private Font fnt20, fnt25, fnt30;
     
     private StringBuilder name;
     
@@ -43,7 +43,9 @@ public class Scores implements State, Input.Listener {
         
         background = Image.getFromTextureResource("menu/scores.png");
         
-        fnt = Font.getResource("Lucida Sans Unicode", 0, 20);
+        fnt20 = Font.getResource("Lucida Sans Unicode", 0, 20);
+        fnt25 = Font.getResource("Lucida Sans Unicode", 0, 25);
+        fnt30 = Font.getResource("Lucida Sans Unicode", 0, 30);
         
         name = new StringBuilder();
         Keyboard.enableRepeatEvents(true);
@@ -62,22 +64,30 @@ public class Scores implements State, Input.Listener {
     public void render() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
-        background.draw(0, 0, Utils.getDisplayRatio(), 1);
+        float R = Utils.getDisplayRatio();
         
+        background.draw(0, 0, R, 1);
+        
+        fnt25.setColor(1, 0, 0, 1);
+        fnt25.draw(0.6f, 0.3f, "Best escape times:");
+        for (int i = 0; i < scores.size(); i++)
+            fnt20.draw(0.6f, 0.35f, scores.get(i), i);
+        
+        fnt25.setColor(1, 1, 1, 1);
         if (Main.scoreTime > 0) {
-            fnt.draw(0.5f, 0.5f,
-                    String.format("Game time: %.2fs", Main.scoreTime),
+            fnt25.draw(0.5f, 0.6f, "You have succesfully escaped!");
+            fnt30.draw(0.65f, 0.65f,
+                    String.format("Escape time: %.2f s", Main.scoreTime),
                                         0, Font.Align.LEFT, Font.Align.TOP);
         }
         
         if (canSubmit) {
             boolean blink = (name.length()<10 && Timer.getTime() % 1000 < 500);
-            fnt.draw(0.6f, 0.6f, "Enter Name: " + name + (blink ? '_' : ""),
+            fnt25.draw(0.6f, 0.8f, "Enter Name: " + name + (blink ? '_' : ""),
                                             0, Font.Align.LEFT, Font.Align.TOP);
         }
         
-        for (int i = 0; i < scores.size(); i++)
-            fnt.draw(0.6f, 0.7f, scores.get(i), i);
+
     }
 
     @Override
@@ -139,11 +149,9 @@ public class Scores implements State, Input.Listener {
                     break;
                     
                 case Keyboard.KEY_RETURN:
-                    // Obtain name entry
-                    String n = name.length() != 0 ? name.toString() : "PLAYER";
-                    
                     // Update score in database 
-                    db.addTime(name.toString(), Main.scoreTime);
+                    db.addTime(name.length() != 0 ? name.toString() : "PLAYER",
+                                                                Main.scoreTime);
                     
                     // Retreive top times
                     scores = db.getTopTimes();

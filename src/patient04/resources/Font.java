@@ -51,7 +51,7 @@ public class Font {
         
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        
+
         font.drawString(
                 width / 2 - font.getWidth(str) / 2, y * height, str, color);
         
@@ -101,7 +101,7 @@ public class Font {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         
-        font.drawString(tx, ty, str);
+        font.drawString(tx, ty, str, color);
         
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPopMatrix();

@@ -65,7 +65,7 @@ public class Database {
             while (r.next()) {
                 String name = r.getString("playerName");
                 float time = r.getFloat("time");
-                times.add(name + ": " + String.format("%.2fs", time));
+                times.add(name + ": " + String.format("%.2f s", time));
             }
             
             // Close connection
