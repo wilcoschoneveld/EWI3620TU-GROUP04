@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -53,11 +54,13 @@ public class Utils {
         try {            
             JFileChooser jc = new JFileChooser();
             
-            int res = jc.showOpenDialog(null);
+            jc.setCurrentDirectory(new File("res/levels/"));
+            jc.setAcceptAllFileFilterUsed(false);
+            jc.addChoosableFileFilter(
+                            new FileNameExtensionFilter("Level files", "lvl"));
             
-            if (res == JFileChooser.APPROVE_OPTION)
+            if (jc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
                 return jc.getSelectedFile();
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,22 +69,18 @@ public class Utils {
     }
     
     public static File showSaveDialog() {
-        DisplayMode old = Display.getDisplayMode();
-        
-        try {
-            DisplayMode small = new DisplayMode(0, 0);
-            Display.setDisplayMode(small);
-            
+        try {            
             JFileChooser jc = new JFileChooser();
             
-            jc.showSaveDialog(null);
+            jc.setCurrentDirectory(new File("res/levels/"));
+            jc.setAcceptAllFileFilterUsed(false);
+            jc.addChoosableFileFilter(
+                            new FileNameExtensionFilter("Level files", "lvl"));
             
-        } catch (LWJGLException e) {
+            if (jc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
+                return jc.getSelectedFile();            
+        } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                Display.setDisplayMode(old);
-            } catch(LWJGLException e) {}
         }
         
         return null;

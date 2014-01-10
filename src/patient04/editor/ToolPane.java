@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.states.Editor;
 import patient04.utilities.Input;
+import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -184,6 +185,16 @@ public class ToolPane implements Input.Listener {
             }
             
             if(save.isInside(mx, my)) {
+                File save = Utils.showSaveDialog();
+                
+                if (save == null)
+                    return Input.HANDLED;
+                
+                String loc = save.getAbsolutePath();
+                int ext = loc.lastIndexOf(".");
+                
+                editor.level.saveToFile(
+                            (ext < 0 ? loc : loc.substring(0, ext)) + ".lvl");
                 
                 return Input.HANDLED;
             }
