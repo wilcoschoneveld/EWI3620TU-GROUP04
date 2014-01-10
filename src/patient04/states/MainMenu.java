@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.resources.Font;
 import patient04.resources.Image;
+import patient04.resources.Sound;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
 import patient04.utilities.Utils;
@@ -19,6 +20,7 @@ public class MainMenu implements State, Input.Listener {
     private Input controller;
     private Parallax bg, trees1, trees2, logo;
     private Button start, editor, scores;
+    private Sound.Source music;
 
     @Override
     public void initialize() {
@@ -54,6 +56,8 @@ public class MainMenu implements State, Input.Listener {
         scores = new Button("menu/highscores.png", "menu/highscores2.png", 0.3f, 0.4f, 0.5f, 0.07f);
         trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
         start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
+        
+        music = Sound.getResource("music_sample.ogg").setLooping(true).play();
     }
 
     @Override
@@ -77,6 +81,10 @@ public class MainMenu implements State, Input.Listener {
     @Override
     public void destroy() {
         Texture.disposeResources();
+        
+        music.stop();
+        
+        Sound.disposeResources();
     }
 
     @Override

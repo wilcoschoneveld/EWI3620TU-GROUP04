@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
+import org.newdawn.slick.openal.OggData;
+import org.newdawn.slick.openal.OggDecoder;
 import patient04.math.Vector;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
@@ -89,14 +91,28 @@ public class Sound {
         // Try to load the wav file
         try (InputStream in 
                         = new BufferedInputStream(new FileInputStream(file))) {
-            // Load the wav data
-            WaveData wav = WaveData.create(in);
+            
+            switch(file.substring(file.length() - 4).toLowerCase()) {
+                case ".wav":
+                    // Load the wav data
+                    WaveData wav = WaveData.create(in);
 
-            // Upload the data into the buffer
-            AL10.alBufferData(buffer, wav.format, wav.data, wav.samplerate);
+                    // Upload the data into the buffer
+                    AL10.alBufferData(buffer, wav.format, wav.data, wav.samplerate);
 
-            // Dispose the wav data
-            wav.dispose();
+                    // Dispose the wav data
+                    wav.dispose(); break;
+                case ".ogg":
+                    // Load the ogg data
+                    OggData ogg = new OggDecoder().getData(in);
+                    
+                    // Upload the data into the buffer
+                    AL10.alBufferData(buffer, ogg.channels > 1 ?
+                            AL10.AL_FORMAT_STEREO16 : AL10.AL_FORMAT_MONO16,
+                                                            ogg.data, ogg.rate);
+                    
+                    break;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
