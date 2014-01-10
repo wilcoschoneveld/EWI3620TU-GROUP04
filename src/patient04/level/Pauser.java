@@ -96,7 +96,7 @@ public class Pauser implements Input.Listener {
         GL11.glVertex2f(-1, 1);
         GL11.glEnd();
         
-        fnt.setColor(1, 1, 1, 0.3f);
+        fnt.setColor(1, 1, 1, 0.6f);
         fnt.drawCentered(0.4f, "Press ESCAPE again to give up");
         fnt.drawCentered(0.5f, "Hit ENTER to keep trying");
     }

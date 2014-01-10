@@ -46,6 +46,8 @@ public class MainMenu implements State, Input.Listener {
         float R = Utils.getDisplayRatio();
         
         bg = new Parallax("menu/main.png", -0.02f, -0.02f, R * 1.05f, 0.02f);
+        bg.ratio = (float) (bg.image.width / bg.image.height) / R;
+        
         logo = new Parallax("menu/logo.png", 0.12f, 0.08f, 0.5f, 0.025f);
         trees2 = new Parallax("menu/trees2.png", R - 0.4f, 0.3f, 0.5f, 0.04f);
         editor = new Button("menu/editor.png", "menu/editor2.png", 0.55f * R, 0.1f, 0.6f, 0.06f);
@@ -113,7 +115,7 @@ public class MainMenu implements State, Input.Listener {
     
     private class Parallax {
         final Image image;
-        float x, y, size, depth;
+        float x, y, size, depth, ratio = 1;
         
         public Parallax(String img, float x, float y, float size, float depth) {
             Texture tex = Texture.getResource(img);
@@ -129,7 +131,7 @@ public class MainMenu implements State, Input.Listener {
             float my = (float) Mouse.getY() / Display.getHeight() - 0.5f;
             
             image.draw(x + mx * depth, y + my * depth, x + mx * depth + size,
-                                        y + my * depth + size/image.getRatio());
+                                 y + my * depth + ratio*size/image.getRatio());
         }
     }
     
@@ -151,7 +153,7 @@ public class MainMenu implements State, Input.Listener {
             float my = (float) Mouse.getY() / Display.getHeight() - 0.5f;
             
             img.draw(x + mx * depth, y + my * depth, x + mx * depth + size,
-                                        y + my * depth + size/image.getRatio());
+                                 y + my * depth + ratio*size/image.getRatio());
         }
         
         public boolean isInside(float tx, float ty) {

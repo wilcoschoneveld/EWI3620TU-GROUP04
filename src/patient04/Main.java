@@ -1,5 +1,6 @@
 package patient04;
 
+import java.nio.ByteBuffer;
 import patient04.utilities.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
@@ -79,6 +80,12 @@ public final class Main {
         try {
             Display.setDisplayMode(dm);
             Display.setFullscreen(fullscreen);
+            
+            Display.setIcon(new ByteBuffer[] {
+                Utils.loadIcon("res/icon16.png"),
+                Utils.loadIcon("res/icon32.png")
+            });
+            
             Display.create();
             AL.create();
         } catch (LWJGLException e) {
