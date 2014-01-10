@@ -1,6 +1,5 @@
 package patient04.states;
 
-import java.io.File;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -12,7 +11,6 @@ import patient04.editor.ToolPane;
 import patient04.resources.Model;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
-import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**

@@ -102,10 +102,9 @@ public class Level implements Input.Listener {
         float mx = editor.camera.convertWindowX(Mouse.getEventX());
         float mz = editor.camera.convertWindowY(Mouse.getEventY());
         
-        switch (editor.tools.selected) {
-            case SELECT:
-                if (Input.mouseButton(0, true)) {
-                    
+        if (Input.mouseButton(0, true)) {
+            switch (editor.tools.selected) {
+                case SELECT:
                     // Reverse elements
                     Collections.reverse(elements);
                     
@@ -133,10 +132,7 @@ public class Level implements Input.Listener {
                     Collections.reverse(elements);
                     
                     return Input.HANDLED;
-                }                
-                break;
-            case WALL: 
-                if (Input.mouseButton(0, true)) {
+                case WALL:
                     // Snap to grid if shift is held down
                     if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                         mx = Math.round(mx); mz = Math.round(mz); }
@@ -150,10 +146,7 @@ public class Level implements Input.Listener {
                     target = 2;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case LIGHT:
-                if (Input.mouseButton(0, true)) {
+                case LIGHT:
                     Light light = new Light(this, mx, mz);
                     
                     elements.add(light);
@@ -161,10 +154,7 @@ public class Level implements Input.Listener {
                     target = 2;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case ENEMY:
-                if (Input.mouseButton(0, true)) {
+                case ENEMY:
                     Enemy enemy = new Enemy(this, mx, mz);
                     
                     elements.add(enemy);
@@ -172,10 +162,7 @@ public class Level implements Input.Listener {
                     target = 2;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case NEEDLE:
-                if (Input.mouseButton(0, true)) {
+                case NEEDLE:
                     Needle needle = new Needle(this, mx, mz);
                     
                     elements.add(needle);
@@ -183,10 +170,7 @@ public class Level implements Input.Listener {
                     target = 1;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case INFUSION:
-                if (Input.mouseButton(0, true)) {
+                case INFUSION:
                     Infusion infusion = new Infusion(this, mx, mz);
                     
                     elements.add(infusion);
@@ -194,10 +178,7 @@ public class Level implements Input.Listener {
                     target = 1;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case WAYPOINT:
-                if (Input.mouseButton(0, true)) {                    
+                case WAYPOINT:                   
                     Waypoint waypoint = new Waypoint(this, mx, mz);
                     
                     if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
@@ -213,10 +194,7 @@ public class Level implements Input.Listener {
                     target = 1;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case START:
-                if (Input.mouseButton(0, true)) {
+                case START:
                     Start start = new Start(this, mx, mz);
                     
                     for (int i = 0; i < elements.size(); i++)
@@ -228,10 +206,7 @@ public class Level implements Input.Listener {
                     target = 2;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case END:
-                if (Input.mouseButton(0, true)) {
+                case END:
                     Exit exit = new Exit(this, mx, mz);
                     
                     elements.add(exit);
@@ -239,10 +214,7 @@ public class Level implements Input.Listener {
                     target = 2;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case DOOR:
-                if (Input.mouseButton(0, true)) {
+                case DOOR:
                     Door door = new Door(this, mx, mz);
                     
                     elements.add(door);
@@ -250,10 +222,7 @@ public class Level implements Input.Listener {
                     target = 2;
                     
                     return Input.HANDLED;
-                }
-                break;
-            case MODEL:
-                if (Input.mouseButton(0, true)) {
+                case MODEL:
                     String s;
                     
                     if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
@@ -271,10 +240,7 @@ public class Level implements Input.Listener {
                     }
                     
                     return Input.HANDLED;
-                }
-                break;
-            case LINK:
-                if (Input.mouseButton(0, true)) {
+                case LINK:
                     Link link = new Link(this, mx, mz);
                     
                     if (link.one != null) {
@@ -284,10 +250,7 @@ public class Level implements Input.Listener {
                     }
                     
                     return Input.HANDLED;
-                }
-                break;
-            case DELETE:
-                if (Input.mouseButton(0, true)) {
+                case DELETE:
                     Element delete = null;
                     
                     for (Element element : elements)
@@ -298,8 +261,7 @@ public class Level implements Input.Listener {
                         removeElement(delete);
                     
                     return Input.HANDLED;
-                }
-                break;
+            }
         }
         
         return Input.UNHANDLED;
