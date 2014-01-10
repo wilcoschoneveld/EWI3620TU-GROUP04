@@ -17,13 +17,16 @@ import patient04.utilities.Utils;
  */
 public class MainMenu implements State, Input.Listener {
     private Input controller;
-    private Parallax bg, trees1, trees2;
-    private Button start, editor;
+    private Parallax bg, trees1, trees2, logo;
+    private Button start, editor, scores;
 
     @Override
     public void initialize() {
         // Preload font
         Font.getResource("Lucida Sans Unicode", 0, 25);
+        
+        // Reset score timer
+        Main.scoreTime = 0;
         
         // Disable depth testing
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -43,10 +46,12 @@ public class MainMenu implements State, Input.Listener {
         float R = Utils.getDisplayRatio();
         
         bg = new Parallax("menu/main.png", -0.02f, -0.02f, R * 1.05f, 0.02f);
-        trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
+        logo = new Parallax("menu/logo.png", 0.12f, 0.08f, 0.5f, 0.025f);
         trees2 = new Parallax("menu/trees2.png", R - 0.4f, 0.3f, 0.5f, 0.04f);
-        start = new Button("menu/start.png", "menu/start2.png", 0.3f, 0.3f, 0.6f, 0.03f);
-        editor = new Button("menu/editor.png", "menu/editor2.png", 0.7f, 0.05f, 0.6f, 0.2f);
+        editor = new Button("menu/editor.png", "menu/editor2.png", 0.55f * R, 0.1f, 0.6f, 0.06f);
+        scores = new Button("menu/highscores.png", "menu/highscores2.png", 0.3f, 0.4f, 0.5f, 0.07f);
+        trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
+        start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
     }
 
     @Override
@@ -59,10 +64,12 @@ public class MainMenu implements State, Input.Listener {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
         bg.draw();
-        trees1.draw();
+        logo.draw();
         trees2.draw();
-        start.draw();
         editor.draw();
+        scores.draw();
+        trees1.draw();
+        start.draw();
     }
 
     @Override
@@ -79,12 +86,10 @@ public class MainMenu implements State, Input.Listener {
                 // Request transition to first level
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
                 game.loadLevel = "testlevel15356474.lvl";
-                
-                // Reset score timer
-                Main.scoreTime = 0;
-                
             } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Main.requestNewState(Main.States.EDITOR);
+            } else if(scores.isInside(Mouse.getEventX(), Mouse.getEventY())) {
+                Main.requestNewState(Main.States.SCORES);
             }
 
             return Input.HANDLED;

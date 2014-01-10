@@ -62,8 +62,11 @@ public class Database {
                         "SELECT * FROM highscore ORDER BY time ASC LIMIT 5;");
             
             // Add results to arraylist
-            while (r.next())
-                times.add(r.getString("playerName")+ ": " + r.getFloat("time"));
+            while (r.next()) {
+                String name = r.getString("playerName");
+                float time = r.getFloat("time");
+                times.add(name + ": " + String.format("%.2fs", time));
+            }
             
             // Close connection
             r.close(); s.close(); c.close();

@@ -17,15 +17,17 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class Scores implements State, Input.Listener {
+    public boolean canSubmit;
+    
     private Input controller;
     
     private Image background;
     private Font fnt;
     
     private StringBuilder name;
-    private ArrayList<String> scores;
     
     private Database db;
+    private ArrayList<String> scores;
 
     @Override
     public void initialize() {
@@ -62,12 +64,17 @@ public class Scores implements State, Input.Listener {
         
         background.draw(0, 0, Utils.getDisplayRatio(), 1);
         
-        fnt.draw(0.5f, 0.5f, String.format("Game time: %.2fs", Main.scoreTime),
-                            0, Font.Align.LEFT, Font.Align.TOP);
+        if (Main.scoreTime > 0) {
+            fnt.draw(0.5f, 0.5f,
+                    String.format("Game time: %.2fs", Main.scoreTime),
+                                        0, Font.Align.LEFT, Font.Align.TOP);
+        }
         
-        fnt.draw(0.6f, 0.6f, "Enter Name: " + name +
-            ((name.length() < 10 && Timer.getTime() % 1000 < 500) ? '_' : ""),
+        if (canSubmit) {
+            boolean blink = (name.length()<10 && Timer.getTime() % 1000 < 500);
+            fnt.draw(0.6f, 0.6f, "Enter Name: " + name + (blink ? '_' : ""),
                                             0, Font.Align.LEFT, Font.Align.TOP);
+        }
         
         for (int i = 0; i < scores.size(); i++)
             fnt.draw(0.6f, 0.7f, scores.get(i), i);
@@ -95,17 +102,7 @@ public class Scores implements State, Input.Listener {
             return Input.HANDLED;
         }
         
-        if (Input.keyboardKey(Keyboard.KEY_RETURN, true) && name.length() != 0) {
-            // Update score in database
-            db.addTime(name.toString(), Main.scoreTime);
-            
-            // Retreive top times
-            scores = db.getTopTimes();
-            
-            return Input.HANDLED;
-        }
-        
-        if (Keyboard.getEventKeyState()) {
+        if (Keyboard.getEventKeyState() && canSubmit) {
             switch (Keyboard.getEventKey()) {
                 case Keyboard.KEY_A: name.append('A'); break;
                 case Keyboard.KEY_B: name.append('B'); break;
@@ -134,8 +131,27 @@ public class Scores implements State, Input.Listener {
                 case Keyboard.KEY_Y: name.append('Y'); break;
                 case Keyboard.KEY_Z: name.append('Z'); break;
                 case Keyboard.KEY_MINUS: name.append('-'); break;
+                    
                 case Keyboard.KEY_BACK:
-                    name.setLength(Math.max(0, name.length()-1)); break;
+                    // Remove last character
+                    name.setLength(Math.max(0, name.length()-1));
+                    
+                    break;
+                    
+                case Keyboard.KEY_RETURN:
+                    // Obtain name entry
+                    String n = name.length() != 0 ? name.toString() : "PLAYER";
+                    
+                    // Update score in database 
+                    db.addTime(name.toString(), Main.scoreTime);
+                    
+                    // Retreive top times
+                    scores = db.getTopTimes();
+                    
+                    // Revoke submit permission
+                    canSubmit = false;
+                    
+                    break;
             }
             
             // Ensure maximum of 10 characters
