@@ -23,6 +23,7 @@ import patient04.utilities.Utils;
 
 public class Game implements State, Input.Listener {
     public String loadLevel = "";
+    public boolean enableTutorial;
     
     private Renderer renderer;
     
@@ -63,6 +64,7 @@ public class Game implements State, Input.Listener {
         
         // Tutorial
         tutorial = new Tutorial();
+        if (enableTutorial) tutorial.stage = 0;
         
         // Input controller
         controller = new Input();

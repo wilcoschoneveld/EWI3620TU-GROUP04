@@ -85,7 +85,8 @@ public class MainMenu implements State, Input.Listener {
             if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 // Request transition to first level
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
-                game.loadLevel = "testlevel15356474.lvl";
+                game.loadLevel = "testlevel13688806.lvl";
+                game.enableTutorial = true;
             } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Main.requestNewState(Main.States.EDITOR);
             } else if(scores.isInside(Mouse.getEventX(), Mouse.getEventY())) {
@@ -116,7 +117,7 @@ public class MainMenu implements State, Input.Listener {
         
         public Parallax(String img, float x, float y, float size, float depth) {
             Texture tex = Texture.getResource(img);
-            this.image = new Image(tex, 2, 2, tex.width-4, tex.height-4);
+            this.image = new Image(tex, 1, 1, tex.width-2, tex.height-2);
             this.x = x;
             this.y = y;
             this.depth = depth;
@@ -164,8 +165,6 @@ public class MainMenu implements State, Input.Listener {
             float y0 = y + my * depth;
             float x1 = x0 + size;
             float y1 = y0 + size / image.getRatio();
-            
-//            System.out.println("ny: " + ny + "/y0");
             
             return (nx>x0 && nx<x1 && ny>y0 && ny<y1);
         }

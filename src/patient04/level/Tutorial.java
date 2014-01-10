@@ -1,5 +1,4 @@
 package patient04.level;
-import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import patient04.resources.Font;
@@ -14,7 +13,7 @@ public class Tutorial implements Input.Listener {
     
     private final Font fntHints;
     private float alpha = -1f;
-    private int stage = 0;
+    public int stage = -1;
     
     public Tutorial() {
         fntHints = Font.getResource("Lucida Sans Unicode", 0, 25);
