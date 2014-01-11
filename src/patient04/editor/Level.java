@@ -225,15 +225,38 @@ public class Level implements Input.Listener {
                 case MODEL:
                     String s;
                     
+                    // Check if current selection is a prop
                     if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
-                            selected instanceof Prop)
-                        s = ((Prop) selected).name.replace(".obj", ""); 
-                    else
-                        s = (String) JOptionPane.showInputDialog(
-                            "Enter a model name:");
+                            selected instanceof Prop) {
+                        // Copy name
+                        s = ((Prop) selected).name; 
+                    } else {
+                        // Models directory
+                        File dir = new File("res/models/");
+                        
+                        // Scan the directory
+                        File[] files = dir.listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String filename) {
+                                return filename.endsWith(".obj");
+                            }
+                        });
+                        
+                        // Create a list of object names
+                        String[] list = new String[files.length];
+                        for (int i = 0; i < files.length; i++)
+                            list[i] = files[i].getName();
+                        
+                        // Ask user for model
+                        s = (String) JOptionPane.showInputDialog(null,
+                                "Choose a model", "Prop",
+                                JOptionPane.QUESTION_MESSAGE, null,
+                                list, list[0]);
+                    }
                     
-                    if (s != null && Model.getResource(s + ".obj") != null) {
-                        Prop prop = new Prop(this, mx, mz, s + ".obj");
+                    // If a model is selected
+                    if (s != null && Model.getResource(s) != null) {
+                        Prop prop = new Prop(this, mx, mz, s);
                         elements.add(prop);
                         selected = prop;
                         target = 0;
