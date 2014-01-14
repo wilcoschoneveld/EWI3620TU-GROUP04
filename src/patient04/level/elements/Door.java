@@ -32,6 +32,9 @@ public class Door extends Prop implements Usable {
 
     @Override
     public void use(Player player) {
+        // Don't do anything if already open
+        if (timer != 0) return;
+        
         Vector toPlayer = player.getPosition().copy().min(position);
         Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);
         

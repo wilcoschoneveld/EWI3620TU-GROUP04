@@ -9,6 +9,7 @@ import patient04.editor.Info;
 import patient04.editor.Level;
 import patient04.editor.ToolPane;
 import patient04.resources.Model;
+import patient04.resources.Sound;
 import patient04.resources.Texture;
 import patient04.utilities.Input;
 import patient04.utilities.Utils;
@@ -83,6 +84,7 @@ public class Editor implements State, Input.Listener {
     public void destroy() {
         Model.disposeResources();
         Texture.disposeResources();
+        Sound.disposeResources();
         
         // Go back to fullscreen
         try { Display.setFullscreen(Main.fullscreen); } catch(Exception e) { };        

@@ -13,6 +13,7 @@ import patient04.physics.AABB;
 import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
+import patient04.resources.Sound;
 
 public class Level {
     // Next subsequent level
@@ -324,7 +325,15 @@ public class Level {
                         
                         level.addUsable(infusion);
                         
-                        break;      
+                        break;
+                    case "source":
+                        Sound.getResource(tokens[1]).setGain(0.1f)
+                            .setLooping(true)
+                            .setPosition(Float.parseFloat(tokens[2]),
+                                         Float.parseFloat(tokens[3]),
+                                         Float.parseFloat(tokens[4])).play();
+                        
+                        break;
                     case "link":
                         Waypoint.link(
                             level.waypoints.get(Integer.parseInt(tokens[1])),
