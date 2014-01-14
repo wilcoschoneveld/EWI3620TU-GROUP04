@@ -66,9 +66,6 @@ public class Renderer {
     public final Frustum frustum;
     
     public Renderer() {
-        // Enable depth testing and backface culling
-        //glLoadDefaults();
-        
         // Load full screen quad
         screenQuad = Model.getResource("lighting/lightDirectional.obj");
         

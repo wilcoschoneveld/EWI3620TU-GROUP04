@@ -1,5 +1,6 @@
 package patient04.states;
 
+import java.io.File;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -19,7 +20,6 @@ import patient04.utilities.Utils;
  * @author Wilco
  */
 public class Editor implements State, Input.Listener {
-    
     public Level level;
     public Camera camera;
     public Info info;
@@ -48,6 +48,7 @@ public class Editor implements State, Input.Listener {
         
         camera = new Camera();
         level = new Level(this);
+        
         info = new Info(this);
         tools = new ToolPane(this);
         
