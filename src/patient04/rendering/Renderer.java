@@ -67,7 +67,7 @@ public class Renderer {
     
     public Renderer() {
         // Enable depth testing and backface culling
-        glLoadDefaults();
+        //glLoadDefaults();
         
         // Load full screen quad
         screenQuad = Model.getResource("lighting/lightDirectional.obj");
