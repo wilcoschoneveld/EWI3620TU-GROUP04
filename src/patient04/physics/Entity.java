@@ -127,7 +127,7 @@ public abstract class Entity {
             //aabb2 = box to test
             Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);
             Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);
-            Vector p3 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
+            Vector p3 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.min.z);
             Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
             
             float sign = Math.signum(pNormal.dot(p1) + pDistance);
