@@ -162,6 +162,10 @@ public class ToolPane implements Input.Listener {
                 // Set controller
                 editor.controller.changeListener(old, editor.level);
                 
+                // Reset camera
+                editor.camera.zoom = 1f;
+                editor.camera.position.set(0, 0, 0);
+                
                 return Input.HANDLED;
             }
             
