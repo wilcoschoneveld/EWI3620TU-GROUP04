@@ -11,7 +11,7 @@ import patient04.resources.Texture;
 public class Waypoint extends Element {
     private static final float SIZE = 0.5f;
     
-    private final Image image;
+    private final Image image, image2;
     
     public float x, z;
     
@@ -20,6 +20,8 @@ public class Waypoint extends Element {
         
         image = new Image(
                 Texture.getResource("editor/elements.png"), 128, 0, 64, 64);
+        image2 = new Image(
+                Texture.getResource("editor/elements.png"), 192, 0, 64, 64);
         
         this.x = x;
         this.z = z;
@@ -32,7 +34,10 @@ public class Waypoint extends Element {
         
         float size = level.editor.camera.zoom * SIZE;
         
-        image.draw(x - size, z - 2 * size, x + size, z);
+        if (target == -1)
+            image.draw(x - size, z - 2 * size, x + size, z);
+        else
+            image2.draw(x - size, z - 2 * size, x + size, z);
     }
 
     @Override
