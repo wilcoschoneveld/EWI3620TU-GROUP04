@@ -56,9 +56,7 @@ public class Enemy extends Entity {
             anim_walking[i].releaseRawData();
         }
         
-        light = new Light()
-                .setColor(0.15f, 1f)
-                .setEnvironmentLight();
+        light = new Light().setColor(0.15f, 1f).setWalkLight();
         
         distanceMoved = (float) Math.random();
         lastMoved = distanceMoved;
