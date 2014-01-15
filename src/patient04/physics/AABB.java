@@ -104,7 +104,7 @@ public class AABB {
         
         float tmp;
         switch(axis) {
-            case 0:
+            case 0: default:
                 if(delta.x > 0 && pos.x + max.x <= o.pos.x + o.min.x &&
                         (tmp = o.pos.x + o.min.x - pos.x - max.x) < delta.x) {
                     delta.x = tmp - epsilon; return; }
@@ -124,7 +124,7 @@ public class AABB {
                     delta.z = tmp - epsilon; return; }
                 if(delta.z < 0 && pos.z + min.z >= o.pos.z + o.max.z &&
                         (tmp = o.pos.z + o.max.z - pos.z - min.z) > delta.z) {
-                    delta.z = tmp + epsilon; }
+                    delta.z = tmp + epsilon; return; }
         }
     }
     

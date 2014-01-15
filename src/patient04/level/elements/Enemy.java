@@ -1,9 +1,6 @@
 package patient04.level.elements;
 
 import patient04.level.Player;
-import patient04.Main.States;
-import static patient04.Main.requestNewState;
-import patient04.level.elements.Waypoint;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -12,7 +9,6 @@ import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
 import patient04.resources.Sound;
-import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
