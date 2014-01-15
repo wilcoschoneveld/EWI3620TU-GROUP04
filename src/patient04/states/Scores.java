@@ -22,7 +22,7 @@ public class Scores implements State, Input.Listener {
     private Input controller;
     
     private Image background;
-    private Font fnt20, fnt25, fnt30;
+    private Font fnt20, fnt25, fnt40;
     
     private StringBuilder name;
     
@@ -41,11 +41,11 @@ public class Scores implements State, Input.Listener {
         controller = new Input();
         controller.addListener(this);
         
-        background = Image.getFromTextureResource("menu/scores.png");
+        background = Image.getFromTextureResource("menu/scores2.png");
         
-        fnt20 = Font.getResource("Lucida Sans Unicode", 0, 20);
-        fnt25 = Font.getResource("Lucida Sans Unicode", 0, 25);
-        fnt30 = Font.getResource("Lucida Sans Unicode", 0, 30);
+        fnt20 = Font.getResource("Myriad Pro", 0, 20);
+        fnt25 = Font.getResource("Myriad Pro", 0, 25);
+        fnt40 = Font.getResource("Myriad Pro", 0, 40);
         
         name = new StringBuilder();
         Keyboard.enableRepeatEvents(true);
@@ -73,14 +73,15 @@ public class Scores implements State, Input.Listener {
         for (int i = 0; i < scores.size(); i++)
             fnt20.draw(0.6f, 0.35f, scores.get(i), i);
         
-        fnt25.setColor(1, 1, 1, 1);
+        fnt40.setColor(1,0,0,1);
         if (Main.scoreTime > 0) {
-            fnt25.draw(0.5f, 0.6f, "You have succesfully escaped!");
-            fnt30.draw(0.65f, 0.65f,
+            //fnt25.draw(0.5f, 0.6f, "You have succesfully escaped!");
+            fnt40.draw(0.6f, 0.7f,
                     String.format("Escape time: %.2f s", Main.scoreTime),
                                         0, Font.Align.LEFT, Font.Align.TOP);
         }
         
+        fnt25.setColor(1, 1, 1, 1);
         if (canSubmit) {
             boolean blink = (name.length()<10 && Timer.getTime() % 1000 < 500);
             fnt25.draw(0.6f, 0.8f, "Enter Name: " + name + (blink ? '_' : ""),

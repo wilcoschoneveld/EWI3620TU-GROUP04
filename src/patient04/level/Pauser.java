@@ -16,6 +16,7 @@ public class Pauser implements Input.Listener {
     private boolean paused;
     
     private final Font fnt = Font.getResource("Myriad Pro", 0, 25);
+    private final Font ftitel = Font.getResource("1942 report", 0, 60);
     
     /** Gets the pause state.
      * 
@@ -97,7 +98,9 @@ public class Pauser implements Input.Listener {
         GL11.glEnd();
         
         fnt.setColor(1, 1, 1, 0.6f);
+        ftitel.setColor(1, 0, 0, 0.6f);
+        ftitel.drawCentered(0.30f, "PAUSE");
         fnt.drawCentered(0.4f, "Press ESCAPE again to give up");
-        fnt.drawCentered(0.5f, "Hit ENTER to keep trying");
+        fnt.drawCentered(0.45f, "Hit ENTER to keep trying");
     }
 }

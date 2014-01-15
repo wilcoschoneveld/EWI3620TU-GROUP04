@@ -28,7 +28,7 @@ public class MainMenu implements State, Input.Listener {
         Utils.showLoading();
         
         // Preload font
-        Font.getResource("Myriad Pro", 0, 25);
+       // Font.getResource("Myriad Pro", 0, 25);
         
         // Reset score timer
         Main.scoreTime = 0;

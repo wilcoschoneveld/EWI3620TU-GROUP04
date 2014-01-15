@@ -155,12 +155,15 @@ public class Utils {
     }
     
     public static void showLoading() {
-        Font fnt = Font.getResource("Lucida Sans Unicode", 0, 25);
+        Font fload = Font.getResource("1942 report", 0, 25);
+        Font fwait = Font.getResource("Myriad Pro", 0, 25);
         
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         
-        fnt.setColor(1, 1, 1, 1);
-        fnt.draw(0.1f, 0.9f, "Loading, please wait...",
+        fwait.setColor(1, 1, 1, 1);
+        fload.setColor(1, 0, 0, 1);
+        fload.draw(0.1f, 0.9f, "Loading", 0, Font.Align.LEFT, Font.Align.BOTTOM);
+        fwait.draw(0.19f, 0.91f, ", please wait...",
                 0, Font.Align.LEFT, Font.Align.BOTTOM);
         
         Display.update();
