@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AABB.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.physics</a> &gt; <span class="el_source">AABB.java</span></div><h1>AABB.java</h1><pre class="source lang-java linenums">package patient04.physics;
+
+import patient04.math.Vector;
+
+/**
+ *
+ * @author Wilco
+ */
+public class AABB {
+    private static final float epsilon = 0.00001f;
+    public final Vector pos, min, max;
+    
+<span class="fc" id="L13">    public AABB(Vector pos, Vector min, Vector max) {</span>
+<span class="fc" id="L14">        this.pos = pos;</span>
+<span class="fc" id="L15">        this.min = min;</span>
+<span class="fc" id="L16">        this.max = max;</span>
+<span class="fc" id="L17">    }</span>
+    
+    public AABB(Vector min, Vector max) {
+<span class="fc" id="L20">        this(new Vector(), min, max);</span>
+<span class="fc" id="L21">    }</span>
+    
+    public AABB copy() {
+<span class="fc" id="L24">        return new AABB(pos.copy(), min.copy(), max.copy());</span>
+    }
+    
+    public AABB copy(Vector pos) {
+<span class="fc" id="L28">        return new AABB(pos, min.copy(), max.copy());</span>
+    }
+    
+    /** Translates AABB by delta distance.
+     * 
+     * @param delta
+     * @return self
+     */
+    public AABB translate(Vector delta) {
+<span class="fc" id="L37">        pos.add(delta);</span>
+        
+<span class="fc" id="L39">        return this;</span>
+    }
+    
+    /** Rotates AABB by a given angle.
+     * 
+     * @param angle
+     * @param x
+     * @param y
+     * @param z
+     * @return 
+     */
+    public AABB rotate(float angle, float x, float y, float z) {
+<span class="fc" id="L51">        Vector a = min.copy().rotate(angle, x, y, z);</span>
+<span class="fc" id="L52">        Vector b = max.copy().rotate(angle, x, y, z);</span>
+        
+<span class="fc" id="L54">        min.set(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.min(a.z, b.z));</span>
+<span class="fc" id="L55">        max.set(Math.max(a.x, b.x), Math.max(a.y, b.y), Math.max(a.z, b.z));</span>
+        
+<span class="fc" id="L57">        return this;</span>
+    }
+    
+    /** Expands AABB with delta size in delta direction.
+     * 
+     * @param delta
+     * @return self
+     */
+    public AABB expand(Vector delta) {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        min.x += delta.x &lt; 0 ? delta.x : 0;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        min.y += delta.y &lt; 0 ? delta.y : 0;</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        min.z += delta.z &lt; 0 ? delta.z : 0;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        max.x += delta.x &gt; 0 ? delta.x : 0;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        max.y += delta.y &gt; 0 ? delta.y : 0;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        max.z += delta.z &gt; 0 ? delta.z : 0;</span>
+
+<span class="fc" id="L73">        return this;</span>
+    }
+    
+    /** Checks if AABB intersects with other.
+     * 
+     * @param o
+     * @return
+     */
+    public boolean intersects(AABB o) {
+        // Y coordinate is checked last because it is least critical.
+<span class="fc bfc" id="L83" title="All 14 branches covered.">        return !(o == null || o.pos.x + o.min.x &gt;= pos.x + max.x ||</span>
+                              o.pos.x + o.max.x &lt;= pos.x + min.x ||
+                              o.pos.z + o.min.z &gt;= pos.z + max.z ||
+                              o.pos.z + o.max.z &lt;= pos.z + min.z ||
+                              o.pos.y + o.min.y &gt;= pos.y + max.y ||
+                              o.pos.y + o.max.y &lt;= pos.y + min.y);
+    }
+    
+    /** Performs a sweep test with other AABB along a given axis.
+     * 
+     * @param o AABB to test with
+     * @param delta Vector with desired delta movement
+     * @param axis 0, 1, 2 for X, Y, Z respectively
+     */
+    public void sweepAlongAxis(AABB o, Vector delta, int axis) {        
+<span class="fc bfc" id="L98" title="All 6 branches covered.">        if(axis != 0 &amp;&amp; (o.pos.x + o.min.x &gt;= pos.x + max.x ||</span>
+<span class="fc" id="L99">                         o.pos.x + o.max.x &lt;= pos.x + min.x)) return;</span>
+<span class="fc bfc" id="L100" title="All 6 branches covered.">        if(axis != 1 &amp;&amp; (o.pos.y + o.min.y &gt;= pos.y + max.y ||</span>
+<span class="fc" id="L101">                         o.pos.y + o.max.y &lt;= pos.y + min.y)) return;</span>
+<span class="fc bfc" id="L102" title="All 6 branches covered.">        if(axis != 2 &amp;&amp; (o.pos.z + o.min.z &gt;= pos.z + max.z ||</span>
+<span class="fc" id="L103">                         o.pos.z + o.max.z &lt;= pos.z + min.z)) return;</span>
+        
+        float tmp;
+<span class="pc bpc" id="L106" title="1 of 4 branches missed.">        switch(axis) {</span>
+            case 0:
+<span class="fc bfc" id="L108" title="All 6 branches covered.">                if(delta.x &gt; 0 &amp;&amp; pos.x + max.x &lt;= o.pos.x + o.min.x &amp;&amp;</span>
+                        (tmp = o.pos.x + o.min.x - pos.x - max.x) &lt; delta.x) {
+<span class="fc" id="L110">                    delta.x = tmp - epsilon; return; }</span>
+<span class="fc bfc" id="L111" title="All 6 branches covered.">                if(delta.x &lt; 0 &amp;&amp; pos.x + min.x &gt;= o.pos.x + o.max.x &amp;&amp;</span>
+                        (tmp = o.pos.x + o.max.x - pos.x - min.x) &gt; delta.x) {
+<span class="fc" id="L113">                    delta.x = tmp + epsilon; return; }</span>
+            case 1:
+<span class="fc bfc" id="L115" title="All 6 branches covered.">                if(delta.y &gt; 0 &amp;&amp; pos.y + max.y &lt;= o.pos.y + o.min.y &amp;&amp;</span>
+                        (tmp = o.pos.y + o.min.y - pos.y - max.y) &lt; delta.y) {
+<span class="fc" id="L117">                    delta.y = tmp - epsilon; return; }</span>
+<span class="fc bfc" id="L118" title="All 6 branches covered.">                if(delta.y &lt; 0 &amp;&amp; pos.y + min.y &gt;= o.pos.y + o.max.y &amp;&amp;</span>
+                        (tmp = o.pos.y + o.max.y - pos.y - min.y) &gt; delta.y) {
+<span class="fc" id="L120">                    delta.y = tmp + epsilon; return; }</span>
+            case 2:
+<span class="fc bfc" id="L122" title="All 6 branches covered.">                if(delta.z &gt; 0 &amp;&amp; pos.z + max.z &lt;= o.pos.z + o.min.z &amp;&amp;</span>
+                        (tmp = o.pos.z + o.min.z - pos.z - max.z) &lt; delta.z) {
+<span class="fc" id="L124">                    delta.z = tmp - epsilon; return; }</span>
+<span class="fc bfc" id="L125" title="All 6 branches covered.">                if(delta.z &lt; 0 &amp;&amp; pos.z + min.z &gt;= o.pos.z + o.max.z &amp;&amp;</span>
+                        (tmp = o.pos.z + o.max.z - pos.z - min.z) &gt; delta.z) {
+<span class="fc" id="L127">                    delta.z = tmp + epsilon; }</span>
+        }
+<span class="fc" id="L129">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

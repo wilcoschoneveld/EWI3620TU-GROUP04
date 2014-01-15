@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Pauser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.level</a> &gt; <span class="el_source">Pauser.java</span></div><h1>Pauser.java</h1><pre class="source lang-java linenums">package patient04.level;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
+import patient04.Main;
+import patient04.resources.Font;
+import patient04.utilities.Input;
+
+/**
+ *
+ * @author Wilco
+ */
+<span class="nc" id="L15">public class Pauser implements Input.Listener {</span>
+    private boolean paused;
+    
+<span class="nc" id="L18">    private final Font fnt = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 25);</span>
+    
+    /** Gets the pause state.
+     * 
+     * @return true if paused.
+     */
+    public boolean isPaused() {
+<span class="nc" id="L25">        return paused;</span>
+    }
+    
+    /** Sets pause state.
+     * 
+     * @param pause true to pause, false to un-pause.
+     */
+    public void setPaused(boolean pause) {
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        Mouse.setGrabbed(!pause);</span>
+<span class="nc" id="L34">        this.paused = pause;</span>
+<span class="nc" id="L35">    }</span>
+    
+    /** Handles mouse events.
+     * 
+     * @return 
+     */
+    @Override
+    public boolean handleMouseEvent() {
+        // Do not handle mouse event if the game is not paused
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if(!paused)</span>
+<span class="nc" id="L45">            return Input.UNHANDLED;</span>
+        
+<span class="nc" id="L47">        return Input.HANDLED;</span>
+    }
+
+    /** Handles keyboard events.
+     * 
+     * @return 
+     */
+    @Override
+    public boolean handleKeyboardEvent() {
+        // Do not handle keyboard event if the game is not paused
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if(!paused)</span>
+<span class="nc" id="L58">            return Input.UNHANDLED;</span>
+        
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_RETURN, true)) {</span>
+            // Unpause game
+<span class="nc" id="L62">            setPaused(false);</span>
+            
+<span class="nc" id="L64">            return Input.HANDLED;</span>
+        }
+        
+        // TODO: remove this response
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
+            // Request transition to main menu
+<span class="nc" id="L70">            Main.requestNewState(Main.States.MAIN_MENU);</span>
+            
+<span class="nc" id="L72">            return Input.HANDLED;</span>
+        }
+        
+        // Event, you shall not pass!
+<span class="nc" id="L76">        return Input.HANDLED;</span>
+    }
+    
+    /** Draws the pause screen. */
+    public void draw() {
+        // Draw a fullscreen black quad
+<span class="nc" id="L82">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="nc" id="L83">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="nc" id="L84">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
+
+<span class="nc" id="L86">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="nc" id="L87">        GL11.glLoadIdentity();</span>
+<span class="nc" id="L88">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="nc" id="L89">        GL11.glLoadIdentity();</span>
+
+<span class="nc" id="L91">        GL11.glColor4f(0, 0, 0, 0.8f);</span>
+<span class="nc" id="L92">        GL11.glBegin(GL11.GL_QUADS);</span>
+<span class="nc" id="L93">        GL11.glVertex2f(-1, -1);</span>
+<span class="nc" id="L94">        GL11.glVertex2f(1, -1);</span>
+<span class="nc" id="L95">        GL11.glVertex2f(1, 1);</span>
+<span class="nc" id="L96">        GL11.glVertex2f(-1, 1);</span>
+<span class="nc" id="L97">        GL11.glEnd();</span>
+        
+<span class="nc" id="L99">        fnt.setColor(1, 1, 1, 0.6f);</span>
+<span class="nc" id="L100">        fnt.drawCentered(0.4f, &quot;Press ESCAPE again to give up&quot;);</span>
+<span class="nc" id="L101">        fnt.drawCentered(0.5f, &quot;Hit ENTER to keep trying&quot;);</span>
+<span class="nc" id="L102">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

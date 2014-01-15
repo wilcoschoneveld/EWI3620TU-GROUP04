@@ -4,6 +4,7 @@ import patient04.math.Vector;
 import patient04.level.Level;
 import java.util.ArrayList;
 import patient04.rendering.Renderer;
+import patient04.utilities.Utils;
 
 /**
  *
@@ -127,19 +128,19 @@ public abstract class Entity {
             //aabb2 = box to test
             Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);
             Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);
-            Vector p3 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
+            Vector p3 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.min.z);
             Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
             
             float sign = Math.signum(pNormal.dot(p1) + pDistance);
             
-            if(Math.signum(pNormal.dot(p2) + pDistance) != sign)
-                return false;
+            if(Utils.sign(pNormal.dot(p2) + pDistance) != sign){
+                return false;}
             
-            if(Math.signum(pNormal.dot(p3) + pDistance) != sign)
-                return false;
+            if(Utils.sign(pNormal.dot(p3) + pDistance) != sign){
+                return false;}
             
-            if(Math.signum(pNormal.dot(p4) + pDistance) != sign)
-                return false;
+            if(Utils.sign(pNormal.dot(p4) + pDistance) != sign){
+                return false;}
         }
         
         return true;

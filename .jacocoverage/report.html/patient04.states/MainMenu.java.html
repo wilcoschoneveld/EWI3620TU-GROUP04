@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MainMenu.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.states</a> &gt; <span class="el_source">MainMenu.java</span></div><h1>MainMenu.java</h1><pre class="source lang-java linenums">package patient04.states;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import patient04.Main;
+import patient04.resources.Font;
+import patient04.resources.Image;
+import patient04.resources.Sound;
+import patient04.resources.Texture;
+import patient04.utilities.Input;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Wilco
+ */
+<span class="nc" id="L19">public class MainMenu implements State, Input.Listener {</span>
+    private Input controller;
+    private Parallax bg, trees1, trees2, logo;
+    private Button start, editor, scores;
+
+    @Override
+    public void initialize() {
+<span class="nc" id="L26">        Utils.showLoading();</span>
+        
+        // Preload font
+<span class="nc" id="L29">        Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 25);</span>
+        
+        // Reset score timer
+<span class="nc" id="L32">        Main.scoreTime = 0;</span>
+        
+        // Disable depth testing
+<span class="nc" id="L35">        GL11.glDisable(GL11.GL_DEPTH_TEST);</span>
+<span class="nc" id="L36">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="nc" id="L37">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
+        
+        // Set projection matrix
+<span class="nc" id="L40">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="nc" id="L41">        GL11.glLoadIdentity();</span>
+<span class="nc" id="L42">        GL11.glOrtho(0, Utils.getDisplayRatio(), 1, 0, -1, 1);</span>
+<span class="nc" id="L43">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="nc" id="L44">        GL11.glLoadIdentity();</span>
+        
+<span class="nc" id="L46">        controller = new Input();</span>
+<span class="nc" id="L47">        controller.addListener(this);</span>
+        
+<span class="nc" id="L49">        float R = Utils.getDisplayRatio();</span>
+        
+<span class="nc" id="L51">        bg = new Parallax(&quot;menu/main.png&quot;, -0.02f, -0.02f, R * 1.05f, 0.02f);</span>
+<span class="nc" id="L52">        bg.ratio = (float) (bg.image.width / bg.image.height) / R;</span>
+        
+<span class="nc" id="L54">        logo = new Parallax(&quot;menu/logo.png&quot;, 0.12f, 0.08f, 0.5f, 0.025f);</span>
+<span class="nc" id="L55">        trees2 = new Parallax(&quot;menu/trees2.png&quot;, R - 0.4f, 0.3f, 0.5f, 0.04f);</span>
+<span class="nc" id="L56">        editor = new Button(&quot;menu/editor.png&quot;, &quot;menu/editor2.png&quot;, 0.55f * R, 0.1f, 0.6f, 0.06f);</span>
+<span class="nc" id="L57">        scores = new Button(&quot;menu/highscores.png&quot;, &quot;menu/highscores2.png&quot;, 0.3f, 0.4f, 0.5f, 0.07f);</span>
+<span class="nc" id="L58">        trees1 = new Parallax(&quot;menu/trees1.png&quot;, -0.1f, 0.3f, 0.7f, 0.13f);</span>
+<span class="nc" id="L59">        start = new Button(&quot;menu/start.png&quot;, &quot;menu/start2.png&quot;, R / 2, 0.6f, 0.6f, 0.2f);</span>
+        
+<span class="nc" id="L61">        Sound.getResource(&quot;music.ogg&quot;).setLooping(true).play();</span>
+<span class="nc" id="L62">    }</span>
+
+    @Override
+    public void update() {
+<span class="nc" id="L66">        controller.processInput();</span>
+<span class="nc" id="L67">    }</span>
+
+    @Override
+    public void render() {
+<span class="nc" id="L71">        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);</span>
+        
+<span class="nc" id="L73">        bg.draw();</span>
+<span class="nc" id="L74">        logo.draw();</span>
+<span class="nc" id="L75">        trees2.draw();</span>
+<span class="nc" id="L76">        editor.draw();</span>
+<span class="nc" id="L77">        scores.draw();</span>
+<span class="nc" id="L78">        trees1.draw();</span>
+<span class="nc" id="L79">        start.draw();</span>
+<span class="nc" id="L80">    }</span>
+
+    @Override
+    public void destroy() {
+<span class="nc" id="L84">        Texture.disposeResources();        </span>
+<span class="nc" id="L85">        Sound.disposeResources();</span>
+<span class="nc" id="L86">    }</span>
+
+    @Override
+    public boolean handleMouseEvent() {
+        // If left mouse button is released
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (Input.mouseButton(0, false)) {</span>
+            // Check buttons
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {</span>
+                // Request transition to first level
+<span class="nc" id="L95">                Game game = (Game) Main.requestNewState(Main.States.GAME);</span>
+<span class="nc" id="L96">                game.loadLevel = &quot;testlevel13688806.lvl&quot;;</span>
+<span class="nc" id="L97">                game.enableTutorial = true;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {</span>
+<span class="nc" id="L99">                Main.requestNewState(Main.States.EDITOR);</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            } else if(scores.isInside(Mouse.getEventX(), Mouse.getEventY())) {</span>
+<span class="nc" id="L101">                Main.requestNewState(Main.States.SCORES);</span>
+            }
+
+<span class="nc" id="L104">            return Input.HANDLED;</span>
+        }
+
+<span class="nc" id="L107">        return Input.UNHANDLED;</span>
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+        // Exit the game
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
+<span class="nc" id="L114">            Main.requestNewState(null);</span>
+            
+<span class="nc" id="L116">            return Input.HANDLED;</span>
+        }
+        
+<span class="nc" id="L119">        return Input.UNHANDLED;</span>
+    }
+    
+    private class Parallax {
+        final Image image;
+<span class="nc" id="L124">        float x, y, size, depth, ratio = 1;</span>
+        
+<span class="nc" id="L126">        public Parallax(String img, float x, float y, float size, float depth) {</span>
+<span class="nc" id="L127">            Texture tex = Texture.getResource(img);</span>
+<span class="nc" id="L128">            this.image = new Image(tex, 1, 1, tex.width-2, tex.height-2);</span>
+<span class="nc" id="L129">            this.x = x;</span>
+<span class="nc" id="L130">            this.y = y;</span>
+<span class="nc" id="L131">            this.depth = depth;</span>
+<span class="nc" id="L132">            this.size = size;</span>
+<span class="nc" id="L133">        }</span>
+        
+        public void draw() {
+<span class="nc" id="L136">            float mx = 0.5f - (float) Mouse.getX() / Display.getWidth();</span>
+<span class="nc" id="L137">            float my = (float) Mouse.getY() / Display.getHeight() - 0.5f;</span>
+            
+<span class="nc" id="L139">            image.draw(x + mx * depth, y + my * depth, x + mx * depth + size,</span>
+                                 y + my * depth + ratio*size/image.getRatio());
+<span class="nc" id="L141">        }</span>
+    }
+    
+<span class="nc" id="L144">    private class Button extends Parallax {</span>
+        final Image hover;
+
+<span class="nc" id="L147">        public Button(String img, String img2, float x, float y, float size, float depth) {</span>
+<span class="nc" id="L148">            super(img, x, y, size, depth);</span>
+            
+<span class="nc" id="L150">            Texture tex = Texture.getResource(img2);</span>
+<span class="nc" id="L151">            this.hover = new Image(tex, 2, 2, tex.width-4, tex.height-4);</span>
+<span class="nc" id="L152">        }</span>
+        
+        @Override
+        public void draw() {            
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            Image img = isInside(Mouse.getX(), Mouse.getY()) ? hover : image;</span>
+            
+<span class="nc" id="L158">            float mx = 0.5f - (float) Mouse.getX() / Display.getWidth();</span>
+<span class="nc" id="L159">            float my = (float) Mouse.getY() / Display.getHeight() - 0.5f;</span>
+            
+<span class="nc" id="L161">            img.draw(x + mx * depth, y + my * depth, x + mx * depth + size,</span>
+                                 y + my * depth + ratio*size/image.getRatio());
+<span class="nc" id="L163">        }</span>
+        
+        public boolean isInside(float tx, float ty) {
+<span class="nc" id="L166">            float mx = 0.5f - (float) tx / Display.getWidth();</span>
+<span class="nc" id="L167">            float my = (float) ty / Display.getHeight() - 0.5f;</span>
+            
+<span class="nc" id="L169">            float nx = (float) tx / Display.getHeight();</span>
+<span class="nc" id="L170">            float ny = 1 - (float) ty / Display.getHeight();</span>
+            
+<span class="nc" id="L172">            float x0 = x + mx * depth;</span>
+<span class="nc" id="L173">            float y0 = y + my * depth;</span>
+<span class="nc" id="L174">            float x1 = x0 + size;</span>
+<span class="nc" id="L175">            float y1 = y0 + size / image.getRatio();</span>
+            
+<span class="nc bnc" id="L177" title="All 8 branches missed.">            return (nx&gt;x0 &amp;&amp; nx&lt;x1 &amp;&amp; ny&gt;y0 &amp;&amp; ny&lt;y1);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

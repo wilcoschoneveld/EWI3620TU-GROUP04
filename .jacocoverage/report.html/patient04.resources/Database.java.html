@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Database.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.resources</a> &gt; <span class="el_source">Database.java</span></div><h1>Database.java</h1><pre class="source lang-java linenums">package patient04.resources;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author Kaj Dreef
+ */
+public class Database {
+    
+<span class="nc" id="L12">    public Database() {</span>
+        // Create database if it does not exist        
+        try {
+            // Make sure static JDBC class is loaded
+<span class="nc" id="L16">            Class.forName(&quot;org.sqlite.JDBC&quot;);</span>
+            
+            // Connect to database
+<span class="nc" id="L19">            Connection c = DriverManager.getConnection(</span>
+                                             &quot;jdbc:sqlite:res/scores.db&quot;);
+            
+            // Create a new statement
+<span class="nc" id="L23">            Statement s = c.createStatement();</span>
+            
+            // Execute an update statement
+<span class="nc" id="L26">            s.executeUpdate(&quot;CREATE TABLE IF NOT EXISTS &quot;</span>
+                          + &quot;highscore (playerName STRING, time FLOAT);&quot;);
+            
+            // Close connection
+<span class="nc" id="L30">            s.close(); c.close();</span>
+<span class="nc" id="L31">        } catch(Exception e) { e.printStackTrace(); }</span>
+<span class="nc" id="L32">    }</span>
+    
+    public void addTime(String name, float time) {     
+        try {
+            // Connect to database
+<span class="nc" id="L37">            Connection c = DriverManager.getConnection(</span>
+                                             &quot;jdbc:sqlite:res/scores.db&quot;);
+            
+            // Prepare and executre an insert statement
+<span class="nc" id="L41">            PreparedStatement s = c.prepareStatement(</span>
+                    &quot;INSERT INTO highscore (playerName, time) VALUES (?, ?);&quot;);
+<span class="nc" id="L43">            s.setString(1, name);</span>
+<span class="nc" id="L44">            s.setFloat(2, time);</span>
+<span class="nc" id="L45">            s.executeUpdate();</span>
+            
+            // Close connection
+<span class="nc" id="L48">            s.close(); c.close();</span>
+<span class="nc" id="L49">        } catch(SQLException e) { e.printStackTrace(); }</span>
+<span class="nc" id="L50">    }</span>
+    
+    public ArrayList&lt;String&gt; getTopTimes() {
+<span class="nc" id="L53">        ArrayList&lt;String&gt; times = new ArrayList&lt;&gt;();</span>
+        
+        try {
+            // Connect to database
+<span class="nc" id="L57">            Connection c = DriverManager.getConnection(</span>
+                                             &quot;jdbc:sqlite:res/scores.db&quot;);
+            
+            // Create a new statement
+<span class="nc" id="L61">            Statement s = c.createStatement();</span>
+            
+            // Execute a query
+<span class="nc" id="L64">            ResultSet r = s.executeQuery(</span>
+                        &quot;SELECT * FROM highscore ORDER BY time ASC LIMIT 5;&quot;);
+            
+            // Add results to arraylist
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            while (r.next()) {</span>
+<span class="nc" id="L69">                String name = r.getString(&quot;playerName&quot;);</span>
+<span class="nc" id="L70">                float time = r.getFloat(&quot;time&quot;);</span>
+<span class="nc" id="L71">                times.add(name + &quot;: &quot; + String.format(&quot;%.2f s&quot;, time));</span>
+<span class="nc" id="L72">            }</span>
+            
+            // Close connection
+<span class="nc" id="L75">            r.close(); s.close(); c.close();</span>
+<span class="nc" id="L76">        } catch(Exception e) { e.printStackTrace(); }</span>
+        
+<span class="nc" id="L78">        return times;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

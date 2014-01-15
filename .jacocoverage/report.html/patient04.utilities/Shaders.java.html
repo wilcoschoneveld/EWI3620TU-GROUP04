@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Shaders.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.utilities</a> &gt; <span class="el_source">Shaders.java</span></div><h1>Shaders.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package patient04.utilities;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import org.lwjgl.opengl.GL20;
+
+/**
+ *
+ * @author Wilco
+ */
+<span class="nc" id="L18">public class Shaders {</span>
+    
+    public static void glUniform1i(int program, String name, int value) {
+<span class="nc" id="L21">        GL20.glUniform1i(GL20.glGetUniformLocation(program, name), value);</span>
+<span class="nc" id="L22">    }</span>
+    
+    public static void glUniform1f(int program, String name, float value) {
+<span class="nc" id="L25">        GL20.glUniform1f(GL20.glGetUniformLocation(program, name), value);</span>
+<span class="nc" id="L26">    }</span>
+    
+    public static void glUniform2f(int program, String name, float v1, float v2) {
+<span class="nc" id="L29">        GL20.glUniform2f(GL20.glGetUniformLocation(program, name), v1, v2);</span>
+<span class="nc" id="L30">    }</span>
+    
+    public static int loadShaderPairFromFiles(String vertFile, String fragFile) {
+        // String variable for line reading
+        String line;
+        
+        // Load the vertex shader source from file
+<span class="nc" id="L37">        StringBuilder vertexSource = new StringBuilder();</span>
+        
+<span class="nc" id="L39">        try (BufferedReader vertexReader =</span>
+                new BufferedReader(new FileReader(vertFile))) {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            while ((line = vertexReader.readLine()) != null)</span>
+<span class="nc" id="L42">                vertexSource.append(line).append('\n');</span>
+<span class="nc bnc" id="L43" title="All 8 branches missed.">        } catch(IOException e) { e.printStackTrace(); return -1; }</span>
+        
+        // Load the fragment shader source from file
+<span class="nc" id="L46">        StringBuilder fragmentSource = new StringBuilder();</span>
+        
+<span class="nc" id="L48">        try (BufferedReader fragmentReader =</span>
+                new BufferedReader(new FileReader(fragFile))) {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            while ((line = fragmentReader.readLine()) != null)</span>
+<span class="nc" id="L51">                fragmentSource.append(line).append('\n');</span>
+<span class="nc bnc" id="L52" title="All 8 branches missed.">        } catch(IOException e) { e.printStackTrace(); return -1; }</span>
+        
+        // Create a new vertex shader from source
+<span class="nc" id="L55">        int vertexShader = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);</span>
+        
+<span class="nc" id="L57">        GL20.glShaderSource(vertexShader, vertexSource);</span>
+<span class="nc" id="L58">        GL20.glCompileShader(vertexShader);</span>
+        
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == 0) {</span>
+<span class="nc" id="L61">            Logger.error(&quot;Vertex shader compile error &quot; + vertFile);</span>
+<span class="nc" id="L62">            Logger.error(GL20.glGetShaderInfoLog(vertexShader, 1024));</span>
+<span class="nc" id="L63">            return -1;</span>
+        }
+        
+        // Create a new fragment shader from source
+<span class="nc" id="L67">        int fragmentShader = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);</span>
+        
+<span class="nc" id="L69">        GL20.glShaderSource(fragmentShader, fragmentSource);</span>
+<span class="nc" id="L70">        GL20.glCompileShader(fragmentShader);</span>
+        
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == 0) {</span>
+<span class="nc" id="L73">            Logger.error(&quot;Fragment shader compile error &quot; + fragFile);</span>
+<span class="nc" id="L74">            Logger.error(GL20.glGetShaderInfoLog(fragmentShader, 1024));</span>
+<span class="nc" id="L75">            return -1;</span>
+        }
+        
+        // Create a new shader program and link shaders
+<span class="nc" id="L79">        int shaderProgram = GL20.glCreateProgram();</span>
+        
+<span class="nc" id="L81">        GL20.glAttachShader(shaderProgram, vertexShader);</span>
+<span class="nc" id="L82">        GL20.glAttachShader(shaderProgram, fragmentShader);</span>
+        
+<span class="nc" id="L84">        GL20.glLinkProgram(shaderProgram);</span>
+        
+        // Cleanup loaded shaders
+<span class="nc" id="L87">        GL20.glDetachShader(shaderProgram, vertexShader);</span>
+<span class="nc" id="L88">        GL20.glDetachShader(shaderProgram, fragmentShader);</span>
+<span class="nc" id="L89">        GL20.glDeleteShader(vertexShader);</span>
+<span class="nc" id="L90">        GL20.glDeleteShader(fragmentShader);</span>
+        
+        // Make sure link was succesful
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (GL20.glGetProgrami(shaderProgram, GL20.GL_LINK_STATUS) == 0) {</span>
+<span class="nc" id="L94">            Logger.error(&quot;Shader program link error&quot;);</span>
+<span class="nc" id="L95">            Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));</span>
+<span class="nc" id="L96">            return -1;</span>
+        }
+        
+        // Validate the shader program
+<span class="nc" id="L100">        GL20.glValidateProgram(shaderProgram);</span>
+        
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (GL20.glGetProgrami(shaderProgram, GL20.GL_VALIDATE_STATUS) == 0) {</span>
+<span class="nc" id="L103">            Logger.error(&quot;Shader program vailidation error&quot;);</span>
+<span class="nc" id="L104">            Logger.error(GL20.glGetProgramInfoLog(shaderProgram, 1024));</span>
+<span class="nc" id="L105">            return -1;</span>
+        }
+        
+<span class="nc" id="L108">        return shaderProgram;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

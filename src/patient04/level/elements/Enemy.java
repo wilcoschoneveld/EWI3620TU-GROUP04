@@ -172,9 +172,9 @@ public class Enemy extends Entity {
             Waypoint wp = nextWaypoint.neighbors.get(index);
             
             if(wp.equals(prevWaypoint))
-                weight[index] = 0.01f;
+                weight[index] = 0.01f/wp.getPheromones();
             else
-                weight[index] = 1f;
+                weight[index] = 1f/wp.getPheromones();
             
             total += weight[index];
         }
@@ -191,6 +191,7 @@ public class Enemy extends Entity {
         
         // Set prev and next waypoint
         prevWaypoint = nextWaypoint;
+        prevWaypoint.addPheromones();
         nextWaypoint = nextWaypoint.neighbors.get(index);
     }
     
