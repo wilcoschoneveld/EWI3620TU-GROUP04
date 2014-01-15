@@ -56,15 +56,15 @@ public class MainMenu implements State, Input.Listener {
         logo = new Parallax("menu/logo.png", 0.12f, 0.05f, 0.5f, 0.05f);
         trees3 = new Parallax("menu/GroupTrees4.png", -0.02f, 0.43f, 0.6f, 0.04f);
         backhill = new Parallax("menu/BackHill.png", 0f, 0.23f, R * 1.05f, 0.05f);
+        editor = new Button("menu/editor.png", "menu/editor2.png", 0.55f * R, 0.1f, 0.6f, 0.06f);
         middlehill = new Parallax("menu/MiddleHill.png", -0.02f, 0.38f, R * 1.05f, 0.08f);
-        building = new Parallax("menu/Building.png", 0.9f, 0.34f, 0.25f, 0.09f);
+        building = new Parallax("menu/Building.png", 0.9f, 0.34f, 0.25f, 0.08f);
         lake = new Parallax("menu/Lake.png", -0.02f, 0.65f, R * 1.05f, 0.09f);
         shore = new Parallax("menu/Shore.png", -0.02f, 0.7f, R * 1.05f, 0.11f);
-        fronthill = new Parallax("menu/FrontHill.png", -0.07f, 0.8f, R * 1.05f, 0.13f);
-        trees2 = new Parallax("menu/Group2aTrees.png", R - 0.4f, 0.42f, 0.5f, 0.08f);
-        editor = new Button("menu/editor.png", "menu/editor2.png", 0.55f * R, 0.1f, 0.6f, 0.06f);
         scores = new Button("menu/highscores.png", "menu/highscores2.png", 0.3f, 0.4f, 0.5f, 0.11f);
-        trees1 = new Parallax("menu/Group1Trees.png", -0.1f, 0.3f, 0.5f, 0.15f);
+        trees1 = new Parallax("menu/Group1Trees.png", -0.1f, 0.3f, 0.5f, 0.12f);
+        fronthill = new Parallax("menu/FrontHill.png", -0.07f, 0.8f, R * 1.05f, 0.15f);
+        trees2 = new Parallax("menu/Group2aTrees.png", R - 0.4f, 0.42f, 0.5f, 0.17f);
         start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
         
         Sound.getResource("music.ogg").setLooping(true).play();
@@ -83,6 +83,7 @@ public class MainMenu implements State, Input.Listener {
         logo.draw();
         trees3.draw();
         backhill.draw();
+        editor.draw();
         middlehill.draw();
         building.draw();
         lake.draw();
@@ -91,9 +92,6 @@ public class MainMenu implements State, Input.Listener {
         trees1.draw();
         fronthill.draw();
         trees2.draw();
-        editor.draw();
-        //scores.draw();
-        //trees1.draw();
         start.draw();
     }
 
