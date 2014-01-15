@@ -37,7 +37,11 @@ public class Game implements State, Input.Listener {
     
     @Override
     public void initialize() {
-        Utils.showLoading();
+        
+        if (enableTutorial)
+            Utils.showStory();
+        else
+            Utils.showLoading();
         
         // Create a new Renderer
         renderer = new Renderer();
@@ -64,7 +68,8 @@ public class Game implements State, Input.Listener {
         
         // Tutorial
         tutorial = new Tutorial();
-        if (enableTutorial) tutorial.stage = 0;
+        if (enableTutorial)
+            tutorial.stage = 0;
         
         // Input controller
         controller = new Input();
@@ -75,20 +80,14 @@ public class Game implements State, Input.Listener {
         controller.addListener(this);
         controller.addListener(player);
         
-        // TODO remove
-//        Sound.getResource("monitor.wav").setGain(0.1f)
-//                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
+        if (enableTutorial)
+            Utils.showWaitForInput();
     }
 
     @Override
     public void update() {
         // Obtain frame time
         float dt = timer.deltaTime() * 0.001f;
-        
-        // Set frame title to performance information
-//        Display.setTitle(
-//                String.format("Frame update time: %.3fs", dt) +
-//                " / Vsync: " + (Main.vsyncEnabled ? "Enabled" : "Disabled"));
         
         // Handle keyboard and mouse events
         controller.processInput();

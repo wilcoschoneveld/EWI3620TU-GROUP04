@@ -114,6 +114,8 @@ public abstract class Entity {
         
         // Obtain broadphase box
         AABB broadphase = aabb.copy().expand(delta);
+        
+        // Eye level
         broadphase.min.add(0, 1.5f, 0);
         
         // Get possible line of sight blockers
@@ -124,21 +126,19 @@ public abstract class Entity {
         float pDistance = -pNormal.dot(position);
         
         for (AABB aabb2 : aabbs) {
-            //aabb2 = box to test
+            // Obtain corners
             Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);
             Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);
-            Vector p3 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
+            Vector p3 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.min.z);
             Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);
             
+            // Calculate sign of first corner
             float sign = Math.signum(pNormal.dot(p1) + pDistance);
             
-            if(Math.signum(pNormal.dot(p2) + pDistance) != sign)
-                return false;
-            
-            if(Math.signum(pNormal.dot(p3) + pDistance) != sign)
-                return false;
-            
-            if(Math.signum(pNormal.dot(p4) + pDistance) != sign)
+            // Check sign of other corners
+            if(Math.signum(pNormal.dot(p2) + pDistance) != sign ||
+               Math.signum(pNormal.dot(p3) + pDistance) != sign ||
+               Math.signum(pNormal.dot(p4) + pDistance) != sign)
                 return false;
         }
         

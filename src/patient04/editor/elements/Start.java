@@ -24,7 +24,7 @@ public class Start extends Element {
         super(level);
         
         image = new Image(
-                Texture.getResource("editor/elements.png"), 192, 0, 64, 64);
+                Texture.getResource("editor/elements.png"), 192, 64, 64, 64);
         
         this.x = x;
         this.z = z;
