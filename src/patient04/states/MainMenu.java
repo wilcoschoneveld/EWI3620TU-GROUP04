@@ -18,7 +18,9 @@ import patient04.utilities.Utils;
  */
 public class MainMenu implements State, Input.Listener {
     private Input controller;
-    private Parallax bg, trees1, trees2, logo;
+    private Parallax bg, trees1, trees2, trees3, logo,
+                    backhill, middlehill, lake, shore,
+                    building, fronthill;
     private Button start, editor, scores;
 
     @Override
@@ -26,7 +28,7 @@ public class MainMenu implements State, Input.Listener {
         Utils.showLoading();
         
         // Preload font
-        Font.getResource("Lucida Sans Unicode", 0, 25);
+        Font.getResource("Myriad Pro", 0, 25);
         
         // Reset score timer
         Main.scoreTime = 0;
@@ -48,14 +50,21 @@ public class MainMenu implements State, Input.Listener {
         
         float R = Utils.getDisplayRatio();
         
-        bg = new Parallax("menu/main.png", -0.02f, -0.02f, R * 1.05f, 0.02f);
+        bg = new Parallax("menu/Background.png", -0.02f, -0.02f, R * 1.05f, 0.02f);
         bg.ratio = (float) (bg.image.width / bg.image.height) / R;
         
-        logo = new Parallax("menu/logo.png", 0.12f, 0.08f, 0.5f, 0.025f);
-        trees2 = new Parallax("menu/trees2.png", R - 0.4f, 0.3f, 0.5f, 0.04f);
+        logo = new Parallax("menu/logo.png", 0.12f, 0.05f, 0.5f, 0.05f);
+        trees3 = new Parallax("menu/GroupTrees4.png", -0.02f, 0.43f, 0.6f, 0.04f);
+        backhill = new Parallax("menu/BackHill.png", 0f, 0.23f, R * 1.05f, 0.05f);
+        middlehill = new Parallax("menu/MiddleHill.png", -0.02f, 0.38f, R * 1.05f, 0.08f);
+        building = new Parallax("menu/Building.png", 0.9f, 0.34f, 0.25f, 0.09f);
+        lake = new Parallax("menu/Lake.png", -0.02f, 0.65f, R * 1.05f, 0.09f);
+        shore = new Parallax("menu/Shore.png", -0.02f, 0.7f, R * 1.05f, 0.11f);
+        fronthill = new Parallax("menu/FrontHill.png", -0.07f, 0.8f, R * 1.05f, 0.13f);
+        trees2 = new Parallax("menu/Group2aTrees.png", R - 0.4f, 0.42f, 0.5f, 0.08f);
         editor = new Button("menu/editor.png", "menu/editor2.png", 0.55f * R, 0.1f, 0.6f, 0.06f);
-        scores = new Button("menu/highscores.png", "menu/highscores2.png", 0.3f, 0.4f, 0.5f, 0.07f);
-        trees1 = new Parallax("menu/trees1.png", -0.1f, 0.3f, 0.7f, 0.13f);
+        scores = new Button("menu/highscores.png", "menu/highscores2.png", 0.3f, 0.4f, 0.5f, 0.11f);
+        trees1 = new Parallax("menu/Group1Trees.png", -0.1f, 0.3f, 0.5f, 0.15f);
         start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
         
         Sound.getResource("music.ogg").setLooping(true).play();
@@ -72,10 +81,19 @@ public class MainMenu implements State, Input.Listener {
         
         bg.draw();
         logo.draw();
-        trees2.draw();
-        editor.draw();
+        trees3.draw();
+        backhill.draw();
+        middlehill.draw();
+        building.draw();
+        lake.draw();
+        shore.draw();
         scores.draw();
         trees1.draw();
+        fronthill.draw();
+        trees2.draw();
+        editor.draw();
+        //scores.draw();
+        //trees1.draw();
         start.draw();
     }
 

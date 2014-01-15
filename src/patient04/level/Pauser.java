@@ -15,7 +15,7 @@ import patient04.utilities.Input;
 public class Pauser implements Input.Listener {
     private boolean paused;
     
-    private final Font fnt = Font.getResource("Lucida Sans Unicode", 0, 25);
+    private final Font fnt = Font.getResource("Myriad Pro", 0, 25);
     
     /** Gets the pause state.
      * 
