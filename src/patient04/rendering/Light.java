@@ -75,7 +75,7 @@ public final class Light {
     
     public Light setEnvironmentLight() {
         // Set attenuation model
-        constant = 0.3f;
+        constant = 0.5f;
         linear = 0f;
         quadratic = 0.5f;
         
