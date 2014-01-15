@@ -13,6 +13,7 @@ import patient04.physics.AABB;
 import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
+import patient04.resources.Sound;
 
 public class Level {
     // Next subsequent level
@@ -161,7 +162,7 @@ public class Level {
         // TODO?
     }
     
-    public void generateFloor(String textureFile) {
+    public void generateFloorCeiling(String floorFile, String ceilingFile) {
         Float xmin = null, zmin = null,
                 xmax = null, zmax = null;
         
@@ -181,19 +182,31 @@ public class Level {
             return;
         }
         
+        // Floor
         Vector min = new Vector(xmin, -1f, zmin);
         Vector max = new Vector(xmax, 0, zmax);
-        
         Solid floor = new Solid();
         
-        floor.model = Model.buildFloor(min, max, textureFile);
+        floor.model = Model.buildFloor(min, max, floorFile);
         floor.model.compileBuffers();
-        //floor.model.releaseRawData();
         
         floor.aabb = new AABB(floor.position, min, max);
         floor.culling = false;
         
         solids.add(floor);
+        
+        // ceiling        
+        Solid ceil = new Solid();
+        
+        ceil.model = Model.buildCeiling(
+                new Vector(xmin, Level.WALL_HEIGHT, zmin),
+                new Vector(xmax, Level.WALL_HEIGHT + 0.1f, zmax),
+                ceilingFile);
+        ceil.model.compileBuffers();
+        ceil.culling = false;
+        
+        solids.add(ceil);
+        
     }
     
     public static Level fromFile(String file) {
@@ -241,7 +254,7 @@ public class Level {
                         
                         level.addNewLight()
                                 .setPosition(Float.parseFloat(tokens[1]),
-                                             WALL_HEIGHT * 2 / 3,
+                                             WALL_HEIGHT - 0.2f,
                                              Float.parseFloat(tokens[2]))
                                 .setColor(Float.parseFloat(tokens[3]),
                                           Float.parseFloat(tokens[4]))
@@ -324,7 +337,15 @@ public class Level {
                         
                         level.addUsable(infusion);
                         
-                        break;      
+                        break;
+                    case "source":
+                        Sound.getResource(tokens[1]).setGain(0.1f)
+                            .setLooping(true)
+                            .setPosition(Float.parseFloat(tokens[2]),
+                                         Float.parseFloat(tokens[3]),
+                                         Float.parseFloat(tokens[4])).play();
+                        
+                        break;
                     case "link":
                         Waypoint.link(
                             level.waypoints.get(Integer.parseInt(tokens[1])),
@@ -343,7 +364,7 @@ public class Level {
             }
             
             // Generate floor
-            level.generateFloor("level/floor.png");
+            level.generateFloorCeiling("level/floor.png", "level/ceiling.png");
             
             return level;
         } catch(IOException e) { e.printStackTrace(); return null; }

@@ -39,8 +39,8 @@ public class Waypoint {
         two.neighbors.remove(one);
     }
     
-    public void addPheromones(int i) {
-        pheromones += i;
+    public void addPheromones() {
+        pheromones++;
     }
     
     public void addPheromones() {

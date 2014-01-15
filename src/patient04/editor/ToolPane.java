@@ -9,8 +9,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.states.Editor;
+import patient04.states.Game;
 import patient04.utilities.Input;
-import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -32,7 +32,7 @@ public class ToolPane implements Input.Listener {
     private final HashMap<Tool, Button> tools;
     public Tool selected = Tool.SELECT;
     
-    private final Button newl, save, load, back;
+    private final Button newl, save, load, back, play;
     
     private float x;
     private boolean open;
@@ -72,8 +72,11 @@ public class ToolPane implements Input.Listener {
         load = Button.fromSheet("editor/buttons3.png", 2, 124, 40, 1);
         load.x = 0.05f; load.y = 0.78f; load.width = 0.15f; load.height = 0.05f;
         
+        play = Button.fromSheet("editor/buttons3.png", 4, 124, 40, 1);
+        play.x = 0.05f; play.y = 0.84f; play.width = 0.15f; play.height = 0.05f;
+        
         back = Button.fromSheet("editor/buttons3.png", 0, 124, 40, 1);
-        back.x = 0.05f; back.y = 0.84f; back.width = 0.15f; back.height = 0.05f;
+        back.x = 0.05f; back.y = 0.90f; back.width = 0.15f; back.height = 0.05f;
     }
     
     public final Button createButton(int index) {
@@ -128,6 +131,7 @@ public class ToolPane implements Input.Listener {
         newl.draw(newl.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
         save.draw(save.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
         load.draw(load.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
+        play.draw(play.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
         back.draw(back.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);
         
         GL11.glPopMatrix();
@@ -161,6 +165,10 @@ public class ToolPane implements Input.Listener {
 
                 // Set controller
                 editor.controller.changeListener(old, editor.level);
+                
+                // Reset camera
+                editor.camera.zoom = 1f;
+                editor.camera.position.set(0, 0, 0);
                 
                 return Input.HANDLED;
             }
@@ -203,6 +211,16 @@ public class ToolPane implements Input.Listener {
                 // Request state transition to main menu
                 Main.requestNewState(Main.States.MAIN_MENU);
             
+                return Input.HANDLED;
+            }
+            
+            if(play.isInside(mx, my)) {
+                // Save to temp file
+                editor.level.saveToFile("res/levels/editor.tmp");
+                
+                Game game = (Game) Main.requestNewState(Main.States.GAME);
+                game.loadLevel = "editor.tmp";
+                
                 return Input.HANDLED;
             }
             

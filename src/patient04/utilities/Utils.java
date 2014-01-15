@@ -16,11 +16,14 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.PNGDecoder;
 import patient04.resources.Font;
+import patient04.resources.Image;
 
 /**
  *
@@ -163,6 +166,64 @@ public class Utils {
         fnt.draw(0.1f, 0.9f, "Loading, please wait...",
                 0, Font.Align.LEFT, Font.Align.BOTTOM);
         
+        Display.update();
+    }
+    
+    public static void showWaitForInput() {
+        // Refresh screen
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        Font fnt = Font.getResource("Lucida Sans Unicode", 0, 25);
+        Image image = Image.getFromTextureResource("menu/story.png");
+
+        image.draw(-1, 1, 1, -1);
+
+        fnt.setColor(1, 1, 1, 1);
+        fnt.draw(0.9f, 0.98f, "Press any key to continue",
+                0, Font.Align.RIGHT, Font.Align.BOTTOM);
+
+        Display.update();
+
+        // Flush all input
+        while (Keyboard.next()) { }
+        while (Mouse.next()) { }
+
+        // Do not play... just yet
+        boolean play = false;
+
+        // Check user input
+        while (!play) {
+            try { Thread.sleep(100); } catch (Exception e) { }
+
+            Display.processMessages();
+
+            while (Keyboard.next())
+                if (Keyboard.getEventKeyState())
+                    play = true;
+
+            while (Mouse.next())
+                if (Mouse.getEventButtonState())
+                    play = true;
+        }
+    }
+    
+    public static void showStory() {
+        Font fnt = Font.getResource("Lucida Sans Unicode", 0, 25);
+        Image image = Image.getFromTextureResource("menu/story.png");
+
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
+
+        image.draw(-1, 1, 1, -1);
+
+        fnt.setColor(1, 1, 1, 1);
+        fnt.draw(0.9f, 0.98f, "Loading, please wait...",
+                0, Font.Align.RIGHT, Font.Align.BOTTOM);
+
         Display.update();
     }
 }
