@@ -43,10 +43,6 @@ public class Waypoint {
         pheromones++;
     }
     
-    public void addPheromones() {
-        pheromones++;
-    }
-    
     public int getPheromones() {
         return pheromones;
     }

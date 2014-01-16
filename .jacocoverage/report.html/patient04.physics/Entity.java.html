@@ -115,32 +115,32 @@ public abstract class Entity {
         
         // Obtain broadphase box
 <span class="nc" id="L117">        AABB broadphase = aabb.copy().expand(delta);</span>
-<span class="nc" id="L118">        broadphase.min.add(0, 1.5f, 0);</span>
+        
+        // Eye level
+<span class="nc" id="L120">        broadphase.min.add(0, 1.5f, 0);</span>
         
         // Get possible line of sight blockers
-<span class="nc" id="L121">        ArrayList&lt;AABB&gt; aabbs = level.getCollisionBoxes(broadphase);</span>
+<span class="nc" id="L123">        ArrayList&lt;AABB&gt; aabbs = level.getCollisionBoxes(broadphase);</span>
         
         // Get plane properties
-<span class="nc" id="L124">        Vector pNormal = delta.cross(new Vector(0, 1, 0)).normalize();</span>
-<span class="nc" id="L125">        float pDistance = -pNormal.dot(position);</span>
+<span class="nc" id="L126">        Vector pNormal = delta.cross(new Vector(0, 1, 0)).normalize();</span>
+<span class="nc" id="L127">        float pDistance = -pNormal.dot(position);</span>
         
-<span class="nc bnc" id="L127" title="All 2 branches missed.">        for (AABB aabb2 : aabbs) {</span>
-            //aabb2 = box to test
-<span class="nc" id="L129">            Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);</span>
-<span class="nc" id="L130">            Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);</span>
-<span class="nc" id="L131">            Vector p3 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.min.z);</span>
-<span class="nc" id="L132">            Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        for (AABB aabb2 : aabbs) {</span>
+            // Obtain corners
+<span class="nc" id="L131">            Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);</span>
+<span class="nc" id="L132">            Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);</span>
+<span class="nc" id="L133">            Vector p3 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.min.z);</span>
+<span class="nc" id="L134">            Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);</span>
             
-<span class="nc" id="L134">            float sign = Math.signum(pNormal.dot(p1) + pDistance);</span>
+            // Calculate sign of first corner
+<span class="nc" id="L137">            float sign = Math.signum(pNormal.dot(p1) + pDistance);</span>
             
-<span class="nc bnc" id="L136" title="All 2 branches missed.">            if(Utils.sign(pNormal.dot(p2) + pDistance) != sign){</span>
-<span class="nc" id="L137">                return false;}</span>
-            
-<span class="nc bnc" id="L139" title="All 2 branches missed.">            if(Utils.sign(pNormal.dot(p3) + pDistance) != sign){</span>
-<span class="nc" id="L140">                return false;}</span>
-            
-<span class="nc bnc" id="L142" title="All 2 branches missed.">            if(Utils.sign(pNormal.dot(p4) + pDistance) != sign){</span>
-<span class="nc" id="L143">                return false;}</span>
+            // Check sign of other corners
+<span class="nc bnc" id="L140" title="All 6 branches missed.">            if(Math.signum(pNormal.dot(p2) + pDistance) != sign ||</span>
+               Math.signum(pNormal.dot(p3) + pDistance) != sign ||
+               Math.signum(pNormal.dot(p4) + pDistance) != sign)
+<span class="nc" id="L143">                return false;</span>
 <span class="nc" id="L144">        }</span>
         
 <span class="nc" id="L146">        return true;</span>

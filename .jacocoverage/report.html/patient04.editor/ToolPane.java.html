@@ -9,8 +9,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.states.Editor;
+import patient04.states.Game;
 import patient04.utilities.Input;
-import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -32,7 +32,7 @@ public class ToolPane implements Input.Listener {
     private final HashMap&lt;Tool, Button&gt; tools;
 <span class="nc" id="L33">    public Tool selected = Tool.SELECT;</span>
     
-    private final Button newl, save, load, back;
+    private final Button newl, save, load, back, play;
     
     private float x;
     private boolean open;
@@ -72,151 +72,169 @@ public class ToolPane implements Input.Listener {
 <span class="nc" id="L72">        load = Button.fromSheet(&quot;editor/buttons3.png&quot;, 2, 124, 40, 1);</span>
 <span class="nc" id="L73">        load.x = 0.05f; load.y = 0.78f; load.width = 0.15f; load.height = 0.05f;</span>
         
-<span class="nc" id="L75">        back = Button.fromSheet(&quot;editor/buttons3.png&quot;, 0, 124, 40, 1);</span>
-<span class="nc" id="L76">        back.x = 0.05f; back.y = 0.84f; back.width = 0.15f; back.height = 0.05f;</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L75">        play = Button.fromSheet(&quot;editor/buttons3.png&quot;, 4, 124, 40, 1);</span>
+<span class="nc" id="L76">        play.x = 0.05f; play.y = 0.84f; play.width = 0.15f; play.height = 0.05f;</span>
+        
+<span class="nc" id="L78">        back = Button.fromSheet(&quot;editor/buttons3.png&quot;, 0, 124, 40, 1);</span>
+<span class="nc" id="L79">        back.x = 0.05f; back.y = 0.90f; back.width = 0.15f; back.height = 0.05f;</span>
+<span class="nc" id="L80">    }</span>
     
     public final Button createButton(int index) {
-<span class="nc" id="L80">        Button button = Button.fromSheet(</span>
+<span class="nc" id="L83">        Button button = Button.fromSheet(</span>
                 &quot;editor/buttons.png&quot;, index, 66, 66, 1);
 
-<span class="nc" id="L83">        button.x = 0.05f + (index % 2)*0.08f;</span>
-<span class="nc" id="L84">        button.y = 0.05f + index * 0.04f - (index % 2)*0.04f;</span>
-<span class="nc" id="L85">        button.width = 0.07f;</span>
-<span class="nc" id="L86">        button.height = 0.07f;</span>
+<span class="nc" id="L86">        button.x = 0.05f + (index % 2)*0.08f;</span>
+<span class="nc" id="L87">        button.y = 0.05f + index * 0.04f - (index % 2)*0.04f;</span>
+<span class="nc" id="L88">        button.width = 0.07f;</span>
+<span class="nc" id="L89">        button.height = 0.07f;</span>
 
-<span class="nc" id="L88">        return button;</span>
+<span class="nc" id="L91">        return button;</span>
     }
     
     public void update() {
-<span class="nc" id="L92">        float R = editor.camera.viewRatio();</span>
+<span class="nc" id="L95">        float R = editor.camera.viewRatio();</span>
         
-<span class="nc bnc" id="L94" title="All 6 branches missed.">        open = (float) Mouse.getX() / Display.getHeight() &gt; x </span>
+<span class="nc bnc" id="L97" title="All 6 branches missed.">        open = (float) Mouse.getX() / Display.getHeight() &gt; x </span>
                 &amp;&amp; !editor.camera.mouseDrag
                 &amp;&amp; editor.level.target == 0;
         
-<span class="nc bnc" id="L98" title="All 2 branches missed.">        x = Utils.clamp(x + (open ? -1 : 1) * SPEED, R - MAX, R - MIN);</span>
-<span class="nc" id="L99">    }</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        x = Utils.clamp(x + (open ? -1 : 1) * SPEED, R - MAX, R - MIN);</span>
+<span class="nc" id="L102">    }</span>
     
     public void draw() {
-<span class="nc" id="L102">        float R = editor.camera.viewRatio();</span>
-<span class="nc" id="L103">        float mx = +(float) Mouse.getX() / Display.getHeight() - x;</span>
-<span class="nc" id="L104">        float my = -(float) Mouse.getY() / Display.getHeight() + 1;</span>
+<span class="nc" id="L105">        float R = editor.camera.viewRatio();</span>
+<span class="nc" id="L106">        float mx = +(float) Mouse.getX() / Display.getHeight() - x;</span>
+<span class="nc" id="L107">        float my = -(float) Mouse.getY() / Display.getHeight() + 1;</span>
         
-<span class="nc" id="L106">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="nc" id="L109">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
         
-<span class="nc" id="L108">        GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.85f);</span>
+<span class="nc" id="L111">        GL11.glColor4f(0.5f, 0.5f, 0.5f, 0.85f);</span>
                 
-<span class="nc" id="L110">        GL11.glBegin(GL11.GL_QUADS);</span>
-<span class="nc" id="L111">        GL11.glVertex2f(x, 0);</span>
-<span class="nc" id="L112">        GL11.glVertex2f(x, 1);</span>
-<span class="nc" id="L113">        GL11.glVertex2f(R, 1);</span>
-<span class="nc" id="L114">        GL11.glVertex2f(R, 0);</span>
-<span class="nc" id="L115">        GL11.glEnd();</span>
+<span class="nc" id="L113">        GL11.glBegin(GL11.GL_QUADS);</span>
+<span class="nc" id="L114">        GL11.glVertex2f(x, 0);</span>
+<span class="nc" id="L115">        GL11.glVertex2f(x, 1);</span>
+<span class="nc" id="L116">        GL11.glVertex2f(R, 1);</span>
+<span class="nc" id="L117">        GL11.glVertex2f(R, 0);</span>
+<span class="nc" id="L118">        GL11.glEnd();</span>
         
-<span class="nc" id="L117">        GL11.glPushMatrix();</span>
-<span class="nc" id="L118">        GL11.glTranslatef(x, 0, 0);</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        for (Button button : tools.values()) {</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">            if (tools.get(selected) == button)</span>
-<span class="nc" id="L121">                button.draw(Button.State.SELECTED);</span>
-<span class="nc bnc" id="L122" title="All 2 branches missed.">            else if (button.isInside(mx, my))</span>
-<span class="nc" id="L123">                button.draw(Button.State.OVER);</span>
+<span class="nc" id="L120">        GL11.glPushMatrix();</span>
+<span class="nc" id="L121">        GL11.glTranslatef(x, 0, 0);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for (Button button : tools.values()) {</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (tools.get(selected) == button)</span>
+<span class="nc" id="L124">                button.draw(Button.State.SELECTED);</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            else if (button.isInside(mx, my))</span>
+<span class="nc" id="L126">                button.draw(Button.State.OVER);</span>
             else
-<span class="nc" id="L125">                button.draw(Button.State.ACTIVE);</span>
-<span class="nc" id="L126">        }</span>
+<span class="nc" id="L128">                button.draw(Button.State.ACTIVE);</span>
+<span class="nc" id="L129">        }</span>
         
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        newl.draw(newl.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">        save.draw(save.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
-<span class="nc bnc" id="L130" title="All 2 branches missed.">        load.draw(load.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
-<span class="nc bnc" id="L131" title="All 2 branches missed.">        back.draw(back.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        newl.draw(newl.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        save.draw(save.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        load.draw(load.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        play.draw(play.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        back.draw(back.isInside(mx, my) ? Button.State.OVER : Button.State.ACTIVE);</span>
         
-<span class="nc" id="L133">        GL11.glPopMatrix();</span>
-<span class="nc" id="L134">    }</span>
+<span class="nc" id="L137">        GL11.glPopMatrix();</span>
+<span class="nc" id="L138">    }</span>
     
     @Override
     public boolean handleMouseEvent() {
         // In this stage, 'open' is an indication of the mouse being inside
         // the tools pane, so no need for extra checking
-<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (!open)</span>
-<span class="nc" id="L141">            return Input.UNHANDLED;</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (!open)</span>
+<span class="nc" id="L145">            return Input.UNHANDLED;</span>
         
-<span class="nc" id="L143">        float mx = +(float) Mouse.getEventX() / Display.getHeight() - x;</span>
-<span class="nc" id="L144">        float my = -(float) Mouse.getEventY() / Display.getHeight() + 1;</span>
+<span class="nc" id="L147">        float mx = +(float) Mouse.getEventX() / Display.getHeight() - x;</span>
+<span class="nc" id="L148">        float my = -(float) Mouse.getEventY() / Display.getHeight() + 1;</span>
         
-<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (Input.mouseButton(0, true)) {</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (Input.mouseButton(0, true)) {</span>
             // Check all buttons for click inside
-<span class="nc bnc" id="L148" title="All 2 branches missed.">            for (Entry&lt;Tool, Button&gt; entry : tools.entrySet()) {</span>
-<span class="nc bnc" id="L149" title="All 2 branches missed.">                if (entry.getValue().isInside(mx, my)) {</span>
-<span class="nc" id="L150">                    selected = entry.getKey();</span>
-<span class="nc" id="L151">                    return Input.HANDLED;</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            for (Entry&lt;Tool, Button&gt; entry : tools.entrySet()) {</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                if (entry.getValue().isInside(mx, my)) {</span>
+<span class="nc" id="L154">                    selected = entry.getKey();</span>
+<span class="nc" id="L155">                    return Input.HANDLED;</span>
                 }
-<span class="nc" id="L153">            }</span>
+<span class="nc" id="L157">            }</span>
             
-<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (newl.isInside(mx, my)) {</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (newl.isInside(mx, my)) {</span>
                 // Store old level
-<span class="nc" id="L157">                Level old = editor.level;</span>
+<span class="nc" id="L161">                Level old = editor.level;</span>
 
                 // Load level from file
-<span class="nc" id="L160">                editor.level = new Level(editor);</span>
+<span class="nc" id="L164">                editor.level = new Level(editor);</span>
 
                 // Set controller
-<span class="nc" id="L163">                editor.controller.changeListener(old, editor.level);</span>
+<span class="nc" id="L167">                editor.controller.changeListener(old, editor.level);</span>
                 
-<span class="nc" id="L165">                return Input.HANDLED;</span>
+                // Reset camera
+<span class="nc" id="L170">                editor.camera.zoom = 1f;</span>
+<span class="nc" id="L171">                editor.camera.position.set(0, 0, 0);</span>
+                
+<span class="nc" id="L173">                return Input.HANDLED;</span>
             }
             
-<span class="nc bnc" id="L168" title="All 2 branches missed.">            if(load.isInside(mx, my)) {</span>
-<span class="nc" id="L169">                File load = Utils.showOpenDialog();</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if(load.isInside(mx, my)) {</span>
+<span class="nc" id="L177">                File load = Utils.showOpenDialog();</span>
             
                 // Do nothin'
-<span class="nc bnc" id="L172" title="All 2 branches missed.">                if (load == null)</span>
-<span class="nc" id="L173">                    return Input.HANDLED;</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                if (load == null)</span>
+<span class="nc" id="L181">                    return Input.HANDLED;</span>
 
                 // Store old level
-<span class="nc" id="L176">                Level old = editor.level;</span>
+<span class="nc" id="L184">                Level old = editor.level;</span>
 
                 // Load level from file
-<span class="nc" id="L179">                editor.level = Level.loadFromFile(editor, load);</span>
+<span class="nc" id="L187">                editor.level = Level.loadFromFile(editor, load);</span>
 
                 // Set controller
-<span class="nc" id="L182">                editor.controller.changeListener(old, editor.level);</span>
+<span class="nc" id="L190">                editor.controller.changeListener(old, editor.level);</span>
                 
-<span class="nc" id="L184">                return Input.HANDLED;</span>
+<span class="nc" id="L192">                return Input.HANDLED;</span>
             }
             
-<span class="nc bnc" id="L187" title="All 2 branches missed.">            if(save.isInside(mx, my)) {</span>
-<span class="nc" id="L188">                File save = Utils.showSaveDialog();</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            if(save.isInside(mx, my)) {</span>
+<span class="nc" id="L196">                File save = Utils.showSaveDialog();</span>
                 
-<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (save == null)</span>
-<span class="nc" id="L191">                    return Input.HANDLED;</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">                if (save == null)</span>
+<span class="nc" id="L199">                    return Input.HANDLED;</span>
                 
-<span class="nc" id="L193">                String loc = save.getAbsolutePath();</span>
-<span class="nc" id="L194">                int ext = loc.lastIndexOf(&quot;.&quot;);</span>
+<span class="nc" id="L201">                String loc = save.getAbsolutePath();</span>
+<span class="nc" id="L202">                int ext = loc.lastIndexOf(&quot;.&quot;);</span>
                 
-<span class="nc bnc" id="L196" title="All 2 branches missed.">                editor.level.saveToFile(</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                editor.level.saveToFile(</span>
                             (ext &lt; 0 ? loc : loc.substring(0, ext)) + &quot;.lvl&quot;);
                 
-<span class="nc" id="L199">                return Input.HANDLED;</span>
+<span class="nc" id="L207">                return Input.HANDLED;</span>
             }
             
-<span class="nc bnc" id="L202" title="All 2 branches missed.">            if(back.isInside(mx, my)) {</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            if(back.isInside(mx, my)) {</span>
                 // Request state transition to main menu
-<span class="nc" id="L204">                Main.requestNewState(Main.States.MAIN_MENU);</span>
+<span class="nc" id="L212">                Main.requestNewState(Main.States.MAIN_MENU);</span>
             
-<span class="nc" id="L206">                return Input.HANDLED;</span>
+<span class="nc" id="L214">                return Input.HANDLED;</span>
+            }
+            
+<span class="nc bnc" id="L217" title="All 2 branches missed.">            if(play.isInside(mx, my)) {</span>
+                // Save to temp file
+<span class="nc" id="L219">                editor.level.saveToFile(&quot;res/levels/editor.tmp&quot;);</span>
+                
+<span class="nc" id="L221">                Game game = (Game) Main.requestNewState(Main.States.GAME);</span>
+<span class="nc" id="L222">                game.loadLevel = &quot;editor.tmp&quot;;</span>
+                
+<span class="nc" id="L224">                return Input.HANDLED;</span>
             }
             
             // Always handled if inside pane
-<span class="nc" id="L210">            return Input.HANDLED;</span>
+<span class="nc" id="L228">            return Input.HANDLED;</span>
         }
         
-<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (Input.mouseButton(1, true)) {</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        if (Input.mouseButton(1, true)) {</span>
             
             // Always handled if inside pane
-<span class="nc" id="L216">            return Input.HANDLED;</span>
+<span class="nc" id="L234">            return Input.HANDLED;</span>
         }
         
-<span class="nc" id="L219">        return Input.UNHANDLED;</span>
+<span class="nc" id="L237">        return Input.UNHANDLED;</span>
     }
 
     @Override
@@ -225,17 +243,17 @@ public class ToolPane implements Input.Listener {
 //        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
 //        SELECT, ENEMY,WALL, DOOR, MODEL, DELETE, SOUND;
         
-<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (Keyboard.getEventKeyState()) {</span>
-<span class="nc bnc" id="L229" title="All 6 branches missed.">            switch(Keyboard.getEventKey()) {</span>
-<span class="nc" id="L230">                case Keyboard.KEY_V: selected = Tool.SELECT; return true;</span>
-<span class="nc" id="L231">                case Keyboard.KEY_L: selected = Tool.LIGHT; return true;</span>
-<span class="nc" id="L232">                case Keyboard.KEY_W: selected = Tool.WALL; return true;</span>
-<span class="nc" id="L233">                case Keyboard.KEY_E: selected = Tool.ENEMY; return true;</span>
-<span class="nc" id="L234">                case Keyboard.KEY_S: selected = Tool.START; return true;</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (Keyboard.getEventKeyState()) {</span>
+<span class="nc bnc" id="L247" title="All 6 branches missed.">            switch(Keyboard.getEventKey()) {</span>
+<span class="nc" id="L248">                case Keyboard.KEY_V: selected = Tool.SELECT; return true;</span>
+<span class="nc" id="L249">                case Keyboard.KEY_L: selected = Tool.LIGHT; return true;</span>
+<span class="nc" id="L250">                case Keyboard.KEY_W: selected = Tool.WALL; return true;</span>
+<span class="nc" id="L251">                case Keyboard.KEY_E: selected = Tool.ENEMY; return true;</span>
+<span class="nc" id="L252">                case Keyboard.KEY_S: selected = Tool.START; return true;</span>
             }
         }
         
-<span class="nc" id="L238">        return Input.UNHANDLED;</span>
+<span class="nc" id="L256">        return Input.UNHANDLED;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

@@ -75,42 +75,51 @@ public final class Light {
     
     public Light setEnvironmentLight() {
         // Set attenuation model
-<span class="nc" id="L78">        constant = 1;</span>
+<span class="nc" id="L78">        constant = 0.5f;</span>
 <span class="nc" id="L79">        linear = 0f;</span>
 <span class="nc" id="L80">        quadratic = 0.5f;</span>
         
 <span class="nc" id="L82">        return this;</span>
     }
     
-<span class="nc" id="L85">    public Vector getPosition() { return position; }</span>
-<span class="nc" id="L86">    public FloatBuffer getColor() { return color; }</span>
-<span class="nc" id="L87">    public float getIntensity() { return intensity; }</span>
-<span class="nc" id="L88">    public float getRadius() { return radius; }</span>
-<span class="nc" id="L89">    public float getConstant() { return constant; }</span>
-<span class="nc" id="L90">    public float getLinear() { return linear; }</span>
-<span class="nc" id="L91">    public float getQuadratic() { return quadratic; }</span>
+    public Light setWalkLight() {
+        // Set attenuation model
+<span class="nc" id="L87">        constant = 1f;</span>
+<span class="nc" id="L88">        linear = 0f;</span>
+<span class="nc" id="L89">        quadratic = 0.5f;</span>
+        
+<span class="nc" id="L91">        return this;</span>
+    }
+    
+<span class="nc" id="L94">    public Vector getPosition() { return position; }</span>
+<span class="nc" id="L95">    public FloatBuffer getColor() { return color; }</span>
+<span class="nc" id="L96">    public float getIntensity() { return intensity; }</span>
+<span class="nc" id="L97">    public float getRadius() { return radius; }</span>
+<span class="nc" id="L98">    public float getConstant() { return constant; }</span>
+<span class="nc" id="L99">    public float getLinear() { return linear; }</span>
+<span class="nc" id="L100">    public float getQuadratic() { return quadratic; }</span>
     
     public void draw(Renderer renderer) {
         // Set modelview matrix
-<span class="nc" id="L95">        Matrix matrix = new Matrix();</span>
-<span class="nc" id="L96">        matrix.translate(position.x, position.y, position.z);                </span>
-<span class="nc" id="L97">        matrix.scale(radius, radius, radius);</span>
+<span class="nc" id="L104">        Matrix matrix = new Matrix();</span>
+<span class="nc" id="L105">        matrix.translate(position.x, position.y, position.z);                </span>
+<span class="nc" id="L106">        matrix.scale(radius, radius, radius);</span>
         
-<span class="nc" id="L99">        renderer.glUpdateModelMatrix(matrix);</span>
+<span class="nc" id="L108">        renderer.glUpdateModelMatrix(matrix);</span>
         
         // Discard if not in frustum (-1 due to radius scaling)
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (renderer.frustum.isOutside((Vector) null, -1)) </span>
-<span class="nc" id="L103">            return;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (renderer.frustum.isOutside((Vector) null, -1)) </span>
+<span class="nc" id="L112">            return;</span>
         
-<span class="nc" id="L105">        renderer.pointLightFirstPass();</span>
-<span class="nc" id="L106">        model.draw();</span>
+<span class="nc" id="L114">        renderer.pointLightFirstPass();</span>
+<span class="nc" id="L115">        model.draw();</span>
         
-<span class="nc" id="L108">        float d = (renderer.frustum.planes[5].distance(null) - 0.5f)</span>
+<span class="nc" id="L117">        float d = (renderer.frustum.planes[5].distance(null) - 0.5f)</span>
                                                                  * radius / 5;
         
-<span class="nc" id="L111">        renderer.pointLightSecondPass();        </span>
-<span class="nc" id="L112">        renderer.updateLightParams(this, Utils.clamp(d, 0, 1));</span>
-<span class="nc" id="L113">        model.draw();</span>
-<span class="nc" id="L114">    }</span>
+<span class="nc" id="L120">        renderer.pointLightSecondPass();        </span>
+<span class="nc" id="L121">        renderer.updateLightParams(this, Utils.clamp(d, 0, 1));</span>
+<span class="nc" id="L122">        model.draw();</span>
+<span class="nc" id="L123">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

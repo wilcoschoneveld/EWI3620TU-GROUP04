@@ -39,31 +39,27 @@ public class Waypoint {
 <span class="nc" id="L39">        two.neighbors.remove(one);</span>
 <span class="nc" id="L40">    }</span>
     
-    public void addPheromones(int i) {
-<span class="nc" id="L43">        pheromones += i;</span>
+    public void addPheromones() {
+<span class="nc" id="L43">        pheromones++;</span>
 <span class="nc" id="L44">    }</span>
     
-    public void addPheromones() {
-<span class="nc" id="L47">        pheromones++;</span>
-<span class="nc" id="L48">    }</span>
-    
     public int getPheromones() {
-<span class="nc" id="L51">        return pheromones;</span>
+<span class="nc" id="L47">        return pheromones;</span>
     }
     
     @Override
     public boolean equals(Object obj) {
-<span class="nc bnc" id="L56" title="All 2 branches missed.">        if(!(obj instanceof Waypoint))</span>
-<span class="nc" id="L57">            return false;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if(!(obj instanceof Waypoint))</span>
+<span class="nc" id="L53">            return false;</span>
         
-<span class="nc" id="L59">        Waypoint other = (Waypoint) obj;</span>
+<span class="nc" id="L55">        Waypoint other = (Waypoint) obj;</span>
         
-<span class="nc" id="L61">        return position.equals(other.position);</span>
+<span class="nc" id="L57">        return position.equals(other.position);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L66">        return position.hashCode();</span>
+<span class="nc" id="L62">        return position.hashCode();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
