@@ -3,6 +3,7 @@ package patient04;
 import java.nio.ByteBuffer;
 import patient04.utilities.Logger;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -94,6 +95,7 @@ public final class Main {
         }
 
         // Display OpenGL information
+        Logger.debug("LWJGL version " + Sys.getVersion());
         Logger.debug("OS name " + System.getProperty("os.name"));
         Logger.debug("OS version " + System.getProperty("os.version"));
         Logger.debug("OpenGL version " + GL11.glGetString(GL11.GL_VERSION));
