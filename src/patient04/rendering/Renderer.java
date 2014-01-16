@@ -22,7 +22,7 @@ import patient04.resources.Model;
 import patient04.resources.Texture;
 import patient04.utilities.Buffers;
 import patient04.utilities.Logger;
-import patient04.utilities.Shaders;
+import patient04.utilities.Shader;
 import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
@@ -119,11 +119,11 @@ public class Renderer {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
         // Load the geometry shader
-        geometryShader = Shaders.loadShaderPairFromFiles(
+        geometryShader = Shader.loadShaderPairFromFiles(
                 "res/shaders/geometry.vert", "res/shaders/geometry.frag");
         
         // Load the lighting shader
-        lightingShader = Shaders.loadShaderPairFromFiles(
+        lightingShader = Shader.loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/lighting.frag");
         
         // Bind the lighting shader
@@ -140,15 +140,15 @@ public class Renderer {
         attQ = GL20.glGetUniformLocation(lightingShader, "falloffQuadratic");
         
         // Set screensize
-        Shaders.glUniform2f(lightingShader, "screenSize", w, h);
+        Shader.glUniform2f(lightingShader, "screenSize", w, h);
         
         // Set samplers to correct texture units
-        Shaders.glUniform1i(lightingShader, "uTexPosition", 0);
-        Shaders.glUniform1i(lightingShader, "uTexNormal", 1);
-        Shaders.glUniform1i(lightingShader, "uTexDiffuse", 2);
+        Shader.glUniform1i(lightingShader, "uTexPosition", 0);
+        Shader.glUniform1i(lightingShader, "uTexNormal", 1);
+        Shader.glUniform1i(lightingShader, "uTexDiffuse", 2);
         
         // Set stencil operations
-        stencilShader = Shaders.loadShaderPairFromFiles(
+        stencilShader = Shader.loadShaderPairFromFiles(
                 "res/shaders/lighting.vert", "res/shaders/empty.frag");
         
         useShaderProgram(stencilShader);
@@ -159,7 +159,7 @@ public class Renderer {
                 GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
         
         // Load the effects shader
-        effectShader = Shaders.loadShaderPairFromFiles(
+        effectShader = Shader.loadShaderPairFromFiles(
                 "res/shaders/pass.vert", "res/shaders/effect.frag");
         
         // Bind the effects shader
@@ -172,22 +172,22 @@ public class Renderer {
         effColor = GL20.glGetUniformLocation(effectShader, "effectColor");
         
         // Bind uniform variables
-        Shaders.glUniform1i(effectShader, "uTexAccum", 0);
-        Shaders.glUniform1i(effectShader, "uTexDiffuse", 1);
-        Shaders.glUniform2f(effectShader, "screenSize", w, h);
+        Shader.glUniform1i(effectShader, "uTexAccum", 0);
+        Shader.glUniform1i(effectShader, "uTexDiffuse", 1);
+        Shader.glUniform2f(effectShader, "screenSize", w, h);
         
         // Load debug shader
-        debugShader = Shaders.loadShaderPairFromFiles(
+        debugShader = Shader.loadShaderPairFromFiles(
                 "res/shaders/pass.vert", "res/shaders/gbuffer.frag");
         
         useShaderProgram(debugShader);
         
         // Bind uniform variables 
-        Shaders.glUniform1i(debugShader, "uTexPosition", 0);
-        Shaders.glUniform1i(debugShader, "uTexNormal", 1);
-        Shaders.glUniform1i(debugShader, "uTexDiffuse", 2);
-        Shaders.glUniform1i(debugShader, "uTexAccum", 3);
-        Shaders.glUniform2f(debugShader, "screenSize", w, h);
+        Shader.glUniform1i(debugShader, "uTexPosition", 0);
+        Shader.glUniform1i(debugShader, "uTexNormal", 1);
+        Shader.glUniform1i(debugShader, "uTexDiffuse", 2);
+        Shader.glUniform1i(debugShader, "uTexAccum", 3);
+        Shader.glUniform2f(debugShader, "screenSize", w, h);
         
         // Unbind shader program
         useShaderProgram(0);

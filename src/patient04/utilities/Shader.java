@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL20;
  *
  * @author Wilco
  */
-public class Shaders {
+public class Shader {
     
     public static void glUniform1i(int program, String name, int value) {
         GL20.glUniform1i(GL20.glGetUniformLocation(program, name), value);
