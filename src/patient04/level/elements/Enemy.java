@@ -1,9 +1,6 @@
 package patient04.level.elements;
 
 import patient04.level.Player;
-import patient04.Main.States;
-import static patient04.Main.requestNewState;
-import patient04.level.elements.Waypoint;
 import patient04.level.Level;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -12,7 +9,6 @@ import patient04.rendering.Light;
 import patient04.rendering.Renderer;
 import patient04.resources.Model;
 import patient04.resources.Sound;
-import patient04.utilities.Timer;
 import patient04.utilities.Utils;
 
 /**
@@ -56,9 +52,7 @@ public class Enemy extends Entity {
             anim_walking[i].releaseRawData();
         }
         
-        light = new Light()
-                .setColor(0.15f, 1f)
-                .setEnvironmentLight();
+        light = new Light().setColor(0.15f, 1f).setWalkLight();
         
         distanceMoved = (float) Math.random();
         lastMoved = distanceMoved;
@@ -172,9 +166,9 @@ public class Enemy extends Entity {
             Waypoint wp = nextWaypoint.neighbors.get(index);
             
             if(wp.equals(prevWaypoint))
-                weight[index] = 0.01f;
+                weight[index] = 0.01f / wp.getPheromones();
             else
-                weight[index] = 1f;
+                weight[index] = 1f / wp.getPheromones();
             
             total += weight[index];
         }
@@ -191,6 +185,7 @@ public class Enemy extends Entity {
         
         // Set prev and next waypoint
         prevWaypoint = nextWaypoint;
+        prevWaypoint.addPheromones();
         nextWaypoint = nextWaypoint.neighbors.get(index);
     }
     

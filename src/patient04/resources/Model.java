@@ -615,34 +615,46 @@ public class Model {
         return model;
     }
     
-    public static Model buildQuad() {
+    public static Model buildCeiling(Vector min, Vector max, String textureFile) {
         Model model = new Model();
         
         model.vertices.addAll(Arrays.asList(new Vector[] {
-            new Vector(-1, -1, 0),
-            new Vector(1, -1, 0),
-            new Vector(1, 1, 0),
-            new Vector(-1, 1, 0)            
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
         }));
         
         model.texcoords.addAll(Arrays.asList(new UV[] {
-            new UV(0, 0),
-            new UV(1, 0),
-            new UV(1, 1),
-            new UV(0, 1)
+            new UV(0, 0), // 0
+            new UV(0, (max.z - min.z) / Level.WALL_HEIGHT),  // 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, // 2
+                    (max.z - min.z) / Level.WALL_HEIGHT),
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, 0), // 3
         }));
         
         model.normals.addAll(Arrays.asList(new Vector[] {
-            new Vector(0, 0, 1)
+            new Vector(0, 0, 1), new Vector(0, 0, -1),
+            new Vector(0, 1, 0), new Vector(0, -1, 0),
+            new Vector(1, 0, 0), new Vector(-1, 0, 0)
         }));
         
         Group group = model.requestGroup("default");
         
         group.faces.addAll(Arrays.asList(new Face[] {
-            new Face(0, 1, 2, 0, 1, 2, 0, 0, 0),
-            new Face(2, 3, 0, 2, 3, 0, 0, 0, 0)
+            //  Face(V, V, V, T, T, T, N, N, N)
+            new Face(0, 4, 5, 1, 2, 3, 3, 3, 3),
+            new Face(5, 1, 0, 3, 0, 1, 3, 3, 3),
         }));
         
+        // Also add a new material
+        group.material = new Material();
+        
+        group.material.texture = Texture.getResource(textureFile);
+        group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);
+        
+        // Return the new model        
         return model;
     }
+    
 }

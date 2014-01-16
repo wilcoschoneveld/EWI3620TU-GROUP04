@@ -37,166 +37,165 @@ import patient04.utilities.Utils;
     
     @Override
     public void initialize() {
-<span class="nc" id="L40">        Utils.showLoading();</span>
+        
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (enableTutorial)</span>
+<span class="nc" id="L42">            Utils.showStory();</span>
+        else
+<span class="nc" id="L44">            Utils.showLoading();</span>
         
         // Create a new Renderer
-<span class="nc" id="L43">        renderer = new Renderer();</span>
+<span class="nc" id="L47">        renderer = new Renderer();</span>
         
-<span class="nc" id="L45">        renderer.projection = Matrix.projPerspective(</span>
+<span class="nc" id="L49">        renderer.projection = Matrix.projPerspective(</span>
                70, (float) Display.getWidth() / Display.getHeight(), .1f, 50);
         
         // Create a new timer
-<span class="nc" id="L49">        timer = new Timer();</span>
+<span class="nc" id="L53">        timer = new Timer();</span>
         
         // Create a new maze and player
-<span class="nc" id="L52">        level = Level.fromFile(&quot;res/levels/&quot; +loadLevel);</span>
+<span class="nc" id="L56">        level = Level.fromFile(&quot;res/levels/&quot; +loadLevel);</span>
 
         // Add player to level
-<span class="nc" id="L55">        player = level.newPlayer();</span>
+<span class="nc" id="L59">        player = level.newPlayer();</span>
        
         // Set player at start point
-<span class="nc" id="L58">        player.setPosition(level.startPoint.x, 0, level.startPoint.z);</span>
-<span class="nc" id="L59">        player.setRotation(0, level.startPoint.y - 90, 0);</span>
+<span class="nc" id="L62">        player.setPosition(level.startPoint.x, 0, level.startPoint.z);</span>
+<span class="nc" id="L63">        player.setRotation(0, level.startPoint.y - 90, 0);</span>
         
         // Pauser
-<span class="nc" id="L62">        pauser = new Pauser();</span>
-<span class="nc" id="L63">        pauser.setPaused(false);</span>
+<span class="nc" id="L66">        pauser = new Pauser();</span>
+<span class="nc" id="L67">        pauser.setPaused(false);</span>
         
         // Tutorial
-<span class="nc" id="L66">        tutorial = new Tutorial();</span>
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (enableTutorial) tutorial.stage = 0;</span>
+<span class="nc" id="L70">        tutorial = new Tutorial();</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (enableTutorial)</span>
+<span class="nc" id="L72">            tutorial.stage = 0;</span>
         
         // Input controller
-<span class="nc" id="L70">        controller = new Input();</span>
+<span class="nc" id="L75">        controller = new Input();</span>
         
         // Add listeners in order of priority
-<span class="nc" id="L73">        controller.addListener(pauser);</span>
-<span class="nc" id="L74">        controller.addListener(tutorial);</span>
-<span class="nc" id="L75">        controller.addListener(this);</span>
-<span class="nc" id="L76">        controller.addListener(player);</span>
+<span class="nc" id="L78">        controller.addListener(pauser);</span>
+<span class="nc" id="L79">        controller.addListener(tutorial);</span>
+<span class="nc" id="L80">        controller.addListener(this);</span>
+<span class="nc" id="L81">        controller.addListener(player);</span>
         
-        // TODO remove
-//        Sound.getResource(&quot;monitor.wav&quot;).setGain(0.1f)
-//                .setLooping(true).setPosition(7.3f, 1f, 5.4f).play();
-<span class="nc" id="L81">    }</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (enableTutorial)</span>
+<span class="nc" id="L84">            Utils.showWaitForInput();</span>
+<span class="nc" id="L85">    }</span>
 
     @Override
     public void update() {
         // Obtain frame time
-<span class="nc" id="L86">        float dt = timer.deltaTime() * 0.001f;</span>
-        
-        // Set frame title to performance information
-//        Display.setTitle(
-//                String.format(&quot;Frame update time: %.3fs&quot;, dt) +
-//                &quot; / Vsync: &quot; + (Main.vsyncEnabled ? &quot;Enabled&quot; : &quot;Disabled&quot;));
+<span class="nc" id="L90">        float dt = timer.deltaTime() * 0.001f;</span>
         
         // Handle keyboard and mouse events
-<span class="nc" id="L94">        controller.processInput();</span>
+<span class="nc" id="L93">        controller.processInput();</span>
         
         // Update game dynamics if the game is not paused
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        if(!pauser.isPaused()) {</span>
-<span class="nc" id="L98">            level.update(dt);</span>
-<span class="nc" id="L99">            tutorial.update(dt);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if(!pauser.isPaused()) {</span>
+<span class="nc" id="L97">            level.update(dt);</span>
+<span class="nc" id="L98">            tutorial.update(dt);</span>
             
             // Also update score timer
-<span class="nc" id="L102">            Main.scoreTime += dt;</span>
+<span class="nc" id="L101">            Main.scoreTime += dt;</span>
         }
-<span class="nc" id="L104">    }</span>
+<span class="nc" id="L103">    }</span>
     
     @Override
     public boolean handleMouseEvent() {
         // Event unhandled
-<span class="nc" id="L109">        return Input.UNHANDLED;</span>
+<span class="nc" id="L108">        return Input.UNHANDLED;</span>
     }
 
     @Override
     public boolean handleKeyboardEvent() {
         // (Un)pause the game
-<span class="nc bnc" id="L115" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
-<span class="nc" id="L116">            pauser.setPaused(true);</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
+<span class="nc" id="L115">            pauser.setPaused(true);</span>
             
-<span class="nc" id="L118">            return Input.HANDLED;</span>
+<span class="nc" id="L117">            return Input.HANDLED;</span>
         }
         
         
-<span class="nc bnc" id="L122" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_R, true)) {</span>
-<span class="nc" id="L123">            Game game = (Game) Main.requestNewState(Main.States.GAME);</span>
-<span class="nc" id="L124">            game.loadLevel = loadLevel;</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_R, true)) {</span>
+<span class="nc" id="L122">            Game game = (Game) Main.requestNewState(Main.States.GAME);</span>
+<span class="nc" id="L123">            game.loadLevel = loadLevel;</span>
             
-<span class="nc" id="L126">            return Input.HANDLED;</span>
+<span class="nc" id="L125">            return Input.HANDLED;</span>
         }
         
-<span class="nc bnc" id="L129" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_L, true)) {</span>
-<span class="nc" id="L130">            Vector position = player.getPosition().add(0, 2, 0);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_L, true)) {</span>
+<span class="nc" id="L129">            Vector position = player.getPosition().add(0, 2, 0);</span>
             
             // Create a new light at player position
-<span class="nc" id="L133">            level.addNewLight().setColor((float) Math.random(), 0.7f)</span>
+<span class="nc" id="L132">            level.addNewLight().setColor((float) Math.random(), 0.7f)</span>
                     .setIntensity(15).setEnvironmentLight()
                     .setPosition(position.x, position.y, position.z);
             
-<span class="nc" id="L137">            Logger.debug(&quot;Light placed at: &quot; + position);</span>
+<span class="nc" id="L136">            Logger.debug(&quot;Light placed at: &quot; + position);</span>
             
-<span class="nc" id="L139">            return Input.HANDLED;</span>
+<span class="nc" id="L138">            return Input.HANDLED;</span>
         }
         
-<span class="nc bnc" id="L142" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_F12, true)) {</span>
-<span class="nc" id="L143">            renderer.makeScreenshots();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_F12, true)) {</span>
+<span class="nc" id="L142">            renderer.makeScreenshots();</span>
         }
         
         // Unhandled event
-<span class="nc" id="L147">        return Input.UNHANDLED;</span>
+<span class="nc" id="L146">        return Input.UNHANDLED;</span>
     }
     
     @Override
     public void render() {
-<span class="nc bnc" id="L152" title="All 2 branches missed.">        if(!pauser.isPaused()) {</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if(!pauser.isPaused()) {</span>
             // Set view matrix
-<span class="nc" id="L154">            renderer.view = player.getFirstPersonView();</span>
+<span class="nc" id="L153">            renderer.view = player.getFirstPersonView();</span>
 
             // Change to geometry pass
-<span class="nc" id="L157">            renderer.geometryPass();</span>
+<span class="nc" id="L156">            renderer.geometryPass();</span>
 
             // Draw level geometry
-<span class="nc" id="L160">            level.drawGeometry(renderer);</span>
+<span class="nc" id="L159">            level.drawGeometry(renderer);</span>
 
             // Change to lighting pass
-<span class="nc" id="L163">            renderer.lightingPass();</span>
+<span class="nc" id="L162">            renderer.lightingPass();</span>
 
-<span class="nc" id="L165">            level.drawLights(renderer);</span>
+<span class="nc" id="L164">            level.drawLights(renderer);</span>
         }
         
         // Do a gui pass
-<span class="nc" id="L169">        renderer.guiPass(player);</span>
+<span class="nc" id="L168">        renderer.guiPass(player);</span>
         
         // Debug navigation grid
-<span class="nc bnc" id="L172" title="All 2 branches missed.">        if(Keyboard.isKeyDown(Keyboard.KEY_P))</span>
-<span class="nc" id="L173">            level.drawNavPoints(renderer);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if(Keyboard.isKeyDown(Keyboard.KEY_P))</span>
+<span class="nc" id="L172">            level.drawNavPoints(renderer);</span>
         
-<span class="nc bnc" id="L175" title="All 2 branches missed.">        if(pauser.isPaused()) {</span>
-<span class="nc" id="L176">            pauser.draw();</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if(pauser.isPaused()) {</span>
+<span class="nc" id="L175">            pauser.draw();</span>
         } else {
-<span class="nc" id="L178">            tutorial.draw();</span>
+<span class="nc" id="L177">            tutorial.draw();</span>
         }
         
-<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (Keyboard.isKeyDown(Keyboard.KEY_B))</span>
-<span class="nc" id="L182">            renderer.debugPass();</span>
-<span class="nc" id="L183">    }</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (Keyboard.isKeyDown(Keyboard.KEY_B))</span>
+<span class="nc" id="L181">            renderer.debugPass();</span>
+<span class="nc" id="L182">    }</span>
     
     @Override
     public void destroy() {
         // Clean up level
-<span class="nc" id="L188">        level.cleanup();</span>
+<span class="nc" id="L187">        level.cleanup();</span>
         
         // Delete renderer
-<span class="nc" id="L191">        renderer.dispose();</span>
+<span class="nc" id="L190">        renderer.dispose();</span>
         
         // Clean up textures and models
-<span class="nc" id="L194">        Texture.disposeResources();</span>
-<span class="nc" id="L195">        Model.disposeResources();</span>
-<span class="nc" id="L196">        Sound.disposeResources();</span>
+<span class="nc" id="L193">        Texture.disposeResources();</span>
+<span class="nc" id="L194">        Model.disposeResources();</span>
+<span class="nc" id="L195">        Sound.disposeResources();</span>
         
         // Un-grab mouse
-<span class="nc" id="L199">        Mouse.setGrabbed(false);</span>
-<span class="nc" id="L200">    }</span>
+<span class="nc" id="L198">        Mouse.setGrabbed(false);</span>
+<span class="nc" id="L199">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

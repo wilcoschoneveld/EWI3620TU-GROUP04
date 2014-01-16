@@ -11,7 +11,7 @@ import patient04.resources.Texture;
 public class Waypoint extends Element {
     private static final float SIZE = 0.5f;
     
-    private final Image image;
+    private final Image image, image2;
     
     public float x, z;
     
@@ -20,47 +20,52 @@ public class Waypoint extends Element {
         
 <span class="nc" id="L21">        image = new Image(</span>
                 Texture.getResource(&quot;editor/elements.png&quot;), 128, 0, 64, 64);
+<span class="nc" id="L23">        image2 = new Image(</span>
+                Texture.getResource(&quot;editor/elements.png&quot;), 192, 0, 64, 64);
         
-<span class="nc" id="L24">        this.x = x;</span>
-<span class="nc" id="L25">        this.z = z;</span>
+<span class="nc" id="L26">        this.x = x;</span>
+<span class="nc" id="L27">        this.z = z;</span>
         
-<span class="nc" id="L27">        priority = 6;</span>
-<span class="nc" id="L28">    }</span>
+<span class="nc" id="L29">        priority = 6;</span>
+<span class="nc" id="L30">    }</span>
 
     @Override
     public void draw(int target) {
         
-<span class="nc" id="L33">        float size = level.editor.camera.zoom * SIZE;</span>
+<span class="nc" id="L35">        float size = level.editor.camera.zoom * SIZE;</span>
         
-<span class="nc" id="L35">        image.draw(x - size, z - 2 * size, x + size, z);</span>
-<span class="nc" id="L36">    }</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (target == -1)</span>
+<span class="nc" id="L38">            image.draw(x - size, z - 2 * size, x + size, z);</span>
+        else
+<span class="nc" id="L40">            image2.draw(x - size, z - 2 * size, x + size, z);</span>
+<span class="nc" id="L41">    }</span>
 
     @Override
     public void translate(int target, float dx, float dz) {
-<span class="nc" id="L40">        x += dx;</span>
-<span class="nc" id="L41">        z += dz;</span>
-<span class="nc" id="L42">    }</span>
+<span class="nc" id="L45">        x += dx;</span>
+<span class="nc" id="L46">        z += dz;</span>
+<span class="nc" id="L47">    }</span>
 
     @Override
     public int select(boolean selected, float x, float z) {
         
-<span class="nc" id="L47">        float size = level.editor.camera.zoom * SIZE;</span>
+<span class="nc" id="L52">        float size = level.editor.camera.zoom * SIZE;</span>
         
-<span class="nc bnc" id="L49" title="All 8 branches missed.">        if (x &gt; this.x - size &amp;&amp; x &lt; this.x + size</span>
+<span class="nc bnc" id="L54" title="All 8 branches missed.">        if (x &gt; this.x - size &amp;&amp; x &lt; this.x + size</span>
          &amp;&amp; z &gt; this.z - 2 * size &amp;&amp; z &lt; this.z)
-<span class="nc" id="L51">            return 1;</span>
+<span class="nc" id="L56">            return 1;</span>
         
-<span class="nc" id="L53">        return 0;</span>
+<span class="nc" id="L58">        return 0;</span>
     }
 
     @Override
     public boolean release() {
-<span class="nc" id="L58">        return true;</span>
+<span class="nc" id="L63">        return true;</span>
     }
     
     @Override
     public String toString() {
-<span class="nc" id="L63">        return &quot;waypoint &quot; + x + &quot; &quot; + z;</span>
+<span class="nc" id="L68">        return &quot;waypoint &quot; + x + &quot; &quot; + z;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

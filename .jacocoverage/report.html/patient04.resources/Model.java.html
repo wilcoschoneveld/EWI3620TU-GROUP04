@@ -615,35 +615,47 @@ public class Model {
 <span class="nc" id="L615">        return model;</span>
     }
     
-    public static Model buildQuad() {
+    public static Model buildCeiling(Vector min, Vector max, String textureFile) {
 <span class="nc" id="L619">        Model model = new Model();</span>
         
 <span class="nc" id="L621">        model.vertices.addAll(Arrays.asList(new Vector[] {</span>
-            new Vector(-1, -1, 0),
-            new Vector(1, -1, 0),
-            new Vector(1, 1, 0),
-            new Vector(-1, 1, 0)            
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
         }));
         
 <span class="nc" id="L628">        model.texcoords.addAll(Arrays.asList(new UV[] {</span>
-            new UV(0, 0),
-            new UV(1, 0),
-            new UV(1, 1),
-            new UV(0, 1)
+            new UV(0, 0), // 0
+            new UV(0, (max.z - min.z) / Level.WALL_HEIGHT),  // 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, // 2
+                    (max.z - min.z) / Level.WALL_HEIGHT),
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, 0), // 3
         }));
         
-<span class="nc" id="L635">        model.normals.addAll(Arrays.asList(new Vector[] {</span>
-            new Vector(0, 0, 1)
+<span class="nc" id="L636">        model.normals.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(0, 0, 1), new Vector(0, 0, -1),
+            new Vector(0, 1, 0), new Vector(0, -1, 0),
+            new Vector(1, 0, 0), new Vector(-1, 0, 0)
         }));
         
-<span class="nc" id="L639">        Group group = model.requestGroup(&quot;default&quot;);</span>
+<span class="nc" id="L642">        Group group = model.requestGroup(&quot;default&quot;);</span>
         
-<span class="nc" id="L641">        group.faces.addAll(Arrays.asList(new Face[] {</span>
-            new Face(0, 1, 2, 0, 1, 2, 0, 0, 0),
-            new Face(2, 3, 0, 2, 3, 0, 0, 0, 0)
+<span class="nc" id="L644">        group.faces.addAll(Arrays.asList(new Face[] {</span>
+            //  Face(V, V, V, T, T, T, N, N, N)
+            new Face(0, 4, 5, 1, 2, 3, 3, 3, 3),
+            new Face(5, 1, 0, 3, 0, 1, 3, 3, 3),
         }));
         
-<span class="nc" id="L646">        return model;</span>
+        // Also add a new material
+<span class="nc" id="L651">        group.material = new Material();</span>
+        
+<span class="nc" id="L653">        group.material.texture = Texture.getResource(textureFile);</span>
+<span class="nc" id="L654">        group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);</span>
+        
+        // Return the new model        
+<span class="nc" id="L657">        return model;</span>
     }
+    
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

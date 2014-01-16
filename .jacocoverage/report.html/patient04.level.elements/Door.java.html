@@ -32,48 +32,51 @@ public class Door extends Prop implements Usable {
 
     @Override
     public void use(Player player) {
-<span class="nc" id="L35">        Vector toPlayer = player.getPosition().copy().min(position);</span>
-<span class="nc" id="L36">        Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);</span>
+        // Don't do anything if already open
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (timer != 0) return;</span>
         
-<span class="nc bnc" id="L38" title="All 2 branches missed.">        if (toPlayer.dot(normal) &gt; 0) {</span>
-<span class="nc" id="L39">            timer = 0.01f;</span>
+<span class="nc" id="L38">        Vector toPlayer = player.getPosition().copy().min(position);</span>
+<span class="nc" id="L39">        Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);</span>
+        
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (toPlayer.dot(normal) &gt; 0) {</span>
+<span class="nc" id="L42">            timer = 0.01f;</span>
             
             // TODO create new AABB
-<span class="nc" id="L42">            Vector min = new Vector(-0.8f, 0, -1.35f),</span>
-<span class="nc" id="L43">                   max = new Vector(-0.5f, Level.WALL_HEIGHT, 0.05f);</span>
+<span class="nc" id="L45">            Vector min = new Vector(-0.8f, 0, -1.35f),</span>
+<span class="nc" id="L46">                   max = new Vector(-0.5f, Level.WALL_HEIGHT, 0.05f);</span>
         
-<span class="nc" id="L45">            aabb = new AABB(this.position, min, max);</span>
-<span class="nc" id="L46">            aabb.rotate(rotation.y, 0, 1, 0);</span>
+<span class="nc" id="L48">            aabb = new AABB(this.position, min, max);</span>
+<span class="nc" id="L49">            aabb.rotate(rotation.y, 0, 1, 0);</span>
         }
         
         // TODO change AABB 
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L53">    }</span>
     
     @Override
     public void update(float dt) {
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (timer &gt; 0)</span>
-<span class="nc" id="L55">            model = anim_open[(int) Math.min(timer += 20*dt, 5)];</span>
-<span class="nc" id="L56">    }</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (timer &gt; 0)</span>
+<span class="nc" id="L58">            model = anim_open[(int) Math.min(timer += 20*dt, 5)];</span>
+<span class="nc" id="L59">    }</span>
     
     @Override
     public void draw(Renderer renderer) {
-<span class="nc" id="L60">        super.draw(renderer);</span>
-<span class="nc" id="L61">    }</span>
+<span class="nc" id="L63">        super.draw(renderer);</span>
+<span class="nc" id="L64">    }</span>
 
     @Override
     public void drawLight(Renderer renderer) {
-<span class="nc" id="L65">    }</span>
+<span class="nc" id="L68">    }</span>
 
     @Override
     public Vector getLocation() {
-<span class="nc" id="L69">        Vector handle = new Vector(0.5f, 1.22f, 0).rotate(rotation.y, 0, 1, 0);</span>
+<span class="nc" id="L72">        Vector handle = new Vector(0.5f, 1.22f, 0).rotate(rotation.y, 0, 1, 0);</span>
         
-<span class="nc" id="L71">        return position.copy().add(handle);</span>
+<span class="nc" id="L74">        return position.copy().add(handle);</span>
     }
     
     @Override
     public AABB getAABB() {
-<span class="nc" id="L76">        return aabb;</span>
+<span class="nc" id="L79">        return aabb;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

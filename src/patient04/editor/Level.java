@@ -15,6 +15,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.elements.*;
 import patient04.resources.Model;
+import patient04.resources.Sound;
 import patient04.states.Editor;
 import patient04.utilities.Input;
 import patient04.utilities.Logger;
@@ -220,6 +221,38 @@ public class Level implements Input.Listener {
                     elements.add(door);
                     selected = door;
                     target = 2;
+                    
+                    return Input.HANDLED;
+                case SOUND:
+                    // Sound directory
+                    File sdir = new File("res/sounds/");
+                   
+                    // Scan for sounds
+                    File[] sfiles = sdir.listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String filename) {
+                            return filename.endsWith(".wav");
+                        }
+                    });
+                    
+                    // List of sounds
+                    String[] slist = new String[sfiles.length];
+                    for (int i = 0; i < sfiles.length; i++)
+                        slist[i] = sfiles[i].getName();
+                    
+                    // Ask user for model
+                    String r = (String) JOptionPane.showInputDialog(null,
+                                "Choose a sound", "Sound",
+                                JOptionPane.QUESTION_MESSAGE, null,
+                                slist, slist[0]);
+                    
+                    // If a model is selected
+                    if (r != null && Sound.getResource(r) != null) {
+                        Source source = new Source(this, mx, mz, r);
+                        elements.add(source);
+                        selected = source;
+                        target = 0;
+                    }
                     
                     return Input.HANDLED;
                 case MODEL:
@@ -457,6 +490,14 @@ public class Level implements Input.Listener {
                         prop.angle = Integer.parseInt(tokens[5]);
                         
                         level.elements.add(prop);
+                        
+                        break;
+                    case "source":
+                        Source source = new Source(level,
+                                Float.parseFloat(tokens[2]),
+                                Float.parseFloat(tokens[4]), tokens[1]);
+                        
+                        level.elements.add(source);
                         
                         break;
                     case "link":

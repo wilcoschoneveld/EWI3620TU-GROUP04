@@ -13,18 +13,19 @@ import patient04.physics.AABB;
 import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
+import patient04.resources.Sound;
 
 public class Level {
     // Next subsequent level
     public String nextLevel;    
     
     // Gravity vectors
-<span class="nc" id="L22">    public static final Vector GRAVITY = new Vector(0, -1, 0);</span>
+<span class="nc" id="L23">    public static final Vector GRAVITY = new Vector(0, -1, 0);</span>
     
     // Friction vectors
-<span class="nc" id="L25">    public static final Vector FRICTION_FLY = new Vector(0.6f, 0.6f, 0.6f);</span>
-<span class="nc" id="L26">    public static final Vector FRICTION_GROUND = new Vector(0.6f, 1, 0.6f);</span>
-<span class="nc" id="L27">    public static final Vector FRICTION_AIR = new Vector(0.98f, 0.98f, 0.98f);</span>
+<span class="nc" id="L26">    public static final Vector FRICTION_FLY = new Vector(0.6f, 0.6f, 0.6f);</span>
+<span class="nc" id="L27">    public static final Vector FRICTION_GROUND = new Vector(0.6f, 1, 0.6f);</span>
+<span class="nc" id="L28">    public static final Vector FRICTION_AIR = new Vector(0.98f, 0.98f, 0.98f);</span>
     
     // Wall height
     public static final float WALL_HEIGHT = 3f;
@@ -35,318 +36,338 @@ public class Level {
     private final ArrayList&lt;Usable&gt; usables;
     
     public final ArrayList&lt;Waypoint&gt; waypoints;
-<span class="nc" id="L38">    public final Vector startPoint = new Vector();</span>
+<span class="nc" id="L39">    public final Vector startPoint = new Vector();</span>
     
-<span class="nc" id="L40">    public Level() {</span>
-<span class="nc" id="L41">        this.solids = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L42">        this.lights = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L43">        this.entities = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L44">        this.waypoints = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L45">        this.usables = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L46">    }</span>
+<span class="nc" id="L41">    public Level() {</span>
+<span class="nc" id="L42">        this.solids = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L43">        this.lights = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L44">        this.entities = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L45">        this.waypoints = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L46">        this.usables = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L47">    }</span>
     
     public void addSolid(Solid solid) {
-<span class="nc" id="L49">        solids.add(solid);</span>
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L50">        solids.add(solid);</span>
+<span class="nc" id="L51">    }</span>
     
     public void addUsable(Usable usable) {
-<span class="nc" id="L53">        usables.add(usable);</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L54">        usables.add(usable);</span>
+<span class="nc" id="L55">    }</span>
     
     public void removeUsable(Usable usable) {
-<span class="nc" id="L57">        usables.remove(usable);</span>
-<span class="nc" id="L58">    }</span>
+<span class="nc" id="L58">        usables.remove(usable);</span>
+<span class="nc" id="L59">    }</span>
     
     public ArrayList&lt;Usable&gt; getUsables() {
-<span class="nc" id="L61">        return usables;</span>
+<span class="nc" id="L62">        return usables;</span>
     }
     
     public Light addNewLight() {
-<span class="nc" id="L65">        Light light = new Light();</span>
-<span class="nc" id="L66">        lights.add(light);</span>
-<span class="nc" id="L67">        return light;</span>
+<span class="nc" id="L66">        Light light = new Light();</span>
+<span class="nc" id="L67">        lights.add(light);</span>
+<span class="nc" id="L68">        return light;</span>
     }
     
     public void addEntity(Entity entity) {
-<span class="nc" id="L71">        entities.add(entity);</span>
-<span class="nc" id="L72">    }</span>
+<span class="nc" id="L72">        entities.add(entity);</span>
+<span class="nc" id="L73">    }</span>
     
     public Player newPlayer() {
-<span class="nc" id="L75">        Player player = new Player(this);</span>
+<span class="nc" id="L76">        Player player = new Player(this);</span>
 
-<span class="nc" id="L77">        addEntity(player);</span>
+<span class="nc" id="L78">        addEntity(player);</span>
 
-<span class="nc bnc" id="L79" title="All 2 branches missed.">        for (Entity entity : entities)</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (entity instanceof Enemy)</span>
-<span class="nc" id="L81">                ((Enemy) entity).target = player;</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        for (Entity entity : entities)</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (entity instanceof Enemy)</span>
+<span class="nc" id="L82">                ((Enemy) entity).target = player;</span>
 
-<span class="nc" id="L83">        return player;</span>
+<span class="nc" id="L84">        return player;</span>
     }
     
     public Waypoint addWaypoint(Waypoint waypoint) {
-<span class="nc" id="L87">        waypoints.add(waypoint);</span>
+<span class="nc" id="L88">        waypoints.add(waypoint);</span>
         
-<span class="nc" id="L89">        return waypoint;</span>
+<span class="nc" id="L90">        return waypoint;</span>
     }
     
     public ArrayList&lt;AABB&gt; getCollisionBoxes(AABB broadphase) {
-<span class="nc" id="L93">        ArrayList&lt;AABB&gt; aabbs = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L94">        ArrayList&lt;AABB&gt; aabbs = new ArrayList&lt;&gt;();</span>
         
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        for (Solid obj : solids) </span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">            if(broadphase.intersects(obj.aabb))</span>
-<span class="nc" id="L97">                aabbs.add(obj.aabb);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        for (Solid obj : solids) </span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if(broadphase.intersects(obj.aabb))</span>
+<span class="nc" id="L98">                aabbs.add(obj.aabb);</span>
         
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        for (Usable usable : usables)</span>
-<span class="nc bnc" id="L100" title="All 2 branches missed.">            if(broadphase.intersects(usable.getAABB()))</span>
-<span class="nc" id="L101">                aabbs.add(usable.getAABB());</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        for (Usable usable : usables)</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if(broadphase.intersects(usable.getAABB()))</span>
+<span class="nc" id="L102">                aabbs.add(usable.getAABB());</span>
 
-<span class="nc" id="L103">        return aabbs;</span>
+<span class="nc" id="L104">        return aabbs;</span>
     }
     
     public void drawGeometry(Renderer renderer) {
-<span class="nc bnc" id="L107" title="All 2 branches missed.">        for (Solid solid : solids)</span>
-<span class="nc" id="L108">            solid.draw(renderer);</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (Solid solid : solids)</span>
+<span class="nc" id="L109">            solid.draw(renderer);</span>
         
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (Entity entity : entities)</span>
-<span class="nc" id="L111">            entity.draw(renderer);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        for (Entity entity : entities)</span>
+<span class="nc" id="L112">            entity.draw(renderer);</span>
         
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        for (Usable usable : usables)</span>
-<span class="nc" id="L114">            usable.draw(renderer);</span>
-<span class="nc" id="L115">    }</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        for (Usable usable : usables)</span>
+<span class="nc" id="L115">            usable.draw(renderer);</span>
+<span class="nc" id="L116">    }</span>
     
     public void drawLights(Renderer renderer) {
-<span class="nc bnc" id="L118" title="All 2 branches missed.">        for (Light light : lights)</span>
-<span class="nc" id="L119">            light.draw(renderer);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        for (Light light : lights)</span>
+<span class="nc" id="L120">            light.draw(renderer);</span>
         
-<span class="nc bnc" id="L121" title="All 2 branches missed.">        for (Entity entity : entities)</span>
-<span class="nc" id="L122">            entity.drawLight(renderer);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for (Entity entity : entities)</span>
+<span class="nc" id="L123">            entity.drawLight(renderer);</span>
         
-<span class="nc bnc" id="L124" title="All 2 branches missed.">        for (Usable usable : usables)</span>
-<span class="nc" id="L125">            usable.drawLight(renderer);</span>
-<span class="nc" id="L126">    }</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        for (Usable usable : usables)</span>
+<span class="nc" id="L126">            usable.drawLight(renderer);</span>
+<span class="nc" id="L127">    }</span>
     
     public void drawNavPoints(Renderer renderer) {
-<span class="nc" id="L129">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
-<span class="nc" id="L130">        GL11.glEnable(GL11.GL_BLEND);</span>
-<span class="nc" id="L131">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
+<span class="nc" id="L130">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="nc" id="L131">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="nc" id="L132">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
         
-<span class="nc" id="L133">        renderer.glUpdateModelMatrix(null);</span>
+<span class="nc" id="L134">        renderer.glUpdateModelMatrix(null);</span>
         
-<span class="nc" id="L135">        GL11.glBegin(GL11.GL_LINES);</span>
-<span class="nc bnc" id="L136" title="All 2 branches missed.">        for(Waypoint wp : waypoints) {</span>
-<span class="nc bnc" id="L137" title="All 2 branches missed.">            for(Waypoint np : wp.neighbors) {</span>
-<span class="nc" id="L138">                GL11.glColor4f(0, 1, 0, 0.3f);</span>
-<span class="nc" id="L139">                GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);</span>
-<span class="nc" id="L140">                GL11.glVertex3f(np.position.x, np.position.y, np.position.z);</span>
-<span class="nc" id="L141">            }</span>
-<span class="nc" id="L142">            GL11.glColor4f(1, 0, 0, 0.9f);</span>
-<span class="nc" id="L143">            GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);</span>
-<span class="nc" id="L144">            GL11.glVertex3f(wp.position.x, wp.position.y + 1, wp.position.z);</span>
-<span class="nc" id="L145">        }</span>
-<span class="nc" id="L146">        GL11.glEnd();</span>
-<span class="nc" id="L147">    }</span>
+<span class="nc" id="L136">        GL11.glBegin(GL11.GL_LINES);</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        for(Waypoint wp : waypoints) {</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            for(Waypoint np : wp.neighbors) {</span>
+<span class="nc" id="L139">                GL11.glColor4f(0, 1, 0, 0.3f);</span>
+<span class="nc" id="L140">                GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);</span>
+<span class="nc" id="L141">                GL11.glVertex3f(np.position.x, np.position.y, np.position.z);</span>
+<span class="nc" id="L142">            }</span>
+<span class="nc" id="L143">            GL11.glColor4f(1, 0, 0, 0.9f);</span>
+<span class="nc" id="L144">            GL11.glVertex3f(wp.position.x, wp.position.y, wp.position.z);</span>
+<span class="nc" id="L145">            GL11.glVertex3f(wp.position.x, wp.position.y + 1, wp.position.z);</span>
+<span class="nc" id="L146">        }</span>
+<span class="nc" id="L147">        GL11.glEnd();</span>
+<span class="nc" id="L148">    }</span>
     
     public void update(float dt) {
-<span class="nc bnc" id="L150" title="All 2 branches missed.">        for (Entity entity : entities)</span>
-<span class="nc" id="L151">            entity.update(dt);</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        for (Entity entity : entities)</span>
+<span class="nc" id="L152">            entity.update(dt);</span>
         
-<span class="nc bnc" id="L153" title="All 2 branches missed.">        for (Usable usable : usables)</span>
-<span class="nc" id="L154">            usable.update(dt);</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        for (Usable usable : usables)</span>
+<span class="nc" id="L155">            usable.update(dt);</span>
                 
-<span class="nc bnc" id="L156" title="All 2 branches missed.">        for (Entity entity : entities)</span>
-<span class="nc" id="L157">            entity.integrate();</span>
-<span class="nc" id="L158">    }</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        for (Entity entity : entities)</span>
+<span class="nc" id="L158">            entity.integrate();</span>
+<span class="nc" id="L159">    }</span>
     
     public void cleanup() {
         // TODO?
-<span class="nc" id="L162">    }</span>
+<span class="nc" id="L163">    }</span>
     
-    public void generateFloor(String textureFile) {
-<span class="nc" id="L165">        Float xmin = null, zmin = null,</span>
-<span class="nc" id="L166">                xmax = null, zmax = null;</span>
+    public void generateFloorCeiling(String floorFile, String ceilingFile) {
+<span class="nc" id="L166">        Float xmin = null, zmin = null,</span>
+<span class="nc" id="L167">                xmax = null, zmax = null;</span>
         
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        for (Solid obj : solids) {</span>
-<span class="nc bnc" id="L169" title="All 4 branches missed.">            if(xmin == null || obj.aabb.pos.x + obj.aabb.min.x &lt;  xmin)</span>
-<span class="nc" id="L170">                xmin = obj.aabb.pos.x + obj.aabb.min.x;</span>
-<span class="nc bnc" id="L171" title="All 4 branches missed.">            if(zmin == null || obj.aabb.pos.z + obj.aabb.min.z &lt;  zmin)</span>
-<span class="nc" id="L172">                zmin = obj.aabb.pos.z + obj.aabb.min.z;</span>
-<span class="nc bnc" id="L173" title="All 4 branches missed.">            if(xmax == null || obj.aabb.pos.x + obj.aabb.max.x &gt;  xmax)</span>
-<span class="nc" id="L174">                xmax = obj.aabb.pos.x + obj.aabb.max.x;</span>
-<span class="nc bnc" id="L175" title="All 4 branches missed.">            if(zmax == null || obj.aabb.pos.z + obj.aabb.max.z &gt;  zmax)</span>
-<span class="nc" id="L176">                zmax = obj.aabb.pos.z + obj.aabb.max.z;</span>
-<span class="nc" id="L177">        }</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        for (Solid obj : solids) {</span>
+<span class="nc bnc" id="L170" title="All 4 branches missed.">            if(xmin == null || obj.aabb.pos.x + obj.aabb.min.x &lt;  xmin)</span>
+<span class="nc" id="L171">                xmin = obj.aabb.pos.x + obj.aabb.min.x;</span>
+<span class="nc bnc" id="L172" title="All 4 branches missed.">            if(zmin == null || obj.aabb.pos.z + obj.aabb.min.z &lt;  zmin)</span>
+<span class="nc" id="L173">                zmin = obj.aabb.pos.z + obj.aabb.min.z;</span>
+<span class="nc bnc" id="L174" title="All 4 branches missed.">            if(xmax == null || obj.aabb.pos.x + obj.aabb.max.x &gt;  xmax)</span>
+<span class="nc" id="L175">                xmax = obj.aabb.pos.x + obj.aabb.max.x;</span>
+<span class="nc bnc" id="L176" title="All 4 branches missed.">            if(zmax == null || obj.aabb.pos.z + obj.aabb.max.z &gt;  zmax)</span>
+<span class="nc" id="L177">                zmax = obj.aabb.pos.z + obj.aabb.max.z;</span>
+<span class="nc" id="L178">        }</span>
         
-<span class="nc bnc" id="L179" title="All 8 branches missed.">        if (xmin == null || zmin == null || xmax == null || zmax == null) {</span>
-<span class="nc" id="L180">            Logger.error(&quot;Could not generate floor!&quot;);</span>
-<span class="nc" id="L181">            return;</span>
+<span class="nc bnc" id="L180" title="All 8 branches missed.">        if (xmin == null || zmin == null || xmax == null || zmax == null) {</span>
+<span class="nc" id="L181">            Logger.error(&quot;Could not generate floor!&quot;);</span>
+<span class="nc" id="L182">            return;</span>
         }
         
-<span class="nc" id="L184">        Vector min = new Vector(xmin, -1f, zmin);</span>
-<span class="nc" id="L185">        Vector max = new Vector(xmax, 0, zmax);</span>
+        // Floor
+<span class="nc" id="L186">        Vector min = new Vector(xmin, -1f, zmin);</span>
+<span class="nc" id="L187">        Vector max = new Vector(xmax, 0, zmax);</span>
+<span class="nc" id="L188">        Solid floor = new Solid();</span>
         
-<span class="nc" id="L187">        Solid floor = new Solid();</span>
-        
-<span class="nc" id="L189">        floor.model = Model.buildFloor(min, max, textureFile);</span>
-<span class="nc" id="L190">        floor.model.compileBuffers();</span>
-        //floor.model.releaseRawData();
+<span class="nc" id="L190">        floor.model = Model.buildFloor(min, max, floorFile);</span>
+<span class="nc" id="L191">        floor.model.compileBuffers();</span>
         
 <span class="nc" id="L193">        floor.aabb = new AABB(floor.position, min, max);</span>
 <span class="nc" id="L194">        floor.culling = false;</span>
         
 <span class="nc" id="L196">        solids.add(floor);</span>
-<span class="nc" id="L197">    }</span>
+        
+        // ceiling        
+<span class="nc" id="L199">        Solid ceil = new Solid();</span>
+        
+<span class="nc" id="L201">        ceil.model = Model.buildCeiling(</span>
+                new Vector(xmin, Level.WALL_HEIGHT, zmin),
+                new Vector(xmax, Level.WALL_HEIGHT + 0.1f, zmax),
+                ceilingFile);
+<span class="nc" id="L205">        ceil.model.compileBuffers();</span>
+<span class="nc" id="L206">        ceil.culling = false;</span>
+        
+<span class="nc" id="L208">        solids.add(ceil);</span>
+        
+<span class="nc" id="L210">    }</span>
     
     public static Level fromFile(String file) {
         
-<span class="nc" id="L201">        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {</span>
-<span class="nc" id="L202">            Level level = new Level();</span>
+<span class="nc" id="L214">        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {</span>
+<span class="nc" id="L215">            Level level = new Level();</span>
             
             String line; String[] tokens;
             
-<span class="nc bnc" id="L206" title="All 2 branches missed.">            while ((line = reader.readLine()) != null) {</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">            while ((line = reader.readLine()) != null) {</span>
                 // Split line
-<span class="nc" id="L208">                tokens = line.split(&quot;\\s+&quot;); </span>
+<span class="nc" id="L221">                tokens = line.split(&quot;\\s+&quot;); </span>
                 
-<span class="nc bnc" id="L210" title="All 4 branches missed.">                if(line.length() == 0 || tokens.length &lt; 1)</span>
-<span class="nc" id="L211">                    continue;</span>
+<span class="nc bnc" id="L223" title="All 4 branches missed.">                if(line.length() == 0 || tokens.length &lt; 1)</span>
+<span class="nc" id="L224">                    continue;</span>
                 
-<span class="nc bnc" id="L213" title="All 54 branches missed.">                switch (tokens[0].toLowerCase()) {</span>
-<span class="nc" id="L214">                    case &quot;camera&quot;: break;</span>
+<span class="nc bnc" id="L226" title="All 58 branches missed.">                switch (tokens[0].toLowerCase()) {</span>
+<span class="nc" id="L227">                    case &quot;camera&quot;: break;</span>
                     case &quot;wall&quot;:
-<span class="nc" id="L216">                        float w = Float.parseFloat(tokens[3]);</span>
-<span class="nc" id="L217">                        float h = Float.parseFloat(tokens[4]);</span>
+<span class="nc" id="L229">                        float w = Float.parseFloat(tokens[3]);</span>
+<span class="nc" id="L230">                        float h = Float.parseFloat(tokens[4]);</span>
                         
-<span class="nc" id="L219">                        Vector min = new Vector(-w/2, 0, -h/2);</span>
-<span class="nc" id="L220">                        Vector max = new Vector(w/2, WALL_HEIGHT, h/2);</span>
+<span class="nc" id="L232">                        Vector min = new Vector(-w/2, 0, -h/2);</span>
+<span class="nc" id="L233">                        Vector max = new Vector(w/2, WALL_HEIGHT, h/2);</span>
                         
-<span class="nc" id="L222">                        Model model =</span>
+<span class="nc" id="L235">                        Model model =</span>
                                 Model.buildWall(min, max, &quot;level/wall.png&quot;);
                         
-<span class="nc" id="L225">                        model.compileBuffers();</span>
-<span class="nc" id="L226">                        model.releaseRawData();</span>
+<span class="nc" id="L238">                        model.compileBuffers();</span>
+<span class="nc" id="L239">                        model.releaseRawData();</span>
                         
-<span class="nc" id="L228">                        Solid wall = new Solid();</span>
+<span class="nc" id="L241">                        Solid wall = new Solid();</span>
                         
-<span class="nc" id="L230">                        wall.aabb = new AABB(wall.position, min, max);</span>
-<span class="nc" id="L231">                        wall.model = model;</span>
-<span class="nc" id="L232">                        wall.position.set(</span>
+<span class="nc" id="L243">                        wall.aabb = new AABB(wall.position, min, max);</span>
+<span class="nc" id="L244">                        wall.model = model;</span>
+<span class="nc" id="L245">                        wall.position.set(</span>
                                 Float.parseFloat(tokens[1]), 0,
                                 Float.parseFloat(tokens[2]));
-<span class="nc" id="L235">                        wall.culling = false;</span>
+<span class="nc" id="L248">                        wall.culling = false;</span>
                         
-<span class="nc" id="L237">                        level.addSolid(wall);</span>
+<span class="nc" id="L250">                        level.addSolid(wall);</span>
                         
-<span class="nc" id="L239">                        break;</span>
+<span class="nc" id="L252">                        break;</span>
                     case &quot;light&quot;:
                         
-<span class="nc" id="L242">                        level.addNewLight()</span>
+<span class="nc" id="L255">                        level.addNewLight()</span>
                                 .setPosition(Float.parseFloat(tokens[1]),
-                                             WALL_HEIGHT * 2 / 3,
+                                             WALL_HEIGHT - 0.2f,
                                              Float.parseFloat(tokens[2]))
                                 .setColor(Float.parseFloat(tokens[3]),
                                           Float.parseFloat(tokens[4]))
                                 .setIntensity(Float.parseFloat(tokens[5]) * 5)
                                 .setEnvironmentLight();
                         
-<span class="nc" id="L251">                        break;</span>
+<span class="nc" id="L264">                        break;</span>
                     case &quot;enemy&quot;:
-<span class="nc" id="L253">                        Enemy enemy = new Enemy(level);</span>
+<span class="nc" id="L266">                        Enemy enemy = new Enemy(level);</span>
                         
-<span class="nc" id="L255">                        enemy.setPosition(Float.parseFloat(tokens[1]), 0,</span>
+<span class="nc" id="L268">                        enemy.setPosition(Float.parseFloat(tokens[1]), 0,</span>
                                            Float.parseFloat(tokens[2]));
                         
-<span class="nc" id="L258">                        enemy.setRotation(0, Float.parseFloat(tokens[3]), 0);</span>
-<span class="nc" id="L259">                        enemy.selectNearestWaypoint();</span>
+<span class="nc" id="L271">                        enemy.setRotation(0, Float.parseFloat(tokens[3]), 0);</span>
+<span class="nc" id="L272">                        enemy.selectNearestWaypoint();</span>
                         
-<span class="nc" id="L261">                        level.addEntity(enemy);</span>
+<span class="nc" id="L274">                        level.addEntity(enemy);</span>
                         
-<span class="nc" id="L263">                        break;</span>
+<span class="nc" id="L276">                        break;</span>
                     case &quot;waypoint&quot;:
-<span class="nc" id="L265">                        Waypoint waypoint = new Waypoint(new Vector(</span>
+<span class="nc" id="L278">                        Waypoint waypoint = new Waypoint(new Vector(</span>
                                 Float.parseFloat(tokens[1]), 0,
                                 Float.parseFloat(tokens[2])));
                         
-<span class="nc" id="L269">                        level.addWaypoint(waypoint);</span>
+<span class="nc" id="L282">                        level.addWaypoint(waypoint);</span>
                         
-<span class="nc" id="L271">                        break;</span>
+<span class="nc" id="L284">                        break;</span>
                     case &quot;start&quot;:
-<span class="nc" id="L273">                        level.startPoint.set(Float.parseFloat(tokens[1]),</span>
+<span class="nc" id="L286">                        level.startPoint.set(Float.parseFloat(tokens[1]),</span>
                                              Float.parseFloat(tokens[3]),
                                              Float.parseFloat(tokens[2]));
                         
-<span class="nc" id="L277">                        break;</span>
+<span class="nc" id="L290">                        break;</span>
                     case &quot;exit&quot;:
-<span class="nc" id="L279">                        Elevator elevator = new Elevator(</span>
+<span class="nc" id="L292">                        Elevator elevator = new Elevator(</span>
                                                 Integer.parseInt(tokens[3]));
                         
-<span class="nc" id="L282">                        elevator.position.set(Float.parseFloat(tokens[1]), 0,</span>
+<span class="nc" id="L295">                        elevator.position.set(Float.parseFloat(tokens[1]), 0,</span>
                                               Float.parseFloat(tokens[2]));
                         
-<span class="nc" id="L285">                        level.addUsable(elevator);</span>
+<span class="nc" id="L298">                        level.addUsable(elevator);</span>
                         
-<span class="nc" id="L287">                        break;</span>
+<span class="nc" id="L300">                        break;</span>
                     case &quot;door&quot;:
-<span class="nc" id="L289">                        Door door = new Door(Integer.parseInt(tokens[3]) + 2);</span>
+<span class="nc" id="L302">                        Door door = new Door(Integer.parseInt(tokens[3]) + 2);</span>
                         
-<span class="nc" id="L291">                        door.position.set(Float.parseFloat(tokens[1]), 0,</span>
+<span class="nc" id="L304">                        door.position.set(Float.parseFloat(tokens[1]), 0,</span>
                                           Float.parseFloat(tokens[2]));
                         
-<span class="nc" id="L294">                        level.addUsable(door);</span>
+<span class="nc" id="L307">                        level.addUsable(door);</span>
                         
-<span class="nc" id="L296">                        break;</span>
+<span class="nc" id="L309">                        break;</span>
                     case &quot;prop&quot;:
-<span class="nc" id="L298">                        Prop prop = new Prop(tokens[1],</span>
+<span class="nc" id="L311">                        Prop prop = new Prop(tokens[1],</span>
                                       (Integer.parseInt(tokens[5]) + 1) % 4);
                         
-<span class="nc" id="L301">                        prop.position.set(Float.parseFloat(tokens[2]),</span>
+<span class="nc" id="L314">                        prop.position.set(Float.parseFloat(tokens[2]),</span>
                                           Float.parseFloat(tokens[3]),
                                           Float.parseFloat(tokens[4]));
                         
-<span class="nc" id="L305">                        level.addSolid(prop);</span>
+<span class="nc" id="L318">                        level.addSolid(prop);</span>
                         
-<span class="nc" id="L307">                        break;</span>
+<span class="nc" id="L320">                        break;</span>
                     case &quot;needle&quot;:
-<span class="nc" id="L309">                        Pickup needle = new Needle(level);</span>
+<span class="nc" id="L322">                        Pickup needle = new Needle(level);</span>
                         
-<span class="nc" id="L311">                        needle.position.set(Float.parseFloat(tokens[1]), 0,</span>
+<span class="nc" id="L324">                        needle.position.set(Float.parseFloat(tokens[1]), 0,</span>
                                             Float.parseFloat(tokens[2]));
-<span class="nc" id="L313">                        needle.setProperAltitude();</span>
+<span class="nc" id="L326">                        needle.setProperAltitude();</span>
                         
-<span class="nc" id="L315">                        level.addUsable(needle);</span>
+<span class="nc" id="L328">                        level.addUsable(needle);</span>
                         
-<span class="nc" id="L317">                        break;</span>
+<span class="nc" id="L330">                        break;</span>
                     case &quot;infusion&quot;:
-<span class="nc" id="L319">                        Pickup infusion = new Infusion(level);</span>
+<span class="nc" id="L332">                        Pickup infusion = new Infusion(level);</span>
                         
-<span class="nc" id="L321">                        infusion.position.set(Float.parseFloat(tokens[1]), 0,</span>
+<span class="nc" id="L334">                        infusion.position.set(Float.parseFloat(tokens[1]), 0,</span>
                                               Float.parseFloat(tokens[2]));
-<span class="nc" id="L323">                        infusion.setProperAltitude();</span>
+<span class="nc" id="L336">                        infusion.setProperAltitude();</span>
                         
-<span class="nc" id="L325">                        level.addUsable(infusion);</span>
+<span class="nc" id="L338">                        level.addUsable(infusion);</span>
                         
-<span class="nc" id="L327">                        break;      </span>
+<span class="nc" id="L340">                        break;</span>
+                    case &quot;source&quot;:
+<span class="nc" id="L342">                        Sound.getResource(tokens[1]).setGain(0.1f)</span>
+                            .setLooping(true)
+                            .setPosition(Float.parseFloat(tokens[2]),
+                                         Float.parseFloat(tokens[3]),
+                                         Float.parseFloat(tokens[4])).play();
+                        
+<span class="nc" id="L348">                        break;</span>
                     case &quot;link&quot;:
-<span class="nc" id="L329">                        Waypoint.link(</span>
+<span class="nc" id="L350">                        Waypoint.link(</span>
                             level.waypoints.get(Integer.parseInt(tokens[1])),
                             level.waypoints.get(Integer.parseInt(tokens[2])));
                         
-<span class="nc" id="L333">                        break;</span>
+<span class="nc" id="L354">                        break;</span>
                     case &quot;nextlevel&quot;:
-<span class="nc" id="L335">                        level.nextLevel = tokens[1];</span>
+<span class="nc" id="L356">                        level.nextLevel = tokens[1];</span>
                         
-<span class="nc" id="L337">                        break;</span>
+<span class="nc" id="L358">                        break;</span>
                     default: // Incompatible line                        
-<span class="nc" id="L339">                        Logger.error(&quot;Could not read LVL file &quot; + file);</span>
-<span class="nc" id="L340">                        Logger.error(&quot;Invalid line &gt; &quot; + line);</span>
-<span class="nc" id="L341">                        return null;</span>
+<span class="nc" id="L360">                        Logger.error(&quot;Could not read LVL file &quot; + file);</span>
+<span class="nc" id="L361">                        Logger.error(&quot;Invalid line &gt; &quot; + line);</span>
+<span class="nc" id="L362">                        return null;</span>
                 }
             }
             
             // Generate floor
-<span class="nc" id="L346">            level.generateFloor(&quot;level/floor.png&quot;);</span>
+<span class="nc" id="L367">            level.generateFloorCeiling(&quot;level/floor.png&quot;, &quot;level/ceiling.png&quot;);</span>
             
-<span class="nc" id="L348">            return level;</span>
-<span class="nc bnc" id="L349" title="All 12 branches missed.">        } catch(IOException e) { e.printStackTrace(); return null; }</span>
+<span class="nc" id="L369">            return level;</span>
+<span class="nc bnc" id="L370" title="All 12 branches missed.">        } catch(IOException e) { e.printStackTrace(); return null; }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
