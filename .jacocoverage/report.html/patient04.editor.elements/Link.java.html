@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Link.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.editor.elements</a> &gt; <span class="el_source">Link.java</span></div><h1>Link.java</h1><pre class="source lang-java linenums">package patient04.editor.elements;
+
+import java.util.ArrayList;
+import org.lwjgl.opengl.GL11;
+import patient04.editor.Level;
+import patient04.utilities.Timer;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Link extends Element {
+    public Waypoint one;
+    public Waypoint two;
+    public float x, z;
+
+    public Link(Level level, float x, float z) {
+<span class="nc" id="L18">        super(level);</span>
+        
+<span class="nc" id="L20">        float distance = 3 * level.editor.camera.zoom;</span>
+        
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        for (Element element : level.elements) {</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">            if (element instanceof Waypoint) {</span>
+                // Obtain waypoint reference
+<span class="nc" id="L25">                Waypoint wp = (Waypoint) element;</span>
+                
+                // Calculate distance to desired location
+<span class="nc" id="L28">                double d = Math.sqrt((x-wp.x)*(x-wp.x) + (z-wp.z)*(z-wp.z));</span>
+                
+                // Set first waypoint
+<span class="nc bnc" id="L31" title="All 2 branches missed.">                if (d &lt; distance) {</span>
+<span class="nc" id="L32">                    one = wp;</span>
+<span class="nc" id="L33">                    distance = (float) d;</span>
+                }
+            }
+<span class="nc" id="L36">        }</span>
+        
+<span class="nc" id="L38">        this.x = x;</span>
+<span class="nc" id="L39">        this.z = z;</span>
+        
+<span class="nc" id="L41">        priority = 7;</span>
+<span class="nc" id="L42">    }</span>
+
+    @Override
+    public void draw(int target) {
+<span class="nc" id="L46">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="nc" id="L47">        GL11.glColor3f(1, 0, 0);</span>
+<span class="nc" id="L48">        GL11.glBegin(GL11.GL_LINES);</span>
+        
+<span class="nc" id="L50">        GL11.glVertex2f(one.x, one.z);</span>
+        
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (two != null)</span>
+<span class="nc" id="L53">            GL11.glVertex2f(two.x, two.z);</span>
+        else
+<span class="nc" id="L55">            GL11.glVertex2f(x, z);</span>
+        
+<span class="nc" id="L57">        GL11.glEnd();</span>
+<span class="nc" id="L58">    }</span>
+
+    @Override
+    public void translate(int target, float dx, float dz) {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        switch (target) {</span>
+            case 1:
+<span class="nc" id="L64">                x += dx;</span>
+<span class="nc" id="L65">                z += dz;</span>
+                break;
+        }
+<span class="nc" id="L68">    }</span>
+
+    @Override
+    public int select(boolean selected, float x, float z) {
+<span class="nc" id="L72">        return 0;</span>
+    }
+
+    @Override
+    public boolean release() {
+<span class="nc" id="L77">        float distance = 3 * level.editor.camera.zoom;</span>
+        
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        for (Element element : level.elements) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (element instanceof Waypoint) {</span>
+                // Obtain waypoint reference
+<span class="nc" id="L82">                Waypoint wp = (Waypoint) element;</span>
+                
+                // Calculate distance to desired location
+<span class="nc" id="L85">                double d = Math.sqrt((x-wp.x)*(x-wp.x) + (z-wp.z)*(z-wp.z));</span>
+                
+                // Set first waypoint
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                if (d &lt; distance) {</span>
+<span class="nc" id="L89">                    two = wp;</span>
+<span class="nc" id="L90">                    distance = (float) d;</span>
+                }
+            }
+<span class="nc" id="L93">        }</span>
+        
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (two == null)</span>
+<span class="nc" id="L96">            return false;</span>
+        
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (getLinks(level.elements, one, two).size() &gt; 1)</span>
+<span class="nc" id="L99">            return false;</span>
+        
+<span class="nc" id="L101">        return true;</span>
+    }
+    
+    @Override
+    public String toString() {
+        // Construct an arraylist of waypoints
+<span class="nc" id="L107">        ArrayList&lt;Waypoint&gt; waypoints = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (Element element : level.elements)</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (element instanceof Waypoint)</span>
+<span class="nc" id="L110">                waypoints.add((Waypoint) element);</span>
+        
+<span class="nc" id="L112">        return &quot;link &quot; + waypoints.indexOf(one) + &quot; &quot; + waypoints.indexOf(two);</span>
+    }
+    
+    public static ArrayList&lt;Link&gt; getLinks(ArrayList&lt;Element&gt; elements,
+                                             Waypoint first, Waypoint second) {
+<span class="nc" id="L117">        ArrayList&lt;Link&gt; links = new ArrayList&lt;&gt;();</span>
+        
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        for (Element element : elements) {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            if (element instanceof Link) {</span>
+<span class="nc" id="L121">                Link link = (Link) element;</span>
+                
+<span class="nc bnc" id="L123" title="All 6 branches missed.">                if (second == null &amp;&amp; (link.one == first || link.two == first))</span>
+<span class="nc" id="L124">                    links.add(link);</span>
+<span class="nc bnc" id="L125" title="All 8 branches missed.">                else if ((link.one == first &amp;&amp; link.two == second)</span>
+                      || (link.two == first &amp;&amp; link.one == second))
+<span class="nc" id="L127">                    links.add(link);</span>
+            }
+<span class="nc" id="L129">        }</span>
+        
+<span class="nc" id="L131">        return links;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

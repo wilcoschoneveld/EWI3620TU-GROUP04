@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Model.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.resources</a> &gt; <span class="el_source">Model.java</span></div><h1>Model.java</h1><pre class="source lang-java linenums">package patient04.resources;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import patient04.level.Level;
+import patient04.math.Vector;
+import patient04.physics.AABB;
+import patient04.utilities.Buffers;
+import patient04.utilities.Logger;
+
+/**
+ *
+ * @author Wilco Schoneveld
+ */
+public class Model {
+    // Static resource managing variables
+    private static final String defaultModelLocation = &quot;res/models/&quot;;
+<span class="nc" id="L26">    private static final HashMap&lt;String, Model&gt; models = new HashMap&lt;&gt;();</span>
+    
+    // Raw data
+    private ArrayList&lt;Vector&gt; vertices;
+    private ArrayList&lt;Vector&gt; normals;
+    private ArrayList&lt;UV&gt; texcoords;
+    
+    // Groups and materials
+    private HashMap&lt;String, Group&gt; groups;
+    private HashMap&lt;String, Material&gt; materials;
+    
+    /** Creates a new empty Model. */
+<span class="nc" id="L38">    public Model() {</span>
+<span class="nc" id="L39">        vertices = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L40">        texcoords = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L41">        normals = new ArrayList&lt;&gt;();</span>
+        
+<span class="nc" id="L43">        groups = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L44">        materials = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L45">    }</span>
+    
+    public void draw() {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        for(Group group : groups.values())</span>
+<span class="nc" id="L49">            group.drawBuffer();</span>
+<span class="nc" id="L50">    }</span>
+    
+    /** Compiles the raw vertex data into vertex buffer objects. */
+    public void compileBuffers() {
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        for(Group group : groups.values())</span>
+<span class="nc" id="L55">            group.compileBuffer();</span>
+<span class="nc" id="L56">    }</span>
+    
+    /** Releases the raw vertex data. If no other object has a reference
+     * to this data, the memory can be reclaimed by the garbage collector. */
+    public void releaseRawData() {
+        // Clear raw data collections
+<span class="nc" id="L62">        vertices = null;</span>
+<span class="nc" id="L63">        texcoords = null;</span>
+<span class="nc" id="L64">        normals = null;</span>
+<span class="nc" id="L65">        materials = null;</span>
+        
+        // Remove group face information
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        for(Group group : groups.values())</span>
+<span class="nc" id="L69">            group.faces = null;</span>
+<span class="nc" id="L70">    }</span>
+    
+    /** Deletes the vertex buffer objects. */
+    public void disposeBuffers() {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        for(Group group : groups.values())</span>
+<span class="nc" id="L75">            group.disposeBuffer();</span>
+<span class="nc" id="L76">    }</span>
+    
+    /** Group of faces. */
+    private class Group {
+        ArrayList&lt;Face&gt; faces;
+        Material material;
+        
+<span class="nc" id="L83">        int bufferSize = 0;</span>
+        int bufferObject;
+        
+        /** Create a new empty group. */
+<span class="nc" id="L87">        public Group() {</span>
+<span class="nc" id="L88">            this.faces = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L89">        }</span>
+        
+        /** Draws the faces in the group. */
+        public void drawBuffer() {
+            // If the buffer has not been created, do so first
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            if(bufferSize == 0) {</span>
+<span class="nc" id="L95">                Logger.error(&quot;Not compiled before drawing: &quot; + toString());</span>
+<span class="nc" id="L96">                compileBuffer();</span>
+            }
+            
+            // Set the diffuse color
+<span class="nc bnc" id="L100" title="All 4 branches missed.">            if(material != null &amp;&amp; material.texture != null)</span>
+<span class="nc" id="L101">                material.texture.bind();</span>
+            
+            // Draw the vertex buffer object
+<span class="nc" id="L104">            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);</span>
+
+<span class="nc" id="L106">            GL11.glVertexPointer(3, GL11.GL_FLOAT, 8*4, 0);</span>
+<span class="nc" id="L107">            GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 8*4, 3*4);</span>
+<span class="nc" id="L108">            GL11.glNormalPointer(GL11.GL_FLOAT, 8*4, 5*4);</span>
+
+<span class="nc" id="L110">            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, bufferSize);</span>
+<span class="nc" id="L111">        }</span>
+        
+        /** Compiles the raw vertex data into a vertex buffer object. */
+        public void compileBuffer() {
+            // Number of Faces * Vertices * (Pos + Tex + Norm)
+<span class="nc" id="L116">            bufferSize = faces.size() * 3;</span>
+            
+            // Create a FloatBuffer to store faces
+<span class="nc" id="L119">            FloatBuffer buffer =</span>
+                    BufferUtils.createFloatBuffer(bufferSize * (3 + 2 + 3));
+            
+            // Interleave the buffer with face information
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            for (Face face : faces) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                for(int i = 0; i &lt; 3; i++) {</span>
+                    // Store vertex position
+<span class="nc" id="L126">                    Vector v = vertices.get(face.vertices[i]);</span>
+<span class="nc" id="L127">                    buffer.put(v.x).put(v.y).put(v.z);</span>
+                    
+                    // Store texture coordinates
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                    if(texcoords.size() &gt; 0) {</span>
+<span class="nc" id="L131">                        UV t = texcoords.get(face.texcoords[i]);</span>
+<span class="nc" id="L132">                        buffer.put(t.u).put(t.v);</span>
+<span class="nc" id="L133">                    } else buffer.put(0).put(0);</span>
+                    
+                    // Store vertex normals
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                    if(normals.size() &gt; 0) {</span>
+<span class="nc" id="L137">                        Vector n = normals.get(face.normals[i]);</span>
+<span class="nc" id="L138">                        buffer.put(n.x).put(n.y).put(n.z);</span>
+<span class="nc" id="L139">                    } else buffer.put(0).put(0).put(0);</span>
+                }
+<span class="nc" id="L141">            }</span>
+            
+            // Flip the buffer
+<span class="nc" id="L144">            buffer.flip();</span>
+            
+            // Create a new VBO
+<span class="nc" id="L147">            bufferObject = GL15.glGenBuffers();</span>
+            
+            // Fill the buffer 
+<span class="nc" id="L150">            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferObject);</span>
+<span class="nc" id="L151">            GL15.glBufferData(GL15.GL_ARRAY_BUFFER,</span>
+                                         buffer, GL15.GL_STATIC_DRAW);
+            
+            // Unbind
+<span class="nc" id="L155">            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);</span>
+<span class="nc" id="L156">        }</span>
+        
+        /** Deletes the vertex buffer object. */
+        public void disposeBuffer() {
+<span class="nc" id="L160">            GL15.glDeleteBuffers(bufferObject);</span>
+<span class="nc" id="L161">            bufferSize = 0;</span>
+<span class="nc" id="L162">        }</span>
+    }
+    
+    /** Constructs minimum bounding box.
+     * 
+     * @return minimum bounding box as an array of 2 vectors.
+     */
+//    public Vector[] getBounds() {
+//        // Create bounding vectors
+//        Vector[] bounds = { new Vector(), new Vector() };
+//        
+//        // Loop through all the vertices
+//        for (Vector vertex : vertices) {
+//            
+//            // Find minimum bound
+//            bounds[0].x = Math.min(bounds[0].x, vertex.x);
+//            bounds[0].y = Math.min(bounds[0].y, vertex.y);
+//            bounds[0].z = Math.min(bounds[0].z, vertex.z);
+//            
+//            // Find maximum bound
+//            bounds[1].x = Math.max(bounds[1].x, vertex.x);
+//            bounds[1].y = Math.max(bounds[1].y, vertex.y);
+//            bounds[1].z = Math.max(bounds[1].z, vertex.z);
+//        }
+//        
+//        return bounds;
+//    }
+    
+    /** Constructs minimum bounding box.
+     * 
+     * @param position
+     * @return 
+     */
+    public AABB getBoundingBox(Vector position) {
+<span class="nc" id="L196">        Vector min = new Vector(), max = new Vector();</span>
+        
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        for (Vector v : vertices) {</span>
+<span class="nc" id="L199">            min.set(Math.min(min.x, v.x),</span>
+                    Math.min(min.y, v.y),
+                    Math.min(min.z, v.z));
+<span class="nc" id="L202">            max.set(Math.max(max.x, v.x),</span>
+                    Math.max(max.y, v.y),
+                    Math.max(max.z, v.z));
+<span class="nc" id="L205">        }</span>
+        
+<span class="nc" id="L207">        return new AABB(position, min, max);</span>
+    }
+    
+    /** Requests a group with a given name. This will return the existing group
+     * or a new group with the given name.
+     * 
+     * @param groupName
+     * @return 
+     */
+    private Group requestGroup(String groupName) {
+        // Check if the group exists
+<span class="nc" id="L218">        Group group = groups.get(groupName);</span>
+        
+        // If not, create a new group
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if(group == null) {</span>
+<span class="nc" id="L222">            group = new Group();</span>
+<span class="nc" id="L223">            groups.put(groupName, group);</span>
+        }
+        
+        // Return group
+<span class="nc" id="L227">        return group;</span>
+    }
+    
+    /** Triangle of vertices, texture coordinates and normals. */
+    private static class Face {
+        int[] vertices, texcoords, normals;
+        
+        /** Creates a new Face from integer arrays. */
+<span class="nc" id="L235">        public Face(int[] vertices, int[] texcoords, int[] normals) {</span>
+<span class="nc" id="L236">            this.vertices = vertices;</span>
+<span class="nc" id="L237">            this.texcoords = texcoords;</span>
+<span class="nc" id="L238">            this.normals = normals;</span>
+<span class="nc" id="L239">        }</span>
+        
+        /** Creates a new Face from interleaved integer array. */
+        public Face(int... vertexdata) {
+<span class="nc" id="L243">            this(Arrays.copyOfRange(vertexdata, 0, 3),</span>
+                 Arrays.copyOfRange(vertexdata, 3, 6),
+                 Arrays.copyOfRange(vertexdata, 6, 9));
+<span class="nc" id="L246">        }</span>
+    }    
+    
+    /** Look of a model described by a Texture and colors. */
+<span class="nc" id="L250">    private static class Material {</span>
+<span class="nc" id="L251">        Texture texture = null;</span>
+<span class="nc" id="L252">        FloatBuffer colorAmbient = Buffers.WHITE;</span>
+<span class="nc" id="L253">        FloatBuffer colorDiffuse = Buffers.WHITE;</span>
+<span class="nc" id="L254">        FloatBuffer colorSpecular = Buffers.WHITE;</span>
+<span class="nc" id="L255">        float shininess = 0;</span>
+<span class="nc" id="L256">        float opacity = 1;</span>
+    }
+    
+    /** Texture coordinates. */
+    private static class UV {
+        float u, v;
+        
+<span class="nc" id="L263">        public UV(float u, float v) {</span>
+<span class="nc" id="L264">            this.u = u;</span>
+<span class="nc" id="L265">            this.v = v;</span>
+<span class="nc" id="L266">        }</span>
+    }
+    
+    /** Obtains a reference to a model loaded from given file. The model will
+     * only be loaded once, and automatically compiled to a VBO. Subsequent
+     * calls to this method will return the same instance of the model.
+     * 
+     * @param modelFile OBJ file.
+     * @return 
+     */
+    public static Model getResource(String modelFile) {
+        // Return null if no model given
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if(modelFile == null)</span>
+<span class="nc" id="L279">            return null;</span>
+        
+        // Check if model is already loaded
+<span class="nc" id="L282">        Model model = models.get(modelFile);</span>
+        
+        // If model exist already, return
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        if(model != null)</span>
+<span class="nc" id="L286">            return model;</span>
+        
+        // Try to load the model
+        try {
+            // Load an OBJ from file
+<span class="nc" id="L291">            model = loadOBJFromFile(defaultModelLocation + modelFile);</span>
+
+            // Compile model and release raw data
+<span class="nc" id="L294">            model.compileBuffers();</span>
+
+            // Store loaded model
+<span class="nc" id="L297">            models.put(modelFile, model);</span>
+
+            // Return model
+<span class="nc" id="L300">            return model;</span>
+<span class="nc" id="L301">        } catch (Exception e) {</span>
+<span class="nc" id="L302">            Logger.error(&quot;Could not load &quot; + modelFile);</span>
+<span class="nc" id="L303">            return null;</span>
+        }        
+    }
+    
+    /** Deletes all loaded models from memory. */
+    public static void disposeResources() {
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        for (Model model : models.values()) {</span>
+<span class="nc" id="L310">            model.disposeBuffers();</span>
+<span class="nc" id="L311">        }</span>
+        
+<span class="nc" id="L313">        models.clear();</span>
+<span class="nc" id="L314">    }</span>
+    
+    /** Loads an OBJ model from a given file.
+     * 
+     * @param f OBJ file.
+     * @return 
+     */
+    private static Model loadOBJFromFile(String f) {
+<span class="nc" id="L322">        try (BufferedReader reader = new BufferedReader(new FileReader(f))) {</span>
+            // Create a new Model
+<span class="nc" id="L324">            Model model = new Model();</span>
+            
+            // Create a new Group
+<span class="nc" id="L327">            Group activeGroup = model.requestGroup(&quot;default&quot;);</span>
+            
+            // Define reading variables
+            String line; String[] tokens;
+
+<span class="nc bnc" id="L332" title="All 2 branches missed.">            while ((line = reader.readLine()) != null) {</span>
+                // Split line
+<span class="nc" id="L334">                tokens = line.split(&quot;\\s+&quot;); </span>
+                
+                // Continue if there is no line information
+<span class="nc bnc" id="L337" title="All 4 branches missed.">                if(line.length() == 0 || tokens.length &lt; 1)</span>
+<span class="nc" id="L338">                    continue;</span>
+                
+                // Handle different tokens
+<span class="nc bnc" id="L341" title="All 45 branches missed.">                switch (tokens[0].toLowerCase()) {</span>
+                    case &quot;#&quot;: // Comments
+<span class="nc" id="L343">                        continue;</span>
+                    case &quot;mtllib&quot;: // Load Material
+<span class="nc" id="L345">                        String path = f.substring(0, f.lastIndexOf('/')+1);</span>
+<span class="nc" id="L346">                        model.loadMTL(path + tokens[1]);</span>
+<span class="nc" id="L347">                        continue;</span>
+                    case &quot;v&quot;: // Vertices
+<span class="nc" id="L349">                        model.vertices.add(new Vector(</span>
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3])));
+<span class="nc" id="L353">                        continue;</span>
+                    case &quot;vn&quot;: // Normals
+<span class="nc" id="L355">                        model.normals.add(new Vector(</span>
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3])));
+<span class="nc" id="L359">                        continue;</span>
+                    case &quot;vt&quot;: // UV Map
+<span class="nc" id="L361">                        model.texcoords.add(new UV(</span>
+                            Float.parseFloat(tokens[1]),
+                            1 - Float.parseFloat(tokens[2])));
+<span class="nc" id="L364">                        continue;</span>
+                    case &quot;usemtl&quot;: // Use Material
+<span class="nc bnc" id="L366" title="All 2 branches missed.">                        if (tokens.length &gt; 1)</span>
+<span class="nc" id="L367">                            activeGroup.material =</span>
+                                    model.materials.get(tokens[1]);
+                        else
+<span class="nc" id="L370">                            activeGroup.material = null;</span>
+<span class="nc" id="L371">                        continue;</span>
+                    case &quot;f&quot;: // Faces
+<span class="nc" id="L373">                        int[] vertices = new int[3],</span>
+<span class="nc" id="L374">                              texcoords = new int[3],</span>
+<span class="nc" id="L375">                              normals = new int[3];</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">                        for (int i = 0; i &lt; 3; i++) {</span>
+<span class="nc" id="L377">                            String[] parts = tokens[i+1].split(&quot;/&quot;);</span>
+<span class="nc" id="L378">                            vertices[i] = Integer.parseInt(parts[0]) - 1;</span>
+<span class="nc bnc" id="L379" title="All 6 branches missed.">                            if(parts[1].length() &gt; 0</span>
+                                  &amp;&amp; activeGroup.material != null
+                                  &amp;&amp; activeGroup.material.texture != null)
+<span class="nc" id="L382">                                texcoords[i] = Integer.parseInt(parts[1]) - 1;</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">                            if(parts.length &gt; 2)</span>
+<span class="nc" id="L384">                                normals[i] = Integer.parseInt(parts[2]) - 1;</span>
+                        }
+<span class="nc" id="L386">                        activeGroup.faces.add(</span>
+                                new Face(vertices, texcoords, normals));
+<span class="nc" id="L388">                        continue;    </span>
+                    case &quot;o&quot;: // Object
+                    case &quot;g&quot;: // Group
+<span class="nc bnc" id="L391" title="All 2 branches missed.">                        activeGroup = model.requestGroup(</span>
+                                tokens.length &gt; 1 ? tokens[1] : &quot;default&quot;);
+<span class="nc" id="L393">                        continue;</span>
+<span class="nc" id="L394">                    case &quot;s&quot;: continue; // Shading</span>
+<span class="nc" id="L395">                    case &quot;l&quot;: continue; // Line</span>
+                    default: // Incompatible line                        
+<span class="nc" id="L397">                        Logger.error(&quot;Could not read OBJ file &quot; + f);</span>
+<span class="nc" id="L398">                        Logger.error(&quot;Invalid line &gt; &quot; + line);</span>
+<span class="nc" id="L399">                        return null;</span>
+                }
+            }
+            
+            // Remove empty groups
+<span class="nc" id="L404">            Iterator groups = model.groups.values().iterator();</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">            while(groups.hasNext()) {</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">                if(((Group) groups.next()).faces.isEmpty())</span>
+<span class="nc" id="L407">                    groups.remove();</span>
+            }
+            
+            // Return nothing if model contains no data
+<span class="nc bnc" id="L411" title="All 2 branches missed.">            if(model.groups.isEmpty()) {</span>
+<span class="nc" id="L412">                Logger.error(&quot;No data found in OBJ file &quot; + f);</span>
+<span class="nc" id="L413">                return null;</span>
+            }
+            
+            // Return the model
+<span class="nc" id="L417">            Logger.debug(&quot;Succesfully loaded &quot; + f +</span>
+                                    &quot; / vertices: &quot; + model.vertices.size());
+<span class="nc" id="L419">            return model;</span>
+<span class="nc bnc" id="L420" title="All 16 branches missed.">        } catch(Exception e) {</span>
+            // Error in loading file
+<span class="nc" id="L422">            Logger.error(&quot;Failed to load model &quot; + f);</span>
+<span class="nc" id="L423">            e.printStackTrace();</span>
+<span class="nc" id="L424">            return null;</span>
+        }
+    }
+    
+    /** Loads a material from a given file.
+     * 
+     * @param f MTL file.
+     */
+    private void loadMTL(String f) {        
+<span class="nc" id="L433">        try (BufferedReader reader = new BufferedReader(new FileReader(f))) {</span>
+            // Material variables
+<span class="nc" id="L435">            Material material = new Material();</span>
+<span class="nc" id="L436">            String materialName = &quot;&quot;;</span>
+            
+            // Define reading variables
+            String line; String[] tokens;
+            
+<span class="nc bnc" id="L441" title="All 2 branches missed.">            while ((line = reader.readLine()) != null) {</span>
+                // Split line
+<span class="nc" id="L443">                tokens = line.split(&quot;\\s+&quot;); </span>
+                
+                // Continue if there is no line information
+<span class="nc bnc" id="L446" title="All 4 branches missed.">                if(line.length() == 0 || tokens.length &lt; 1)</span>
+<span class="nc" id="L447">                    continue;</span>
+                
+<span class="nc bnc" id="L449" title="All 45 branches missed.">                switch (tokens[0].toLowerCase()) {</span>
+                    case &quot;#&quot;: // Comments
+<span class="nc" id="L451">                        continue;</span>
+                    case &quot;newmtl&quot;: // New Material
+<span class="nc bnc" id="L453" title="All 2 branches missed.">                        if(!materialName.isEmpty())</span>
+<span class="nc" id="L454">                            materials.put(materialName, material);</span>
+<span class="nc" id="L455">                        materialName = tokens[1];</span>
+<span class="nc" id="L456">                        material = new Material();</span>
+<span class="nc" id="L457">                        continue;</span>
+                    case &quot;map_kd&quot;: // New Texture
+<span class="nc" id="L459">                        material.texture = Texture.getResource(tokens[1]);</span>
+<span class="nc" id="L460">                        continue;</span>
+                    case &quot;ns&quot;: // Shininess
+<span class="nc" id="L462">                        material.shininess = Float.parseFloat(tokens[1]);</span>
+<span class="nc" id="L463">                        continue;</span>
+                    case &quot;ka&quot;: // Ambient Color
+<span class="nc" id="L465">                        material.colorAmbient = Buffers.createFloatBuffer(</span>
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3]));
+<span class="nc" id="L469">                        continue;</span>
+                    case &quot;kd&quot;: // Diffuse Color
+<span class="nc" id="L471">                        material.colorDiffuse = Buffers.createFloatBuffer(</span>
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3]));
+<span class="nc" id="L475">                        continue;</span>
+                    case &quot;ks&quot;: // Specular Color
+<span class="nc" id="L477">                        material.colorSpecular = Buffers.createFloatBuffer(</span>
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3]));
+<span class="nc" id="L481">                        continue;</span>
+                    case &quot;tr&quot;: // Transparancy
+                    case &quot;d&quot;:
+<span class="nc" id="L484">                        material.opacity = Float.parseFloat(tokens[1]);</span>
+<span class="nc" id="L485">                        continue;</span>
+                    case &quot;ni&quot;: // TODO: optical density
+<span class="nc" id="L487">                        continue;</span>
+                    case &quot;illum&quot;: // TODO: illumination model
+<span class="nc" id="L489">                        continue;</span>
+                    default: // Incompatible line                        
+<span class="nc" id="L491">                        Logger.error(&quot;Could not read MTL file &quot; + f);</span>
+<span class="nc" id="L492">                        Logger.error(&quot;Invalid line &gt; &quot; + line);</span>
+                        return;
+                }
+            }
+            
+            // Add material to model if loaded
+<span class="nc bnc" id="L498" title="All 2 branches missed.">            if(!materialName.isEmpty())</span>
+<span class="nc" id="L499">                materials.put(materialName, material);</span>
+            
+<span class="nc" id="L501">            Logger.debug(&quot;Succesfully loaded &quot; + f);</span>
+<span class="nc bnc" id="L502" title="All 12 branches missed.">        } catch(Exception e) {</span>
+            // Error in loading file
+<span class="nc" id="L504">            Logger.error(&quot;Failed to load material &quot; + f);</span>
+<span class="nc" id="L505">        }</span>
+<span class="nc" id="L506">    }</span>
+    
+    /** Builds a wall model from given coordinates
+     * 
+     * @param min Vector containing minimum coordinates
+     * @param max Vector containing maximum coordinates
+     * @param textureFile
+     * @return generated model
+     */ 
+    public static Model buildWall(Vector min, Vector max, String textureFile) {
+<span class="nc" id="L516">        Model model = new Model();</span>
+        
+<span class="nc" id="L518">        model.vertices.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
+        }));
+        
+<span class="nc" id="L525">        float margin = 0.001f;</span>
+        
+<span class="nc" id="L527">        model.texcoords.addAll(Arrays.asList(new UV[] {</span>
+            new UV(margin, margin), new UV(margin, 1 - margin), //0, 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT - margin, 1 - margin), // 2
+            new UV((max.x - min.x) / Level.WALL_HEIGHT - margin, margin), // 3
+            new UV((max.z - min.z) / Level.WALL_HEIGHT - margin, 1 - margin), // 4
+            new UV((max.z - min.z) / Level.WALL_HEIGHT - margin, margin)  // 5
+        }));
+        
+<span class="nc" id="L535">        model.normals.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(0, 0, 1), new Vector(0, 0, -1),
+            new Vector(0, 1, 0), new Vector(0, -1, 0),
+            new Vector(1, 0, 0), new Vector(-1, 0, 0)
+        }));
+        
+<span class="nc" id="L541">        Group group = model.requestGroup(&quot;default&quot;);</span>
+        
+<span class="nc" id="L543">        group.faces.addAll(Arrays.asList(new Face[] {</span>
+            //  Face(V, V, V, T, T, T, N, N, N)
+            new Face(2, 1, 5, 0, 1, 2, 0, 0, 0), // Front 1
+            new Face(5, 6, 2, 2, 3, 0, 0, 0, 0), // Front 2
+            new Face(7, 4, 0, 0, 1, 2, 1, 1, 1), // Back 1
+            new Face(0, 3, 7, 2, 3, 0, 1, 1, 1), // Back 2
+            new Face(2, 6, 7, 0, 0, 0, 2, 2, 2), // Top 1
+            new Face(7, 3, 2, 0, 0, 0, 2, 2, 2), // Top 2
+//            new Face(0, 4, 5, 0, 0, 0, 3, 3, 3), // Bottom 1
+//            new Face(5, 1, 0, 0, 0, 0, 3, 3, 3), // Bottom 2
+            new Face(5, 4, 7, 1, 4, 5, 4, 4, 4), // Right 1
+            new Face(7, 6, 5, 5, 0, 1, 4, 4, 4), // Right 2
+            new Face(0, 1, 2, 1, 4, 5, 5, 5, 5), // Left 1
+            new Face(2, 3, 0, 5, 0, 1, 5, 5, 5)  // Left 2
+        }));
+        
+        // Also add a new material
+<span class="nc" id="L560">        group.material = new Material();</span>
+        
+<span class="nc" id="L562">        group.material.texture = Texture.getResource(textureFile);</span>
+<span class="nc" id="L563">        group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);</span>
+        
+        // Return the new model        
+<span class="nc" id="L566">        return model;</span>
+    }
+
+    /** Builds a floor model from given coordinates
+     * 
+     * @param min Vector containing minimum coordinates
+     * @param max Vector containing maximum coordinates
+     * @param textureFile
+     * @return generated model
+     */ 
+    public static Model buildFloor(Vector min, Vector max, String textureFile) {
+<span class="nc" id="L577">        Model model = new Model();</span>
+        
+<span class="nc" id="L579">        model.vertices.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(min.x, min.y, min.z), new Vector(min.x, min.y, max.z),
+            new Vector(min.x, max.y, max.z), new Vector(min.x, max.y, min.z),
+            new Vector(max.x, min.y, min.z), new Vector(max.x, min.y, max.z),
+            new Vector(max.x, max.y, max.z), new Vector(max.x, max.y, min.z)
+        }));
+        
+<span class="nc" id="L586">        model.texcoords.addAll(Arrays.asList(new UV[] {</span>
+            new UV(0, 0), // 0
+            new UV(0, (max.z - min.z) / Level.WALL_HEIGHT),  // 1
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, // 2
+                    (max.z - min.z) / Level.WALL_HEIGHT),
+            new UV((max.x - min.x) / Level.WALL_HEIGHT, 0), // 3
+        }));
+        
+<span class="nc" id="L594">        model.normals.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(0, 0, 1), new Vector(0, 0, -1),
+            new Vector(0, 1, 0), new Vector(0, -1, 0),
+            new Vector(1, 0, 0), new Vector(-1, 0, 0)
+        }));
+        
+<span class="nc" id="L600">        Group group = model.requestGroup(&quot;default&quot;);</span>
+        
+<span class="nc" id="L602">        group.faces.addAll(Arrays.asList(new Face[] {</span>
+            //  Face(V, V, V, T, T, T, N, N, N)
+            new Face(2, 6, 7, 1, 2, 3, 2, 2, 2), // Top 1
+            new Face(7, 3, 2, 3, 0, 1, 2, 2, 2), // Top 2
+        }));
+        
+        // Also add a new material
+<span class="nc" id="L609">        group.material = new Material();</span>
+        
+<span class="nc" id="L611">        group.material.texture = Texture.getResource(textureFile);</span>
+<span class="nc" id="L612">        group.material.colorDiffuse = Buffers.createFloatBuffer(1, 1, 1);</span>
+        
+        // Return the new model        
+<span class="nc" id="L615">        return model;</span>
+    }
+    
+    public static Model buildQuad() {
+<span class="nc" id="L619">        Model model = new Model();</span>
+        
+<span class="nc" id="L621">        model.vertices.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(-1, -1, 0),
+            new Vector(1, -1, 0),
+            new Vector(1, 1, 0),
+            new Vector(-1, 1, 0)            
+        }));
+        
+<span class="nc" id="L628">        model.texcoords.addAll(Arrays.asList(new UV[] {</span>
+            new UV(0, 0),
+            new UV(1, 0),
+            new UV(1, 1),
+            new UV(0, 1)
+        }));
+        
+<span class="nc" id="L635">        model.normals.addAll(Arrays.asList(new Vector[] {</span>
+            new Vector(0, 0, 1)
+        }));
+        
+<span class="nc" id="L639">        Group group = model.requestGroup(&quot;default&quot;);</span>
+        
+<span class="nc" id="L641">        group.faces.addAll(Arrays.asList(new Face[] {</span>
+            new Face(0, 1, 2, 0, 1, 2, 0, 0, 0),
+            new Face(2, 3, 0, 2, 3, 0, 0, 0, 0)
+        }));
+        
+<span class="nc" id="L646">        return model;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

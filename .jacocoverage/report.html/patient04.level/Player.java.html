@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Player.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.level</a> &gt; <span class="el_source">Player.java</span></div><h1>Player.java</h1><pre class="source lang-java linenums">package patient04.level;
+
+import patient04.math.Vector;
+import patient04.physics.Entity;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import patient04.Main;
+import patient04.level.Level;
+import patient04.level.elements.Enemy;
+import patient04.level.elements.Usable;
+import patient04.math.Matrix;
+import patient04.physics.AABB;
+import patient04.resources.Sound;
+import patient04.states.Game;
+import patient04.states.Scores;
+import patient04.utilities.Input;
+import patient04.utilities.Timer;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Player extends Entity implements Input.Listener {
+    // Width and height of the player, used as bounding box
+    public static final float WIDTH = 0.6f;
+    public static final float HEIGHT = 1.8f;
+    public static final float EYE_HEIGHT = 1.65f;
+    
+    // Movement acceleration
+    public static final float ACCEL_WALKING = 0.7f;
+    public static final float ACCEL_RUNNING = 1.5f;
+    public static final float ACCEL_AIR = 0.1f;
+    public static final float ACCEL_JUMP = 0.5f;
+    
+    // Leaning
+    public static final float LEAN_MAX = 0.5f;
+    public static final float LEAN_SPEED = 0.03f;
+    
+    // Patient treatment
+    public static final float MEDICINE_USE_RATE = 0.01f; // per second
+    public static final float MEDICINE_CAN_RUN = 0.5f;
+    public static final float MEDICINE_CAN_MOVE = 0.01f;
+
+    // Player variables
+<span class="nc" id="L47">    private float viewLean = 0, viewBobbing = 0, viewHeight = EYE_HEIGHT;</span>
+<span class="nc" id="L48">    public float medicineLevel = 1;</span>
+<span class="nc" id="L49">    public boolean injecting = false;</span>
+    
+<span class="nc" id="L51">    public Enemy spotter = null;</span>
+    
+    private float lastMoved;
+    private final Sound.Source stepSource;
+    
+    /** Constructs a new player.
+     * 
+     * @param level 
+     */
+    public Player(Level level) {
+<span class="nc" id="L61">        super(level, WIDTH, HEIGHT);</span>
+        
+<span class="nc" id="L63">        stepSource = Sound.getResource(&quot;step.wav&quot;).setGain(0.1f);</span>
+<span class="nc" id="L64">        lastMoved = distanceMoved;</span>
+<span class="nc" id="L65">    }</span>
+    
+    /** Checks for any input given to the player.
+     * 
+     * @param dt delta time
+     */
+    @Override
+    public void update(float dt) {
+        // Set sound listener location
+<span class="nc" id="L74">        Sound.setListenerPosition(position.x, position.y+viewHeight, position.z);</span>
+<span class="nc" id="L75">        Sound.setListenerVelocity(velocity.x, velocity.y, velocity.z);</span>
+<span class="nc" id="L76">        Sound.setListenerOrientation(rotation.x, rotation.y, rotation.z);</span>
+        
+        // Use some medicine
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (spotter == null) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (injecting) {</span>
+<span class="nc" id="L81">                medicineLevel += MEDICINE_USE_RATE * 10 * dt;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                if (medicineLevel &gt; 1) injecting = false;</span>
+            } else
+<span class="nc" id="L84">                medicineLevel -= MEDICINE_USE_RATE * dt;</span>
+        }
+        
+        // Define new input vectors
+<span class="nc" id="L88">        Vector moveInput = new Vector(), leanInput = new Vector();</span>
+        
+        // Handle input
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        if (medicineLevel &gt; MEDICINE_CAN_MOVE &amp;&amp; spotter == null) {</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_W)) moveInput.add(0, 0, -1);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_A)) moveInput.add(-1, 0, 0);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_S)) moveInput.add(0, 0, 1);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_D)) moveInput.add(1, 0, 0);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_Q)) leanInput.add(-1, 0, 0);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_E)) leanInput.add(1, 0, 0);</span>
+        }
+        
+        // If movement input is given
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (moveInput.length() &gt; 0) {</span>
+            // Rotate inputForce according to viewing direction
+<span class="nc" id="L103">            moveInput.rotate(rotation.y, 0, 1, 0);</span>
+            
+            // Determine movement speed
+<span class="nc" id="L106">            float speed = ACCEL_WALKING * dt;</span>
+            
+            // If trying to run and is allowed
+<span class="nc bnc" id="L109" title="All 4 branches missed.">            if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)</span>
+                                    &amp;&amp; medicineLevel &gt; MEDICINE_CAN_RUN)
+<span class="nc" id="L111">                speed = ACCEL_RUNNING * dt;</span>
+            
+            // If not on the ground
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if(onGround == false)</span>
+<span class="nc" id="L115">                speed = ACCEL_AIR * dt;</span>
+            
+            // Normalize and scale to speed
+<span class="nc" id="L118">            moveInput.normalize().scale(speed);</span>
+            
+            // Add movement input to acceleration
+<span class="nc" id="L121">            acceleration.add(moveInput);</span>
+        }
+        
+        // If lean input is given
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (leanInput.length() &gt; 0) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            if (leanInput.x &gt; 0) viewLean = Math.min(LEAN_MAX, viewLean + LEAN_SPEED);</span>
+<span class="nc" id="L127">            else viewLean = Math.max(-LEAN_MAX, viewLean - LEAN_SPEED);</span>
+        } else {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (viewLean &gt; 0) viewLean = Math.max(0, viewLean - LEAN_SPEED);</span>
+<span class="nc" id="L130">            else viewLean = Math.min(0, viewLean + LEAN_SPEED);</span>
+        }
+        
+        // Check for collisions while leaning
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (viewLean != 0) {</span>
+<span class="nc" id="L135">            AABB head = aabb.copy();</span>
+<span class="nc" id="L136">            head.min.add(0, 1.4f, 0);</span>
+
+<span class="nc" id="L138">            Vector leanDir = new Vector(viewLean, 0, 0)</span>
+                                    .rotate(rotation.y, 0, 1, 0).normalize();
+
+<span class="nc" id="L141">            head.pos.add(leanDir.copy().scale(Math.abs(viewLean)));</span>
+
+            boolean isFree;
+<span class="nc bnc" id="L144" title="All 4 branches missed.">            while (viewLean != 0 &amp;&amp;</span>
+                  (isFree = level.getCollisionBoxes(head).isEmpty()) == false) {
+<span class="nc" id="L146">                head.pos.min(leanDir.copy().scale(LEAN_SPEED / 2));</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                if (viewLean &gt; 0) viewLean = Math.max(0, viewLean - LEAN_SPEED / 2);</span>
+<span class="nc" id="L148">                else viewLean = Math.min(0, viewLean + LEAN_SPEED / 2);</span>
+            }
+        }
+        
+        // Step sound
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (distanceMoved - lastMoved &gt; 1f) {</span>
+            // set sound position
+<span class="nc" id="L155">            stepSource.setPosition(position.x, position.y, position.z);</span>
+            
+            // play sound
+<span class="nc" id="L158">            stepSource.play();</span>
+            
+            // set last moved
+<span class="nc" id="L161">            lastMoved = distanceMoved;</span>
+        }
+        
+        // If there is a spotter
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (spotter != null) {</span>
+            // Rotate towards spotter (y angle)
+<span class="nc" id="L167">            Vector dS = spotter.getPosition().copy().min(position).normalize();</span>
+<span class="nc" id="L168">            Vector dY = new Vector(0,0,-1).rotate(rotation.y,0,1,0).normalize();</span>
+<span class="nc" id="L169">            float tmpSign = Utils.sign(dY.cross(dS).y);            </span>
+<span class="nc" id="L170">            float tmpAngle = Utils.acos(Utils.clamp(dY.dot(dS), -1, 1));</span>
+<span class="nc" id="L171">            dY.rotate(Math.min(tmpAngle, 200*dt), 0, tmpSign, 0);</span>
+<span class="nc" id="L172">            rotation.y = Utils.atan2(-dY.x, -dY.z);</span>
+            
+            // Rotate towards spotter (x angle)
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (rotation.x &gt; 0) rotation.x = Math.max(0, rotation.x - 100*dt);</span>
+<span class="nc" id="L176">            else                rotation.x = Math.min(0, rotation.x + 100*dt);</span>
+        }
+        
+        // Update remaining entity
+<span class="nc" id="L180">        super.update(dt);</span>
+<span class="nc" id="L181">    }</span>
+    
+    public void useExit() {
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (level.nextLevel != null) {</span>
+<span class="nc" id="L185">            Game game = (Game) Main.requestNewState(Main.States.GAME);</span>
+<span class="nc" id="L186">            game.loadLevel = level.nextLevel;</span>
+<span class="nc" id="L187">        } else {</span>
+<span class="nc" id="L188">            Scores scores = (Scores) Main.requestNewState(Main.States.SCORES);</span>
+<span class="nc" id="L189">            scores.canSubmit = true;</span>
+        }
+<span class="nc" id="L191">    }</span>
+    
+    /** Obtain the view matrix.
+     * 
+     * @return 
+     */
+    public Matrix getFirstPersonView() {
+        // Drop to ground if player has no more medicine
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (medicineLevel &lt;= 0)</span>
+<span class="nc" id="L200">            viewHeight = Math.max(viewHeight - 0.03f, 0.25f);</span>
+        else
+<span class="nc" id="L202">            viewHeight = Math.min(viewHeight + 0.03f, EYE_HEIGHT);</span>
+        
+        // Update bobbing
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        viewBobbing = viewBobbing * 0.9f + (onGround ? 0.1f : 0);</span>
+        
+        // Create new view matrix
+<span class="nc" id="L208">        Matrix matrix = new Matrix();</span>
+        
+        // Leaning
+<span class="nc" id="L211">        matrix.rotate(viewLean*20, 0, 0, 1);</span>
+<span class="nc" id="L212">        matrix.translate(-viewLean, Math.abs(viewLean*0.1f), 0);</span>
+        
+        // Bobbing
+<span class="nc" id="L215">        matrix.translate(</span>
+                (float)  Math.cos(distanceMoved * 3) * 0.05f * viewBobbing,
+                (float)  Math.cos(distanceMoved * 6) * 0.05f * viewBobbing, 0);
+<span class="nc" id="L218">        matrix.rotate(</span>
+                (float) -Math.cos(distanceMoved * 3) * 0.05f * viewBobbing,
+                0, 0, 1);
+        
+        // Player view
+<span class="nc" id="L223">        matrix.rotate((EYE_HEIGHT - viewHeight) * 30, 0, 0, 1);</span>
+<span class="nc" id="L224">        matrix.rotate(-rotation.x, 1, 0, 0);</span>
+<span class="nc" id="L225">        matrix.rotate(-rotation.y, 0, 1, 0);</span>
+<span class="nc" id="L226">        matrix.translate(</span>
+                -position.x,
+                -position.y - viewHeight,
+                -position.z);
+        
+<span class="nc" id="L231">        return matrix;</span>
+    }
+    
+    @Override
+    public boolean handleMouseEvent() {
+        // Poll for mouse movement
+<span class="nc" id="L237">        int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();</span>
+        
+        // Update the camera orientation from mouse movement
+<span class="nc bnc" id="L240" title="All 8 branches missed.">        if ((dx != 0 || dy != 0) &amp;&amp; medicineLevel &gt; MEDICINE_CAN_MOVE </span>
+                                                        &amp;&amp; spotter == null) {
+<span class="nc" id="L242">            rotation.y -= 0.1 * Mouse.getEventDX();</span>
+<span class="nc" id="L243">            rotation.x += 0.1 * Mouse.getEventDY();</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            if (rotation.x &gt; 90) rotation.x = 90;</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            if (rotation.x &lt; -90) rotation.x = -90;</span>
+            
+<span class="nc" id="L247">            return Input.HANDLED;</span>
+        }
+        
+<span class="nc" id="L250">        return Input.UNHANDLED;</span>
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+        // Handle jump key (TODO: REMOVE)
+<span class="nc bnc" id="L256" title="All 4 branches missed.">        if (Input.keyboardKey(Keyboard.KEY_SPACE, true) &amp;&amp; onGround) {</span>
+<span class="nc" id="L257">            acceleration.add(0, ACCEL_JUMP, 0);</span>
+            
+<span class="nc" id="L259">            return Input.HANDLED;</span>
+        }
+        
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (Input.keyboardKey(Keyboard.KEY_V, true)) {</span>
+<span class="nc" id="L263">            medicineLevel = 0.01f;</span>
+            
+<span class="nc" id="L265">            return Input.HANDLED;</span>
+        }
+        
+        // Handle self injection (TODO: REMOVE)
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (Input.keyboardKey(Keyboard.KEY_G, true)) {</span>
+<span class="nc" id="L270">            injecting = true;</span>
+            
+<span class="nc" id="L272">            return Input.HANDLED;</span>
+        }
+        
+        // Handle use key
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        if (Input.keyboardKey(Keyboard.KEY_F, true)) {</span>
+            // Usable candidate
+<span class="nc" id="L278">            Usable candidate = null;</span>
+            
+            // Selection variables
+<span class="nc" id="L281">            float angledist = 30 + 10*2.5f;</span>
+            
+            // Loop through level usables
+<span class="nc bnc" id="L284" title="All 2 branches missed.">            for (Usable usable : level.getUsables()) {</span>
+<span class="nc" id="L285">                Vector toUsable = usable.getLocation().copy()</span>
+                      .min(position).min(0, viewHeight, 0);
+<span class="nc" id="L287">                Vector lookTo = new Vector(0, 0, -1)</span>
+                      .rotate(rotation.x, 1, 0, 0).rotate(rotation.y, 0, 1, 0);
+<span class="nc" id="L289">                float distance = toUsable.length();</span>
+<span class="nc" id="L290">                float angle = Utils.acos(lookTo.dot(toUsable.normalize()));</span>
+                
+<span class="nc bnc" id="L292" title="All 4 branches missed.">                if (distance &lt; 2.5f &amp;&amp; angle + 10*distance &lt; angledist) {</span>
+<span class="nc" id="L293">                    candidate = usable;</span>
+<span class="nc" id="L294">                    angledist = angle + 10*distance;</span>
+                }
+<span class="nc" id="L296">            }</span>
+            
+            // If candidate was found
+<span class="nc bnc" id="L299" title="All 2 branches missed.">            if (candidate != null) {</span>
+                // Use the item
+<span class="nc" id="L301">                candidate.use(this);</span>
+            }
+        }
+        
+<span class="nc" id="L305">        return Input.UNHANDLED;</span>
+    }
+    
+    public float getDistanceMoved(){
+<span class="nc" id="L309">        return distanceMoved;</span>
+    }
+    
+    @Override
+    public Vector getRotation(){
+<span class="nc" id="L314">        return rotation;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

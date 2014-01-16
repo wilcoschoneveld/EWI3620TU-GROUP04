@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Wall.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.editor.elements</a> &gt; <span class="el_source">Wall.java</span></div><h1>Wall.java</h1><pre class="source lang-java linenums">package patient04.editor.elements;
+
+import org.lwjgl.opengl.GL11;
+import patient04.editor.Level;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Wall extends Element {
+    
+<span class="nc" id="L12">    public float[][] vertices = new float[4][2];</span>
+    
+    public Wall(Level level, float xmin, float zmin, float xmax, float zmax) {
+<span class="nc" id="L15">        super(level);</span>
+        
+<span class="nc" id="L17">        vertices[0][0] = xmin; vertices[0][1] = zmin;</span>
+<span class="nc" id="L18">        vertices[1][0] = xmin; vertices[1][1] = zmax;</span>
+<span class="nc" id="L19">        vertices[2][0] = xmax; vertices[2][1] = zmax;</span>
+<span class="nc" id="L20">        vertices[3][0] = xmax; vertices[3][1] = zmin;</span>
+        
+<span class="nc" id="L22">        priority = 1;</span>
+<span class="nc" id="L23">    }</span>
+    
+    @Override
+    public void draw(int target) {
+<span class="nc" id="L27">        float size = level.editor.camera.zoom * 0.1f;</span>
+        
+        // Disable culling and textures
+<span class="nc" id="L30">        GL11.glDisable(GL11.GL_CULL_FACE);</span>
+<span class="nc" id="L31">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="nc" id="L32">        GL11.glColor3f(0.7f, 0.7f, 0.6f);</span>
+        
+        // Draw wall
+<span class="nc" id="L35">        GL11.glBegin(GL11.GL_QUADS);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        for (float[] vertex : vertices)</span>
+<span class="nc" id="L37">            GL11.glVertex2f(vertex[0], vertex[1]);</span>
+<span class="nc" id="L38">        GL11.glEnd();</span>
+        
+        // Draw selection parameters
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (target != -1) {</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            for (int i = 0; i &lt; 4; i++) {</span>
+<span class="nc" id="L43">                float x = vertices[i][0], z = vertices[i][1];</span>
+                
+                // Draw corner vertex
+<span class="nc bnc" id="L46" title="All 2 branches missed.">                GL11.glBegin(target==i+2 ? GL11.GL_QUADS : GL11.GL_LINE_LOOP);</span>
+                
+<span class="nc" id="L48">                GL11.glColor3f(1, 1, 1);</span>
+<span class="nc" id="L49">                GL11.glVertex2f(x - size, z - size);</span>
+<span class="nc" id="L50">                GL11.glVertex2f(x - size, z + size);</span>
+<span class="nc" id="L51">                GL11.glVertex2f(x + size, z + size);</span>
+<span class="nc" id="L52">                GL11.glVertex2f(x + size, z - size);</span>
+<span class="nc" id="L53">                GL11.glEnd();</span>
+            }
+        }
+        
+        // Re-enable face culling, although technically not needed
+<span class="nc" id="L58">        GL11.glEnable(GL11.GL_CULL_FACE);</span>
+<span class="nc" id="L59">    }</span>
+
+    @Override
+    public int select(boolean selected, float x, float z) {
+<span class="nc" id="L63">        float size = level.editor.camera.zoom * 0.1f;</span>
+        
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (selected) {</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">            for (int i = 0; i &lt; 4; i++) {</span>
+<span class="nc bnc" id="L67" title="All 8 branches missed.">                if (x &gt; vertices[i][0] - size &amp;&amp; x &lt; vertices[i][0] + size</span>
+                 &amp;&amp; z &gt; vertices[i][1] - size &amp;&amp; z &lt; vertices[i][1] + size)
+<span class="nc" id="L69">                    return i + 2;</span>
+            }
+        }
+        
+<span class="nc bnc" id="L73" title="All 8 branches missed.">        return x &gt; vertices[0][0] &amp;&amp; x &lt; vertices[2][0] &amp;&amp;</span>
+               z &gt; vertices[0][1] &amp;&amp; z &lt; vertices[2][1] ? 1 : 0;
+    }
+    
+    @Override
+    public void translate(int target, float dx, float dz) {
+<span class="nc bnc" id="L79" title="All 5 branches missed.">        switch(target - 2) {</span>
+            default:
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                for (float[] vertex : vertices) {</span>
+<span class="nc" id="L82">                    vertex[0] += dx;</span>
+<span class="nc" id="L83">                    vertex[1] += dz;</span>
+                }
+<span class="nc" id="L85">                break;</span>
+            case 0:
+<span class="nc" id="L87">                vertices[0][0] += dx;</span>
+<span class="nc" id="L88">                vertices[0][1] += dz;</span>
+<span class="nc" id="L89">                vertices[1][0] += dx;</span>
+<span class="nc" id="L90">                vertices[3][1] += dz;</span>
+<span class="nc" id="L91">                break;</span>
+            case 1:
+<span class="nc" id="L93">                vertices[1][0] += dx;</span>
+<span class="nc" id="L94">                vertices[1][1] += dz;</span>
+<span class="nc" id="L95">                vertices[0][0] += dx;</span>
+<span class="nc" id="L96">                vertices[2][1] += dz;</span>
+<span class="nc" id="L97">                break;</span>
+            case 2:
+<span class="nc" id="L99">                vertices[2][0] += dx;</span>
+<span class="nc" id="L100">                vertices[2][1] += dz;</span>
+<span class="nc" id="L101">                vertices[3][0] += dx;</span>
+<span class="nc" id="L102">                vertices[1][1] += dz;</span>
+<span class="nc" id="L103">                break;</span>
+            case 3:
+<span class="nc" id="L105">                vertices[3][0] += dx;</span>
+<span class="nc" id="L106">                vertices[3][1] += dz;</span>
+<span class="nc" id="L107">                vertices[2][0] += dx;</span>
+<span class="nc" id="L108">                vertices[0][1] += dz;</span>
+                break;
+        }
+        // End translate
+<span class="nc" id="L112">    }</span>
+    
+    @Override
+    public boolean release() {        
+<span class="nc" id="L116">        float x = 0.5f*vertices[0][0] + 0.5f*vertices[2][0];</span>
+<span class="nc" id="L117">        float z = 0.5f*vertices[0][1] + 0.5f*vertices[2][1];</span>
+        
+<span class="nc" id="L119">        float w = Math.max(0.25f, Math.abs(vertices[0][0] - vertices[2][0]));</span>
+<span class="nc" id="L120">        float h = Math.max(0.25f, Math.abs(vertices[0][1] - vertices[2][1]));</span>
+        
+<span class="nc" id="L122">        vertices[0][0] = x - w / 2; vertices[0][1] = z - h / 2;</span>
+<span class="nc" id="L123">        vertices[1][0] = x - w / 2; vertices[1][1] = z + h / 2;</span>
+<span class="nc" id="L124">        vertices[2][0] = x + w / 2; vertices[2][1] = z + h / 2;</span>
+<span class="nc" id="L125">        vertices[3][0] = x + w / 2; vertices[3][1] = z - h / 2;</span>
+        
+<span class="nc" id="L127">        return true;</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="nc" id="L132">        float x = 0.5f*vertices[0][0] + 0.5f*vertices[2][0];</span>
+<span class="nc" id="L133">        float z = 0.5f*vertices[0][1] + 0.5f*vertices[2][1];</span>
+        
+<span class="nc" id="L135">        float w = Math.max(0.25f, Math.abs(vertices[0][0] - vertices[2][0]));</span>
+<span class="nc" id="L136">        float h = Math.max(0.25f, Math.abs(vertices[0][1] - vertices[2][1]));</span>
+        
+<span class="nc" id="L138">        return &quot;wall &quot; + x + &quot; &quot; + z + &quot; &quot; + w + &quot; &quot; + h;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

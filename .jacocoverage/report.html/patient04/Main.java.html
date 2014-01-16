@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package patient04;
+
+import java.nio.ByteBuffer;
+import patient04.utilities.Logger;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
+import patient04.states.*;
+import patient04.utilities.Utils;
+
+<span class="nc" id="L14">public final class Main {</span>
+    // Window dimensions
+    public static final int desiredWidth = 1280;
+    public static final int desiredHeight = 800;
+    public static final boolean fullscreen = false;
+    public static final boolean vsyncEnabled = true;
+    
+    // Game timer for scores
+<span class="nc" id="L22">    public static float scoreTime = 0;</span>
+    
+    // Possible states
+<span class="nc" id="L25">    public static enum States {</span>
+<span class="nc" id="L26">        MAIN_MENU, GAME, EDITOR, SCORES</span>
+    }
+    
+    // State machine variables
+<span class="nc" id="L30">    private static State currentState = null;</span>
+<span class="nc" id="L31">    private static State nextState = null;</span>
+    
+    /** Initializes the game. */
+    public static void initialize() {
+<span class="nc" id="L35">        requestNewState(States.MAIN_MENU);</span>
+<span class="nc" id="L36">    }</span>
+    
+    /** Requests a state transition.
+     * 
+     * @param state state to transition to.
+     * @return new instance of requested State for modifications.
+     */
+    public static State requestNewState(States state) {
+        // if no nextState is given, set to null
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (state == null)</span>
+<span class="nc" id="L46">            return (nextState = null);</span>
+        
+        // set nextState to a new instance of the selected State
+<span class="nc bnc" id="L49" title="All 5 branches missed.">        switch(state) {</span>
+            case MAIN_MENU:
+<span class="nc" id="L51">                Logger.log(&quot;Transition to Main Menu&quot;);</span>
+<span class="nc" id="L52">                return (nextState = new MainMenu());</span>
+            case GAME:
+<span class="nc" id="L54">                Logger.log(&quot;Transition to Game&quot;);</span>
+<span class="nc" id="L55">                return (nextState = new Game());</span>
+            case EDITOR:
+<span class="nc" id="L57">                Logger.log(&quot;Transition to Editor&quot;);</span>
+<span class="nc" id="L58">                return (nextState = new Editor());</span>
+            case SCORES:
+<span class="nc" id="L60">                Logger.log(&quot;Transition to High Scores&quot;);</span>
+<span class="nc" id="L61">                return (nextState = new Scores());</span>
+            default:
+<span class="nc" id="L63">                Logger.error(&quot;Requested unknown State!&quot;);</span>
+<span class="nc" id="L64">                return (nextState = null);</span>
+        }
+    }
+    
+    /** Main application entry point.
+     * 
+     * @param args arguments (not used).
+     */
+    public static void main(String[] args) {
+        // Start the application
+<span class="nc" id="L74">        Logger.log(&quot;Starting application...&quot;);</span>
+        
+        // Create a new DisplayMode
+<span class="nc" id="L77">        DisplayMode dm = Utils.findDisplayMode(desiredWidth, desiredHeight);</span>
+
+        // Try to create a game window and sound
+        try {
+<span class="nc" id="L81">            Display.setDisplayMode(dm);</span>
+<span class="nc" id="L82">            Display.setFullscreen(fullscreen);</span>
+            
+<span class="nc" id="L84">            Display.setTitle(&quot;Patient 04&quot;);</span>
+<span class="nc" id="L85">            Display.setIcon(new ByteBuffer[] {</span>
+                Utils.loadIcon(&quot;res/icon16.png&quot;),
+                Utils.loadIcon(&quot;res/icon32.png&quot;)
+            });
+            
+<span class="nc" id="L90">            Display.create();</span>
+<span class="nc" id="L91">            AL.create();</span>
+<span class="nc" id="L92">        } catch (LWJGLException e) {</span>
+<span class="nc" id="L93">            System.exit(0);</span>
+<span class="nc" id="L94">        }</span>
+
+        // Display OpenGL information
+<span class="nc" id="L97">        Logger.debug(&quot;OS name &quot; + System.getProperty(&quot;os.name&quot;));</span>
+<span class="nc" id="L98">        Logger.debug(&quot;OS version &quot; + System.getProperty(&quot;os.version&quot;));</span>
+<span class="nc" id="L99">        Logger.debug(&quot;OpenGL version &quot; + GL11.glGetString(GL11.GL_VERSION));</span>
+<span class="nc" id="L100">        Logger.debug(&quot;Display mode &quot; + dm);</span>
+        
+        // Check OpenGL extensions
+<span class="nc" id="L103">        Logger.debug(&quot;ARB frame buffer object: &quot; +</span>
+                GLContext.getCapabilities().GL_ARB_framebuffer_object);
+<span class="nc" id="L105">        Logger.debug(&quot;ARB texture float: &quot; +</span>
+                GLContext.getCapabilities().GL_ARB_texture_float);
+<span class="nc" id="L107">        Logger.debug(&quot;ARB depth clamp: &quot; +</span>
+                GLContext.getCapabilities().GL_ARB_depth_clamp);
+<span class="nc" id="L109">        Logger.debug(&quot;NPOT textures: &quot; +</span>
+                GLContext.getCapabilities().GL_ARB_texture_non_power_of_two);
+        
+        // Enable vsync
+<span class="nc" id="L113">        Display.setVSyncEnabled(vsyncEnabled);</span>
+        
+        // Set glClearColor to black
+<span class="nc" id="L116">        GL11.glClearColor(0, 0, 0, 1);</span>
+        
+        // Call the initialize method
+<span class="nc" id="L119">        initialize();</span>
+        
+        // Start the game loop
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        while (!Display.isCloseRequested()) {</span>
+            // Transition to new state if needed
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            if (currentState != nextState) {                </span>
+                // Destroy the old state
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                if(currentState != null)</span>
+<span class="nc" id="L127">                    currentState.destroy();</span>
+                
+                // Initialize the new state
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                if (nextState != null)</span>
+<span class="nc" id="L131">                    nextState.initialize();</span>
+                
+                // Set current state
+<span class="nc" id="L134">                currentState = nextState;</span>
+            }
+ 
+            // If there is a current state
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            if (currentState != null) {</span>
+                // Update state
+<span class="nc" id="L140">                currentState.update();</span>
+                
+                // Render state
+<span class="nc" id="L143">                currentState.render();</span>
+                
+                // Flip the buffer and process input
+<span class="nc" id="L146">                Display.update();</span>
+            } else
+                break;
+        }
+ 
+        // If the game loop has been interrupted
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (currentState != null)</span>
+<span class="nc" id="L153">            currentState.destroy();</span>
+        
+        // Destroy the display and sound
+<span class="nc" id="L156">        Display.destroy();</span>
+<span class="nc" id="L157">        AL.destroy();</span>
+        
+<span class="nc" id="L159">        Logger.log(&quot;Application succesfully destroyed!&quot;);</span>
+<span class="nc" id="L160">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

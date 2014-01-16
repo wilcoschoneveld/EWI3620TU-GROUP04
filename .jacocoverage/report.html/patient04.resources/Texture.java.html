@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Texture.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.resources</a> &gt; <span class="el_source">Texture.java</span></div><h1>Texture.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package patient04.resources;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.opengl.PNGDecoder;
+import patient04.utilities.Logger;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Texture {
+    private static final String defaultTextureLocation = &quot;res/textures/&quot;;
+<span class="nc" id="L24">    private static final HashMap&lt;String, Texture&gt; textures = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L25">    private static Texture lastBind = null;</span>
+    
+    public final int id;
+    public final int width;
+    public final int height;
+    
+    public Texture(int width, int height, int format) {
+<span class="nc" id="L32">        this(width, height, format, GL11.GL_NEAREST);</span>
+<span class="nc" id="L33">    }</span>
+    
+    public Texture(int width, int height, int format, int filter) {
+<span class="nc" id="L36">        this(width, height, format, null, filter, filter);</span>
+<span class="nc" id="L37">    }</span>
+    
+    public Texture(int width, int height, int format, ByteBuffer buffer,
+<span class="nc" id="L40">                                                int minFilter, int magFilter) {</span>
+        // Store texture dimensions
+<span class="nc" id="L42">        this.width = width;</span>
+<span class="nc" id="L43">        this.height = height;</span>
+        
+        // Generate a new texture
+<span class="nc" id="L46">        id = GL11.glGenTextures();</span>
+        
+        // Bind texture
+<span class="nc" id="L49">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);</span>
+        
+        // Set texture filters 
+<span class="nc" id="L52">        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,</span>
+                GL11.GL_TEXTURE_MIN_FILTER, minFilter);
+<span class="nc" id="L54">        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,</span>
+                GL11.GL_TEXTURE_MAG_FILTER, magFilter);
+        
+        // Copy buffer into texture
+<span class="nc" id="L58">        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format, width, height, 0,</span>
+                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        
+        // Unbind texture
+<span class="nc" id="L62">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);</span>
+<span class="nc" id="L63">    }</span>
+        
+    public void bind() {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if(lastBind != this)</span>
+<span class="nc" id="L67">            GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);</span>
+<span class="nc" id="L68">        lastBind = this;</span>
+<span class="nc" id="L69">    }</span>
+    
+    public static void unbind() {
+<span class="nc" id="L72">        lastBind = null;</span>
+<span class="nc" id="L73">    }</span>
+    
+    public void dispose() {
+<span class="nc" id="L76">        GL11.glDeleteTextures(id);</span>
+<span class="nc" id="L77">    }</span>
+    
+    public static Texture getResource(String textureFile) {
+        // Return null if no texture given
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if(textureFile == null)</span>
+<span class="nc" id="L82">            return null;</span>
+        
+        // Check if texture is already loaded
+<span class="nc" id="L85">        Texture texture = textures.get(textureFile);</span>
+        
+        // Load texture from file if needed
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if(texture == null) {</span>
+<span class="nc" id="L89">            texture = loadPNGFromFile(defaultTextureLocation + textureFile);</span>
+<span class="nc" id="L90">            textures.put(textureFile, texture);</span>
+        }
+        
+        // Return texture
+<span class="nc" id="L94">        return texture;</span>
+    }
+    
+    public static void disposeResources() {
+        // Delete all Textures from video memory
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        for(Texture texture : textures.values())</span>
+<span class="nc" id="L100">            texture.dispose();</span>
+        
+        // Clear the loaded textures list
+<span class="nc" id="L103">        textures.clear();</span>
+        
+        // Set lastBind to nothing
+<span class="nc" id="L106">        lastBind = null;</span>
+<span class="nc" id="L107">    }</span>
+
+    private static Texture loadPNGFromFile(String texturePath) {
+        // Define texture dimensions
+        int width, height;
+        
+        // ByteBuffer to hold PNG data
+        ByteBuffer buffer;
+        
+        // Try to load the file
+<span class="nc" id="L117">        try(InputStream in = new FileInputStream(texturePath)) {</span>
+            // Create a new PNG decoder
+<span class="nc" id="L119">            PNGDecoder decoder = new PNGDecoder(in);</span>
+            
+            // Set the width and height from PNG
+<span class="nc" id="L122">            width = decoder.getWidth();</span>
+<span class="nc" id="L123">            height = decoder.getHeight();</span>
+            
+            // Allocate a ByteBuffer
+<span class="nc" id="L126">            buffer = ByteBuffer.allocateDirect(4 * width * height);</span>
+            
+            // Decode the PNG into the ByteBuffer
+<span class="nc" id="L129">            decoder.decode(buffer, 4 * width, PNGDecoder.RGBA);</span>
+            
+            // Flip the buffer
+<span class="nc" id="L132">            buffer.flip();</span>
+<span class="nc bnc" id="L133" title="All 8 branches missed.">        } catch(IOException e) { e.printStackTrace(); return null; }</span>
+        
+        // Create a new texture from the buffer
+<span class="nc" id="L136">        Texture texture = new Texture(width, height, GL11.GL_RGBA8, buffer,</span>
+                                              GL11.GL_LINEAR, GL11.GL_LINEAR);
+        
+        // If error, print statement
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (GL11.glGetError() != GL11.GL_NO_ERROR) {</span>
+<span class="nc" id="L141">            Logger.error(&quot;Error loading texture &quot; + texturePath);</span>
+        }
+        
+<span class="nc" id="L144">        Logger.debug(&quot;Succesfully loaded &quot; + texturePath);</span>
+        
+<span class="nc" id="L146">        return texture;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
