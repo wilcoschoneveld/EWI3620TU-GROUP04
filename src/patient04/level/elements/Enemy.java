@@ -33,8 +33,8 @@ public class Enemy extends Entity {
     private final Light light;
     private float nextflicker;
     
-    public Waypoint prevWaypoint;
-    public Waypoint nextWaypoint;
+    private Waypoint prevWaypoint;
+    private Waypoint nextWaypoint;
     
     public Player target;
 

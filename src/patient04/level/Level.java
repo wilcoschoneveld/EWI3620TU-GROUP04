@@ -323,7 +323,7 @@ public class Level {
                         
                         needle.position.set(Float.parseFloat(tokens[1]), 0,
                                             Float.parseFloat(tokens[2]));
-                        needle.setProperAltitude();
+                        needle.findAltitude();
                         
                         level.addUsable(needle);
                         
@@ -333,7 +333,7 @@ public class Level {
                         
                         infusion.position.set(Float.parseFloat(tokens[1]), 0,
                                               Float.parseFloat(tokens[2]));
-                        infusion.setProperAltitude();
+                        infusion.findAltitude();
                         
                         level.addUsable(infusion);
                         

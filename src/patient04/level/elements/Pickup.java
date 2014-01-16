@@ -57,7 +57,7 @@ public class Pickup extends Solid implements Usable {
         return null;
     }
     
-    public void setProperAltitude() {
+    public void findAltitude() {
         AABB check = new AABB(position, new Vector(-0.2f, 0, -0.2f),
                                         new Vector(0.2f, 100, 0.2f));
         
