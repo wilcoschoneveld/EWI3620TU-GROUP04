@@ -105,6 +105,19 @@ public class Editor implements State, Input.Listener {
             return Input.HANDLED;
         }
         
+        if (Input.keyboardKey(Keyboard.KEY_F6, true)) {
+            // Store old level
+            Level old = level;
+
+            // Load level from file
+            level = Level.loadFromFile(this, new File("res/levels/editor.tmp"));
+
+            // Set controller
+            controller.changeListener(old, level);
+
+            return Input.HANDLED;
+        }
+        
         return Input.UNHANDLED;
     }
     
