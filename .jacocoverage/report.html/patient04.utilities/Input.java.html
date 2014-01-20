@@ -9,18 +9,18 @@ import org.lwjgl.input.Mouse;
  * @author Wilco
  */
 public class Input {
-<span class="nc" id="L12">    public static boolean UNHANDLED = false;</span>
-<span class="nc" id="L13">    public static boolean HANDLED = true;</span>
+<span class="fc" id="L12">    public static boolean UNHANDLED = false;</span>
+<span class="fc" id="L13">    public static boolean HANDLED = true;</span>
     
     private final ArrayList&lt;Listener&gt; listeners;
     
-<span class="nc" id="L17">    public Input() {</span>
-<span class="nc" id="L18">        listeners = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L19">    }</span>
+<span class="fc" id="L17">    public Input() {</span>
+<span class="fc" id="L18">        listeners = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L19">    }</span>
     
     public void addListener(Listener listener) {
-<span class="nc" id="L22">        listeners.add(listener);</span>
-<span class="nc" id="L23">    }</span>
+<span class="fc" id="L22">        listeners.add(listener);</span>
+<span class="fc" id="L23">    }</span>
     
     public void changeListener(Listener oldL, Listener newL) {
 <span class="nc" id="L26">        int i = listeners.indexOf(oldL);</span>
@@ -31,27 +31,27 @@ public class Input {
     
     public void processInput() {
         // Handle mouse events
-<span class="nc bnc" id="L34" title="All 2 branches missed.">        while(Mouse.next()) {</span>
-<span class="nc bnc" id="L35" title="All 2 branches missed.">            for (Listener listener : listeners)</span>
-<span class="nc bnc" id="L36" title="All 2 branches missed.">                if(listener.handleMouseEvent())</span>
-<span class="nc" id="L37">                    break;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        while(Mouse.next()) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            for (Listener listener : listeners)</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">                if(listener.handleMouseEvent())</span>
+<span class="fc" id="L37">                    break;</span>
         }
         
         // Handle keyboard events
-<span class="nc bnc" id="L41" title="All 2 branches missed.">        while(Keyboard.next()) {</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">            for (Listener listener : listeners)</span>
-<span class="nc bnc" id="L43" title="All 2 branches missed.">                if(listener.handleKeyboardEvent())</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        while(Keyboard.next()) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            for (Listener listener : listeners)</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                if(listener.handleKeyboardEvent())</span>
 <span class="nc" id="L44">                    break;</span>
         }
-<span class="nc" id="L46">    }</span>
+<span class="fc" id="L46">    }</span>
     
     public static boolean mouseButton(int button, boolean pressed) {
-<span class="nc bnc" id="L49" title="All 4 branches missed.">        return Mouse.getEventButton() == button</span>
+<span class="fc bfc" id="L49" title="All 4 branches covered.">        return Mouse.getEventButton() == button</span>
                 &amp;&amp; Mouse.getEventButtonState() == pressed;
     }
     
     public static boolean keyboardKey(int key, boolean pressed) {
-<span class="nc bnc" id="L54" title="All 4 branches missed.">        return Keyboard.getEventKey() == key</span>
+<span class="pc bpc" id="L54" title="3 of 4 branches missed.">        return Keyboard.getEventKey() == key</span>
                 &amp;&amp; Keyboard.getEventKeyState() == pressed;
     }
     

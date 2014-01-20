@@ -9,27 +9,27 @@ import java.util.ArrayList;
  */
 public class Database {
     
-<span class="nc" id="L12">    public Database() {</span>
+<span class="fc" id="L12">    public Database() {</span>
         // Create database if it does not exist        
         try {
             // Make sure static JDBC class is loaded
-<span class="nc" id="L16">            Class.forName(&quot;org.sqlite.JDBC&quot;);</span>
+<span class="fc" id="L16">            Class.forName(&quot;org.sqlite.JDBC&quot;);</span>
             
             // Connect to database
-<span class="nc" id="L19">            Connection c = DriverManager.getConnection(</span>
+<span class="fc" id="L19">            Connection c = DriverManager.getConnection(</span>
                                              &quot;jdbc:sqlite:res/scores.db&quot;);
             
             // Create a new statement
-<span class="nc" id="L23">            Statement s = c.createStatement();</span>
+<span class="fc" id="L23">            Statement s = c.createStatement();</span>
             
             // Execute an update statement
-<span class="nc" id="L26">            s.executeUpdate(&quot;CREATE TABLE IF NOT EXISTS &quot;</span>
+<span class="fc" id="L26">            s.executeUpdate(&quot;CREATE TABLE IF NOT EXISTS &quot;</span>
                           + &quot;highscore (playerName STRING, time FLOAT);&quot;);
             
             // Close connection
-<span class="nc" id="L30">            s.close(); c.close();</span>
-<span class="nc" id="L31">        } catch(Exception e) { e.printStackTrace(); }</span>
-<span class="nc" id="L32">    }</span>
+<span class="fc" id="L30">            s.close(); c.close();</span>
+<span class="pc" id="L31">        } catch(Exception e) { e.printStackTrace(); }</span>
+<span class="fc" id="L32">    }</span>
     
     public void addTime(String name, float time) {     
         try {
@@ -50,32 +50,32 @@ public class Database {
 <span class="nc" id="L50">    }</span>
     
     public ArrayList&lt;String&gt; getTopTimes() {
-<span class="nc" id="L53">        ArrayList&lt;String&gt; times = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L53">        ArrayList&lt;String&gt; times = new ArrayList&lt;&gt;();</span>
         
         try {
             // Connect to database
-<span class="nc" id="L57">            Connection c = DriverManager.getConnection(</span>
+<span class="fc" id="L57">            Connection c = DriverManager.getConnection(</span>
                                              &quot;jdbc:sqlite:res/scores.db&quot;);
             
             // Create a new statement
-<span class="nc" id="L61">            Statement s = c.createStatement();</span>
+<span class="fc" id="L61">            Statement s = c.createStatement();</span>
             
             // Execute a query
-<span class="nc" id="L64">            ResultSet r = s.executeQuery(</span>
+<span class="fc" id="L64">            ResultSet r = s.executeQuery(</span>
                         &quot;SELECT * FROM highscore ORDER BY time ASC LIMIT 5;&quot;);
             
             // Add results to arraylist
-<span class="nc bnc" id="L68" title="All 2 branches missed.">            while (r.next()) {</span>
-<span class="nc" id="L69">                String name = r.getString(&quot;playerName&quot;);</span>
-<span class="nc" id="L70">                float time = r.getFloat(&quot;time&quot;);</span>
-<span class="nc" id="L71">                times.add(name + &quot;: &quot; + String.format(&quot;%.2f s&quot;, time));</span>
-<span class="nc" id="L72">            }</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            while (r.next()) {</span>
+<span class="fc" id="L69">                String name = r.getString(&quot;playerName&quot;);</span>
+<span class="fc" id="L70">                float time = r.getFloat(&quot;time&quot;);</span>
+<span class="fc" id="L71">                times.add(name + &quot;: &quot; + String.format(&quot;%.2f s&quot;, time));</span>
+<span class="fc" id="L72">            }</span>
             
             // Close connection
-<span class="nc" id="L75">            r.close(); s.close(); c.close();</span>
-<span class="nc" id="L76">        } catch(Exception e) { e.printStackTrace(); }</span>
+<span class="fc" id="L75">            r.close(); s.close(); c.close();</span>
+<span class="pc" id="L76">        } catch(Exception e) { e.printStackTrace(); }</span>
         
-<span class="nc" id="L78">        return times;</span>
+<span class="fc" id="L78">        return times;</span>
     }
     
 }

@@ -16,7 +16,7 @@ import patient04.utilities.Utils;
  *
  * @author Wilco
  */
-<span class="nc" id="L19">public class Scores implements State, Input.Listener {</span>
+<span class="fc" id="L19">public class Scores implements State, Input.Listener {</span>
     public boolean canSubmit;
     
     private Input controller;
@@ -32,70 +32,70 @@ import patient04.utilities.Utils;
     @Override
     public void initialize() {
         // Set projection matrix
-<span class="nc" id="L35">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
-<span class="nc" id="L36">        GL11.glLoadIdentity();</span>
-<span class="nc" id="L37">        GL11.glOrtho(0, Utils.getDisplayRatio(), 1, 0, -1, 1);</span>
-<span class="nc" id="L38">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
-<span class="nc" id="L39">        GL11.glLoadIdentity();</span>
+<span class="fc" id="L35">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="fc" id="L36">        GL11.glLoadIdentity();</span>
+<span class="fc" id="L37">        GL11.glOrtho(0, Utils.getDisplayRatio(), 1, 0, -1, 1);</span>
+<span class="fc" id="L38">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L39">        GL11.glLoadIdentity();</span>
         
-<span class="nc" id="L41">        controller = new Input();</span>
-<span class="nc" id="L42">        controller.addListener(this);</span>
+<span class="fc" id="L41">        controller = new Input();</span>
+<span class="fc" id="L42">        controller.addListener(this);</span>
         
-<span class="nc" id="L44">        background = Image.getFromTextureResource(&quot;menu/scores.png&quot;);</span>
+<span class="fc" id="L44">        background = Image.getFromTextureResource(&quot;menu/scores.png&quot;);</span>
         
-<span class="nc" id="L46">        fnt20 = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 20);</span>
-<span class="nc" id="L47">        fnt25 = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 25);</span>
-<span class="nc" id="L48">        fnt30 = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 30);</span>
+<span class="fc" id="L46">        fnt20 = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 20);</span>
+<span class="fc" id="L47">        fnt25 = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 25);</span>
+<span class="fc" id="L48">        fnt30 = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 30);</span>
         
-<span class="nc" id="L50">        name = new StringBuilder();</span>
-<span class="nc" id="L51">        Keyboard.enableRepeatEvents(true);</span>
+<span class="fc" id="L50">        name = new StringBuilder();</span>
+<span class="fc" id="L51">        Keyboard.enableRepeatEvents(true);</span>
         
-<span class="nc" id="L53">        db = new Database();</span>
+<span class="fc" id="L53">        db = new Database();</span>
         
-<span class="nc" id="L55">        scores = db.getTopTimes();</span>
-<span class="nc" id="L56">    }</span>
+<span class="fc" id="L55">        scores = db.getTopTimes();</span>
+<span class="fc" id="L56">    }</span>
 
     @Override
     public void update() {
-<span class="nc" id="L60">        controller.processInput();</span>
-<span class="nc" id="L61">    }</span>
+<span class="fc" id="L60">        controller.processInput();</span>
+<span class="fc" id="L61">    }</span>
 
     @Override
     public void render() {
-<span class="nc" id="L65">        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);</span>
+<span class="fc" id="L65">        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);</span>
         
-<span class="nc" id="L67">        float R = Utils.getDisplayRatio();</span>
+<span class="fc" id="L67">        float R = Utils.getDisplayRatio();</span>
         
-<span class="nc" id="L69">        background.draw(0, 0, R, 1);</span>
+<span class="fc" id="L69">        background.draw(0, 0, R, 1);</span>
         
-<span class="nc" id="L71">        fnt25.setColor(1, 0, 0, 1);</span>
-<span class="nc" id="L72">        fnt25.draw(0.6f, 0.3f, &quot;Best escape times:&quot;);</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        for (int i = 0; i &lt; scores.size(); i++)</span>
-<span class="nc" id="L74">            fnt20.draw(0.6f, 0.35f, scores.get(i), i);</span>
+<span class="fc" id="L71">        fnt25.setColor(1, 0, 0, 1);</span>
+<span class="fc" id="L72">        fnt25.draw(0.6f, 0.3f, &quot;Best escape times:&quot;);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (int i = 0; i &lt; scores.size(); i++)</span>
+<span class="fc" id="L74">            fnt20.draw(0.6f, 0.35f, scores.get(i), i);</span>
         
-<span class="nc" id="L76">        fnt25.setColor(1, 1, 1, 1);</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (Main.scoreTime &gt; 0) {</span>
+<span class="fc" id="L76">        fnt25.setColor(1, 1, 1, 1);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (Main.scoreTime &gt; 0) {</span>
 <span class="nc" id="L78">            fnt25.draw(0.5f, 0.6f, &quot;You have succesfully escaped!&quot;);</span>
 <span class="nc" id="L79">            fnt30.draw(0.65f, 0.65f,</span>
                     String.format(&quot;Escape time: %.2f s&quot;, Main.scoreTime),
                                         0, Font.Align.LEFT, Font.Align.TOP);
         }
         
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (canSubmit) {</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (canSubmit) {</span>
 <span class="nc bnc" id="L85" title="All 4 branches missed.">            boolean blink = (name.length()&lt;10 &amp;&amp; Timer.getTime() % 1000 &lt; 500);</span>
 <span class="nc bnc" id="L86" title="All 2 branches missed.">            fnt25.draw(0.6f, 0.8f, &quot;Enter Name: &quot; + name + (blink ? '_' : &quot;&quot;),</span>
                                             0, Font.Align.LEFT, Font.Align.TOP);
         }
         
 
-<span class="nc" id="L91">    }</span>
+<span class="fc" id="L91">    }</span>
 
     @Override
     public void destroy() {
-<span class="nc" id="L95">        Texture.disposeResources();</span>
+<span class="fc" id="L95">        Texture.disposeResources();</span>
         
-<span class="nc" id="L97">        Keyboard.enableRepeatEvents(false);</span>
-<span class="nc" id="L98">    }</span>
+<span class="fc" id="L97">        Keyboard.enableRepeatEvents(false);</span>
+<span class="fc" id="L98">    }</span>
 
     @Override
     public boolean handleMouseEvent() {
@@ -105,14 +105,14 @@ import patient04.utilities.Utils;
     @Override
     public boolean handleKeyboardEvent() {
         
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
             // Request transition to main menu
 <span class="nc" id="L110">            Main.requestNewState(Main.States.MAIN_MENU);</span>
             
 <span class="nc" id="L112">            return Input.HANDLED;</span>
         }
         
-<span class="nc bnc" id="L115" title="All 4 branches missed.">        if (Keyboard.getEventKeyState() &amp;&amp; canSubmit) {</span>
+<span class="pc bpc" id="L115" title="2 of 4 branches missed.">        if (Keyboard.getEventKeyState() &amp;&amp; canSubmit) {</span>
 <span class="nc bnc" id="L116" title="All 30 branches missed.">            switch (Keyboard.getEventKey()) {</span>
 <span class="nc" id="L117">                case Keyboard.KEY_A: name.append('A'); break;</span>
 <span class="nc" id="L118">                case Keyboard.KEY_B: name.append('B'); break;</span>
@@ -168,7 +168,7 @@ import patient04.utilities.Utils;
 <span class="nc" id="L168">            return Input.HANDLED;</span>
         }
         
-<span class="nc" id="L171">        return Input.UNHANDLED;</span>
+<span class="fc" id="L171">        return Input.UNHANDLED;</span>
     }
     
 }

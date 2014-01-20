@@ -15,12 +15,12 @@ public class Quaternion {
      * @param c the j component.
      * @param d the k component.
      */
-<span class="fc" id="L18">    public Quaternion(float a, float b, float c, float d) {</span>
-<span class="fc" id="L19">        this.a = a;</span>
-<span class="fc" id="L20">        this.b = b;</span>
-<span class="fc" id="L21">        this.c = c;</span>
-<span class="fc" id="L22">        this.d = d;</span>
-<span class="fc" id="L23">    }</span>
+<span class="nc" id="L18">    public Quaternion(float a, float b, float c, float d) {</span>
+<span class="nc" id="L19">        this.a = a;</span>
+<span class="nc" id="L20">        this.b = b;</span>
+<span class="nc" id="L21">        this.c = c;</span>
+<span class="nc" id="L22">        this.d = d;</span>
+<span class="nc" id="L23">    }</span>
     
     /** Creates a new identity Quaternion. */
     public Quaternion() {
@@ -84,12 +84,12 @@ public class Quaternion {
      * @return 
      */
     public Quaternion scale(float sa, float sb, float sc, float sd) {
-<span class="fc" id="L87">        a *= sa;</span>
-<span class="fc" id="L88">        b *= sb;</span>
-<span class="fc" id="L89">        c *= sc;</span>
-<span class="fc" id="L90">        d *= sd;</span>
+<span class="nc" id="L87">        a *= sa;</span>
+<span class="nc" id="L88">        b *= sb;</span>
+<span class="nc" id="L89">        c *= sc;</span>
+<span class="nc" id="L90">        d *= sd;</span>
         
-<span class="fc" id="L92">        return this;</span>
+<span class="nc" id="L92">        return this;</span>
     }
     
     /** Scales all values of the Quaternion by a given value.
@@ -98,7 +98,7 @@ public class Quaternion {
      * @return 
      */
     public Quaternion scale(float scale) {
-<span class="fc" id="L101">        return scale(scale, scale, scale, scale);</span>
+<span class="nc" id="L101">        return scale(scale, scale, scale, scale);</span>
     }
     
     /** Calculates the length of the Quaternion.
@@ -106,7 +106,7 @@ public class Quaternion {
      * @return length as float
      */
     public float length() {
-<span class="fc" id="L109">        return (float) Math.sqrt(a*a + b*b + c*c + d*d);</span>
+<span class="nc" id="L109">        return (float) Math.sqrt(a*a + b*b + c*c + d*d);</span>
     }
     
     /** Normalizes the Quaternion to unit length.
@@ -114,7 +114,7 @@ public class Quaternion {
      * @return 
      */
     public Quaternion normalize() {
-<span class="fc" id="L117">        return scale(1 / length());</span>
+<span class="nc" id="L117">        return scale(1 / length());</span>
     }
     
     /** Scales the Quaternion to conjugate values.
@@ -130,22 +130,22 @@ public class Quaternion {
      * @return rotation matrix.
      */
     public Matrix toMatrix() {        
-<span class="fc" id="L133">        float[] values = new float[16];</span>
+<span class="nc" id="L133">        float[] values = new float[16];</span>
         
-<span class="fc" id="L135">        values[Matrix.m00] = 1 - 2*c*c - 2*d*d;</span>
-<span class="fc" id="L136">        values[Matrix.m11] = 1 - 2*b*b - 2*d*d;</span>
-<span class="fc" id="L137">        values[Matrix.m22] = 1 - 2*b*b - 2*c*c;</span>
+<span class="nc" id="L135">        values[Matrix.m00] = 1 - 2*c*c - 2*d*d;</span>
+<span class="nc" id="L136">        values[Matrix.m11] = 1 - 2*b*b - 2*d*d;</span>
+<span class="nc" id="L137">        values[Matrix.m22] = 1 - 2*b*b - 2*c*c;</span>
         
-<span class="fc" id="L139">        values[Matrix.m01] = 2*b*c - 2*a*d;</span>
-<span class="fc" id="L140">        values[Matrix.m02] = 2*d*b + 2*a*c;</span>
-<span class="fc" id="L141">        values[Matrix.m10] = 2*b*c + 2*a*d;</span>
-<span class="fc" id="L142">        values[Matrix.m12] = 2*c*d - 2*a*b;</span>
-<span class="fc" id="L143">        values[Matrix.m20] = 2*d*b - 2*a*c;</span>
-<span class="fc" id="L144">        values[Matrix.m21] = 2*c*d + 2*a*b;</span>
+<span class="nc" id="L139">        values[Matrix.m01] = 2*b*c - 2*a*d;</span>
+<span class="nc" id="L140">        values[Matrix.m02] = 2*d*b + 2*a*c;</span>
+<span class="nc" id="L141">        values[Matrix.m10] = 2*b*c + 2*a*d;</span>
+<span class="nc" id="L142">        values[Matrix.m12] = 2*c*d - 2*a*b;</span>
+<span class="nc" id="L143">        values[Matrix.m20] = 2*d*b - 2*a*c;</span>
+<span class="nc" id="L144">        values[Matrix.m21] = 2*c*d + 2*a*b;</span>
         
-<span class="fc" id="L146">        values[Matrix.m33] = 1;</span>
+<span class="nc" id="L146">        values[Matrix.m33] = 1;</span>
         
-<span class="fc" id="L148">        return new Matrix(values);</span>
+<span class="nc" id="L148">        return new Matrix(values);</span>
     }
     
     /** Constructs a new Quaternion from given rotation angle and axis.
@@ -157,10 +157,10 @@ public class Quaternion {
      * @return
      */
     public static Quaternion fromRotation(float angle, float x, float y, float z) {
-<span class="fc" id="L160">        float sin = (float) Math.sin(angle * Math.PI/360);</span>
-<span class="fc" id="L161">        float cos = (float) Math.cos(angle * Math.PI/360);</span>
+<span class="nc" id="L160">        float sin = (float) Math.sin(angle * Math.PI/360);</span>
+<span class="nc" id="L161">        float cos = (float) Math.cos(angle * Math.PI/360);</span>
         
-<span class="fc" id="L163">        return new Quaternion(cos, x*sin, y*sin, z*sin).normalize();</span>
+<span class="nc" id="L163">        return new Quaternion(cos, x*sin, y*sin, z*sin).normalize();</span>
     }
     
     @Override

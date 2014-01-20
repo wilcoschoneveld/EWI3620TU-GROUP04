@@ -17,24 +17,24 @@ public class Matrix {
     public static final int m30 = 3, m31 = 7, m32 = 11, m33 = 15;
     
     // Matrix values
-<span class="fc" id="L20">    public final float[] val = new float[16];</span>
+<span class="nc" id="L20">    public final float[] val = new float[16];</span>
     
     /** Creates a new identity Matrix. */
-<span class="fc" id="L23">    public Matrix() {</span>
-<span class="fc" id="L24">        val[m00] = 1;</span>
-<span class="fc" id="L25">        val[m11] = 1;</span>
-<span class="fc" id="L26">        val[m22] = 1;</span>
-<span class="fc" id="L27">        val[m33] = 1;</span>
-<span class="fc" id="L28">    }</span>
+<span class="nc" id="L23">    public Matrix() {</span>
+<span class="nc" id="L24">        val[m00] = 1;</span>
+<span class="nc" id="L25">        val[m11] = 1;</span>
+<span class="nc" id="L26">        val[m22] = 1;</span>
+<span class="nc" id="L27">        val[m33] = 1;</span>
+<span class="nc" id="L28">    }</span>
     
     /** Creates a new Matrix from given float array.
      * 
      * @param values an array of float values representing a 4x4 matrix in
      * column major order.
      */
-<span class="fc" id="L35">    public Matrix(float[] values) {</span>
-<span class="fc" id="L36">        System.arraycopy(values, 0, val, 0, 16);</span>
-<span class="fc" id="L37">    }</span>
+<span class="nc" id="L35">    public Matrix(float[] values) {</span>
+<span class="nc" id="L36">        System.arraycopy(values, 0, val, 0, 16);</span>
+<span class="nc" id="L37">    }</span>
     
     /** Creates a new Matrix from a given matrix. This will copy all values of
      * the given matrix into the new matrix.
