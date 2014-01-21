@@ -254,25 +254,6 @@ public class Player extends Entity implements Input.Listener {
 
     @Override
     public boolean handleKeyboardEvent() {
-        // Handle jump key (TODO: REMOVE)
-        if (Input.keyboardKey(Keyboard.KEY_SPACE, true) && onGround) {
-            acceleration.add(0, ACCEL_JUMP, 0);
-            
-            return Input.HANDLED;
-        }
-        
-        if (Input.keyboardKey(Keyboard.KEY_V, true)) {
-            medicineLevel = 0.1f;
-            
-            return Input.HANDLED;
-        }
-        
-        // Handle self injection (TODO: REMOVE)
-        if (Input.keyboardKey(Keyboard.KEY_G, true)) {
-            injecting = true;
-            
-            return Input.HANDLED;
-        }
         
         // Handle use key
         if (Input.keyboardKey(Keyboard.KEY_F, true)) {

@@ -41,15 +41,12 @@ public class Door extends Prop implements Usable {
         if (toPlayer.dot(normal) > 0) {
             timer = 0.01f;
             
-            // TODO create new AABB
             Vector min = new Vector(-0.8f, 0, -1.35f),
                    max = new Vector(-0.5f, Level.WALL_HEIGHT, 0.05f);
         
             aabb = new AABB(this.position, min, max);
             aabb.rotate(rotation.y, 0, 1, 0);
         }
-        
-        // TODO change AABB 
     }
     
     @Override

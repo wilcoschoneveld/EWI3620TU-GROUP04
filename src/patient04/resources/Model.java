@@ -483,9 +483,9 @@ public class Model {
                     case "d":
                         material.opacity = Float.parseFloat(tokens[1]);
                         continue;
-                    case "ni": // TODO: optical density
+                    case "ni": // optical density
                         continue;
-                    case "illum": // TODO: illumination model
+                    case "illum": // illumination model
                         continue;
                     default: // Incompatible line                        
                         Logger.error("Could not read MTL file " + f);

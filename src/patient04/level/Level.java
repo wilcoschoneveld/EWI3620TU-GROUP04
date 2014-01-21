@@ -14,6 +14,7 @@ import patient04.math.Vector;
 import patient04.physics.Entity;
 import patient04.rendering.Light;
 import patient04.resources.Sound;
+import patient04.resources.Texture;
 
 public class Level {
     // Next subsequent level
@@ -159,7 +160,9 @@ public class Level {
     }
     
     public void cleanup() {
-        // TODO?
+        Texture.disposeResources();
+        Model.disposeResources();
+        Sound.disposeResources();
     }
     
     public void generateFloorCeiling(String floorFile, String ceilingFile) {

@@ -228,7 +228,7 @@ public class Renderer {
         // Upload the effect level
         GL20.glUniform1f(effLevel, level);
         
-        // Determine the period (TODO variable of effect level?)
+        // Determine the period
         int period = 5000;
         
         // Determine the angle

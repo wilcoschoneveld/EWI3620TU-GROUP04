@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 import patient04.Main;
 import patient04.resources.Font;
 import patient04.resources.Image;
-import patient04.resources.Texture;
 import patient04.states.Game;
 import patient04.utilities.Input;
 import patient04.utilities.Utils;
