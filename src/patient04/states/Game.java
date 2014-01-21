@@ -100,6 +100,20 @@ public class Game implements State, Input.Listener {
             // Also update score timer
             Main.scoreTime += dt;
         }
+        
+        // Check if gameover
+        if (isGameOver() != 0)
+            pauser.setPaused(true);
+    }
+    
+    public int isGameOver() {
+        if (player.medicineLevel < -0.05f)
+            return 1;
+        
+        if (player.spottimer > 2) {
+            return 2;
+        }
+        return 0;
     }
     
     @Override

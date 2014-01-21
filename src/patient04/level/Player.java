@@ -37,7 +37,7 @@ public class Player extends Entity implements Input.Listener {
     public static final float LEAN_SPEED = 0.03f;
     
     // Patient treatment
-    public static final float MEDICINE_USE_RATE = 0.01f; // per second
+    public static final float MEDICINE_USE_RATE = 0.015f; // per second
     public static final float MEDICINE_CAN_RUN = 0.5f;
     public static final float MEDICINE_CAN_MOVE = 0.01f;
 
@@ -47,6 +47,7 @@ public class Player extends Entity implements Input.Listener {
     public boolean injecting = false;
     
     public Enemy spotter = null;
+    public float spottimer = 0;
     
     private float lastMoved;
     private final Sound.Source stepSource;
@@ -172,6 +173,9 @@ public class Player extends Entity implements Input.Listener {
             // Rotate towards spotter (x angle)
             if (rotation.x > 0) rotation.x = Math.max(0, rotation.x - 100*dt);
             else                rotation.x = Math.min(0, rotation.x + 100*dt);
+            
+            if (tmpAngle < 30f)
+                spottimer += dt;
         }
         
         // Update remaining entity
@@ -258,7 +262,7 @@ public class Player extends Entity implements Input.Listener {
         }
         
         if (Input.keyboardKey(Keyboard.KEY_V, true)) {
-            medicineLevel = 0.01f;
+            medicineLevel = 0.1f;
             
             return Input.HANDLED;
         }
