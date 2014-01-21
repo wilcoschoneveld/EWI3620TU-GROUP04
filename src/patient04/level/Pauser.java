@@ -6,6 +6,8 @@ import org.lwjgl.opengl.GL11;
 
 import patient04.Main;
 import patient04.resources.Font;
+import patient04.resources.Image;
+import patient04.states.Game;
 import patient04.utilities.Input;
 
 /**
@@ -14,9 +16,20 @@ import patient04.utilities.Input;
  */
 public class Pauser implements Input.Listener {
     private boolean paused;
+    private final Game game;
     
-    private final Font fnt = Font.getResource("Myriad Pro", 0, 25);
-    private final Font ftitel = Font.getResource("1942 report", 0, 60);
+    private final Font fnt, ftitel;
+    private final Image imgDown, imgSeen;
+    
+    public Pauser(Game game) {
+        this.game = game;
+        
+        fnt = Font.getResource("Myriad Pro", 0, 25);
+        ftitel = Font.getResource("1942 report", 0, 60);
+    
+        imgDown = Image.getFromTextureResource("menu/gameover1.png");
+        imgSeen = Image.getFromTextureResource("menu/gameover2.png");
+    }
     
     /** Gets the pause state.
      * 
@@ -65,10 +78,17 @@ public class Pauser implements Input.Listener {
             return Input.HANDLED;
         }
         
-        // TODO: remove this response
         if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             // Request transition to main menu
             Main.requestNewState(Main.States.MAIN_MENU);
+            
+            return Input.HANDLED;
+        }
+        
+        if(Input.keyboardKey(Keyboard.KEY_R, true)) {
+            // Request restart
+            Game game2 = (Game) Main.requestNewState(Main.States.GAME);
+            game2.loadLevel = game.loadLevel;
             
             return Input.HANDLED;
         }
@@ -102,5 +122,6 @@ public class Pauser implements Input.Listener {
         ftitel.drawCentered(0.30f, "PAUSE");
         fnt.drawCentered(0.4f, "Press ESCAPE again to give up");
         fnt.drawCentered(0.45f, "Hit ENTER to keep trying");
+        fnt.drawCentered(0.5f, "Press R to restart level");
     }
 }

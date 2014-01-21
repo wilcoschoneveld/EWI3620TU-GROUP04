@@ -63,7 +63,7 @@ public class Game implements State, Input.Listener {
         player.setRotation(0, level.startPoint.y - 90, 0);
         
         // Pauser
-        pauser = new Pauser();
+        pauser = new Pauser(this);
         pauser.setPaused(false);
         
         // Tutorial
@@ -113,14 +113,6 @@ public class Game implements State, Input.Listener {
         // (Un)pause the game
         if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {
             pauser.setPaused(true);
-            
-            return Input.HANDLED;
-        }
-        
-        
-        if(Input.keyboardKey(Keyboard.KEY_R, true)) {
-            Game game = (Game) Main.requestNewState(Main.States.GAME);
-            game.loadLevel = loadLevel;
             
             return Input.HANDLED;
         }
