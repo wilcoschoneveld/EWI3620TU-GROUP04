@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Font.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.resources</a> &gt; <span class="el_source">Font.java</span></div><h1>Font.java</h1><pre class="source lang-java linenums">package patient04.resources;
+import java.util.HashMap;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.opengl.TextureImpl;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Font {
+    // Static resource managing variables
+<span class="fc" id="L15">    private static final HashMap&lt;java.awt.Font, Font&gt; fonts = new HashMap&lt;&gt;();</span>
+    
+    // Static style variables
+    public static final int BOLD = java.awt.Font.BOLD;
+    public static final int ITALIC = java.awt.Font.ITALIC;
+    
+    // Static alignment enumeration
+<span class="pc" id="L22">    public static enum Align {</span>
+<span class="fc" id="L23">        LEFT, RIGHT, TOP, BOTTOM, CENTER;</span>
+    }
+    
+    private final TrueTypeFont font;
+    private Color color;
+    
+<span class="fc" id="L29">    public Font(TrueTypeFont font) {</span>
+<span class="fc" id="L30">        this.font = font;</span>
+<span class="fc" id="L31">        color = Color.white;</span>
+<span class="fc" id="L32">    }</span>
+    
+    public void setColor(float r, float g, float b, float a) {
+<span class="fc" id="L35">        color = new Color(r, g, b, a);</span>
+<span class="fc" id="L36">    }</span>
+    
+    public void drawCentered(float y, String str) {
+<span class="fc" id="L39">        int width = Display.getWidth(), height = Display.getHeight();</span>
+        
+<span class="fc" id="L41">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L42">        GL11.glPushMatrix();</span>
+<span class="fc" id="L43">        GL11.glLoadIdentity();</span>
+<span class="fc" id="L44">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="fc" id="L45">        GL11.glPushMatrix();</span>
+<span class="fc" id="L46">        GL11.glLoadIdentity();</span>
+<span class="fc" id="L47">        GL11.glOrtho(0, width, height, 0, -1, 1);</span>
+        
+<span class="fc" id="L49">        Texture.unbind();</span>
+<span class="fc" id="L50">        TextureImpl.unbind();</span>
+        
+<span class="fc" id="L52">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="fc" id="L53">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
+
+<span class="fc" id="L55">        font.drawString(</span>
+                width / 2 - font.getWidth(str) / 2, y * height, str, color);
+        
+<span class="fc" id="L58">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L59">        GL11.glPopMatrix();</span>
+<span class="fc" id="L60">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="fc" id="L61">        GL11.glPopMatrix();</span>
+<span class="fc" id="L62">    }</span>
+    
+    public void draw(float x, float y, String str) {
+<span class="fc" id="L65">        draw(x, y, str, 0);</span>
+<span class="fc" id="L66">    }</span>
+    
+    public void draw(float x, float y, String str, int lineskip) {
+<span class="fc" id="L69">        draw(x, y, str, lineskip, Align.LEFT, Align.TOP);</span>
+<span class="fc" id="L70">    }</span>
+    
+    public void draw(float x, float y, String str, int lineskip,
+                                           Align horizontal, Align vertical) {
+        
+<span class="fc" id="L75">        int width = Display.getWidth(), height = Display.getHeight();</span>
+        
+<span class="fc" id="L77">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L78">        GL11.glPushMatrix();</span>
+<span class="fc" id="L79">        GL11.glLoadIdentity();</span>
+<span class="fc" id="L80">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="fc" id="L81">        GL11.glPushMatrix();</span>
+<span class="fc" id="L82">        GL11.glLoadIdentity();</span>
+<span class="fc" id="L83">        GL11.glOrtho(0, width, height, 0, -1, 1);</span>
+        
+<span class="fc" id="L85">        float tx = x * width,</span>
+<span class="fc" id="L86">              ty = y * height + lineskip * font.getHeight();</span>
+        
+<span class="pc bpc" id="L88" title="1 of 3 branches missed.">        switch(horizontal) {</span>
+<span class="nc" id="L89">            case CENTER: tx -= font.getWidth(str) / 2f; break;</span>
+<span class="fc" id="L90">            case RIGHT: tx -= font.getWidth(str); break;</span>
+        }
+        
+<span class="pc bpc" id="L93" title="1 of 3 branches missed.">        switch(vertical) {</span>
+<span class="nc" id="L94">            case CENTER: ty -= font.getHeight() / 2f; break;</span>
+<span class="fc" id="L95">            case BOTTOM: ty -= font.getHeight(); break;</span>
+        }
+        
+<span class="fc" id="L98">        Texture.unbind();</span>
+<span class="fc" id="L99">        TextureImpl.unbind();</span>
+        
+<span class="fc" id="L101">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="fc" id="L102">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
+        
+<span class="fc" id="L104">        font.drawString(tx, ty, str, color);</span>
+        
+<span class="fc" id="L106">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L107">        GL11.glPopMatrix();</span>
+<span class="fc" id="L108">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="fc" id="L109">        GL11.glPopMatrix();</span>
+<span class="fc" id="L110">    }</span>
+    
+    public static Font getResource(java.awt.Font jFont) {
+        // Check if TrueTypeFont was already created
+<span class="fc" id="L114">        Font font = fonts.get(jFont);</span>
+
+        // If font does not exist
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (font == null) {</span>
+            // Create a new TTF
+<span class="fc" id="L119">            font = new Font(new TrueTypeFont(jFont, true));</span>
+            
+            // Store loaded TTF
+<span class="fc" id="L122">            fonts.put(jFont, font);</span>
+        }
+
+        // Return font
+<span class="fc" id="L126">        return font;</span>
+    }
+    
+    public static Font getResource(String fontName, int style, int size) {
+        // Create a new font from given attributes
+<span class="fc" id="L131">        java.awt.Font jFont = new java.awt.Font(fontName, style, size);</span>
+        
+        // Get resource from font
+<span class="fc" id="L134">        return getResource(jFont);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

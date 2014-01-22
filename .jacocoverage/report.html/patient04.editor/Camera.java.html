@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Camera.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.editor</a> &gt; <span class="el_source">Camera.java</span></div><h1>Camera.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package patient04.editor;
+
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import patient04.math.Matrix;
+import patient04.math.Vector;
+import patient04.utilities.Input;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Camera implements Input.Listener {
+    public static final float ZOOM_MIN = 0.2f;
+    public static final float ZOOM_MAX = 8f;
+    public static final float HALF_VIEW = 10f;
+    
+    public final Vector position;
+    public float zoom;
+    
+<span class="fc" id="L29">    public boolean mouseDrag = false;</span>
+    
+<span class="fc" id="L31">    public Camera() {</span>
+<span class="fc" id="L32">        position = new Vector();</span>
+<span class="fc" id="L33">        zoom = 1f;</span>
+<span class="fc" id="L34">    }</span>
+
+    @Override
+    public boolean handleMouseEvent() {
+        // Get mouse event delta values
+<span class="fc" id="L39">        int dz = Mouse.getEventDWheel(),</span>
+<span class="fc" id="L40">            dx = Mouse.getEventDX(),</span>
+<span class="fc" id="L41">            dy = Mouse.getEventDY();</span>
+        
+        // If scrolling happened
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (dz != 0) {</span>
+            // Adjust the zoom by scroll amount
+<span class="nc" id="L46">            zoom *= 1 + (-dz * 0.001f);</span>
+            
+            // Clamp the zoom between min and max values
+<span class="nc" id="L49">            zoom = Utils.clamp(zoom, ZOOM_MIN, ZOOM_MAX);</span>
+            
+<span class="nc" id="L51">            return Input.HANDLED;</span>
+        }
+        
+        // If mouse movement has occured
+<span class="pc bpc" id="L55" title="1 of 6 branches missed.">        if ((dx != 0 || dy != 0) &amp;&amp; mouseDrag) {            </span>
+            // Adjust camera position if dragging
+<span class="nc" id="L57">            position.add(convertWindowD(-dx), 0, convertWindowD(dy));</span>
+            
+<span class="nc" id="L59">            return Input.HANDLED;</span>
+        }
+        
+        // If right mouse button is pressed
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (Input.mouseButton(1, true)) {</span>
+<span class="nc" id="L64">            mouseDrag = true;</span>
+            
+<span class="nc" id="L66">            return Input.HANDLED;</span>
+        }
+        
+        // If right mouse button is released
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if (Input.mouseButton(1, false)) {</span>
+<span class="nc" id="L71">            mouseDrag = false;</span>
+            
+<span class="nc" id="L73">            return Input.HANDLED;</span>
+        }
+        
+<span class="fc" id="L76">        return Input.UNHANDLED;</span>
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+<span class="fc" id="L81">        return Input.UNHANDLED;</span>
+    }
+    
+    public void setCameraMatrix() {
+<span class="fc" id="L85">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+        
+<span class="fc" id="L87">        Matrix matrix = Matrix.projOrthographic(</span>
+                viewMinX(), viewMaxX(), viewMaxZ(), viewMinZ(), -1, 1);
+        
+<span class="fc" id="L90">        GL11.glLoadMatrix(matrix.toBuffer());</span>
+        
+<span class="fc" id="L92">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L93">    }</span>
+    
+    public void setWindowMatrix() {
+<span class="fc" id="L96">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+        
+<span class="fc" id="L98">        Matrix matrix = Matrix.projOrthographic(</span>
+                0, viewRatio(), 1, 0, -1, 1);
+        
+<span class="fc" id="L101">        GL11.glLoadMatrix(matrix.toBuffer());</span>
+                
+<span class="fc" id="L103">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="fc" id="L104">    }</span>
+    
+    public float convertWindowX(float x) {
+<span class="fc" id="L107">        return 2 * zoom * HALF_VIEW *</span>
+                (x / Display.getWidth() - 0.5f)
+                + position.x;
+    }
+    
+    public float convertWindowY(float y) {
+<span class="fc" id="L113">        return 2 * zoom * HALF_VIEW *</span>
+                ((-y + Display.getHeight() * 0.5f) / Display.getWidth())
+                + position.z;
+    }
+    
+    public float convertWindowD(float d) {
+<span class="fc" id="L119">        return 2 * zoom * HALF_VIEW * d / Display.getWidth();</span>
+    }
+    
+    public float convertWorldX(float x) {
+<span class="fc" id="L123">        return (x - position.x) / (2 * zoom * HALF_VIEW) + 0.5f;</span>
+    }
+    
+    public float convertWorldZ(float z) {
+<span class="fc" id="L127">        return (z - position.z) / (2 * zoom * HALF_VIEW / viewRatio()) + 0.5f;</span>
+    }
+    
+    public float viewMinX() {
+<span class="fc" id="L131">        return position.x - HALF_VIEW * zoom;</span>
+    }
+    
+    public float viewMaxX() {
+<span class="fc" id="L135">        return position.x + HALF_VIEW * zoom;</span>
+    }
+    
+    public float viewMinZ() {
+<span class="fc" id="L139">        return position.z - HALF_VIEW * zoom</span>
+                * Display.getHeight() / Display.getWidth();
+    }
+    
+    public float viewMaxZ() {
+<span class="fc" id="L144">        return position.z + HALF_VIEW * zoom</span>
+                * Display.getHeight() / Display.getWidth();
+    }
+    
+    public float viewRatio() {
+<span class="fc" id="L149">        return (float) Display.getWidth() / Display.getHeight();</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L154">        return &quot;camera &quot; + position.x + &quot; &quot; + position.z + &quot; &quot; + zoom;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

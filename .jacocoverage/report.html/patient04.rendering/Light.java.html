@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Light.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.rendering</a> &gt; <span class="el_source">Light.java</span></div><h1>Light.java</h1><pre class="source lang-java linenums">package patient04.rendering;
+
+import java.awt.Color;
+import java.nio.FloatBuffer;
+import patient04.math.Matrix;
+import patient04.math.Vector;
+import patient04.resources.Model;
+import patient04.utilities.Buffers;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Wilco
+ */
+public final class Light {
+    public static final float falloffConstant = 0;
+    public static final float falloffLinear = 0;
+    public static final float falloffQuadratic = 0;
+    
+    private final Vector position;
+    private final Model model;
+    private FloatBuffer color;
+    private float intensity, radius;
+    private float constant, linear, quadratic;
+    
+<span class="fc" id="L26">    public Light() {</span>
+<span class="fc" id="L27">        position = new Vector();</span>
+<span class="fc" id="L28">        model = Model.getResource(&quot;lighting/lightPoint.obj&quot;);</span>
+<span class="fc" id="L29">        model.releaseRawData();</span>
+        
+<span class="fc" id="L31">        setColor(0, 0);</span>
+<span class="fc" id="L32">        setIntensity(10);</span>
+<span class="fc" id="L33">        setEnvironmentLight();</span>
+<span class="fc" id="L34">    }</span>
+    
+    public Light setPosition(float x, float y, float z) {
+<span class="fc" id="L37">        position.set(x, y, z);</span>
+        
+<span class="fc" id="L39">        return this;</span>
+    }
+    
+    public Light setIntensity(float intensity) {
+        // Set intensity
+<span class="fc" id="L44">        this.intensity = intensity * 0.1f;</span>
+        
+        // Set radius 
+<span class="fc" id="L47">       radius = (float) Math.sqrt(15 * intensity);</span>
+       
+<span class="fc" id="L49">       return this;</span>
+    }
+    
+    public Light setColor(float r, float g, float b) {
+        // Set color
+<span class="nc" id="L54">        color = Buffers.createFloatBuffer(r, g, b, 1);</span>
+        
+<span class="nc" id="L56">        return this;</span>
+    }
+    
+    public Light setColor(float hue, float saturation) {
+        // Set color
+<span class="fc" id="L61">        color = Buffers.createFloatBuffer(</span>
+                Color.getHSBColor(hue, saturation, 1).getComponents(null));
+        
+<span class="fc" id="L64">        return this;</span>
+    }
+    
+    public Light setItemLight() {
+        // Set attenuation model
+<span class="fc" id="L69">        constant = 0;</span>
+<span class="fc" id="L70">        linear = 0;</span>
+<span class="fc" id="L71">        quadratic = 1;</span>
+        
+<span class="fc" id="L73">        return this;</span>
+    }
+    
+    public Light setEnvironmentLight() {
+        // Set attenuation model
+<span class="fc" id="L78">        constant = 0.5f;</span>
+<span class="fc" id="L79">        linear = 0f;</span>
+<span class="fc" id="L80">        quadratic = 0.5f;</span>
+        
+<span class="fc" id="L82">        return this;</span>
+    }
+    
+    public Light setWalkLight() {
+        // Set attenuation model
+<span class="fc" id="L87">        constant = 1f;</span>
+<span class="fc" id="L88">        linear = 0f;</span>
+<span class="fc" id="L89">        quadratic = 0.5f;</span>
+        
+<span class="fc" id="L91">        return this;</span>
+    }
+    
+<span class="fc" id="L94">    public Vector getPosition() { return position; }</span>
+<span class="fc" id="L95">    public FloatBuffer getColor() { return color; }</span>
+<span class="fc" id="L96">    public float getIntensity() { return intensity; }</span>
+<span class="fc" id="L97">    public float getRadius() { return radius; }</span>
+<span class="fc" id="L98">    public float getConstant() { return constant; }</span>
+<span class="fc" id="L99">    public float getLinear() { return linear; }</span>
+<span class="fc" id="L100">    public float getQuadratic() { return quadratic; }</span>
+    
+    public void draw(Renderer renderer) {
+        // Set modelview matrix
+<span class="fc" id="L104">        Matrix matrix = new Matrix();</span>
+<span class="fc" id="L105">        matrix.translate(position.x, position.y, position.z);                </span>
+<span class="fc" id="L106">        matrix.scale(radius, radius, radius);</span>
+        
+<span class="fc" id="L108">        renderer.glUpdateModelMatrix(matrix);</span>
+        
+        // Discard if not in frustum (-1 due to radius scaling)
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (renderer.frustum.isOutside((Vector) null, -1)) </span>
+<span class="fc" id="L112">            return;</span>
+        
+<span class="fc" id="L114">        renderer.pointLightFirstPass();</span>
+<span class="fc" id="L115">        model.draw();</span>
+        
+<span class="fc" id="L117">        float d = (renderer.frustum.planes[5].distance(null) - 0.5f)</span>
+                                                                 * radius / 5;
+        
+<span class="fc" id="L120">        renderer.pointLightSecondPass();        </span>
+<span class="fc" id="L121">        renderer.updateLightParams(this, Utils.clamp(d, 0, 1));</span>
+<span class="fc" id="L122">        model.draw();</span>
+<span class="fc" id="L123">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

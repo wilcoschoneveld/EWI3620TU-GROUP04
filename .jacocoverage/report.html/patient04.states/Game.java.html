@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.states</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">package patient04.states;
+
+import org.lwjgl.input.Keyboard;
+import patient04.Main;
+import patient04.resources.Texture;
+import patient04.level.Player;
+import patient04.utilities.Timer;
+import patient04.level.Level;
+import patient04.resources.Model;
+import patient04.math.Matrix;
+import patient04.rendering.Renderer;
+
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+import patient04.level.Pauser;
+import patient04.level.Tutorial;
+import patient04.math.Vector;
+import patient04.resources.Sound;
+import patient04.utilities.Input;
+import patient04.utilities.Logger;
+import patient04.utilities.Utils;
+
+
+<span class="fc" id="L24">public class Game implements State, Input.Listener {</span>
+<span class="fc" id="L25">    public String loadLevel = &quot;&quot;;</span>
+    public boolean enableTutorial;
+    
+    private Renderer renderer;
+    
+    private Input controller;
+    private Pauser pauser;
+    private Tutorial tutorial;
+    
+    private Timer timer;
+    private Level level;
+    private Player player;
+    
+    @Override
+    public void initialize() {
+        
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (enableTutorial)</span>
+<span class="fc" id="L42">            Utils.showStory();</span>
+        else
+<span class="fc" id="L44">            Utils.showLoading();</span>
+        
+        // Create a new Renderer
+<span class="fc" id="L47">        renderer = new Renderer();</span>
+        
+<span class="fc" id="L49">        renderer.projection = Matrix.projPerspective(</span>
+               70, (float) Display.getWidth() / Display.getHeight(), .1f, 50);
+        
+        // Create a new timer
+<span class="fc" id="L53">        timer = new Timer();</span>
+        
+        // Create a new maze and player
+<span class="fc" id="L56">        level = Level.fromFile(&quot;res/levels/&quot; +loadLevel);</span>
+
+        // Add player to level
+<span class="fc" id="L59">        player = level.newPlayer();</span>
+       
+        // Set player at start point
+<span class="fc" id="L62">        player.setPosition(level.startPoint.x, 0, level.startPoint.z);</span>
+<span class="fc" id="L63">        player.setRotation(0, level.startPoint.y - 90, 0);</span>
+        
+        // Pauser
+<span class="fc" id="L66">        pauser = new Pauser();</span>
+<span class="fc" id="L67">        pauser.setPaused(false);</span>
+        
+        // Tutorial
+<span class="fc" id="L70">        tutorial = new Tutorial();</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (enableTutorial)</span>
+<span class="fc" id="L72">            tutorial.stage = 0;</span>
+        
+        // Input controller
+<span class="fc" id="L75">        controller = new Input();</span>
+        
+        // Add listeners in order of priority
+<span class="fc" id="L78">        controller.addListener(pauser);</span>
+<span class="fc" id="L79">        controller.addListener(tutorial);</span>
+<span class="fc" id="L80">        controller.addListener(this);</span>
+<span class="fc" id="L81">        controller.addListener(player);</span>
+        
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (enableTutorial)</span>
+<span class="fc" id="L84">            Utils.showWaitForInput();</span>
+<span class="fc" id="L85">    }</span>
+
+    @Override
+    public void update() {
+        // Obtain frame time
+<span class="fc" id="L90">        float dt = timer.deltaTime() * 0.001f;</span>
+        
+        // Handle keyboard and mouse events
+<span class="fc" id="L93">        controller.processInput();</span>
+        
+        // Update game dynamics if the game is not paused
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if(!pauser.isPaused()) {</span>
+<span class="fc" id="L97">            level.update(dt);</span>
+<span class="fc" id="L98">            tutorial.update(dt);</span>
+            
+            // Also update score timer
+<span class="fc" id="L101">            Main.scoreTime += dt;</span>
+        }
+<span class="fc" id="L103">    }</span>
+    
+    @Override
+    public boolean handleMouseEvent() {
+        // Event unhandled
+<span class="fc" id="L108">        return Input.UNHANDLED;</span>
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {
+        // (Un)pause the game
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
+<span class="fc" id="L115">            pauser.setPaused(true);</span>
+            
+<span class="fc" id="L117">            return Input.HANDLED;</span>
+        }
+        
+        
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if(Input.keyboardKey(Keyboard.KEY_R, true)) {</span>
+<span class="fc" id="L122">            Game game = (Game) Main.requestNewState(Main.States.GAME);</span>
+<span class="fc" id="L123">            game.loadLevel = loadLevel;</span>
+            
+<span class="fc" id="L125">            return Input.HANDLED;</span>
+        }
+        
+//        if(Input.keyboardKey(Keyboard.KEY_L, true)) {
+//            Vector position = player.getPosition().add(0, 2, 0);
+//            
+//            // Create a new light at player position
+//            level.addNewLight().setColor((float) Math.random(), 0.7f)
+//                    .setIntensity(15).setEnvironmentLight()
+//                    .setPosition(position.x, position.y, position.z);
+//            
+//            Logger.debug(&quot;Light placed at: &quot; + position);
+//            
+//            return Input.HANDLED;
+//        }
+        
+//        if(Input.keyboardKey(Keyboard.KEY_F12, true)) {
+//            renderer.makeScreenshots();
+//        }
+        
+        // Unhandled event
+<span class="fc" id="L146">        return Input.UNHANDLED;</span>
+    }
+    
+    @Override
+    public void render() {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if(!pauser.isPaused()) {</span>
+            // Set view matrix
+<span class="fc" id="L153">            renderer.view = player.getFirstPersonView();</span>
+
+            // Change to geometry pass
+<span class="fc" id="L156">            renderer.geometryPass();</span>
+
+            // Draw level geometry
+<span class="fc" id="L159">            level.drawGeometry(renderer);</span>
+
+            // Change to lighting pass
+<span class="fc" id="L162">            renderer.lightingPass();</span>
+
+<span class="fc" id="L164">            level.drawLights(renderer);</span>
+        }
+        
+        // Do a gui pass
+<span class="fc" id="L168">        renderer.guiPass(player);</span>
+        
+        // Debug navigation grid
+//        if(Keyboard.isKeyDown(Keyboard.KEY_P))
+//            level.drawNavPoints(renderer);
+        
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        if(pauser.isPaused()) {</span>
+<span class="fc" id="L175">            pauser.draw();</span>
+        } else {
+<span class="fc" id="L177">            tutorial.draw();</span>
+        }
+        
+//        if (Keyboard.isKeyDown(Keyboard.KEY_B))
+//            renderer.debugPass();
+<span class="fc" id="L182">    }</span>
+    
+    @Override
+    public void destroy() {
+        // Clean up level
+<span class="fc" id="L187">        level.cleanup();</span>
+        
+        // Delete renderer
+<span class="fc" id="L190">        renderer.dispose();</span>
+        
+        // Clean up textures and models
+<span class="fc" id="L193">        Texture.disposeResources();</span>
+<span class="fc" id="L194">        Model.disposeResources();</span>
+<span class="fc" id="L195">        Sound.disposeResources();</span>
+        
+        // Un-grab mouse
+<span class="fc" id="L198">        Mouse.setGrabbed(false);</span>
+<span class="fc" id="L199">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

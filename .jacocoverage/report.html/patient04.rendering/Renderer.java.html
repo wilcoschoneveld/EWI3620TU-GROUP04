@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Renderer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.rendering</a> &gt; <span class="el_source">Renderer.java</span></div><h1>Renderer.java</h1><pre class="source lang-java linenums">package patient04.rendering;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.text.SimpleDateFormat;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBDepthClamp;
+
+import static org.lwjgl.opengl.ARBFramebufferObject.*;
+import static org.lwjgl.opengl.ARBTextureFloat.GL_RGBA16F_ARB;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
+import patient04.level.Player;
+import patient04.math.Matrix;
+import patient04.math.Vector;
+import patient04.resources.Model;
+
+import patient04.resources.Texture;
+import patient04.utilities.Buffers;
+import patient04.utilities.Logger;
+import patient04.utilities.Shaders;
+import patient04.utilities.Timer;
+import patient04.utilities.Utils;
+
+/**
+ * 
+ * @author Wilco
+ */
+public class Renderer {
+    // Geometry textures attachment locations
+    public static final int positionAttachment = GL_COLOR_ATTACHMENT0,
+                            normalAttachment = GL_COLOR_ATTACHMENT1,
+                            diffuseAttachment = GL_COLOR_ATTACHMENT2,
+                            accumAttachment = GL_COLOR_ATTACHMENT3;
+    
+    // Geometry pass draw buffer list
+<span class="fc" id="L41">    public static final IntBuffer gPassDrawBuffers = Buffers.createIntBuffer(</span>
+            positionAttachment, normalAttachment, diffuseAttachment);
+    
+    // Geometry/Lighting buffer textures
+    private final Texture
+            positionTexture, normalTexture, diffuseTexture, accumTexture;
+
+    // Geometry/Lighting shader locations
+    private final int geometryBuffer, depthStencilBuffer, geometryShader, 
+            lightingShader, stencilShader, debugShader, lightP, lightC,
+            lightI, lightR, attC, attL, attQ;
+    
+    // Effect shader locations
+    private final int effectShader, effLevel, effSin, effCos, effColor;
+    
+    // Keep track of active shader program
+<span class="fc" id="L57">    private int currentProgram = 0;</span>
+    
+    // Full screen quad
+    private final Model screenQuad;
+    
+    // Matrices
+    public Matrix projection, view;
+    
+    // Frustum
+    public final Frustum frustum;
+    
+<span class="fc" id="L68">    public Renderer() {</span>
+        // Load full screen quad
+<span class="fc" id="L70">        screenQuad = Model.getResource(&quot;lighting/lightDirectional.obj&quot;);</span>
+        
+        // Enable client states
+<span class="fc" id="L73">        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);</span>
+<span class="fc" id="L74">        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);</span>
+<span class="fc" id="L75">        GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);</span>
+        
+        // Obtain display width and height for FBO
+<span class="fc" id="L78">        int w = Display.getWidth(), h = Display.getHeight();</span>
+        
+        // Create new attachable texture buffers
+<span class="fc" id="L81">        positionTexture = new Texture(w, h, GL_RGBA16F_ARB);</span>
+<span class="fc" id="L82">        normalTexture = new Texture(w, h, GL_RGBA16F_ARB);</span>
+<span class="fc" id="L83">        diffuseTexture = new Texture(w, h, GL11.GL_RGBA8);</span>
+<span class="fc" id="L84">        accumTexture = new Texture(w, h, GL11.GL_RGBA8, GL11.GL_LINEAR);</span>
+        
+        // Create new attachable render buffer
+<span class="fc" id="L87">        depthStencilBuffer = glGenRenderbuffers();</span>
+        
+        // Set storage to depth component
+<span class="fc" id="L90">        glBindRenderbuffer(GL_RENDERBUFFER, depthStencilBuffer);</span>
+<span class="fc" id="L91">        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);</span>
+<span class="fc" id="L92">        glBindRenderbuffer(GL_RENDERBUFFER, 0);</span>
+        
+        // Create a new geometry FBO
+<span class="fc" id="L95">        geometryBuffer = glGenFramebuffers();</span>
+        
+        // Bind the FBO
+<span class="fc" id="L98">        glBindFramebuffer(GL_FRAMEBUFFER, geometryBuffer);</span>
+        
+        // Attach the texture buffers
+<span class="fc" id="L101">        glFramebufferTexture2D(GL_FRAMEBUFFER,</span>
+                positionAttachment, GL11.GL_TEXTURE_2D, positionTexture.id, 0);
+<span class="fc" id="L103">        glFramebufferTexture2D(GL_FRAMEBUFFER,</span>
+                normalAttachment, GL11.GL_TEXTURE_2D, normalTexture.id, 0);
+<span class="fc" id="L105">        glFramebufferTexture2D(GL_FRAMEBUFFER,</span>
+                diffuseAttachment, GL11.GL_TEXTURE_2D, diffuseTexture.id, 0);
+<span class="fc" id="L107">        glFramebufferTexture2D(GL_FRAMEBUFFER,</span>
+                accumAttachment, GL11.GL_TEXTURE_2D, accumTexture.id, 0);
+        
+        // Attach depth buffer
+<span class="fc" id="L111">        glFramebufferRenderbuffer(GL_FRAMEBUFFER,</span>
+             GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthStencilBuffer);
+        
+        // Check framebuffer status
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)</span>
+<span class="nc" id="L116">            Logger.error(&quot;Framebuffer error!&quot;);</span>
+        
+        // Unbind the FBO
+<span class="fc" id="L119">        glBindFramebuffer(GL_FRAMEBUFFER, 0);</span>
+        
+        // Load the geometry shader
+<span class="fc" id="L122">        geometryShader = Shaders.loadShaderPairFromFiles(</span>
+                &quot;res/shaders/geometry.vert&quot;, &quot;res/shaders/geometry.frag&quot;);
+        
+        // Load the lighting shader
+<span class="fc" id="L126">        lightingShader = Shaders.loadShaderPairFromFiles(</span>
+                &quot;res/shaders/lighting.vert&quot;, &quot;res/shaders/lighting.frag&quot;);
+        
+        // Bind the lighting shader
+<span class="fc" id="L130">        useShaderProgram(lightingShader);</span>
+        
+        // Obtain uniform variable locations
+<span class="fc" id="L133">        lightP = GL20.glGetUniformLocation(lightingShader, &quot;lightPosition&quot;);</span>
+<span class="fc" id="L134">        lightC = GL20.glGetUniformLocation(lightingShader, &quot;lightColor&quot;);</span>
+<span class="fc" id="L135">        lightI = GL20.glGetUniformLocation(lightingShader, &quot;lightIntensity&quot;);</span>
+<span class="fc" id="L136">        lightR = GL20.glGetUniformLocation(lightingShader, &quot;lightRadius&quot;);</span>
+        
+<span class="fc" id="L138">        attC = GL20.glGetUniformLocation(lightingShader, &quot;falloffConstant&quot;);</span>
+<span class="fc" id="L139">        attL = GL20.glGetUniformLocation(lightingShader, &quot;falloffLinear&quot;);</span>
+<span class="fc" id="L140">        attQ = GL20.glGetUniformLocation(lightingShader, &quot;falloffQuadratic&quot;);</span>
+        
+        // Set screensize
+<span class="fc" id="L143">        Shaders.glUniform2f(lightingShader, &quot;screenSize&quot;, w, h);</span>
+        
+        // Set samplers to correct texture units
+<span class="fc" id="L146">        Shaders.glUniform1i(lightingShader, &quot;uTexPosition&quot;, 0);</span>
+<span class="fc" id="L147">        Shaders.glUniform1i(lightingShader, &quot;uTexNormal&quot;, 1);</span>
+<span class="fc" id="L148">        Shaders.glUniform1i(lightingShader, &quot;uTexDiffuse&quot;, 2);</span>
+        
+        // Set stencil operations
+<span class="fc" id="L151">        stencilShader = Shaders.loadShaderPairFromFiles(</span>
+                &quot;res/shaders/lighting.vert&quot;, &quot;res/shaders/empty.frag&quot;);
+        
+<span class="fc" id="L154">        useShaderProgram(stencilShader);</span>
+        
+<span class="fc" id="L156">        GL20.glStencilOpSeparate(GL11.GL_FRONT,</span>
+                GL11.GL_KEEP, GL14.GL_INCR_WRAP, GL11.GL_KEEP);
+<span class="fc" id="L158">        GL20.glStencilOpSeparate(GL11.GL_BACK,</span>
+                GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
+        
+        // Load the effects shader
+<span class="fc" id="L162">        effectShader = Shaders.loadShaderPairFromFiles(</span>
+                &quot;res/shaders/pass.vert&quot;, &quot;res/shaders/effect.frag&quot;);
+        
+        // Bind the effects shader
+<span class="fc" id="L166">        useShaderProgram(effectShader);</span>
+        
+        // Obtain uniform variable locations
+<span class="fc" id="L169">        effLevel = GL20.glGetUniformLocation(effectShader, &quot;effectLevel&quot;);</span>
+<span class="fc" id="L170">        effSin = GL20.glGetUniformLocation(effectShader, &quot;effectSin&quot;);</span>
+<span class="fc" id="L171">        effCos = GL20.glGetUniformLocation(effectShader, &quot;effectCos&quot;);</span>
+<span class="fc" id="L172">        effColor = GL20.glGetUniformLocation(effectShader, &quot;effectColor&quot;);</span>
+        
+        // Bind uniform variables
+<span class="fc" id="L175">        Shaders.glUniform1i(effectShader, &quot;uTexAccum&quot;, 0);</span>
+<span class="fc" id="L176">        Shaders.glUniform1i(effectShader, &quot;uTexDiffuse&quot;, 1);</span>
+<span class="fc" id="L177">        Shaders.glUniform2f(effectShader, &quot;screenSize&quot;, w, h);</span>
+        
+        // Load debug shader
+<span class="fc" id="L180">        debugShader = Shaders.loadShaderPairFromFiles(</span>
+                &quot;res/shaders/pass.vert&quot;, &quot;res/shaders/gbuffer.frag&quot;);
+        
+<span class="fc" id="L183">        useShaderProgram(debugShader);</span>
+        
+        // Bind uniform variables 
+<span class="fc" id="L186">        Shaders.glUniform1i(debugShader, &quot;uTexPosition&quot;, 0);</span>
+<span class="fc" id="L187">        Shaders.glUniform1i(debugShader, &quot;uTexNormal&quot;, 1);</span>
+<span class="fc" id="L188">        Shaders.glUniform1i(debugShader, &quot;uTexDiffuse&quot;, 2);</span>
+<span class="fc" id="L189">        Shaders.glUniform1i(debugShader, &quot;uTexAccum&quot;, 3);</span>
+<span class="fc" id="L190">        Shaders.glUniform2f(debugShader, &quot;screenSize&quot;, w, h);</span>
+        
+        // Unbind shader program
+<span class="fc" id="L193">        useShaderProgram(0);</span>
+        
+        // Frustum
+<span class="fc" id="L196">        frustum = new Frustum();</span>
+        
+<span class="fc" id="L198">        Logger.log(&quot;Renderer loaded&quot;);</span>
+<span class="fc" id="L199">    }</span>
+    
+    public final void useShaderProgram(int program) {
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if(currentProgram != program) {</span>
+<span class="fc" id="L203">            GL20.glUseProgram(program);</span>
+<span class="fc" id="L204">            currentProgram = program;</span>
+        }
+<span class="fc" id="L206">    }</span>
+    
+    public void updateLightParams(Light light, float fade) {
+        // Upload light position
+<span class="fc" id="L210">        Vector pos = light.getPosition().copy().premultiply(view);</span>
+        
+        // Update light values
+<span class="fc" id="L213">        GL20.glUniform3f(lightP, pos.x, pos.y, pos.z);</span>
+<span class="fc" id="L214">        GL20.glUniform4(lightC, light.getColor());</span>
+<span class="fc" id="L215">        GL20.glUniform1f(lightI, light.getIntensity() * fade);</span>
+<span class="fc" id="L216">        GL20.glUniform1f(lightR, light.getRadius());</span>
+        
+        // Update light attenuation model
+<span class="fc" id="L219">        GL20.glUniform1f(attC, light.getConstant());</span>
+<span class="fc" id="L220">        GL20.glUniform1f(attL, light.getLinear());</span>
+<span class="fc" id="L221">        GL20.glUniform1f(attQ, light.getQuadratic());</span>
+<span class="fc" id="L222">    }</span>
+    
+    private void updateEffectParams(Player player) {
+        // Determine the effect level
+<span class="fc" id="L226">        float level = Math.max(0, 1 - player.medicineLevel * 1.40f);</span>
+        
+        // Upload the effect level
+<span class="fc" id="L229">        GL20.glUniform1f(effLevel, level);</span>
+        
+        // Determine the period (TODO variable of effect level?)
+<span class="fc" id="L232">        int period = 5000;</span>
+        
+        // Determine the angle
+<span class="fc" id="L235">        double angle = (Timer.getTime() % period) * 2 * Math.PI / period;</span>
+<span class="fc" id="L236">        float sin = (float) Math.sin(angle), cos = (float) Math.cos(angle);</span>
+        
+        // Upload the sine and cosine values to the shader
+<span class="fc" id="L239">        GL20.glUniform1f(effSin, sin);</span>
+<span class="fc" id="L240">        GL20.glUniform1f(effCos, cos);</span>
+        
+        // Upload the effect color to the shader
+<span class="fc" id="L243">        GL20.glUniform4f(effColor, sin, cos, sin * cos, 1);</span>
+<span class="fc" id="L244">    }</span>
+    
+    private void glUpdateProjectionMatrix() {
+<span class="fc" id="L247">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="fc" id="L248">        GL11.glLoadMatrix(projection.toBuffer());</span>
+<span class="fc" id="L249">    }</span>
+    
+    public void glUpdateModelMatrix(Matrix model) {
+<span class="fc" id="L252">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+        
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if(model != null)</span>
+<span class="fc" id="L255">            GL11.glLoadMatrix(view.copy().multiply(model).toBuffer());</span>
+        else
+<span class="nc" id="L257">            GL11.glLoadMatrix(view.toBuffer());</span>
+        
+        // Update frustum
+<span class="fc" id="L260">        frustum.update(projection, view, model);</span>
+<span class="fc" id="L261">    }</span>
+    
+    public final void glLoadDefaults() {
+        // Enable depth testing
+<span class="fc" id="L265">        GL11.glEnable(GL11.GL_DEPTH_TEST);</span>
+<span class="fc" id="L266">        GL11.glDepthMask(true);</span>
+                
+        // Set back-face culling
+<span class="fc" id="L269">        GL11.glEnable(GL11.GL_CULL_FACE);</span>
+<span class="fc" id="L270">        GL11.glCullFace(GL11.GL_BACK);</span>
+        
+        // Disable blending
+<span class="fc" id="L273">        GL11.glDisable(GL11.GL_BLEND);</span>
+        
+        // Disable stencil
+<span class="fc" id="L276">        GL11.glDisable(GL11.GL_STENCIL_TEST);</span>
+        
+        // Disable depth clamp
+<span class="fc" id="L279">        GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);</span>
+<span class="fc" id="L280">    }</span>
+    
+    public void geometryPass() {
+        // Bind the geometry frame buffer object
+<span class="fc" id="L284">        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);</span>
+<span class="fc" id="L285">        GL20.glDrawBuffers(gPassDrawBuffers);</span>
+        
+        // Set OpenGL state
+<span class="fc" id="L288">        glLoadDefaults();</span>
+<span class="fc" id="L289">        glUpdateProjectionMatrix();</span>
+<span class="fc" id="L290">        GL11.glDepthMask(true);</span>
+        
+        // Clear the buffer
+<span class="fc" id="L293">        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);</span>
+        
+        // Bind the geometry shader
+<span class="fc" id="L296">        useShaderProgram(geometryShader);</span>
+        
+<span class="fc" id="L298">    }</span>
+    
+    public void lightingPass() {
+        // Bind the geometry buffer
+<span class="fc" id="L302">        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);</span>
+<span class="fc" id="L303">        GL11.glDrawBuffer(accumAttachment);</span>
+        
+        // Set OpenGL state
+<span class="fc" id="L306">        glLoadDefaults();</span>
+<span class="fc" id="L307">        glUpdateProjectionMatrix();</span>
+<span class="fc" id="L308">        GL11.glEnable(GL11.GL_STENCIL_TEST);</span>
+<span class="fc" id="L309">        GL11.glDisable(GL11.GL_DEPTH_TEST);</span>
+<span class="fc" id="L310">        GL11.glCullFace(GL11.GL_FRONT);</span>
+<span class="fc" id="L311">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="fc" id="L312">        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);</span>
+<span class="fc" id="L313">        GL11.glDepthMask(false);</span>
+<span class="fc" id="L314">        GL11.glEnable(ARBDepthClamp.GL_DEPTH_CLAMP);</span>
+        
+        // Clear the buffer
+<span class="fc" id="L317">        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);</span>
+        
+        // Be nice and clear Texture cache
+<span class="fc" id="L320">        Texture.unbind();</span>
+        
+        // Bind the GBuffer textures to TEXTURE0,1,etc..
+<span class="fc" id="L323">        GL13.glActiveTexture(GL13.GL_TEXTURE2);</span>
+<span class="fc" id="L324">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);</span>
+<span class="fc" id="L325">        GL13.glActiveTexture(GL13.GL_TEXTURE1);</span>
+<span class="fc" id="L326">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);</span>
+<span class="fc" id="L327">        GL13.glActiveTexture(GL13.GL_TEXTURE0);</span>
+<span class="fc" id="L328">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);</span>
+<span class="fc" id="L329">    }</span>
+    
+    public void pointLightFirstPass() {
+<span class="fc" id="L332">        useShaderProgram(stencilShader);</span>
+        
+<span class="fc" id="L334">        GL11.glDrawBuffer(0);</span>
+        
+<span class="fc" id="L336">        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);</span>
+<span class="fc" id="L337">        GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0);</span>
+        
+<span class="fc" id="L339">        GL11.glEnable(GL11.GL_DEPTH_TEST);</span>
+<span class="fc" id="L340">        GL11.glDisable(GL11.GL_CULL_FACE);</span>
+<span class="fc" id="L341">    }</span>
+    
+    public void pointLightSecondPass() {
+<span class="fc" id="L344">        useShaderProgram(lightingShader);</span>
+        
+<span class="fc" id="L346">        GL11.glDrawBuffer(accumAttachment);</span>
+        
+<span class="fc" id="L348">        GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);</span>
+        
+<span class="fc" id="L350">        GL11.glDisable(GL11.GL_DEPTH_TEST);</span>
+<span class="fc" id="L351">        GL11.glEnable(GL11.GL_CULL_FACE);</span>
+<span class="fc" id="L352">    }</span>
+    
+    public void guiPass(Player player) {
+        // Bind the application-provided framebuffer
+<span class="fc" id="L356">        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);</span>
+        
+        // Set OpenGL state
+<span class="fc" id="L359">        glLoadDefaults();</span>
+<span class="fc" id="L360">        GL11.glDisable(GL11.GL_DEPTH_TEST);</span>
+        
+<span class="fc" id="L362">        Texture.unbind();</span>
+        
+        // Bind accumulation and diffuse texture
+<span class="fc" id="L365">        GL13.glActiveTexture(GL13.GL_TEXTURE1);</span>
+<span class="fc" id="L366">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);</span>
+<span class="fc" id="L367">        GL13.glActiveTexture(GL13.GL_TEXTURE0);</span>
+<span class="fc" id="L368">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);</span>
+        
+        // Bind the effect shader
+<span class="fc" id="L371">        useShaderProgram(effectShader);</span>
+        
+        // Setup effects
+<span class="fc" id="L374">        updateEffectParams(player);</span>
+        
+        // Draw a full screen quad
+<span class="fc" id="L377">        screenQuad.draw();</span>
+        
+        // Bind the standard shader
+<span class="fc" id="L380">        useShaderProgram(0);</span>
+<span class="fc" id="L381">    }</span>
+    
+    public void debugPass() {
+        // Bind the window provided buffer object
+<span class="nc" id="L385">        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);</span>
+        
+<span class="nc" id="L387">        glLoadDefaults();</span>
+<span class="nc" id="L388">        GL11.glDisable(GL11.GL_DEPTH_TEST);</span>
+        
+<span class="nc" id="L390">        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);</span>
+        
+<span class="nc" id="L392">        useShaderProgram(debugShader);</span>
+        
+<span class="nc" id="L394">        Texture.unbind();</span>
+        
+        // Bind the GBuffer textures to TEXTURE0,1,etc..
+<span class="nc" id="L397">        GL13.glActiveTexture(GL13.GL_TEXTURE3);</span>
+<span class="nc" id="L398">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);</span>
+<span class="nc" id="L399">        GL13.glActiveTexture(GL13.GL_TEXTURE2);</span>
+<span class="nc" id="L400">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);</span>
+<span class="nc" id="L401">        GL13.glActiveTexture(GL13.GL_TEXTURE1);</span>
+<span class="nc" id="L402">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);</span>
+<span class="nc" id="L403">        GL13.glActiveTexture(GL13.GL_TEXTURE0);</span>
+<span class="nc" id="L404">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);</span>
+        
+<span class="nc" id="L406">        screenQuad.draw();</span>
+<span class="nc" id="L407">    }</span>
+    
+    public void makeScreenshots() {
+<span class="nc" id="L410">        int w = Display.getWidth(), h = Display.getHeight();</span>
+        
+<span class="nc" id="L412">        SimpleDateFormat df = new SimpleDateFormat(&quot;MM.dd.yyyy HH.mm.ss&quot;);</span>
+<span class="nc" id="L413">        String time = df.format(java.util.Calendar.getInstance().getTime());</span>
+        
+<span class="nc" id="L415">        ByteBuffer buf = BufferUtils.createByteBuffer(w * h * 4);</span>
+        
+<span class="nc" id="L417">        GL11.glReadBuffer(GL11.GL_FRONT);</span>
+<span class="nc" id="L418">        GL11.glReadPixels(0, 0, w, h, GL11.GL_RGBA, 5121, buf);</span>
+<span class="nc" id="L419">        Utils.bufferToPNG(time + &quot; full&quot;, w, h, buf); buf.rewind();</span>
+        
+<span class="nc" id="L421">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);</span>
+<span class="nc" id="L422">        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);</span>
+<span class="nc" id="L423">        Utils.bufferToPNG(time + &quot; position&quot;, w, h, buf); buf.rewind();</span>
+        
+<span class="nc" id="L425">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture.id);</span>
+<span class="nc" id="L426">        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);</span>
+<span class="nc" id="L427">        Utils.bufferToPNG(time + &quot; normal&quot;, w, h, buf); buf.rewind();</span>
+        
+<span class="nc" id="L429">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuseTexture.id);</span>
+<span class="nc" id="L430">        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);</span>
+<span class="nc" id="L431">        Utils.bufferToPNG(time + &quot; diffuse&quot;, w, h, buf); buf.rewind();</span>
+        
+<span class="nc" id="L433">        GL11.glBindTexture(GL11.GL_TEXTURE_2D, accumTexture.id);</span>
+<span class="nc" id="L434">        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 5121, buf);</span>
+<span class="nc" id="L435">        Utils.bufferToPNG(time + &quot; accum&quot;, w, h, buf); buf.rewind();</span>
+        
+<span class="nc" id="L437">        Texture.unbind();</span>
+<span class="nc" id="L438">    }</span>
+    
+    public void dispose() {
+        // Delete the framebuffers
+<span class="fc" id="L442">        glDeleteFramebuffers(geometryBuffer);</span>
+<span class="fc" id="L443">        glDeleteRenderbuffers(depthStencilBuffer);</span>
+        
+        // Delete the textures
+<span class="fc" id="L446">        positionTexture.dispose();</span>
+<span class="fc" id="L447">        normalTexture.dispose();</span>
+<span class="fc" id="L448">        diffuseTexture.dispose();</span>
+<span class="fc" id="L449">        accumTexture.dispose();</span>
+        
+        // Delete the shaders
+<span class="fc" id="L452">        GL20.glDeleteProgram(geometryShader);</span>
+<span class="fc" id="L453">        GL20.glDeleteProgram(lightingShader);</span>
+<span class="fc" id="L454">        GL20.glDeleteProgram(debugShader);</span>
+<span class="fc" id="L455">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

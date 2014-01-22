@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Entity.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.physics</a> &gt; <span class="el_source">Entity.java</span></div><h1>Entity.java</h1><pre class="source lang-java linenums">package patient04.physics;
+
+import patient04.math.Vector;
+import patient04.level.Level;
+import java.util.ArrayList;
+import patient04.rendering.Renderer;
+
+/**
+ *
+ * @author Wilco
+ */
+public abstract class Entity {
+    protected final Level level;
+    
+    protected final Vector position;
+    protected final Vector velocity;
+    protected final Vector rotation;
+    protected final Vector acceleration;
+    
+    protected boolean onGround;
+    protected float distanceMoved;
+    
+    protected final AABB aabb;
+    
+<span class="fc" id="L25">    public Entity(Level level, float width, float height) {</span>
+<span class="fc" id="L26">        this.level = level;</span>
+        
+<span class="fc" id="L28">        position = new Vector();</span>
+<span class="fc" id="L29">        velocity = new Vector();</span>
+<span class="fc" id="L30">        rotation = new Vector();</span>
+        
+<span class="fc" id="L32">        acceleration = new Vector();</span>
+        
+        // This creates an AABB and connects it to the entity position, which
+        // means that any change to the position vector will affect the AABB.
+<span class="fc" id="L36">        aabb = new AABB(position,</span>
+                new Vector(-width / 2,      0, -width / 2),
+                new Vector( width / 2, height,  width / 2));
+<span class="fc" id="L39">    }</span>
+    
+    public void update(float dt) {        
+        // Update with gravity
+<span class="fc" id="L43">        acceleration.add(Level.GRAVITY.copy().scale(dt));</span>
+<span class="fc" id="L44">    }</span>
+    
+    public void integrate() {
+        // Add acceleration to velocity
+<span class="fc" id="L48">        velocity.add(acceleration);</span>
+        
+        // Copy velocity into delta vector
+<span class="fc" id="L51">        Vector delta = velocity.copy();</span>
+        
+        // Copy and expand the AABB for broadphase collision
+<span class="fc" id="L54">        AABB broadphase = aabb.copy().expand(delta);</span>
+        
+        // Obtain AABBs eligible for collision detection 
+<span class="fc" id="L57">        ArrayList&lt;AABB&gt; aabbs = level.getCollisionBoxes(broadphase);</span>
+        
+        // Sweep and move along every axis
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for (AABB aabb2 : aabbs)</span>
+<span class="fc" id="L61">            aabb.sweepAlongAxis(aabb2, delta, 1);</span>
+<span class="fc" id="L62">        position.add(0, delta.y, 0);</span>
+        
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        for (AABB aabb2 : aabbs)</span>
+<span class="fc" id="L65">            aabb.sweepAlongAxis(aabb2, delta, 0);</span>
+<span class="fc" id="L66">        position.add(delta.x, 0, 0);</span>
+        
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (AABB aabb2 : aabbs)</span>
+<span class="fc" id="L69">            aabb.sweepAlongAxis(aabb2, delta, 2);</span>
+<span class="fc" id="L70">        position.add(0, 0, delta.z);</span>
+        
+        // Check if you are touching a ground
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        onGround = (delta.y != velocity.y &amp;&amp; velocity.y &lt; 0);</span>
+        
+        // Calculate amount of distance moved
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if(onGround)</span>
+<span class="fc" id="L77">            distanceMoved += delta.length();</span>
+        
+        // Reset velocities to zero in case of collision
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if(velocity.x != delta.x) velocity.x = 0;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if(velocity.y != delta.y) velocity.y = 0;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if(velocity.z != delta.z) velocity.z = 0;</span>
+        
+        // Apply air and ground friction
+<span class="fc" id="L85">        velocity.scale(Level.FRICTION_AIR);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if(onGround)</span>
+<span class="fc" id="L87">            velocity.scale(Level.FRICTION_GROUND);</span>
+        
+        // Reset acceleration
+<span class="fc" id="L90">        acceleration.set(0, 0, 0);</span>
+<span class="fc" id="L91">    }</span>
+    
+    public Vector getPosition() {
+<span class="fc" id="L94">        return position.copy();</span>
+    }
+    
+    public void setPosition(float x, float y, float z) {
+<span class="fc" id="L98">        position.set(x, y, z);</span>
+<span class="fc" id="L99">    }</span>
+    
+    public Vector getRotation() {
+<span class="nc" id="L102">        return rotation.copy();</span>
+    }
+    
+    public void setRotation(float x, float y, float z) { 
+<span class="fc" id="L106">        rotation.set(x, y, z);</span>
+<span class="fc" id="L107">    }</span>
+    
+    public boolean lineOfSight(Entity other) {
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if(other == null) return false;</span>
+        
+        // Vector from entity to other entity
+<span class="fc" id="L113">        Vector delta = other.position.copy().min(position);</span>
+        
+        // Obtain broadphase box
+<span class="fc" id="L116">        AABB broadphase = aabb.copy().expand(delta);</span>
+        
+        // Eye level
+<span class="fc" id="L119">        broadphase.min.add(0, 1.5f, 0);</span>
+        
+        // Get possible line of sight blockers
+<span class="fc" id="L122">        ArrayList&lt;AABB&gt; aabbs = level.getCollisionBoxes(broadphase);</span>
+        
+        // Get plane properties
+<span class="fc" id="L125">        Vector pNormal = delta.cross(new Vector(0, 1, 0)).normalize();</span>
+<span class="fc" id="L126">        float pDistance = -pNormal.dot(position);</span>
+        
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (AABB aabb2 : aabbs) {</span>
+            // Obtain corners
+<span class="fc" id="L130">            Vector p1 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.max.z);</span>
+<span class="fc" id="L131">            Vector p2 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.max.z);</span>
+<span class="fc" id="L132">            Vector p3 = aabb2.pos.copy().add(aabb2.max.x, 0, aabb2.min.z);</span>
+<span class="fc" id="L133">            Vector p4 = aabb2.pos.copy().add(aabb2.min.x, 0, aabb2.min.z);</span>
+            
+            // Calculate sign of first corner
+<span class="fc" id="L136">            float sign = Math.signum(pNormal.dot(p1) + pDistance);</span>
+            
+            // Check sign of other corners
+<span class="pc bpc" id="L139" title="2 of 6 branches missed.">            if(Math.signum(pNormal.dot(p2) + pDistance) != sign ||</span>
+               Math.signum(pNormal.dot(p3) + pDistance) != sign ||
+               Math.signum(pNormal.dot(p4) + pDistance) != sign)
+<span class="fc" id="L142">                return false;</span>
+<span class="fc" id="L143">        }</span>
+        
+<span class="fc" id="L145">        return true;</span>
+    }
+    
+    public void draw(Renderer renderer) {
+        
+<span class="fc" id="L150">    }</span>
+    
+    public void drawLight(Renderer renderer) {
+        
+<span class="fc" id="L154">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

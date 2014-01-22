@@ -45,7 +45,10 @@ public class MainMenu implements State, Input.Listener {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         
+        // Input controller
         controller = new Input();
+        
+        // Add listener
         controller.addListener(this);
         
         float R = Utils.getDisplayRatio();
@@ -72,13 +75,16 @@ public class MainMenu implements State, Input.Listener {
 
     @Override
     public void update() {
+        // Handle keyboard and mouse events
         controller.processInput();
     }
 
     @Override
     public void render() {
+        // Clear the screen
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
+        // Draws all the parallax items in order of appearance
         bg.draw();
         logo.draw();
         trees3.draw();
@@ -97,6 +103,7 @@ public class MainMenu implements State, Input.Listener {
 
     @Override
     public void destroy() {
+        // Deletes the used textures(images) and sound
         Texture.disposeResources();        
         Sound.disposeResources();
     }
@@ -109,7 +116,7 @@ public class MainMenu implements State, Input.Listener {
             if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 // Request transition to first level
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
-                game.loadLevel = "testlevel13688806.lvl";
+                game.loadLevel = "level1.lvl";
                 game.enableTutorial = true;
             } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Main.requestNewState(Main.States.EDITOR);

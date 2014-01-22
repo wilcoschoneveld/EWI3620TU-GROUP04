@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Sound.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.resources</a> &gt; <span class="el_source">Sound.java</span></div><h1>Sound.java</h1><pre class="source lang-java linenums">
+package patient04.resources;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.util.WaveData;
+import org.newdawn.slick.openal.OggData;
+import org.newdawn.slick.openal.OggDecoder;
+import patient04.math.Vector;
+import patient04.utilities.Buffers;
+import patient04.utilities.Logger;
+
+/**
+ *
+ * @author Wilco
+ */
+<span class="nc" id="L21">public class Sound {</span>
+    private static final String defaultSoundLocation = &quot;res/sounds/&quot;;
+<span class="fc" id="L23">    private static final HashMap&lt;String, Integer&gt; buffers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L24">    private static final HashSet&lt;Source&gt; sources = new HashSet&lt;&gt;();</span>
+    
+    public static void setListenerPosition(float x, float y, float z) {
+<span class="fc" id="L27">        AL10.alListener3f(AL10.AL_POSITION, x, y, z);</span>
+<span class="fc" id="L28">    }</span>
+    
+    public static void setListenerVelocity(float x, float y, float z) {
+<span class="fc" id="L31">        AL10.alListener3f(AL10.AL_VELOCITY, x, y, z);</span>
+<span class="fc" id="L32">    }</span>
+    
+    public static void setListenerOrientation(float x, float y, float z) {
+        // Create a new vector pointing in the negative z direction
+<span class="fc" id="L36">        Vector tmp = new Vector(0, 0, -1);</span>
+        
+        // Rotate the vector according to orientation
+<span class="fc" id="L39">        tmp.rotate(y, 0, 1, 0).rotate(x, 1, 0, 0).rotate(z, 0, 0, 1);</span>
+        
+        // Upload the vector to openAL
+<span class="fc" id="L42">        AL10.alListener(AL10.AL_ORIENTATION,</span>
+            Buffers.createFloatBuffer(tmp.x, tmp.y, tmp.z, 0, 1, 0));
+<span class="fc" id="L44">    }    </span>
+  
+    public static Source getResource(String wavFile) {
+        // Return null if no file is given
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (wavFile == null)</span>
+<span class="nc" id="L49">            return null;</span>
+        
+        // Check if file is already loaded
+<span class="fc" id="L52">        Integer buffer = buffers.get(wavFile);</span>
+        
+        // Load file if needed
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (buffer == null) {</span>
+<span class="fc" id="L56">            buffer = createBuffer(wavFile);</span>
+<span class="fc" id="L57">            buffers.put(wavFile, buffer);</span>
+        }
+        
+        // Create a new source from buffer
+<span class="fc" id="L61">        Source source = new Source(buffer);</span>
+
+        // Check if source loaded succesfully
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if (source.source == -1)</span>
+<span class="nc" id="L65">            return null;</span>
+        
+        // Add source to list for easy dispose
+<span class="fc" id="L68">        sources.add(source);</span>
+        
+<span class="fc" id="L70">        return source;</span>
+    }
+    
+    public static void disposeResources() {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for (Source source : sources)</span>
+<span class="fc" id="L75">            AL10.alDeleteSources(source.source);</span>
+        
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (Integer buffer : buffers.values())</span>
+<span class="fc" id="L78">            AL10.alDeleteBuffers(buffer);</span>
+        
+<span class="fc" id="L80">        sources.clear();</span>
+<span class="fc" id="L81">        buffers.clear();</span>
+<span class="fc" id="L82">    }</span>
+
+    private static Integer createBuffer(String wavFile) {
+        // Define file location
+<span class="fc" id="L86">        String file = defaultSoundLocation + wavFile;</span>
+
+        // Create a new buffer
+<span class="fc" id="L89">        int buffer = AL10.alGenBuffers();</span>
+
+        // Try to load the wav file
+<span class="pc" id="L92">        try (InputStream in </span>
+                        = new BufferedInputStream(new FileInputStream(file))) {
+            
+<span class="pc bpc" id="L95" title="4 of 10 branches missed.">            switch(file.substring(file.length() - 4).toLowerCase()) {</span>
+                case &quot;.wav&quot;:
+                    // Load the wav data
+<span class="fc" id="L98">                    WaveData wav = WaveData.create(in);</span>
+
+                    // Upload the data into the buffer
+<span class="fc" id="L101">                    AL10.alBufferData(buffer, wav.format, wav.data, wav.samplerate);</span>
+
+                    // Dispose the wav data
+<span class="fc" id="L104">                    wav.dispose(); break;</span>
+                case &quot;.ogg&quot;:
+                    // Load the ogg data
+<span class="fc" id="L107">                    OggData ogg = new OggDecoder().getData(in);</span>
+                    
+                    // Upload the data into the buffer
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                    AL10.alBufferData(buffer, ogg.channels &gt; 1 ?</span>
+                            AL10.AL_FORMAT_STEREO16 : AL10.AL_FORMAT_MONO16,
+                                                            ogg.data, ogg.rate);
+                    
+                    break;
+            }
+<span class="pc bpc" id="L116" title="6 of 8 branches missed.">        } catch (Exception e) {</span>
+<span class="nc" id="L117">            e.printStackTrace();</span>
+<span class="nc" id="L118">            return null;</span>
+<span class="fc" id="L119">        }</span>
+
+        // Check if the buffer is properly created
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (AL10.alGetError() != AL10.AL_NO_ERROR) {</span>
+<span class="nc" id="L123">            Logger.error(&quot;Could not load &quot; + wavFile);</span>
+<span class="nc" id="L124">            return null;</span>
+        }
+
+<span class="fc" id="L127">        return buffer;</span>
+    }
+    
+<span class="nc" id="L130">    public static final class Source {</span>
+        private int source;
+        
+<span class="fc" id="L133">        private Source(int buffer) {</span>
+            // Create a new source
+<span class="fc" id="L135">            source = AL10.alGenSources();</span>
+            
+            // Setup source settings
+<span class="fc" id="L138">            AL10.alSourcei(source, AL10.AL_BUFFER, buffer);</span>
+            
+            // Set default source values
+<span class="fc" id="L141">            setPitch(1);</span>
+<span class="fc" id="L142">            setGain(1);</span>
+<span class="fc" id="L143">            setLooping(false);</span>
+<span class="fc" id="L144">            setPosition(0, 0, 0);</span>
+<span class="fc" id="L145">            setVelocity(0, 0, 0);</span>
+            
+            // Check if the source is properly created
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if (AL10.alGetError() != AL10.AL_NO_ERROR) {</span>
+<span class="nc" id="L149">                Logger.error(&quot;Could not create source from buffer!&quot;);</span>
+<span class="nc" id="L150">                source = -1;</span>
+            }
+            
+            // End constructor
+<span class="fc" id="L154">        }</span>
+        
+        public Source play() {
+<span class="fc" id="L157">            AL10.alSourcePlay(source);</span>
+<span class="fc" id="L158">            return this;</span>
+        }
+        
+        public Source pause() {
+<span class="nc" id="L162">            AL10.alSourcePause(source);</span>
+<span class="nc" id="L163">            return this;</span>
+        }
+        
+        public Source stop() {
+<span class="nc" id="L167">            AL10.alSourceStop(source);</span>
+<span class="nc" id="L168">            return this;</span>
+        }
+        
+        public Source setPosition(float x, float y, float z) {
+<span class="fc" id="L172">            AL10.alSource3f(source, AL10.AL_POSITION, x, y, z);</span>
+<span class="fc" id="L173">            return this;</span>
+        }
+        
+        public Source setVelocity(float x, float y, float z) {
+<span class="fc" id="L177">            AL10.alSource3f(source, AL10.AL_VELOCITY, x, y, z);</span>
+<span class="fc" id="L178">            return this;</span>
+        }
+        
+        public Source setPitch(float pitch) {
+<span class="fc" id="L182">            AL10.alSourcef(source, AL10.AL_PITCH, pitch);</span>
+<span class="fc" id="L183">            return this;</span>
+        }
+        
+        public Source setGain(float gain) {
+<span class="fc" id="L187">            AL10.alSourcef(source, AL10.AL_GAIN, gain);</span>
+<span class="fc" id="L188">            return this;</span>
+        }
+        
+        public Source setLooping(boolean loop) {
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            AL10.alSourcei(source, AL10.AL_LOOPING, loop ? 1 : 0);</span>
+<span class="fc" id="L193">            return this;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

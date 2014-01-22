@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Prop.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.editor.elements</a> &gt; <span class="el_source">Prop.java</span></div><h1>Prop.java</h1><pre class="source lang-java linenums">package patient04.editor.elements;
+
+import java.awt.Color;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import patient04.editor.Level;
+import static patient04.editor.elements.Element.glAttribute;
+import patient04.math.Vector;
+import patient04.physics.AABB;
+import patient04.resources.Font;
+import patient04.resources.Model;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Prop extends Element {
+    public final String name;
+    private final Vector[] bounds;
+    private final Font fntProp;
+    private final float[] color;
+    
+    public float x, z;
+    public int angle;
+    
+    public Prop(Level level, float x, float z, String modelFile) {
+<span class="fc" id="L28">        super(level);</span>
+        
+<span class="fc" id="L30">        this.x = x;</span>
+<span class="fc" id="L31">        this.z = z;</span>
+        
+<span class="fc" id="L33">        this.name = modelFile;</span>
+        
+<span class="fc" id="L35">        AABB tmp = Model.getResource(modelFile).getBoundingBox(new Vector());</span>
+<span class="fc" id="L36">        this.bounds = new Vector[] {tmp.min, tmp.max};</span>
+        
+<span class="fc" id="L38">        fntProp = Font.getResource(&quot;Verdana&quot;, Font.BOLD, 10);</span>
+        
+<span class="fc" id="L40">        float hue = (name.toLowerCase().charAt(0) - 97) / 25f;</span>
+        
+<span class="fc" id="L42">        color = Color.getHSBColor(hue, 1, 1).getComponents(null);</span>
+        
+<span class="fc" id="L44">        priority = 3;</span>
+<span class="fc" id="L45">    }</span>
+
+    @Override
+    public void draw(int target) {
+        
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (target != -1) {</span>
+<span class="nc" id="L51">            glAttribute(x, z, angle * (float) Math.PI / 2,</span>
+                    level.editor.camera.zoom * 0.5f + bounds[1].x,
+                    level.editor.camera.zoom * 0.1f, Color.WHITE);
+        }
+        
+<span class="fc" id="L56">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="fc" id="L57">        GL11.glColor3f(color[0], color[1], color[2]);</span>
+<span class="fc" id="L58">        GL11.glBegin(GL11.GL_QUADS);</span>
+        
+<span class="pc bpc" id="L60" title="4 of 5 branches missed.">        switch (angle) {</span>
+            case 0:
+<span class="nc" id="L62">                GL11.glVertex2f(x + bounds[0].x, z + bounds[0].z);</span>
+<span class="nc" id="L63">                GL11.glVertex2f(x + bounds[0].x, z + bounds[1].z);</span>
+<span class="nc" id="L64">                GL11.glVertex2f(x + bounds[1].x, z + bounds[1].z);</span>
+<span class="nc" id="L65">                GL11.glVertex2f(x + bounds[1].x, z + bounds[0].z);</span>
+<span class="nc" id="L66">                break;</span>
+            case 1:
+<span class="nc" id="L68">                GL11.glVertex2f(x + bounds[0].z, z - bounds[1].x);</span>
+<span class="nc" id="L69">                GL11.glVertex2f(x + bounds[0].z, z - bounds[0].x);</span>
+<span class="nc" id="L70">                GL11.glVertex2f(x + bounds[1].z, z - bounds[0].x);</span>
+<span class="nc" id="L71">                GL11.glVertex2f(x + bounds[1].z, z - bounds[1].x);</span>
+<span class="nc" id="L72">                break;</span>
+            case 2:
+<span class="nc" id="L74">                GL11.glVertex2f(x - bounds[1].x, z - bounds[1].z);</span>
+<span class="nc" id="L75">                GL11.glVertex2f(x - bounds[1].x, z - bounds[0].z);</span>
+<span class="nc" id="L76">                GL11.glVertex2f(x - bounds[0].x, z - bounds[0].z);</span>
+<span class="nc" id="L77">                GL11.glVertex2f(x - bounds[0].x, z - bounds[1].z);</span>
+<span class="nc" id="L78">                break;</span>
+            case 3:
+<span class="fc" id="L80">                GL11.glVertex2f(x - bounds[1].z, z + bounds[0].x);</span>
+<span class="fc" id="L81">                GL11.glVertex2f(x - bounds[1].z, z + bounds[1].x);</span>
+<span class="fc" id="L82">                GL11.glVertex2f(x - bounds[0].z, z + bounds[1].x);</span>
+<span class="fc" id="L83">                GL11.glVertex2f(x - bounds[0].z, z + bounds[0].x);</span>
+                break;
+        }
+<span class="fc" id="L86">        GL11.glEnd();</span>
+        
+<span class="fc" id="L88">        fntProp.draw(level.editor.camera.convertWorldX(x),</span>
+                     level.editor.camera.convertWorldZ(z), name);
+<span class="fc" id="L90">    }</span>
+
+    @Override
+    public void translate(int target, float dx, float dz) {
+<span class="nc" id="L94">        float mx = level.editor.camera.convertWindowX(Mouse.getEventX());</span>
+<span class="nc" id="L95">        float mz = level.editor.camera.convertWindowY(Mouse.getEventY());</span>
+        
+<span class="nc bnc" id="L97" title="All 3 branches missed.">        switch (target) {</span>
+            case 1:
+<span class="nc" id="L99">                x += dx;</span>
+<span class="nc" id="L100">                z += dz;</span>
+<span class="nc" id="L101">                break;</span>
+            case 2:
+<span class="nc" id="L103">                float alpha = Utils.atan2(z - mz, mx - x);</span>
+<span class="nc" id="L104">                angle = (Math.round(alpha / 90) + 4) % 4;</span>
+                break;
+        }
+<span class="nc" id="L107">    }</span>
+
+    @Override
+    public int select(boolean selected, float x, float z) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (selected) {</span>
+<span class="nc" id="L112">            float len = level.editor.camera.zoom * 0.5f + bounds[1].x;</span>
+<span class="nc" id="L113">            float lx = this.x + (float) Math.cos(angle * Math.PI / 2) * len;</span>
+<span class="nc" id="L114">            float lz = this.z + (float) -Math.sin(angle * Math.PI / 2) * len;</span>
+            
+<span class="nc" id="L116">            float lr = level.editor.camera.zoom * 0.5f;</span>
+        
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if ((x - lx) * (x - lx) + (z - lz) * (z - lz) &lt; lr * lr)</span>
+<span class="nc" id="L119">                return 2;</span>
+        }
+        
+<span class="nc" id="L122">        float xmin = 0, xmax = 0, zmin = 0, zmax = 0;</span>
+        
+<span class="nc bnc" id="L124" title="All 5 branches missed.">        switch (angle) {</span>
+<span class="nc" id="L125">            case 0: xmin =  bounds[0].x; xmax =  bounds[1].x;</span>
+<span class="nc" id="L126">                    zmin =  bounds[0].z; zmax =  bounds[1].z; break;</span>
+<span class="nc" id="L127">            case 1: xmin =  bounds[0].z; xmax =  bounds[1].z;</span>
+<span class="nc" id="L128">                    zmin = -bounds[1].x; zmax = -bounds[0].x; break;</span>
+<span class="nc" id="L129">            case 2: xmin = -bounds[1].x; xmax = -bounds[0].x;</span>
+<span class="nc" id="L130">                    zmin = -bounds[1].z; zmax = -bounds[0].z; break;</span>
+<span class="nc" id="L131">            case 3: xmin = -bounds[1].z; xmax = -bounds[0].z;</span>
+<span class="nc" id="L132">                    zmin =  bounds[0].x; zmax =  bounds[1].x; break;</span>
+        }
+        
+<span class="nc bnc" id="L135" title="All 8 branches missed.">        if (x &gt; this.x + xmin &amp;&amp; x &lt; this.x + xmax</span>
+         &amp;&amp; z &gt; this.z + zmin &amp;&amp; z &lt; this.z + zmax)
+<span class="nc" id="L137">            return 1;</span>
+        
+<span class="nc" id="L139">        return 0;</span>
+    }
+
+    @Override
+    public boolean release() {
+<span class="nc" id="L144">        return true;</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L149">        return &quot;prop &quot; + name + &quot; &quot; + x + &quot; 0 &quot; + z + &quot; &quot; + angle;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

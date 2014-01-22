@@ -107,9 +107,10 @@ public class Game implements State, Input.Listener {
     }
     
     public int isGameOver() {
-        if (player.medicineLevel < -0.05f)
+        // Game over when medicine level is empty
+        if (player.medicineLevel < -0.05f) {
             return 1;
-        
+        } // Game over when player is spotted by the enemy
         if (player.spottimer > 2) {
             return 2;
         }
@@ -131,6 +132,7 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
+        // Should not be used by non-developers! (moet dit er niet uitgecomment worden?)
         if(Input.keyboardKey(Keyboard.KEY_L, true)) {
             Vector position = player.getPosition().add(0, 2, 0);
             
@@ -144,6 +146,7 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
+        // Make a screenshot of the game (all the 4 textures)
         if(Input.keyboardKey(Keyboard.KEY_F12, true)) {
             renderer.makeScreenshots();
         }
@@ -177,12 +180,14 @@ public class Game implements State, Input.Listener {
         if(Keyboard.isKeyDown(Keyboard.KEY_P))
             level.drawNavPoints(renderer);
         
+        // Render pause screen and tutorial
         if(pauser.isPaused()) {
             pauser.draw();
         } else {
             tutorial.draw();
         }
         
+        // Debug
         if (Keyboard.isKeyDown(Keyboard.KEY_B))
             renderer.debugPass();
     }

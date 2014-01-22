@@ -2,8 +2,11 @@ package patient04.states;
 
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import patient04.Main;
+import patient04.editor.Button;
 import patient04.resources.Database;
 import patient04.resources.Font;
 import patient04.resources.Image;
@@ -24,6 +27,8 @@ public class Scores implements State, Input.Listener {
     private Image background;
     private Font fnt20, fnt25, fnt40;
     
+    private Button back;
+    
     private StringBuilder name;
     
     private Database db;
@@ -38,11 +43,16 @@ public class Scores implements State, Input.Listener {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         
+        // Input controller
         controller = new Input();
+        
+        // Add listener
         controller.addListener(this);
         
+        // Add background image
         background = Image.getFromTextureResource("menu/scores2.png");
         
+        // Add different fonts
         fnt20 = Font.getResource("Myriad Pro", 0, 20);
         fnt25 = Font.getResource("Myriad Pro", 0, 25);
         fnt40 = Font.getResource("Myriad Pro", 0, 40);
@@ -50,37 +60,45 @@ public class Scores implements State, Input.Listener {
         name = new StringBuilder();
         Keyboard.enableRepeatEvents(true);
         
+        // Add a new database
         db = new Database();
         
+        // Load the scores
         scores = db.getTopTimes();
     }
 
     @Override
     public void update() {
+        // Handles keyboard and mouse events
         controller.processInput();
     }
 
     @Override
     public void render() {
+        // Clear the screen
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         
         float R = Utils.getDisplayRatio();
         
         background.draw(0, 0, R, 1);
         
+        // Set color of font item
         fnt25.setColor(1, 0, 0, 1);
         fnt25.draw(0.6f, 0.3f, "Best escape times:");
+        // Shows previously obtained scores
         for (int i = 0; i < scores.size(); i++)
             fnt20.draw(0.6f, 0.35f, scores.get(i), i);
         
+        // Set color of font item
         fnt40.setColor(1,0,0,1);
+        // Shows player's new obtained score
         if (Main.scoreTime > 0) {
-            //fnt25.draw(0.5f, 0.6f, "You have succesfully escaped!");
             fnt40.draw(0.6f, 0.7f,
                     String.format("Escape time: %.2f s", Main.scoreTime),
                                         0, Font.Align.LEFT, Font.Align.TOP);
         }
         
+        // Set color of font item
         fnt25.setColor(1, 1, 1, 1);
         if (canSubmit) {
             boolean blink = (name.length()<10 && Timer.getTime() % 1000 < 500);
@@ -93,6 +111,7 @@ public class Scores implements State, Input.Listener {
 
     @Override
     public void destroy() {
+        // Deletes the used textures(images)
         Texture.disposeResources();
         
         Keyboard.enableRepeatEvents(false);
@@ -100,6 +119,7 @@ public class Scores implements State, Input.Listener {
 
     @Override
     public boolean handleMouseEvent() {
+        // Event unhandled
         return Input.UNHANDLED;
     }
 
@@ -115,6 +135,7 @@ public class Scores implements State, Input.Listener {
         
         if (Keyboard.getEventKeyState() && canSubmit) {
             switch (Keyboard.getEventKey()) {
+                // Input letters for name
                 case Keyboard.KEY_A: name.append('A'); break;
                 case Keyboard.KEY_B: name.append('B'); break;
                 case Keyboard.KEY_C: name.append('C'); break;

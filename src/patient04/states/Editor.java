@@ -46,13 +46,18 @@ public class Editor implements State, Input.Listener {
         // Enable face culling
         GL11.glEnable(GL11.GL_CULL_FACE);
         
+        // Add camera and empty level
         camera = new Camera();
         level = new Level(this);
         
+        // Add information and the toolpane
         info = new Info(this);
         tools = new ToolPane(this);
         
+        // Input controller
         controller = new Input();
+        
+          // Add listeners in order of priority
         controller.addListener(this);
         controller.addListener(tools);
         controller.addListener(level);
@@ -61,8 +66,10 @@ public class Editor implements State, Input.Listener {
 
     @Override
     public void update() {
+        // Handle keyboard and mouse events
         controller.processInput();
         
+        // Update the toolpane
         tools.update();
     }
 
@@ -73,16 +80,21 @@ public class Editor implements State, Input.Listener {
         
         camera.setCameraMatrix();
         
+        // Draw the level
         level.draw();
         
         camera.setWindowMatrix();
         
+        // Draw the toolpane
         tools.draw();
+        
+        // Show information
         info.draw();
     }
 
     @Override
     public void destroy() {
+        // Deletes the used models, textures(images) and sound
         Model.disposeResources();
         Texture.disposeResources();
         Sound.disposeResources();
@@ -93,6 +105,7 @@ public class Editor implements State, Input.Listener {
 
     @Override
     public boolean handleMouseEvent() {
+        // Event unhandled
         return Input.UNHANDLED;
     }
 

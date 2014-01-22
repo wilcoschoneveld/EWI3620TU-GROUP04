@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Tutorial.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.level</a> &gt; <span class="el_source">Tutorial.java</span></div><h1>Tutorial.java</h1><pre class="source lang-java linenums">package patient04.level;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import patient04.resources.Font;
+import patient04.utilities.Input;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Tutorial implements Input.Listener {
+    private static final float MAX_ALPHA = 0.5f;
+    
+    private final Font fntHints;
+<span class="fc" id="L15">    private float alpha = -1f;</span>
+<span class="fc" id="L16">    public int stage = -1;</span>
+    
+<span class="fc" id="L18">    public Tutorial() {</span>
+<span class="fc" id="L19">        fntHints = Font.getResource(&quot;Lucida Sans Unicode&quot;, 0, 25);</span>
+<span class="fc" id="L20">    }</span>
+    
+    public void update(float dt) {
+<span class="fc" id="L23">        alpha = Math.min(alpha + 0.2f * dt, MAX_ALPHA);</span>
+<span class="fc" id="L24">    }</span>
+    
+    public void draw() {
+<span class="fc" id="L27">        String hint = null;</span>
+        
+<span class="fc bfc" id="L29" title="All 4 branches covered.">        switch(stage) {</span>
+<span class="fc" id="L30">            case 0: hint = &quot;Use the mouse to look around...&quot;; break;</span>
+<span class="fc" id="L31">            case 1: hint = &quot;Press W,A,S,D to move around...&quot;; break;</span>
+<span class="fc" id="L32">            case 2: hint = &quot;F can be used to grab medicine or open doors...&quot;; break;</span>
+        }
+        
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (hint == null) return;</span>
+        
+<span class="fc" id="L37">        fntHints.setColor(1, 1, 1, alpha);</span>
+<span class="fc" id="L38">        fntHints.drawCentered(0.7f, hint);</span>
+<span class="fc" id="L39">    }</span>
+
+    @Override
+    public boolean handleMouseEvent() {        
+<span class="fc" id="L43">        int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();</span>
+        
+        // Check for mouse look
+<span class="pc bpc" id="L46" title="3 of 6 branches missed.">        if (stage == 0 &amp;&amp; (dx != 0 || dy != 0)) {</span>
+<span class="fc" id="L47">            stage = 1;</span>
+<span class="fc" id="L48">            alpha = -1f;</span>
+            
+<span class="fc" id="L50">            return Input.UNHANDLED;</span>
+        }
+        
+<span class="fc" id="L53">        return Input.UNHANDLED;</span>
+    }
+
+    @Override
+    public boolean handleKeyboardEvent() {                
+        // Check for movement
+<span class="pc bpc" id="L59" title="2 of 10 branches missed.">        if (stage == 1 &amp;&amp; (Input.keyboardKey(Keyboard.KEY_W, true) ||</span>
+                           Input.keyboardKey(Keyboard.KEY_A, true) ||
+                           Input.keyboardKey(Keyboard.KEY_S, true) ||
+                           Input.keyboardKey(Keyboard.KEY_D, true))) {
+<span class="fc" id="L63">            stage = 2;</span>
+<span class="fc" id="L64">            alpha = -1f;</span>
+            
+<span class="fc" id="L66">            return Input.UNHANDLED;</span>
+        }
+        
+        // Check for use key
+<span class="fc bfc" id="L70" title="All 4 branches covered.">        if (stage == 2 &amp;&amp; Input.keyboardKey(Keyboard.KEY_F, true)) {</span>
+<span class="fc" id="L71">            stage = 3;</span>
+<span class="fc" id="L72">            alpha = -1f;</span>
+            
+<span class="fc" id="L74">            return Input.UNHANDLED;</span>
+        }
+        
+<span class="fc" id="L77">        return Input.UNHANDLED;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
