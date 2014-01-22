@@ -26,6 +26,10 @@ public class Font {
     private final TrueTypeFont font;
     private Color color;
     
+    /** Font constructor
+     * 
+     * @param font 
+     */
     public Font(TrueTypeFont font) {
         this.font = font;
         color = Color.white;

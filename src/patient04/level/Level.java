@@ -39,6 +39,9 @@ public class Level {
     public final ArrayList<Waypoint> waypoints;
     public final Vector startPoint = new Vector();
     
+    /** Level Constructor
+     * 
+     */
     public Level() {
         this.solids = new ArrayList<>();
         this.lights = new ArrayList<>();
@@ -47,37 +50,67 @@ public class Level {
         this.usables = new ArrayList<>();
     }
     
+    /** Adds a solid to the level
+     * 
+     * @param solid 
+     */
     public void addSolid(Solid solid) {
         solids.add(solid);
     }
     
+    /** Adds a usable to the level
+     * 
+     * @param usable 
+     */
     public void addUsable(Usable usable) {
         usables.add(usable);
     }
     
+    /** Removes a usable from the level
+     * 
+     * @param usable 
+     */
     public void removeUsable(Usable usable) {
         usables.remove(usable);
     }
     
+    /** Returns the usable's in the level
+     * 
+     * @return ArrayList<Usable> usables 
+     */
     public ArrayList<Usable> getUsables() {
         return usables;
     }
     
+    /** Adds a new light to the level
+     * 
+     * @return Light light
+     */
     public Light addNewLight() {
         Light light = new Light();
         lights.add(light);
         return light;
     }
     
+    /** Adds new entity to the level
+     * 
+     * @param entity 
+     */
     public void addEntity(Entity entity) {
         entities.add(entity);
     }
     
+    /** Adds a new Player to the level
+     * 
+     * @return Player player
+     */
     public Player newPlayer() {
         Player player = new Player(this);
 
+        // Add player to the entity list
         addEntity(player);
 
+        // Sets player as target for enemies
         for (Entity entity : entities)
             if (entity instanceof Enemy)
                 ((Enemy) entity).target = player;
@@ -85,12 +118,22 @@ public class Level {
         return player;
     }
     
+    /** Adds new wayoint to the level
+     * 
+     * @param waypoint
+     * @return 
+     */
     public Waypoint addWaypoint(Waypoint waypoint) {
         waypoints.add(waypoint);
         
         return waypoint;
     }
     
+    /** Returns the collision boxes in a broadphase
+     * 
+     * @param broadphase
+     * @return 
+     */
     public ArrayList<AABB> getCollisionBoxes(AABB broadphase) {
         ArrayList<AABB> aabbs = new ArrayList<>();
         
@@ -105,6 +148,10 @@ public class Level {
         return aabbs;
     }
     
+    /** Draws the geometry of the level
+     * 
+     * @param renderer 
+     */
     public void drawGeometry(Renderer renderer) {
         for (Solid solid : solids)
             solid.draw(renderer);
@@ -116,6 +163,10 @@ public class Level {
             usable.draw(renderer);
     }
     
+    /** Draws the lights of the level
+     * 
+     * @param renderer 
+     */
     public void drawLights(Renderer renderer) {
         for (Light light : lights)
             light.draw(renderer);
@@ -127,6 +178,10 @@ public class Level {
             usable.drawLight(renderer);
     }
     
+    /** Draws the waypoints in the level
+     * 
+     * @param renderer 
+     */
     public void drawNavPoints(Renderer renderer) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -148,6 +203,10 @@ public class Level {
         GL11.glEnd();
     }
     
+    /** Updates the level
+     * 
+     * @param dt delta time in seconds
+     */
     public void update(float dt) {
         for (Entity entity : entities)
             entity.update(dt);
@@ -159,12 +218,20 @@ public class Level {
             entity.integrate();
     }
     
+    /** Cleans the level
+     * 
+     */
     public void cleanup() {
         Texture.disposeResources();
         Model.disposeResources();
         Sound.disposeResources();
     }
     
+    /** Sets the floor and ceiling of the level
+     * 
+     * @param floorFile
+     * @param ceilingFile 
+     */
     public void generateFloorCeiling(String floorFile, String ceilingFile) {
         Float xmin = null, zmin = null,
                 xmax = null, zmax = null;
@@ -212,6 +279,11 @@ public class Level {
         
     }
     
+    /** Loads level from file
+     * 
+     * @param file containing the level
+     * @return 
+     */
     public static Level fromFile(String file) {
         
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

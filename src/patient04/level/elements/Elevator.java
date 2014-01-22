@@ -13,6 +13,10 @@ import patient04.rendering.Renderer;
 public class Elevator extends Prop implements Usable {
     private final Light light1, light2;
     
+    /** Elevator constructor
+     * 
+     * @param angle 
+     */
     public Elevator(int angle) {
         super("elevatordoors.obj", angle);
         
@@ -20,15 +24,27 @@ public class Elevator extends Prop implements Usable {
         light2 = new Light().setItemLight().setColor(0, 1).setIntensity(0.1f);
     }
 
+    /** Use method of the elevator
+     * 
+     * @param player 
+     */
     @Override
     public void use(Player player) {
         player.useExit();
     }
 
+    /** Updates the elevator
+     * 
+     * @param dt delta time in seconds 
+     */
     @Override
     public void update(float dt) {
     }
 
+    /** Draws the light of the elevator button
+     * 
+     * @param renderer 
+     */
     @Override
     public void drawLight(Renderer renderer) {
         Vector pos = new Vector(0.85f, 0, 0.18f)
@@ -42,6 +58,10 @@ public class Elevator extends Prop implements Usable {
         light2.draw(renderer);
     }
 
+    /** Returns the position of the elevator button
+     * 
+     * @return Vector position
+     */
     @Override
     public Vector getLocation() {
         return new Vector(0.85f, 1.17f, 0.18f)
@@ -49,6 +69,10 @@ public class Elevator extends Prop implements Usable {
                         .add(position);
     }
 
+    /** Returns the AABB of the elevator
+     * 
+     * @return AABB elevator 
+     */
     @Override
     public AABB getAABB() {
         return aabb;

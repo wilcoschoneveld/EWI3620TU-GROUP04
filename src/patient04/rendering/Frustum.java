@@ -11,11 +11,20 @@ import patient04.physics.AABB;
 public class Frustum {
     public final Plane[] planes;
     
+    /** Frustum constructor
+     * 
+     */
     public Frustum() {
         // Create a new plane array
         planes = new Plane[6];
     }
     
+    /** Updates the frustum
+     * 
+     * @param projection 
+     * @param view
+     * @param model 
+     */
     public void update(Matrix projection, Matrix view, Matrix model) {
         // Define the combined VP matrix
         Matrix M = projection.copy().multiply(view);

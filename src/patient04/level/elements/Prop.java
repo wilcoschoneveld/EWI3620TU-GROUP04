@@ -8,6 +8,11 @@ import patient04.resources.Model;
  */
 public class Prop extends Solid {
     
+    /** Prop constructor
+     * 
+     * @param modelFile
+     * @param angle 
+     */
     public Prop(String modelFile, int angle) {
         model = Model.getResource(modelFile);
         

@@ -25,12 +25,19 @@ public class Solid {
     public Model model;
     public boolean culling = true;
     
+    /** Solid constructor
+     * 
+     */
     public Solid() {
         position = new Vector();
         rotation = new Vector();
         scale = new Vector(1, 1, 1);
     }
     
+    /** Draw the solid
+     * 
+     * @param renderer 
+     */
     public void draw(Renderer renderer) {
         // If there is no model, return
         if(model == null) return;

@@ -22,6 +22,12 @@ public abstract class Entity {
     
     protected final AABB aabb;
     
+    /** Entity constructor
+     * 
+     * @param level
+     * @param width
+     * @param height 
+     */
     public Entity(Level level, float width, float height) {
         this.level = level;
         
@@ -38,11 +44,18 @@ public abstract class Entity {
                 new Vector( width / 2, height,  width / 2));
     }
     
+    /** Updates the enemy
+     * 
+     * @param dt delta time in seconds 
+     */
     public void update(float dt) {        
         // Update with gravity
         acceleration.add(Level.GRAVITY.copy().scale(dt));
     }
     
+    /** Integrates acceleration into movement
+     * 
+     */
     public void integrate() {
         // Add acceleration to velocity
         velocity.add(acceleration);
@@ -90,22 +103,47 @@ public abstract class Entity {
         acceleration.set(0, 0, 0);
     }
     
+    /** Returns the position
+     * 
+     * @return Vector position 
+     */
     public Vector getPosition() {
         return position.copy();
     }
     
+    /** Sets the position
+     * 
+     * @param x
+     * @param y
+     * @param z 
+     */
     public void setPosition(float x, float y, float z) {
         position.set(x, y, z);
     }
     
+    /** Returns the rotation
+     * 
+     * @return Vector rotation 
+     */
     public Vector getRotation() {
         return rotation.copy();
     }
     
+    /** Sets the rotation
+     * 
+     * @param x
+     * @param y
+     * @param z 
+     */
     public void setRotation(float x, float y, float z) { 
         rotation.set(x, y, z);
     }
     
+    /** Checks if objects intersect with line of sight
+     * 
+     * @param other 
+     * @return 
+     */
     public boolean lineOfSight(Entity other) {
         if(other == null) return false;
         

@@ -15,14 +15,24 @@ public class Tutorial implements Input.Listener {
     private float alpha = -1f;
     public int stage = -1;
     
+    /** Tutorial constructor
+     * 
+     */
     public Tutorial() {
         fntHints = Font.getResource("Lucida Sans Unicode", 0, 25);
     }
     
+    /** Updates the tutorial
+     * 
+     * @param dt delta time in seconds 
+     */
     public void update(float dt) {
         alpha = Math.min(alpha + 0.2f * dt, MAX_ALPHA);
     }
     
+    /** Draws the tutorial
+     * 
+     */
     public void draw() {
         String hint = null;
         
@@ -38,6 +48,10 @@ public class Tutorial implements Input.Listener {
         fntHints.drawCentered(0.7f, hint);
     }
 
+    /** Changes the stage according to the mouse events
+     * 
+     * @return 
+     */
     @Override
     public boolean handleMouseEvent() {        
         int dx = Mouse.getEventDX(), dy = Mouse.getEventDY();
@@ -53,6 +67,10 @@ public class Tutorial implements Input.Listener {
         return Input.UNHANDLED;
     }
 
+    /** Changes the state according to the keyboard events
+     * 
+     * @return 
+     */
     @Override
     public boolean handleKeyboardEvent() {                
         // Check for movement

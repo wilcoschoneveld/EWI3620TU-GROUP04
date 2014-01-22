@@ -109,7 +109,7 @@ public class MainMenu implements State, Input.Listener {
             if (start.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 // Request transition to first level
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
-                game.loadLevel = "testlevel13688806.lvl";
+                game.loadLevel = "level1.lvl";
                 game.enableTutorial = true;
             } else if(editor.isInside(Mouse.getEventX(), Mouse.getEventY())) {
                 Main.requestNewState(Main.States.EDITOR);

@@ -9,6 +9,9 @@ import java.util.ArrayList;
  */
 public class Database {
     
+    /** Database constructor
+     * 
+     */
     public Database() {
         // Create database if it does not exist        
         try {
@@ -31,6 +34,11 @@ public class Database {
         } catch(Exception e) { e.printStackTrace(); }
     }
     
+    /** Adds time to database
+     * 
+     * @param name
+     * @param time 
+     */
     public void addTime(String name, float time) {     
         try {
             // Connect to database
@@ -49,6 +57,10 @@ public class Database {
         } catch(SQLException e) { e.printStackTrace(); }
     }
     
+    /** Get best times from database
+     * 
+     * @return ArrayList times
+     */
     public ArrayList<String> getTopTimes() {
         ArrayList<String> times = new ArrayList<>();
         

@@ -38,6 +38,10 @@ public class Enemy extends Entity {
     
     public Player target;
 
+    /** Enemy constructor.
+     * 
+     * @param level 
+     */
     public Enemy(Level level) {
         super(level, WIDTH, HEIGHT);
         
@@ -52,14 +56,20 @@ public class Enemy extends Entity {
             anim_walking[i].releaseRawData();
         }
         
+        // Create new candle light
         light = new Light().setColor(0.15f, 1f).setWalkLight();
         
         distanceMoved = (float) Math.random();
         lastMoved = distanceMoved;
         
+        // Set walking sound
         stepSource = Sound.getResource("step.wav");
     }
     
+    /** Update the enemy
+     * 
+     * @param dt delta time
+     */
     @Override
     public void update(float dt) {
         super.update(dt);
@@ -70,6 +80,7 @@ public class Enemy extends Entity {
                 selectNextWaypoint();
         
         Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
+        
         // Move towards next waypoint
         if (nextWaypoint != null && target.spotter == null) {
             Vector towaypoint = nextWaypoint.position
@@ -106,6 +117,7 @@ public class Enemy extends Entity {
             lastMoved += 0.5f;
         }
         
+        // Check if player in in sight of enemy
         Vector toPlayer = target.getPosition().copy().min(position);
         float dist = toPlayer.length();
         
@@ -127,6 +139,9 @@ public class Enemy extends Entity {
         
     }
     
+    /** Select nearest waypoint to enemy
+     * 
+     */
     public void selectNearestWaypoint() {
         // Set waypoint selection distance to maximum value
         float currentDist = 10;
@@ -144,6 +159,9 @@ public class Enemy extends Entity {
         prevWaypoint = null;
     }
     
+    /** Select next waypoint using CI
+     * 
+     */
     public void selectNextWaypoint() {        
         // Get the number of neighbors to choose from
         int neighborsNum = nextWaypoint.neighbors.size();
@@ -188,7 +206,11 @@ public class Enemy extends Entity {
         prevWaypoint.addPheromones();
         nextWaypoint = nextWaypoint.neighbors.get(index);
     }
-    
+     
+    /** Draw the enemy
+     * 
+     * @param renderer 
+     */
     @Override
     public void draw(Renderer renderer) {
         // Create a new model matrix
@@ -219,6 +241,10 @@ public class Enemy extends Entity {
         anim_walking[frame].draw();
     }
     
+    /** Draw the light attached to the enemy
+     * 
+     * @param renderer 
+     */
     @Override
     public void drawLight(Renderer renderer) {
         // Find light position

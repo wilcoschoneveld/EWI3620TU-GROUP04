@@ -23,6 +23,9 @@ public final class Light {
     private float intensity, radius;
     private float constant, linear, quadratic;
     
+    /** Light constructor
+     * 
+     */
     public Light() {
         position = new Vector();
         model = Model.getResource("lighting/lightPoint.obj");
@@ -33,12 +36,24 @@ public final class Light {
         setEnvironmentLight();
     }
     
+    /** Sets light position
+     * 
+     * @param x
+     * @param y
+     * @param z
+     * @return 
+     */
     public Light setPosition(float x, float y, float z) {
         position.set(x, y, z);
         
         return this;
     }
     
+    /** Sets light Intensity
+     * 
+     * @param intensity
+     * @return 
+     */
     public Light setIntensity(float intensity) {
         // Set intensity
         this.intensity = intensity * 0.1f;
@@ -49,6 +64,13 @@ public final class Light {
        return this;
     }
     
+    /** Sets light color according to rgb values
+     * 
+     * @param r
+     * @param g
+     * @param b
+     * @return 
+     */
     public Light setColor(float r, float g, float b) {
         // Set color
         color = Buffers.createFloatBuffer(r, g, b, 1);
@@ -56,6 +78,12 @@ public final class Light {
         return this;
     }
     
+    /** Sets light color according to hue and saturation
+     * 
+     * @param hue
+     * @param saturation
+     * @return 
+     */
     public Light setColor(float hue, float saturation) {
         // Set color
         color = Buffers.createFloatBuffer(
@@ -64,6 +92,10 @@ public final class Light {
         return this;
     }
     
+    /** Sets light on item
+     * 
+     * @return 
+     */
     public Light setItemLight() {
         // Set attenuation model
         constant = 0;
@@ -73,6 +105,10 @@ public final class Light {
         return this;
     }
     
+    /** Sets environment light
+     * 
+     * @return 
+     */
     public Light setEnvironmentLight() {
         // Set attenuation model
         constant = 0.5f;
@@ -82,6 +118,10 @@ public final class Light {
         return this;
     }
     
+    /** Sets walk light
+     * 
+     * @return 
+     */
     public Light setWalkLight() {
         // Set attenuation model
         constant = 1f;
@@ -91,6 +131,10 @@ public final class Light {
         return this;
     }
     
+    /** Get methods of light
+     * 
+     * @return 
+     */
     public Vector getPosition() { return position; }
     public FloatBuffer getColor() { return color; }
     public float getIntensity() { return intensity; }
@@ -99,6 +143,10 @@ public final class Light {
     public float getLinear() { return linear; }
     public float getQuadratic() { return quadratic; }
     
+    /** Draws the light
+     * 
+     * @param renderer 
+     */
     public void draw(Renderer renderer) {
         // Set modelview matrix
         Matrix matrix = new Matrix();

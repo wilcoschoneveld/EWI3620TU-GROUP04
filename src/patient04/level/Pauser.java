@@ -22,6 +22,10 @@ public class Pauser implements Input.Listener {
     private final Font fnt;
     private final Image imgPause, imgDown, imgSeen;
     
+    /** Pauser constructor
+     * 
+     * @param game 
+     */
     public Pauser(Game game) {
         this.game = game;
         

@@ -65,6 +65,9 @@ public class Renderer {
     // Frustum
     public final Frustum frustum;
     
+    /** Renderer constrcutor
+     * 
+     */
     public Renderer() {
         // Load full screen quad
         screenQuad = Model.getResource("lighting/lightDirectional.obj");
@@ -198,6 +201,10 @@ public class Renderer {
         Logger.log("Renderer loaded");
     }
     
+    /** Use shader program
+     * 
+     * @param program 
+     */
     public final void useShaderProgram(int program) {
         if(currentProgram != program) {
             GL20.glUseProgram(program);
@@ -205,6 +212,11 @@ public class Renderer {
         }
     }
     
+    /** Update light parameters
+     * 
+     * @param light
+     * @param fade 
+     */
     public void updateLightParams(Light light, float fade) {
         // Upload light position
         Vector pos = light.getPosition().copy().premultiply(view);
@@ -221,6 +233,10 @@ public class Renderer {
         GL20.glUniform1f(attQ, light.getQuadratic());
     }
     
+    /** Update effect parameters
+     * 
+     * @param player 
+     */
     private void updateEffectParams(Player player) {
         // Determine the effect level
         float level = Math.max(0, 1 - player.medicineLevel * 1.40f);
@@ -243,11 +259,18 @@ public class Renderer {
         GL20.glUniform4f(effColor, sin, cos, sin * cos, 1);
     }
     
+    /** Update projection matrix
+     * 
+     */
     private void glUpdateProjectionMatrix() {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadMatrix(projection.toBuffer());
     }
     
+    /** Update model matrix
+     * 
+     * @param model 
+     */
     public void glUpdateModelMatrix(Matrix model) {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
@@ -260,6 +283,9 @@ public class Renderer {
         frustum.update(projection, view, model);
     }
     
+    /** load defaults
+     * 
+     */
     public final void glLoadDefaults() {
         // Enable depth testing
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -279,6 +305,9 @@ public class Renderer {
         GL11.glDisable(ARBDepthClamp.GL_DEPTH_CLAMP);
     }
     
+    /** Handles the geometry pass
+     * 
+     */
     public void geometryPass() {
         // Bind the geometry frame buffer object
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
@@ -297,6 +326,9 @@ public class Renderer {
         
     }
     
+    /** Handles the lighting pass
+     * 
+     */
     public void lightingPass() {
         // Bind the geometry buffer
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, geometryBuffer);
@@ -328,6 +360,9 @@ public class Renderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, positionTexture.id);
     }
     
+    /** First shader pass of point light
+     * 
+     */
     public void pointLightFirstPass() {
         useShaderProgram(stencilShader);
         
@@ -340,6 +375,9 @@ public class Renderer {
         GL11.glDisable(GL11.GL_CULL_FACE);
     }
     
+    /** Second shader pass of point light
+     * 
+     */
     public void pointLightSecondPass() {
         useShaderProgram(lightingShader);
         
@@ -351,6 +389,10 @@ public class Renderer {
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
     
+    /** GUI shader pass
+     * 
+     * @param player 
+     */
     public void guiPass(Player player) {
         // Bind the application-provided framebuffer
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -380,6 +422,9 @@ public class Renderer {
         useShaderProgram(0);
     }
     
+    /** debug shader pass
+     * 
+     */
     public void debugPass() {
         // Bind the window provided buffer object
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -406,6 +451,9 @@ public class Renderer {
         screenQuad.draw();
     }
     
+    /** Make screenshots
+     * 
+     */
     public void makeScreenshots() {
         int w = Display.getWidth(), h = Display.getHeight();
         
@@ -437,6 +485,9 @@ public class Renderer {
         Texture.unbind();
     }
     
+    /** Dispose the buffers, textures and shaders
+     * 
+     */
     public void dispose() {
         // Delete the framebuffers
         glDeleteFramebuffers(geometryBuffer);

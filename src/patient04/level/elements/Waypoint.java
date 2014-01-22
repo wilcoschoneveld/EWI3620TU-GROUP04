@@ -12,6 +12,10 @@ public class Waypoint {
     public final ArrayList<Waypoint> neighbors;
     private int pheromones = 1;
     
+    /** Waypoint constructor
+     * 
+     * @param position 
+     */
     public Waypoint(Vector position) {
         this.position = position;
         
@@ -39,14 +43,26 @@ public class Waypoint {
         two.neighbors.remove(one);
     }
     
+    /** Adds a pheromone to the waypoint
+     * 
+     */
     public void addPheromones() {
         pheromones++;
     }
     
+    /** Returns the number of pheromones on the waypoint
+     * 
+     * @return int pheromones 
+     */
     public int getPheromones() {
         return pheromones;
     }
     
+    /** Checks if waypoints are equal
+     * 
+     * @param obj
+     * @return 
+     */
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof Waypoint))
@@ -57,6 +73,10 @@ public class Waypoint {
         return position.equals(other.position);
     }
 
+    /** Returns the hashCode of the position
+     * 
+     * @return int hashCode 
+     */
     @Override
     public int hashCode() {
         return position.hashCode();

@@ -16,6 +16,10 @@ import patient04.resources.Model;
  */
 public class Infusion extends Pickup {
     
+    /** Infusion constructor
+     * 
+     * @param level 
+     */
     public Infusion(Level level) {
         super(level);
         
@@ -24,6 +28,10 @@ public class Infusion extends Pickup {
         light.setColor(0.3f, 1);
     }
     
+    /** Use method of the infusion
+     * 
+     * @param player 
+     */
     @Override
     public void use(Player player) {
         player.injecting = true;

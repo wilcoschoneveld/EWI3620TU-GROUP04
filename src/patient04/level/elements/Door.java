@@ -16,6 +16,10 @@ public class Door extends Prop implements Usable {
     private final Model[] anim_open;
     private float timer = 0;
 
+    /** Door constructor
+     * 
+     * @param angle 
+     */
     public Door(int angle) {
         super("door/metaldoor_000000.obj", angle);
         
@@ -30,6 +34,10 @@ public class Door extends Prop implements Usable {
         }
     }
 
+    /** Use method of the door
+     * 
+     * @param player 
+     */
     @Override
     public void use(Player player) {
         // Don't do anything if already open
@@ -49,21 +57,37 @@ public class Door extends Prop implements Usable {
         }
     }
     
+    /** Update the door
+     * 
+     * @param dt delta time in seconds
+     */
     @Override
     public void update(float dt) {
         if (timer > 0)
             model = anim_open[(int) Math.min(timer += 20*dt, 5)];
     }
     
+    /** Draws the door
+     * 
+     * @param renderer 
+     */
     @Override
     public void draw(Renderer renderer) {
         super.draw(renderer);
     }
 
+    /** 
+     * 
+     * @param renderer 
+     */
     @Override
     public void drawLight(Renderer renderer) {
     }
 
+    /** Returns the position of the handle on the door
+     * 
+     * @return Vector position 
+     */
     @Override
     public Vector getLocation() {
         Vector handle = new Vector(0.5f, 1.22f, 0).rotate(rotation.y, 0, 1, 0);
@@ -71,6 +95,10 @@ public class Door extends Prop implements Usable {
         return position.copy().add(handle);
     }
     
+    /** Returns AABB of the door
+     * 
+     * @return AABB door
+     */
     @Override
     public AABB getAABB() {
         return aabb;
