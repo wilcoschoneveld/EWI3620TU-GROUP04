@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Matrix.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.math</a> &gt; <span class="el_source">Matrix.java</span></div><h1>Matrix.java</h1><pre class="source lang-java linenums">package patient04.math;
+
+import java.nio.ByteOrder;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.util.Arrays;
+
+/**
+ *
+ * @author Wilco Schoneveld
+ */
+public class Matrix {
+    // Locations in matrix: 'mRC' where R = row and C = column
+    public static final int m00 = 0, m01 = 4, m02 =  8, m03 = 12;
+    public static final int m10 = 1, m11 = 5, m12 =  9, m13 = 13;
+    public static final int m20 = 2, m21 = 6, m22 = 10, m23 = 14;
+    public static final int m30 = 3, m31 = 7, m32 = 11, m33 = 15;
+    
+    // Matrix values
+<span class="fc" id="L20">    public final float[] val = new float[16];</span>
+    
+    /** Creates a new identity Matrix. */
+<span class="fc" id="L23">    public Matrix() {</span>
+<span class="fc" id="L24">        val[m00] = 1;</span>
+<span class="fc" id="L25">        val[m11] = 1;</span>
+<span class="fc" id="L26">        val[m22] = 1;</span>
+<span class="fc" id="L27">        val[m33] = 1;</span>
+<span class="fc" id="L28">    }</span>
+    
+    /** Creates a new Matrix from given float array.
+     * 
+     * @param values an array of float values representing a 4x4 matrix in
+     * column major order.
+     */
+<span class="fc" id="L35">    public Matrix(float[] values) {</span>
+<span class="fc" id="L36">        System.arraycopy(values, 0, val, 0, 16);</span>
+<span class="fc" id="L37">    }</span>
+    
+    /** Creates a new Matrix from a given matrix. This will copy all values of
+     * the given matrix into the new matrix.
+     * 
+     * @param other 
+     */
+    public Matrix(Matrix other) {
+<span class="nc" id="L45">        this(other.val);</span>
+<span class="nc" id="L46">    }</span>
+    
+    /** Creates a copy of this Matrix.
+     * 
+     * @return 
+     */
+    public Matrix copy() {
+<span class="nc" id="L53">        return new Matrix(this);</span>
+    }
+    
+    /** Sets the values equal to those of an identity matrix.
+     * 
+     * @return 
+     */
+    public Matrix identity() {
+<span class="nc" id="L61">        val[m00] = 1; val[m01] = 0; val[m02] = 0; val[m03] = 0;</span>
+<span class="nc" id="L62">        val[m10] = 0; val[m11] = 1; val[m12] = 0; val[m13] = 0;</span>
+<span class="nc" id="L63">        val[m20] = 0; val[m21] = 0; val[m22] = 1; val[m23] = 0;</span>
+<span class="nc" id="L64">        val[m30] = 0; val[m31] = 0; val[m32] = 0; val[m33] = 1;</span>
+<span class="nc" id="L65">        return this;</span>
+    }
+    
+    /** Post-multiplies the Matrix with a given Matrix.
+     * 
+     * @param mat Matrix to multiply with.
+     * @return 
+     */
+    public Matrix multiply(Matrix mat) {
+<span class="nc" id="L74">        float[] tmp = val.clone();</span>
+        
+<span class="nc" id="L76">        val[m00] = mat.val[m00]*tmp[m00] + mat.val[m10]*tmp[m01]</span>
+                 + mat.val[m20]*tmp[m02] + mat.val[m30]*tmp[m03];
+<span class="nc" id="L78">        val[m01] = mat.val[m01]*tmp[m00] + mat.val[m11]*tmp[m01]</span>
+                 + mat.val[m21]*tmp[m02] + mat.val[m31]*tmp[m03];
+<span class="nc" id="L80">        val[m02] = mat.val[m02]*tmp[m00] + mat.val[m12]*tmp[m01]</span>
+                 + mat.val[m22]*tmp[m02] + mat.val[m32]*tmp[m03];
+<span class="nc" id="L82">        val[m03] = mat.val[m03]*tmp[m00] + mat.val[m13]*tmp[m01]</span>
+                 + mat.val[m23]*tmp[m02] + mat.val[m33]*tmp[m03];
+<span class="nc" id="L84">        val[m10] = mat.val[m00]*tmp[m10] + mat.val[m10]*tmp[m11]</span>
+                 + mat.val[m20]*tmp[m12] + mat.val[m30]*tmp[m13];
+<span class="nc" id="L86">        val[m11] = mat.val[m01]*tmp[m10] + mat.val[m11]*tmp[m11]</span>
+                 + mat.val[m21]*tmp[m12] + mat.val[m31]*tmp[m13];
+<span class="nc" id="L88">        val[m12] = mat.val[m02]*tmp[m10] + mat.val[m12]*tmp[m11]</span>
+                 + mat.val[m22]*tmp[m12] + mat.val[m32]*tmp[m13];
+<span class="nc" id="L90">        val[m13] = mat.val[m03]*tmp[m10] + mat.val[m13]*tmp[m11]</span>
+                 + mat.val[m23]*tmp[m12] + mat.val[m33]*tmp[m13];
+<span class="nc" id="L92">        val[m20] = mat.val[m00]*tmp[m20] + mat.val[m10]*tmp[m21]</span>
+                 + mat.val[m20]*tmp[m22] + mat.val[m30]*tmp[m23];
+<span class="nc" id="L94">        val[m21] = mat.val[m01]*tmp[m20] + mat.val[m11]*tmp[m21]</span>
+                 + mat.val[m21]*tmp[m22] + mat.val[m31]*tmp[m23];
+<span class="nc" id="L96">        val[m22] = mat.val[m02]*tmp[m20] + mat.val[m12]*tmp[m21]</span>
+                 + mat.val[m22]*tmp[m22] + mat.val[m32]*tmp[m23];
+<span class="nc" id="L98">        val[m23] = mat.val[m03]*tmp[m20] + mat.val[m13]*tmp[m21]</span>
+                 + mat.val[m23]*tmp[m22] + mat.val[m33]*tmp[m23];
+<span class="nc" id="L100">        val[m30] = mat.val[m00]*tmp[m30] + mat.val[m10]*tmp[m31]</span>
+                 + mat.val[m20]*tmp[m32] + mat.val[m30]*tmp[m33];
+<span class="nc" id="L102">        val[m31] = mat.val[m01]*tmp[m30] + mat.val[m11]*tmp[m31]</span>
+                 + mat.val[m21]*tmp[m32] + mat.val[m31]*tmp[m33];
+<span class="nc" id="L104">        val[m32] = mat.val[m02]*tmp[m30] + mat.val[m12]*tmp[m31]</span>
+                 + mat.val[m22]*tmp[m32] + mat.val[m32]*tmp[m33];
+<span class="nc" id="L106">        val[m33] = mat.val[m03]*tmp[m30] + mat.val[m13]*tmp[m31]</span>
+                 + mat.val[m23]*tmp[m32] + mat.val[m33]*tmp[m33];
+        
+<span class="nc" id="L109">        return this;</span>
+    }
+    
+    /** Post-multiplies the Matrix with a given Vector.
+     * 
+     * @param vec Vector to multiply with.
+     * @return result as a new Vector.
+     */
+    public Vector multiply(Vector vec) {
+<span class="nc" id="L118">        float[] tmp = new float[4];</span>
+        
+<span class="nc" id="L120">        tmp[0] = vec.x*val[m00] + vec.y*val[m01] + vec.z*val[m02] + val[m03];</span>
+<span class="nc" id="L121">        tmp[1] = vec.x*val[m10] + vec.y*val[m11] + vec.z*val[m12] + val[m13];</span>
+<span class="nc" id="L122">        tmp[2] = vec.x*val[m20] + vec.y*val[m21] + vec.z*val[m22] + val[m23];</span>
+<span class="nc" id="L123">        tmp[3] = vec.x*val[m30] + vec.y*val[m31] + vec.z*val[m32] + val[m33];</span>
+                
+<span class="nc" id="L125">        return new Vector(tmp[0]/tmp[3], tmp[1]/tmp[3], tmp[2]/tmp[3]);</span>
+    }
+    
+    /** Calculates the determinant of the Matrix.
+     * 
+     * @return determinant value.
+     */
+    public float determinant() {
+<span class="nc" id="L133">        return val[m30] * val[m21] * val[m12] * val[m03] - val[m20] * val[m31]</span>
+             * val[m12] * val[m03] - val[m30] * val[m11] * val[m22] * val[m03]
+             + val[m10] * val[m31] * val[m22] * val[m03] + val[m20] * val[m11]
+             * val[m32] * val[m03] - val[m10] * val[m21] * val[m32] * val[m03]
+             - val[m30] * val[m21] * val[m02] * val[m13] + val[m20] * val[m31]
+             * val[m02] * val[m13] + val[m30] * val[m01] * val[m22] * val[m13]
+             - val[m00] * val[m31] * val[m22] * val[m13] - val[m20] * val[m01]
+             * val[m32] * val[m13] + val[m00] * val[m21] * val[m32] * val[m13]
+             + val[m30] * val[m11] * val[m02] * val[m23] - val[m10] * val[m31]
+             * val[m02] * val[m23] - val[m30] * val[m01] * val[m12] * val[m23]
+             + val[m00] * val[m31] * val[m12] * val[m23] + val[m10] * val[m01]
+             * val[m32] * val[m23] - val[m00] * val[m11] * val[m32] * val[m23]
+             - val[m20] * val[m11] * val[m02] * val[m33] + val[m10] * val[m21]
+             * val[m02] * val[m33] + val[m20] * val[m01] * val[m12] * val[m33]
+             - val[m00] * val[m21] * val[m12] * val[m33] - val[m10] * val[m01]
+             * val[m22] * val[m33] + val[m00] * val[m11] * val[m22] * val[m33];
+    }
+    
+    /** Calculates the inverse of the Matrix.
+     * 
+     * @return 
+     */
+    public Matrix invert() {        
+        // Calculate the determinant
+<span class="nc" id="L157">        float determinant = determinant();</span>
+        
+        // If the determinant is zero, return null
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if(determinant == 0)</span>
+<span class="nc" id="L161">            return null;</span>
+        
+        // Copy the current matrix in a tmp matrix
+<span class="nc" id="L164">        float[] tmp = val.clone();</span>
+        
+        // Calculate the inverse values
+<span class="nc" id="L167">        val[m00] = tmp[m12] * tmp[m23] * tmp[m31] - tmp[m13] * tmp[m22] * tmp[m31]</span>
+                 + tmp[m13] * tmp[m21] * tmp[m32] - tmp[m11] * tmp[m23] * tmp[m32]
+                 - tmp[m12] * tmp[m21] * tmp[m33] + tmp[m11] * tmp[m22] * tmp[m33];
+<span class="nc" id="L170">        val[m01] = tmp[m03] * tmp[m22] * tmp[m31] - tmp[m02] * tmp[m23] * tmp[m31]</span>
+                 - tmp[m03] * tmp[m21] * tmp[m32] + tmp[m01] * tmp[m23] * tmp[m32]
+                 + tmp[m02] * tmp[m21] * tmp[m33] - tmp[m01] * tmp[m22] * tmp[m33];
+<span class="nc" id="L173">        val[m02] = tmp[m02] * tmp[m13] * tmp[m31] - tmp[m03] * tmp[m12] * tmp[m31]</span>
+                 + tmp[m03] * tmp[m11] * tmp[m32] - tmp[m01] * tmp[m13] * tmp[m32]
+                 - tmp[m02] * tmp[m11] * tmp[m33] + tmp[m01] * tmp[m12] * tmp[m33];
+<span class="nc" id="L176">        val[m03] = tmp[m03] * tmp[m12] * tmp[m21] - tmp[m02] * tmp[m13] * tmp[m21]</span>
+                 - tmp[m03] * tmp[m11] * tmp[m22] + tmp[m01] * tmp[m13] * tmp[m22]
+                 + tmp[m02] * tmp[m11] * tmp[m23] - tmp[m01] * tmp[m12] * tmp[m23];
+<span class="nc" id="L179">        val[m10] = tmp[m13] * tmp[m22] * tmp[m30] - tmp[m12] * tmp[m23] * tmp[m30]</span>
+                 - tmp[m13] * tmp[m20] * tmp[m32] + tmp[m10] * tmp[m23] * tmp[m32]
+                 + tmp[m12] * tmp[m20] * tmp[m33] - tmp[m10] * tmp[m22] * tmp[m33];
+<span class="nc" id="L182">        val[m11] = tmp[m02] * tmp[m23] * tmp[m30] - tmp[m03] * tmp[m22] * tmp[m30]</span>
+                 + tmp[m03] * tmp[m20] * tmp[m32] - tmp[m00] * tmp[m23] * tmp[m32]
+                 - tmp[m02] * tmp[m20] * tmp[m33] + tmp[m00] * tmp[m22] * tmp[m33];
+<span class="nc" id="L185">        val[m12] = tmp[m03] * tmp[m12] * tmp[m30] - tmp[m02] * tmp[m13] * tmp[m30]</span>
+                 - tmp[m03] * tmp[m10] * tmp[m32] + tmp[m00] * tmp[m13] * tmp[m32]
+                 + tmp[m02] * tmp[m10] * tmp[m33] - tmp[m00] * tmp[m12] * tmp[m33];
+<span class="nc" id="L188">        val[m13] = tmp[m02] * tmp[m13] * tmp[m20] - tmp[m03] * tmp[m12] * tmp[m20]</span>
+                 + tmp[m03] * tmp[m10] * tmp[m22] - tmp[m00] * tmp[m13] * tmp[m22]
+                 - tmp[m02] * tmp[m10] * tmp[m23] + tmp[m00] * tmp[m12] * tmp[m23];
+<span class="nc" id="L191">        val[m20] = tmp[m11] * tmp[m23] * tmp[m30] - tmp[m13] * tmp[m21] * tmp[m30]</span>
+                 + tmp[m13] * tmp[m20] * tmp[m31] - tmp[m10] * tmp[m23] * tmp[m31]
+                 - tmp[m11] * tmp[m20] * tmp[m33] + tmp[m10] * tmp[m21] * tmp[m33];
+<span class="nc" id="L194">        val[m21] = tmp[m03] * tmp[m21] * tmp[m30] - tmp[m01] * tmp[m23] * tmp[m30]</span>
+                 - tmp[m03] * tmp[m20] * tmp[m31] + tmp[m00] * tmp[m23] * tmp[m31]
+                 + tmp[m01] * tmp[m20] * tmp[m33] - tmp[m00] * tmp[m21] * tmp[m33];
+<span class="nc" id="L197">        val[m22] = tmp[m01] * tmp[m13] * tmp[m30] - tmp[m03] * tmp[m11] * tmp[m30]</span>
+                 + tmp[m03] * tmp[m10] * tmp[m31] - tmp[m00] * tmp[m13] * tmp[m31]
+                 - tmp[m01] * tmp[m10] * tmp[m33] + tmp[m00] * tmp[m11] * tmp[m33];
+<span class="nc" id="L200">        val[m23] = tmp[m03] * tmp[m11] * tmp[m20] - tmp[m01] * tmp[m13] * tmp[m20]</span>
+                 - tmp[m03] * tmp[m10] * tmp[m21] + tmp[m00] * tmp[m13] * tmp[m21]
+                 + tmp[m01] * tmp[m10] * tmp[m23] - tmp[m00] * tmp[m11] * tmp[m23];
+<span class="nc" id="L203">        val[m30] = tmp[m12] * tmp[m21] * tmp[m30] - tmp[m11] * tmp[m22] * tmp[m30]</span>
+                 - tmp[m12] * tmp[m20] * tmp[m31] + tmp[m10] * tmp[m22] * tmp[m31]
+                 + tmp[m11] * tmp[m20] * tmp[m32] - tmp[m10] * tmp[m21] * tmp[m32];
+<span class="nc" id="L206">        val[m31] = tmp[m01] * tmp[m22] * tmp[m30] - tmp[m02] * tmp[m21] * tmp[m30]</span>
+                 + tmp[m02] * tmp[m20] * tmp[m31] - tmp[m00] * tmp[m22] * tmp[m31]
+                 - tmp[m01] * tmp[m20] * tmp[m32] + tmp[m00] * tmp[m21] * tmp[m32];
+<span class="nc" id="L209">        val[m32] = tmp[m02] * tmp[m11] * tmp[m30] - tmp[m01] * tmp[m12] * tmp[m30]</span>
+                 - tmp[m02] * tmp[m10] * tmp[m31] + tmp[m00] * tmp[m12] * tmp[m31]
+                 + tmp[m01] * tmp[m10] * tmp[m32] - tmp[m00] * tmp[m11] * tmp[m32];
+<span class="nc" id="L212">        val[m33] = tmp[m01] * tmp[m12] * tmp[m20] - tmp[m02] * tmp[m11] * tmp[m20]</span>
+                 + tmp[m02] * tmp[m10] * tmp[m21] - tmp[m00] * tmp[m12] * tmp[m21]
+                 - tmp[m01] * tmp[m10] * tmp[m22] + tmp[m00] * tmp[m11] * tmp[m22];
+        
+        // Divide all values by the determinant
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        for (int i = 0; i &lt; 16; i++)</span>
+<span class="nc" id="L218">            val[i] /= determinant;</span>
+        
+<span class="nc" id="L220">        return this;</span>
+    }
+    
+    /** Transposes the Matrix.
+     * 
+     * @return 
+     */
+    public Matrix transpose() {
+<span class="nc" id="L228">        float[] tmp = val.clone();</span>
+        
+<span class="nc" id="L230">        val[m01] = tmp[m10];</span>
+<span class="nc" id="L231">        val[m02] = tmp[m20];</span>
+<span class="nc" id="L232">        val[m03] = tmp[m30];</span>
+<span class="nc" id="L233">        val[m10] = tmp[m01];</span>
+<span class="nc" id="L234">        val[m12] = tmp[m21];</span>
+<span class="nc" id="L235">        val[m13] = tmp[m31];</span>
+<span class="nc" id="L236">        val[m20] = tmp[m02];</span>
+<span class="nc" id="L237">        val[m21] = tmp[m12];</span>
+<span class="nc" id="L238">        val[m23] = tmp[m32];</span>
+<span class="nc" id="L239">        val[m30] = tmp[m03];</span>
+<span class="nc" id="L240">        val[m31] = tmp[m13];</span>
+<span class="nc" id="L241">        val[m32] = tmp[m23];</span>
+        
+<span class="nc" id="L243">        return this;</span>
+    }
+    
+    /** Multiplies the Matrix by a translation matrix.
+     * 
+     * @param x the x coordinate of a translation vector.
+     * @param y the y coordinate of a translation vector.
+     * @param z the z coordinate of a translation vector.
+     * @return 
+     */
+    public Matrix translate(float x, float y, float z) {
+<span class="nc" id="L254">        Matrix tmp = new Matrix();</span>
+        
+<span class="nc" id="L256">        tmp.val[m03] = x;</span>
+<span class="nc" id="L257">        tmp.val[m13] = y;</span>
+<span class="nc" id="L258">        tmp.val[m23] = z;</span>
+        
+<span class="nc" id="L260">        return multiply(tmp);</span>
+    }
+    
+    /** Multiplies the Matrix by a scaling matrix.
+     * 
+     * @param x scale factor along the x axis.
+     * @param y scale factor along the y axis.
+     * @param z scale factor along the z axis.
+     * @return 
+     */
+    public Matrix scale(float x, float y, float z) {
+<span class="nc" id="L271">        Matrix tmp = new Matrix();</span>
+        
+<span class="nc" id="L273">        tmp.val[m00] = x;</span>
+<span class="nc" id="L274">        tmp.val[m11] = y;</span>
+<span class="nc" id="L275">        tmp.val[m22] = z;</span>
+        
+<span class="nc" id="L277">        return multiply(tmp);</span>
+    }
+    
+    /** Multiplies the Matrix by a rotation matrix.
+     * 
+     * @param angle rotation angle in degrees.
+     * @param x x coordinate of a unit vector.
+     * @param y y coordinate of a unit vector.
+     * @param z z coordinate of a unit vector.
+     * @return 
+     */
+    public Matrix rotate(float angle, float x, float y, float z) {
+<span class="nc" id="L289">        return rotate(Quaternion.fromRotation(angle, x, y, z));</span>
+    }
+    
+    /** Multiplies the Matrix by a given Quaternion. The quaternion is
+     * converted into a rotation matrix before multiplying.
+     * 
+     * @param quaternion
+     * @return 
+     */
+    public Matrix rotate(Quaternion quaternion) {
+<span class="nc" id="L299">        return multiply(quaternion.toMatrix());</span>
+    }
+    
+    /** Creates and flips a direct FloatBuffer from Matrix values. This method
+     * can be used to create buffers for the openGL context created by LWJGL.
+     * 
+     * @return flipped FloatBuffer.
+     */
+    public FloatBuffer toBuffer() {
+<span class="nc" id="L308">        return (FloatBuffer) ByteBuffer.allocateDirect(64).</span>
+                order(ByteOrder.nativeOrder()).asFloatBuffer().put(val).flip();
+    }    
+    
+    /** Creates a perspective projection Matrix.
+     * 
+     * @param fov field of view angle, in degrees.
+     * @param ratio aspect ratio as width / height.
+     * @param near distance to the near clipping plane.
+     * @param far distance to the far clipping plane.
+     * @return a newly created projection Matrix.
+     */
+    public static Matrix projPerspective(
+            float fov, float ratio, float near, float far) {
+        // Create a new identity matrix
+<span class="nc" id="L323">        Matrix matrix = new Matrix(); </span>
+        
+        // Convert field of view parameter
+<span class="nc" id="L326">        float tmp = 1 / (float) Math.tan(fov * Math.PI/360);</span>
+        
+        // Setup perspective projection matrix
+<span class="nc" id="L329">        matrix.val[m00] = tmp / ratio;</span>
+<span class="nc" id="L330">        matrix.val[m11] = tmp;</span>
+<span class="nc" id="L331">        matrix.val[m22] = (far + near) / (near - far);</span>
+<span class="nc" id="L332">        matrix.val[m23] = (2 * far * near) / (near - far);</span>
+<span class="nc" id="L333">        matrix.val[m32] = -1;</span>
+<span class="nc" id="L334">        matrix.val[m33] = 0;</span>
+
+<span class="nc" id="L336">        return matrix;</span>
+    }
+    
+    /** Creates an orthographic projection Matrix.
+     * 
+     * @param left coordinates for the left vertical clipping plane.
+     * @param right coordinates for the right vertical clipping plane.
+     * @param bottom coordinates for the bottom horizontal clipping plane.
+     * @param top coordinates for the top horizontal clipping plane.
+     * @param near distance to the near depth clipping plane.
+     * @param far distance to the far depth clipping plane.
+     * @return a newly created projection Matrix.
+     */
+    public static Matrix projOrthographic(
+            float left, float right, float bottom, float top, float near, float far) {
+        // Create a new identity matrix
+<span class="nc" id="L352">        Matrix matrix = new Matrix();</span>
+        
+        // Setup orthographic projection matrix
+<span class="nc" id="L355">        matrix.val[m00] = 2 / (right - left);</span>
+<span class="nc" id="L356">        matrix.val[m11] = 2 / (top - bottom);</span>
+<span class="nc" id="L357">        matrix.val[m22] = 2 / (near - far);</span>
+<span class="nc" id="L358">        matrix.val[m03] = (left + right) / (left - right);</span>
+<span class="nc" id="L359">        matrix.val[m13] = (bottom + top) / (bottom - top);</span>
+<span class="nc" id="L360">        matrix.val[m23] = (near + far) / (near - far);</span>
+        
+<span class="nc" id="L362">        return matrix;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L367" title="All 2 branches missed.">        if(!(obj instanceof Matrix))</span>
+<span class="nc" id="L368">            return false;</span>
+        
+<span class="nc" id="L370">        Matrix other = (Matrix) obj;</span>
+        
+<span class="nc" id="L372">        return Arrays.equals(this.val, other.val);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L377">        int hash = 5;</span>
+<span class="nc" id="L378">        hash = 79 * hash + Arrays.hashCode(this.val);</span>
+<span class="nc" id="L379">        return hash;</span>
+    }
+    
+    /** Subject to change.
+     * 
+     * @return 
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L388">        return Arrays.toString(val);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

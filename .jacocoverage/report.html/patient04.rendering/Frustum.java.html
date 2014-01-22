@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Frustum.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.rendering</a> &gt; <span class="el_source">Frustum.java</span></div><h1>Frustum.java</h1><pre class="source lang-java linenums">package patient04.rendering;
+
+import patient04.math.Matrix;
+import patient04.math.Vector;
+import patient04.physics.AABB;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Frustum {
+    public final Plane[] planes;
+    
+    /** Frustum constructor
+     * 
+     */
+<span class="nc" id="L17">    public Frustum() {</span>
+        // Create a new plane array
+<span class="nc" id="L19">        planes = new Plane[6];</span>
+<span class="nc" id="L20">    }</span>
+    
+    /** Updates the frustum
+     * 
+     * @param projection 
+     * @param view
+     * @param model 
+     */
+    public void update(Matrix projection, Matrix view, Matrix model) {
+        // Define the combined VP matrix
+<span class="nc" id="L30">        Matrix M = projection.copy().multiply(view);</span>
+        
+        // Multiply with the model matrix
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (model != null)</span>
+<span class="nc" id="L34">            M.multiply(model);</span>
+        
+        // Left clipping plane
+<span class="nc" id="L37">        planes[0] = new Plane(M.val[Matrix.m30] + M.val[Matrix.m00],</span>
+                              M.val[Matrix.m31] + M.val[Matrix.m01],
+                              M.val[Matrix.m32] + M.val[Matrix.m02],
+                              M.val[Matrix.m33] + M.val[Matrix.m03]);
+        
+        // Right clipping plane
+<span class="nc" id="L43">        planes[1] = new Plane(M.val[Matrix.m30] - M.val[Matrix.m00],</span>
+                              M.val[Matrix.m31] - M.val[Matrix.m01],
+                              M.val[Matrix.m32] - M.val[Matrix.m02],
+                              M.val[Matrix.m33] - M.val[Matrix.m03]);
+        
+        // Bottom clipping plane
+<span class="nc" id="L49">        planes[2] = new Plane(M.val[Matrix.m30] + M.val[Matrix.m10],</span>
+                              M.val[Matrix.m31] + M.val[Matrix.m11],
+                              M.val[Matrix.m32] + M.val[Matrix.m12],
+                              M.val[Matrix.m33] + M.val[Matrix.m13]);
+        
+        // Top clipping plane
+<span class="nc" id="L55">        planes[3] = new Plane(M.val[Matrix.m30] - M.val[Matrix.m10],</span>
+                              M.val[Matrix.m31] - M.val[Matrix.m11],
+                              M.val[Matrix.m32] - M.val[Matrix.m12],
+                              M.val[Matrix.m33] - M.val[Matrix.m13]);
+        
+        // Near clipping plane
+<span class="nc" id="L61">        planes[4] = new Plane(M.val[Matrix.m30] + M.val[Matrix.m20],</span>
+                              M.val[Matrix.m31] + M.val[Matrix.m21],
+                              M.val[Matrix.m32] + M.val[Matrix.m22],
+                              M.val[Matrix.m33] + M.val[Matrix.m23]);
+        
+        // Far clipping plane
+<span class="nc" id="L67">        planes[5] = new Plane(M.val[Matrix.m30] - M.val[Matrix.m20],</span>
+                              M.val[Matrix.m31] - M.val[Matrix.m21],
+                              M.val[Matrix.m32] - M.val[Matrix.m22],
+                              M.val[Matrix.m33] - M.val[Matrix.m23]);
+<span class="nc" id="L71">    }</span>
+    
+    public boolean isOutside(Vector point, float margin) {
+        // Check the point on all planes
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (Plane plane : planes)</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (plane.distance(point) &lt; margin)</span>
+<span class="nc" id="L77">                return true;</span>
+        
+        // Can not determine if outside
+<span class="nc" id="L80">        return false;</span>
+    }
+    
+    public boolean isOutside(AABB aabb, float margin) {
+        // If there is no AABB, early out
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (aabb == null)</span>
+<span class="nc" id="L86">                return false;</span>
+        
+        // Check the AABB on all planes
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        for (Plane plane : planes) {</span>
+<span class="nc bnc" id="L90" title="All 16 branches missed.">            if (plane.distance(aabb.min.x, aabb.min.y, aabb.min.z) &lt; margin</span>
+             &amp;&amp; plane.distance(aabb.min.x, aabb.min.y, aabb.max.z) &lt; margin
+             &amp;&amp; plane.distance(aabb.min.x, aabb.max.y, aabb.min.z) &lt; margin
+             &amp;&amp; plane.distance(aabb.min.x, aabb.max.y, aabb.max.z) &lt; margin
+             &amp;&amp; plane.distance(aabb.max.x, aabb.min.y, aabb.min.z) &lt; margin
+             &amp;&amp; plane.distance(aabb.max.x, aabb.min.y, aabb.max.z) &lt; margin
+             &amp;&amp; plane.distance(aabb.max.x, aabb.max.y, aabb.min.z) &lt; margin 
+             &amp;&amp; plane.distance(aabb.max.x, aabb.max.y, aabb.max.z) &lt; margin)
+<span class="nc" id="L98">                    return true;</span>
+        }
+        
+        // Can not determine if outside
+<span class="nc" id="L102">        return false;</span>
+    }
+    
+    public class Plane {
+        // Plane properties
+        private final Vector normal;
+        private final float distance;
+        
+        /** Creates a plane from the plane equation.
+         * 
+         * @param a
+         * @param b
+         * @param c
+         * @param d 
+         */
+<span class="nc" id="L117">        public Plane(float a, float b, float c, float d) {</span>
+<span class="nc" id="L118">            float m = (float) Math.sqrt(a*a + b*b + c*c);</span>
+            
+<span class="nc" id="L120">            normal = new Vector(a / m, b / m, c / m);</span>
+<span class="nc" id="L121">            distance = d / m;</span>
+<span class="nc" id="L122">        }</span>
+        
+        /** Calculates the signed distance to a point.
+         * 
+         * @param point
+         * @return 
+         */
+        public float distance(Vector point) {            
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            if (point == null) return distance;</span>
+<span class="nc" id="L131">            else return normal.dot(point) + distance;</span>
+        }
+        
+        /** Calculates the signed distance to a point.
+         * 
+         * @param x
+         * @param y
+         * @param z
+         * @return 
+         */
+        public float distance(float x, float y, float z) {
+<span class="nc" id="L142">            return normal.x * x + normal.y * y + normal.z * z + distance;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

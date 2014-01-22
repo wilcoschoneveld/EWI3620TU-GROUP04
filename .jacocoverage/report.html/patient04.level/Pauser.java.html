@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Pauser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.level</a> &gt; <span class="el_source">Pauser.java</span></div><h1>Pauser.java</h1><pre class="source lang-java linenums">package patient04.level;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
+import patient04.Main;
+import patient04.resources.Font;
+import patient04.resources.Image;
+import patient04.states.Game;
+import patient04.utilities.Input;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Wilco
+ */
+public class Pauser implements Input.Listener {
+    private boolean paused;
+    private final Game game;
+    
+    private final Font fnt;
+    private final Image imgPause, imgDown, imgSeen;
+    
+    /** Pauser constructor
+     * 
+     * @param game 
+     */
+<span class="nc" id="L29">    public Pauser(Game game) {</span>
+<span class="nc" id="L30">        this.game = game;</span>
+        
+<span class="nc" id="L32">        fnt = Font.getResource(&quot;Myriad Pro&quot;, 0, 25);</span>
+    
+<span class="nc" id="L34">        imgPause = Image.getFromTextureResource(&quot;menu/pause.png&quot;);</span>
+<span class="nc" id="L35">        imgDown = Image.getFromTextureResource(&quot;menu/gameover1.png&quot;);</span>
+<span class="nc" id="L36">        imgSeen = Image.getFromTextureResource(&quot;menu/gameover2.png&quot;);</span>
+<span class="nc" id="L37">    }</span>
+    
+    /** Gets the pause state.
+     * 
+     * @return true if paused.
+     */
+    public boolean isPaused() {
+<span class="nc" id="L44">        return paused;</span>
+    }
+    
+    /** Sets pause state.
+     * 
+     * @param pause true to pause, false to un-pause.
+     */
+    public void setPaused(boolean pause) {
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        Mouse.setGrabbed(!pause);</span>
+<span class="nc" id="L53">        this.paused = pause;</span>
+<span class="nc" id="L54">    }</span>
+    
+    /** Handles mouse events.
+     * 
+     * @return 
+     */
+    @Override
+    public boolean handleMouseEvent() {
+        // Do not handle mouse event if the game is not paused
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if(!paused)</span>
+<span class="nc" id="L64">            return Input.UNHANDLED;</span>
+        
+<span class="nc" id="L66">        return Input.HANDLED;</span>
+    }
+
+    /** Handles keyboard events.
+     * 
+     * @return 
+     */
+    @Override
+    public boolean handleKeyboardEvent() {
+        // Do not handle keyboard event if the game is not paused
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if(!paused)</span>
+<span class="nc" id="L77">            return Input.UNHANDLED;</span>
+        
+<span class="nc bnc" id="L79" title="All 4 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_RETURN, true) &amp;&amp; game.isGameOver() == 0) {</span>
+            // Unpause game
+<span class="nc" id="L81">            setPaused(false);</span>
+            
+<span class="nc" id="L83">            return Input.HANDLED;</span>
+        }
+        
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_ESCAPE, true)) {</span>
+            // Request transition to main menu
+<span class="nc" id="L88">            Main.requestNewState(Main.States.MAIN_MENU);</span>
+            
+<span class="nc" id="L90">            return Input.HANDLED;</span>
+        }
+        
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if(Input.keyboardKey(Keyboard.KEY_R, true)) {</span>
+            // Request restart
+<span class="nc" id="L95">            Game game2 = (Game) Main.requestNewState(Main.States.GAME);</span>
+<span class="nc" id="L96">            game2.loadLevel = game.loadLevel;</span>
+            
+<span class="nc" id="L98">            return Input.HANDLED;</span>
+        }
+        
+        // Event, you shall not pass!
+<span class="nc" id="L102">        return Input.HANDLED;</span>
+    }
+    
+    /** Draws the pause screen. */
+    public void draw() {
+        // Draw a fullscreen black quad
+<span class="nc" id="L108">        GL11.glEnable(GL11.GL_BLEND);</span>
+<span class="nc" id="L109">        GL11.glDisable(GL11.GL_TEXTURE_2D);</span>
+<span class="nc" id="L110">        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);</span>
+
+<span class="nc" id="L112">        GL11.glMatrixMode(GL11.GL_PROJECTION);</span>
+<span class="nc" id="L113">        GL11.glLoadIdentity();</span>
+<span class="nc" id="L114">        GL11.glMatrixMode(GL11.GL_MODELVIEW);</span>
+<span class="nc" id="L115">        GL11.glLoadIdentity();</span>
+
+<span class="nc" id="L117">        GL11.glColor4f(0, 0, 0, 0.8f);</span>
+<span class="nc" id="L118">        GL11.glBegin(GL11.GL_QUADS);</span>
+<span class="nc" id="L119">        GL11.glVertex2f(-1, -1);</span>
+<span class="nc" id="L120">        GL11.glVertex2f(1, -1);</span>
+<span class="nc" id="L121">        GL11.glVertex2f(1, 1);</span>
+<span class="nc" id="L122">        GL11.glVertex2f(-1, 1);</span>
+<span class="nc" id="L123">        GL11.glEnd();</span>
+        
+<span class="nc" id="L125">        int over = game.isGameOver();</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">        Image img = over == 1 ? imgDown : over == 2 ? imgSeen : imgPause;</span>
+        
+<span class="nc" id="L128">        img.draw(-0.4f, 0.2f * Utils.getDisplayRatio(),</span>
+                       0.4f, 0.0f * Utils.getDisplayRatio());
+        
+<span class="nc" id="L131">        fnt.setColor(1, 1, 1, 0.6f);        </span>
+<span class="nc" id="L132">        fnt.drawCentered(0.55f, &quot;Press ESCAPE again to give up&quot;);</span>
+<span class="nc" id="L133">        fnt.drawCentered(0.6f, &quot;Press R to restart level&quot;);</span>
+        
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (over == 0)</span>
+<span class="nc" id="L136">            fnt.drawCentered(0.7f, &quot;Hit ENTER to keep trying&quot;);</span>
+<span class="nc" id="L137">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

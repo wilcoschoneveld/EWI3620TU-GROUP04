@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Enemy.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;EWI3620TU-GROUP04&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">patient04.level.elements</a> &gt; <span class="el_source">Enemy.java</span></div><h1>Enemy.java</h1><pre class="source lang-java linenums">package patient04.level.elements;
+
+import patient04.level.Player;
+import patient04.level.Level;
+import patient04.math.Matrix;
+import patient04.math.Vector;
+import patient04.physics.Entity;
+import patient04.rendering.Light;
+import patient04.rendering.Renderer;
+import patient04.resources.Model;
+import patient04.resources.Sound;
+import patient04.utilities.Utils;
+
+/**
+ *
+ * @author Bart Keulen
+ */
+public class Enemy extends Entity {
+    public static final float WIDTH = 0.5f;
+    public static final float HEIGHT = 1.8f;
+    
+    public static final float ACCEL_WALKING = 0.45f;
+    public static final float SPEED_ROTATE = 100f;
+    
+<span class="nc" id="L25">    public static float SIGHT_ANGLE = 45;</span>
+<span class="nc" id="L26">    public static float SIGHT_DIST = 5;</span>
+    
+    private final Model[] anim_walking;
+    
+    private float lastMoved;
+    private final Sound.Source stepSource;
+    
+    private final Light light;
+    private float nextflicker;
+    
+    private Waypoint prevWaypoint;
+    private Waypoint nextWaypoint;
+    
+    public Player target;
+
+    /** Enemy constructor.
+     * 
+     * @param level 
+     */
+    public Enemy(Level level) {
+<span class="nc" id="L46">        super(level, WIDTH, HEIGHT);</span>
+        
+        // Load animation/model
+<span class="nc" id="L49">        anim_walking = new Model[23];</span>
+        
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        for(int i = 0; i &lt; anim_walking.length; i++) {</span>
+<span class="nc" id="L52">            String file = &quot;nurse/walking_&quot;;</span>
+<span class="nc" id="L53">            file += String.format(&quot;%06d.obj&quot;, i+1);</span>
+            
+<span class="nc" id="L55">            anim_walking[i] = Model.getResource(file);</span>
+<span class="nc" id="L56">            anim_walking[i].releaseRawData();</span>
+        }
+        
+        // Create new candle light
+<span class="nc" id="L60">        light = new Light().setColor(0.15f, 1f).setWalkLight();</span>
+        
+<span class="nc" id="L62">        distanceMoved = (float) Math.random();</span>
+<span class="nc" id="L63">        lastMoved = distanceMoved;</span>
+        
+        // Set walking sound
+<span class="nc" id="L66">        stepSource = Sound.getResource(&quot;step.wav&quot;);</span>
+<span class="nc" id="L67">    }</span>
+    
+    /** Update the enemy
+     * 
+     * @param dt delta time
+     */
+    @Override
+    public void update(float dt) {
+<span class="nc" id="L75">        super.update(dt);</span>
+        
+        // If close to target waypoint, select new target
+<span class="nc bnc" id="L78" title="All 4 branches missed.">        if (nextWaypoint != null &amp;&amp; </span>
+                     nextWaypoint.position.copy().min(position).length() &lt; 0.5)
+<span class="nc" id="L80">                selectNextWaypoint();</span>
+        
+<span class="nc" id="L82">        Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);</span>
+        
+        // Move towards next waypoint
+<span class="nc bnc" id="L85" title="All 4 branches missed.">        if (nextWaypoint != null &amp;&amp; target.spotter == null) {</span>
+<span class="nc" id="L86">            Vector towaypoint = nextWaypoint.position</span>
+                                             .copy().min(position).normalize();
+                        
+<span class="nc" id="L89">            float tmpsign = Utils.sign(direction.cross(towaypoint).y);</span>
+<span class="nc" id="L90">            float tmpdot = Utils.clamp(direction.dot(towaypoint), -1, 1);</span>
+<span class="nc" id="L91">            float tmpangle = (float) Utils.acos(tmpdot);</span>
+            
+<span class="nc" id="L93">            float tmpdelta = Math.min(tmpangle, SPEED_ROTATE * dt);</span>
+            
+<span class="nc" id="L95">            direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);</span>
+            
+<span class="nc" id="L97">            rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);</span>
+<span class="nc" id="L98">            acceleration.add(direction);</span>
+        }
+        
+        // Light flickering
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if((nextflicker -= dt) &lt;= 0) { </span>
+<span class="nc" id="L103">            light.setIntensity(11 + (float) Math.random() * 2f);</span>
+            
+<span class="nc" id="L105">            nextflicker = (float) Math.random() * 0.2f;</span>
+        }
+        
+        // Step sound
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (distanceMoved - lastMoved &gt; 0.5f) {</span>
+            // set sound position
+<span class="nc" id="L111">            stepSource.setPosition(position.x, position.y, position.z);</span>
+            
+            // play sound
+<span class="nc" id="L114">            stepSource.play();</span>
+            
+            // set last moved
+<span class="nc" id="L117">            lastMoved += 0.5f;</span>
+        }
+        
+        // Check if player in in sight of enemy
+<span class="nc" id="L121">        Vector toPlayer = target.getPosition().copy().min(position);</span>
+<span class="nc" id="L122">        float dist = toPlayer.length();</span>
+        
+<span class="nc bnc" id="L124" title="All 6 branches missed.">        if (dist &lt;= SIGHT_DIST </span>
+                &amp;&amp; Utils.acos(direction.copy().normalize()
+                        .dot(toPlayer.normalize())) &lt;= (85-7*dist) 
+                &amp;&amp; lineOfSight(target)) {
+<span class="nc" id="L128">            target.spotter = this;</span>
+            
+<span class="nc" id="L130">            float tmpsign = Utils.sign(direction.cross(toPlayer).y);</span>
+<span class="nc" id="L131">            float tmpdot = Utils.clamp(direction.dot(toPlayer), -1, 1);</span>
+<span class="nc" id="L132">            float tmpangle = (float) Utils.acos(tmpdot);</span>
+            
+<span class="nc" id="L134">            float tmpdelta = Math.min(tmpangle, 200f * dt);</span>
+            
+<span class="nc" id="L136">            direction.rotate(tmpdelta, 0, tmpsign, 0).scale(ACCEL_WALKING * dt);</span>
+<span class="nc" id="L137">            rotation.set(0, Utils.atan2(-direction.z, direction.x), 0);</span>
+        }
+        
+<span class="nc" id="L140">    }</span>
+    
+    /** Select nearest waypoint to enemy
+     * 
+     */
+    public void selectNearestWaypoint() {
+        // Set waypoint selection distance to maximum value
+<span class="nc" id="L147">        float currentDist = 10;</span>
+        
+        // Loop through all waypoints to find nearest
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        for (Waypoint waypoint : level.waypoints) {</span>
+<span class="nc" id="L151">            float tmpdist = waypoint.position.copy().min(position).length();</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if(tmpdist &lt; currentDist) {</span>
+<span class="nc" id="L153">                nextWaypoint = waypoint;</span>
+<span class="nc" id="L154">                currentDist = tmpdist;</span>
+            }
+<span class="nc" id="L156">        }</span>
+        
+        // Set previous waypoint to null
+<span class="nc" id="L159">        prevWaypoint = null;</span>
+<span class="nc" id="L160">    }</span>
+    
+    /** Select next waypoint using CI
+     * 
+     */
+    public void selectNextWaypoint() {        
+        // Get the number of neighbors to choose from
+<span class="nc" id="L167">        int neighborsNum = nextWaypoint.neighbors.size();</span>
+        
+        // If the waypoint has no neighbors, stop movement
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (neighborsNum == 0) {</span>
+<span class="nc" id="L171">            nextWaypoint = null;</span>
+<span class="nc" id="L172">            return; </span>
+        }
+        
+        // Variable for selecting neighbor
+        int index;
+        
+        // Roulette weights
+<span class="nc" id="L179">        float[] weight = new float[neighborsNum];</span>
+<span class="nc" id="L180">        float total = 0;</span>
+        
+        // Loop through all neighbors and assign weights
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        for(index = 0; index &lt; neighborsNum; index++) {</span>
+<span class="nc" id="L184">            Waypoint wp = nextWaypoint.neighbors.get(index);</span>
+            
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            if(wp.equals(prevWaypoint))</span>
+<span class="nc" id="L187">                weight[index] = 0.01f / wp.getPheromones();</span>
+            else
+<span class="nc" id="L189">                weight[index] = 1f / wp.getPheromones();</span>
+            
+<span class="nc" id="L191">            total += weight[index];</span>
+        }
+        
+        // Spin the wheel!
+<span class="nc" id="L195">        float roulette = (float) Math.random() * total;</span>
+        
+        // Loop through all neighbors and find selected
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        for(index = 0; index &lt; neighborsNum; index++) {</span>
+<span class="nc" id="L199">            roulette -= weight[index];</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            if(roulette &lt; 0)</span>
+<span class="nc" id="L201">                break; // now index indicates selected</span>
+        }
+        
+        // Set prev and next waypoint
+<span class="nc" id="L205">        prevWaypoint = nextWaypoint;</span>
+<span class="nc" id="L206">        prevWaypoint.addPheromones();</span>
+<span class="nc" id="L207">        nextWaypoint = nextWaypoint.neighbors.get(index);</span>
+<span class="nc" id="L208">    }</span>
+     
+    /** Draw the enemy
+     * 
+     * @param renderer 
+     */
+    @Override
+    public void draw(Renderer renderer) {
+        // Create a new model matrix
+<span class="nc" id="L217">        Matrix matrix = new Matrix();</span>
+
+        // Translate
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if(position != null)</span>
+<span class="nc" id="L221">            matrix.translate(position.x, position.y, position.z);</span>
+
+        // Rotate
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        if(rotation != null) {</span>
+<span class="nc" id="L225">            matrix.rotate(rotation.x, 1, 0, 0);</span>
+<span class="nc" id="L226">            matrix.rotate(rotation.y + 90, 0, 1, 0);</span>
+<span class="nc" id="L227">            matrix.rotate(rotation.z, 0, 0, 1);</span>
+        }
+        
+        // Update modelview matrix
+<span class="nc" id="L231">        renderer.glUpdateModelMatrix(matrix);</span>
+        
+        // Discard if outside frustum
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (renderer.frustum.isOutside(aabb, -0.1f))</span>
+<span class="nc" id="L235">            return;</span>
+        
+        // Calculate animation frame
+<span class="nc" id="L238">        int frame = (int) ((distanceMoved % 1) * 23);</span>
+        
+        // Draw model
+<span class="nc" id="L241">        anim_walking[frame].draw();</span>
+<span class="nc" id="L242">    }</span>
+    
+    /** Draw the light attached to the enemy
+     * 
+     * @param renderer 
+     */
+    @Override
+    public void drawLight(Renderer renderer) {
+        // Find light position
+<span class="nc" id="L251">        Vector tmp = new Vector(0.5f, 0.94f, -0.14f);</span>
+<span class="nc" id="L252">        tmp.rotate(rotation.y, 0, 1, 0);</span>
+<span class="nc" id="L253">        tmp.add(position);</span>
+        
+        // Set light position
+<span class="nc" id="L256">        light.setPosition(tmp.x, tmp.y, tmp.z);</span>
+        
+        // Draw light
+<span class="nc" id="L259">        light.draw(renderer);</span>
+<span class="nc" id="L260">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
