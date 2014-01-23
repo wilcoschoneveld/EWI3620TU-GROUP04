@@ -4,7 +4,6 @@ import java.awt.Color;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
-import static patient04.editor.elements.Element.glAttribute;
 import patient04.math.Vector;
 import patient04.physics.AABB;
 import patient04.resources.Font;
@@ -32,13 +31,17 @@ public class Prop extends Element {
         
         this.name = modelFile;
         
+        // Load the model and obtain the bounding box
         AABB tmp = Model.getResource(modelFile).getBoundingBox(new Vector());
         this.bounds = new Vector[] {tmp.min, tmp.max};
         
+        // Load a font to display model name
         fntProp = Font.getResource("Verdana", Font.BOLD, 10);
         
+        // Choose color hue based on first letter of model name
         float hue = (name.toLowerCase().charAt(0) - 97) / 25f;
         
+        // Define drawing color
         color = Color.getHSBColor(hue, 1, 1).getComponents(null);
         
         priority = 3;

@@ -240,9 +240,7 @@ public class ToolPane implements Input.Listener {
     @Override
     public boolean handleKeyboardEvent() {
         
-//        START, END, WAYPOINT, LINK, LIGHT, NEEDLE, INFUSION,
-//        SELECT, ENEMY,WALL, DOOR, MODEL, DELETE, SOUND;
-        
+        // Handle some common hotkeys
         if (Keyboard.getEventKeyState()) {
             switch(Keyboard.getEventKey()) {
                 case Keyboard.KEY_V: selected = Tool.SELECT; return true;

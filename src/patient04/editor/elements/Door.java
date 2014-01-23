@@ -4,7 +4,6 @@ import java.awt.Color;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
-import static patient04.editor.elements.Element.glAttribute;
 import patient04.utilities.Utils;
 
 /**
@@ -15,6 +14,12 @@ public class Door extends Element {
     public float x, z;
     public float rotation;
     
+    /** Constructs a door.
+     * 
+     * @param level
+     * @param x
+     * @param z 
+     */
     public Door(Level level, float x, float z) {
         super(level);
         
@@ -24,18 +29,24 @@ public class Door extends Element {
         priority = 3;
     }
 
+    /** Draws the door.
+     * 
+     * @param target 
+     */
     @Override
     public void draw(int target) {
-    
+        // If the door is selected
         if (target != -1) {
             glAttribute(x, z, rotation * (float) Math.PI / 180,
                     level.editor.camera.zoom,
                     level.editor.camera.zoom * 0.1f, Color.WHITE);
         }
         
+        // Determine box dimensions
         float width = (Math.round(rotation / 90)) % 2 == 0 ? 0.1f : 0.8f;
         float height = (Math.round(rotation / 90)) % 2 == 0 ? 0.8f : 0.1f;
                 
+        // Draw bounding box
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(1f, 0.5f, 0.3f);
         GL11.glBegin(GL11.GL_QUADS);
@@ -46,6 +57,12 @@ public class Door extends Element {
         GL11.glEnd();
     }
 
+    /** Translates the door.
+     * 
+     * @param target
+     * @param dx
+     * @param dz 
+     */
     @Override
     public void translate(int target, float dx, float dz) {
         float mx = level.editor.camera.convertWindowX(Mouse.getEventX());
@@ -65,8 +82,16 @@ public class Door extends Element {
         }
     }
 
+    /** Tries to select the door.
+     * 
+     * @param selected
+     * @param x
+     * @param z
+     * @return 
+     */
     @Override
     public int select(boolean selected, float x, float z) {
+        // If the door is already selected, check for rotator selection
         if (selected) {            
             float lx = this.x + (float) Math.cos(rotation * Math.PI / 180)
                                                     * level.editor.camera.zoom;
@@ -79,9 +104,11 @@ public class Door extends Element {
                 return 2;
         }
         
+        // Define box dimensions
         float width = (Math.round(rotation / 90)) % 2 == 0 ? 0.1f : 0.8f;
         float height = (Math.round(rotation / 90)) % 2 == 0 ? 0.8f : 0.1f;
         
+        // Check if inside box dimensions
         if (x > this.x - width && x < this.x + width
          && z > this.z - height && z < this.z + height)
             return 1;

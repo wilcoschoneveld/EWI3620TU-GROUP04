@@ -14,6 +14,8 @@ public interface Usable {
     void update(float dt);
     void draw(Renderer renderer);
     void drawLight(Renderer renderer);
+    
+    // Some utility methods
     Vector getLocation();
     AABB getAABB();
 }

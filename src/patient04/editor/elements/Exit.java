@@ -4,7 +4,6 @@ import java.awt.Color;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
-import static patient04.editor.elements.Element.glAttribute;
 import patient04.utilities.Utils;
 
 /**

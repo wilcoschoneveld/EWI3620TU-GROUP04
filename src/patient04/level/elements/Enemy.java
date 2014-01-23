@@ -79,6 +79,7 @@ public class Enemy extends Entity {
                      nextWaypoint.position.copy().min(position).length() < 0.5)
                 selectNextWaypoint();
         
+        // Determine direction vector
         Vector direction = new Vector(1, 0, 0).rotate(rotation.y, 0, 1, 0);
         
         // Move towards next waypoint

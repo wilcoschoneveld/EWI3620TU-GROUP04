@@ -3,7 +3,6 @@ package patient04.editor.elements;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import patient04.editor.Level;
-import patient04.utilities.Timer;
 
 /**
  *

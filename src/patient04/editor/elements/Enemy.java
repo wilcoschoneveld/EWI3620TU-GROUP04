@@ -22,6 +22,7 @@ public class Enemy extends Element {
     public Enemy(Level level, float x, float z) {
         super(level);
         
+        // Load enemy sprite
         image = new Image(
                 Texture.getResource("editor/elements.png"), 64, 0, 64, 64);
         

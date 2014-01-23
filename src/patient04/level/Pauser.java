@@ -122,6 +122,7 @@ public class Pauser implements Input.Listener {
         GL11.glVertex2f(-1, 1);
         GL11.glEnd();
         
+        // Draw elements based on game over state
         int over = game.isGameOver();
         Image img = over == 1 ? imgDown : over == 2 ? imgSeen : imgPause;
         

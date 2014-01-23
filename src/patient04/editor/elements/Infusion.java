@@ -42,6 +42,7 @@ public class Infusion extends Element {
     public int select(boolean selected, float x, float z) {
         float r = level.editor.camera.zoom * SIZE;
         
+        // Check if click location is inside radius
         if ((x-this.x) * (x-this.x) + (z-this.z) * (z-this.z) < r)
             return 1;
         

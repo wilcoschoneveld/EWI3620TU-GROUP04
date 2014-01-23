@@ -36,6 +36,7 @@ public class Tutorial implements Input.Listener {
     public void draw() {
         String hint = null;
         
+        // Some basic tutorial messages
         switch(stage) {
             case 0: hint = "Use the mouse to look around..."; break;
             case 1: hint = "Press W,A,S,D to move around..."; break;

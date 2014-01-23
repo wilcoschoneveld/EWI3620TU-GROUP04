@@ -17,6 +17,7 @@ public class Needle extends Pickup {
     public Needle(Level level) {
         super(level);
         
+        // Load model
         model = Model.getResource("pickups/needle.obj");
         
         light.setColor(0.1f, 1).setIntensity(1);

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.editor;
 
 import patient04.resources.Image;
@@ -41,15 +35,24 @@ public class Button {
             && y > this.y && y < this.y + height;
     }
     
-    public static Button fromSheet(String file, int index, int w, int h, int space) {
+    /** Loads a button from a sheet.
+     * 
+     * @param file
+     * @param i
+     * @param w
+     * @param h
+     * @param sp
+     * @return 
+     */
+    public static Button fromSheet(String file, int i, int w, int h, int sp) {
         Texture sheet = Texture.getResource(file);
         
-        int x = space + (w + space) * index;
+        int x = sp + (w + sp) * i;
         
         Button button = new Button(
-                new Image(sheet, x, space + (h + space) * 0, w, h),
-                new Image(sheet, x, space + (h + space) * 1, w, h),
-                new Image(sheet, x, space + (h + space) * 2, w, h)
+                new Image(sheet, x, sp + (h + sp) * 0, w, h),
+                new Image(sheet, x, sp + (h + sp) * 1, w, h),
+                new Image(sheet, x, sp + (h + sp) * 2, w, h)
         );
         
         return button;

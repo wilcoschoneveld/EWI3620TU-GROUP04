@@ -18,6 +18,7 @@ public class Waypoint extends Element {
     public Waypoint(Level level, float x, float z) {
         super(level);
         
+        // Load sprite and selected sprite
         image = new Image(
                 Texture.getResource("editor/elements.png"), 128, 0, 64, 64);
         image2 = new Image(

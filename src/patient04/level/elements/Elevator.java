@@ -20,6 +20,7 @@ public class Elevator extends Prop implements Usable {
     public Elevator(int angle) {
         super("elevatordoors.obj", angle);
         
+        // Create elevator lights
         light1 = new Light().setItemLight().setColor(0.33f, 1).setIntensity(0.2f);
         light2 = new Light().setItemLight().setColor(0, 1).setIntensity(0.1f);
     }

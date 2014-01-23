@@ -12,29 +12,48 @@ public abstract class Element implements Comparable<Element> {
     protected final Level level;
     protected int priority;
     
+    // Abstract functions to be overriden by elements
     abstract public void draw(int target);
     abstract public void translate(int target, float dx, float dz);
     abstract public int select(boolean selected, float x, float z);
     abstract public boolean release();
     
+    /** Element constructor.
+     * 
+     * @param level 
+     */
     public Element(Level level) {
         this.level = level;
     }
     
+    /** Compares elements for sorting purposes.
+     * 
+     * @param other
+     * @return 
+     */
     @Override
     public int compareTo(Element other) {
         return priority - other.priority;
     }
     
+    /** Returns a string to store in level file.
+     * 
+     * @return 
+     */
     @Override
     public String toString() {
         return "undefined";
     }
     
-    public Element fromString(String str) {
-        return null;
-    }
-    
+    /** Draws an attribute selector.
+     * 
+     * @param x
+     * @param z
+     * @param angle
+     * @param length
+     * @param radius
+     * @param color 
+     */
     public static void glAttribute(float x, float z, float angle,
                                      float length, float radius, Color color) {
             float lx = (float) +Math.cos(angle) * length;
@@ -59,6 +78,17 @@ public abstract class Element implements Comparable<Element> {
             GL11.glLineWidth(1);
     }
     
+    /** Draws a circle.
+     * 
+     * @param x
+     * @param y
+     * @param radius
+     * @param stroke
+     * @param inner
+     * @param outer
+     * @param clockwise
+     * @param segments 
+     */
     public static void glCircle(float x, float y, float radius, boolean stroke,
             Color inner, Color outer, boolean clockwise, int segments) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);

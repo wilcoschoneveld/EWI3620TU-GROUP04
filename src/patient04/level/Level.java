@@ -16,6 +16,10 @@ import patient04.rendering.Light;
 import patient04.resources.Sound;
 import patient04.resources.Texture;
 
+/**
+ *
+ * @author Wilco
+ */
 public class Level {
     // Next subsequent level
     public String nextLevel;    

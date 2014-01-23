@@ -14,6 +14,7 @@ public class Wall extends Element {
     public Wall(Level level, float xmin, float zmin, float xmax, float zmax) {
         super(level);
         
+        // Define corners of the wall
         vertices[0][0] = xmin; vertices[0][1] = zmin;
         vertices[1][0] = xmin; vertices[1][1] = zmax;
         vertices[2][0] = xmax; vertices[2][1] = zmax;

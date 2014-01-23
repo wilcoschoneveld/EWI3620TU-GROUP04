@@ -3,7 +3,6 @@ package patient04.editor.elements;
 import java.awt.Color;
 import org.lwjgl.input.Mouse;
 import patient04.editor.Level;
-import static patient04.editor.elements.Element.glAttribute;
 import patient04.resources.Image;
 import patient04.resources.Texture;
 import patient04.utilities.Utils;

@@ -4,7 +4,6 @@ import patient04.math.Vector;
 import patient04.level.Level;
 import java.util.ArrayList;
 import patient04.rendering.Renderer;
-import patient04.utilities.Utils;
 
 /**
  *

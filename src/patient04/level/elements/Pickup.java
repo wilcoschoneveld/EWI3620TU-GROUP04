@@ -49,6 +49,7 @@ public class Pickup extends Solid implements Usable {
      */
     @Override
     public void update(float dt) {
+        // Add random flicker time
         timer += (2 + Math.random())*dt;
         
         // Pulsate light

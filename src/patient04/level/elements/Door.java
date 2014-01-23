@@ -46,6 +46,7 @@ public class Door extends Prop implements Usable {
         Vector toPlayer = player.getPosition().copy().min(position);
         Vector normal = new Vector(0, 0, 1).rotate(rotation.y, 0, 1, 0);
         
+        // Check if the player is on the front side
         if (toPlayer.dot(normal) > 0) {
             timer = 0.01f;
             

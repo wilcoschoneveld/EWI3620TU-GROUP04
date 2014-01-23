@@ -46,6 +46,7 @@ public class Player extends Entity implements Input.Listener {
     public float medicineLevel = 1;
     public boolean injecting = false;
     
+    // Spotted by enemy
     public Enemy spotter = null;
     public float spottimer = 0;
     

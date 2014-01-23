@@ -28,6 +28,7 @@ public class Waypoint {
      * @param two
      */
     public static void link(Waypoint one, Waypoint two) {
+        // Unlink first, to ensure no double links
         unlink(one, two);
         one.neighbors.add(two);
         two.neighbors.add(one);

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package patient04.math;
 
 import org.junit.After;
@@ -48,8 +42,6 @@ public class VectorTest {
         Vector expResult = new Vector(1,1,1);
         Vector result = instance.copy();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -65,8 +57,6 @@ public class VectorTest {
         Vector expResult = new Vector(0.0f, 0.0f, 0.0f);
         Vector result = instance.set(x, y, z);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -80,8 +70,6 @@ public class VectorTest {
         Vector expResult = new Vector(1,2,3);
         Vector result = instance.set(other);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -97,8 +85,6 @@ public class VectorTest {
         Vector expResult = new Vector(2,3,4);
         Vector result = instance.add(dx, dy, dz);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -112,8 +98,6 @@ public class VectorTest {
         Vector expResult = new Vector(2,3,4);
         Vector result = instance.add(other);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -129,8 +113,6 @@ public class VectorTest {
         Vector expResult = new Vector(-2,0,2);
         Vector result = instance.min(dx, dy, dz);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -144,8 +126,6 @@ public class VectorTest {
         Vector expResult = new Vector(0,-1,-2);
         Vector result = instance.min(other);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -161,8 +141,6 @@ public class VectorTest {
         Vector expResult = new Vector(1,6,-3);
         Vector result = instance.scale(sx, sy, sz);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -176,8 +154,6 @@ public class VectorTest {
         Vector expResult = new Vector(6,6,6);
         Vector result = instance.scale(scale);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -191,8 +167,6 @@ public class VectorTest {
         Vector expResult = new Vector(2,4,6);
         Vector result = instance.scale(other);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -205,8 +179,6 @@ public class VectorTest {
         float expResult = 5.0F;
         float result = instance.length();
         assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -219,8 +191,6 @@ public class VectorTest {
         Vector expResult = new Vector(0,0,1);
         Vector result = instance.normalize();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -234,8 +204,6 @@ public class VectorTest {
         float expResult = -3.0F;
         float result = instance.dot(other);
         assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -249,8 +217,6 @@ public class VectorTest {
         Vector expResult = new Vector(4,-8,4);
         Vector result = instance.cross(other);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -264,8 +230,6 @@ public class VectorTest {
         Vector expResult = new Vector(3,2,1);
         Vector result = instance.premultiply(mat);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -285,8 +249,6 @@ public class VectorTest {
         float d = result.min(expResult).length();
         
         assertTrue(d < 0.0001f);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -306,8 +268,6 @@ public class VectorTest {
         float d = result.min(expResult).length();
         
         assertTrue(d < 0.0001f);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -359,9 +319,6 @@ public class VectorTest {
         expResult = false;
         result = instance.isInTriangle(p1, p2, p3);
         assertEquals(expResult, result);
-        
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -391,9 +348,6 @@ public class VectorTest {
         instance2 = new Vector(0,0,1);
         result = instance.equals(instance2);
         assertEquals(expResult, result);
-        
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -406,8 +360,6 @@ public class VectorTest {
         Vector instance2 = new Vector(1, 2, 3);
         
         assertEquals(instance.hashCode(), instance2.hashCode());
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 
     /**
@@ -420,8 +372,6 @@ public class VectorTest {
         String expResult = "(1,235 2,346 3,457)";
         String result = instance.toString();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
     
 }
