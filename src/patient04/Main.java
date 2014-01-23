@@ -18,6 +18,7 @@ public final class Main {
     public static final int desiredHeight = 800;
     public static final boolean fullscreen = true;
     public static final boolean vsyncEnabled = true;
+    public static float extraBrightness = 0;
     
     // Game timer for scores
     public static float scoreTime = 0;

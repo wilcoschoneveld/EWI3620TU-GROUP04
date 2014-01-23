@@ -133,6 +133,20 @@ public class Game implements State, Input.Listener {
         
         if(Input.keyboardKey(Keyboard.KEY_F12, true)) {
             renderer.makeScreenshots();
+            
+            return Input.HANDLED;
+        }
+        
+        if(Input.keyboardKey(Keyboard.KEY_COMMA, true)) {
+            Main.extraBrightness = Math.max(Main.extraBrightness - 0.1f, 0);
+            
+            return Input.HANDLED;
+        }
+        
+        if(Input.keyboardKey(Keyboard.KEY_PERIOD, true)) {
+            Main.extraBrightness = Math.min(Main.extraBrightness + 0.1f, 1);
+            
+            return Input.HANDLED;
         }
         
         // Unhandled event

@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL20;
 
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
+import patient04.Main;
 import patient04.level.Player;
 import patient04.math.Matrix;
 import patient04.math.Vector;
@@ -51,7 +52,7 @@ public class Renderer {
             lightI, lightR, attC, attL, attQ;
     
     // Effect shader locations
-    private final int effectShader, effLevel, effSin, effCos, effColor;
+    private final int effectShader, effLevel, effSin, effCos, effColor, effBr;
     
     // Keep track of active shader program
     private int currentProgram = 0;
@@ -173,6 +174,7 @@ public class Renderer {
         effSin = GL20.glGetUniformLocation(effectShader, "effectSin");
         effCos = GL20.glGetUniformLocation(effectShader, "effectCos");
         effColor = GL20.glGetUniformLocation(effectShader, "effectColor");
+        effBr = GL20.glGetUniformLocation(effectShader, "effectBrightness");
         
         // Bind uniform variables
         Shader.glUniform1i(effectShader, "uTexAccum", 0);
@@ -257,6 +259,9 @@ public class Renderer {
         
         // Upload the effect color to the shader
         GL20.glUniform4f(effColor, sin, cos, sin * cos, 1);
+        
+        // Upload brightness
+        GL20.glUniform1f(effBr, Main.extraBrightness);
     }
     
     /** Update projection matrix
