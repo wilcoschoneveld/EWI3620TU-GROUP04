@@ -63,7 +63,7 @@ public class MainMenu implements State, Input.Listener {
         shore = new Parallax("menu/Shore.png", -0.02f, 0.7f, R * 1.05f, 0.11f);
         scores = new Button("menu/highscores.png", "menu/highscores2.png", 0.3f, 0.4f, 0.5f, 0.11f);
         trees1 = new Parallax("menu/Group1Trees.png", -0.1f, 0.3f, 0.5f, 0.12f);
-        fronthill = new Parallax("menu/FrontHill.png", -0.07f, 0.8f, R * 1.05f, 0.15f);
+        fronthill = new Parallax("menu/FrontHill.png", -0.08f, 0.8f, R * 1.05f, 0.15f);
         trees2 = new Parallax("menu/Group2aTrees.png", R - 0.4f, 0.42f, 0.5f, 0.17f);
         start = new Button("menu/start.png", "menu/start2.png", R / 2, 0.6f, 0.6f, 0.2f);
         
