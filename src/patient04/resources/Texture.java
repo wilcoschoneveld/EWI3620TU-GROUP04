@@ -14,7 +14,7 @@ import patient04.utilities.Logger;
  * @author Wilco
  */
 public class Texture {
-    private static final String defaultTextureLocation = "res/textures/";
+    private static final String defaultTextureLocation = "resources/textures/";
     private static final HashMap<String, Texture> textures = new HashMap<>();
     private static Texture lastBind = null;
     

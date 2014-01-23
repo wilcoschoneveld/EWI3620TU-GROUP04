@@ -110,7 +110,7 @@ public class Editor implements State, Input.Listener {
             Level old = level;
 
             // Load level from file
-            level = Level.loadFromFile(this, new File("res/levels/editor.tmp"));
+            level = Level.loadFromFile(this, new File("resources/levels/editor.tmp"));
 
             // Set controller
             controller.changeListener(old, level);

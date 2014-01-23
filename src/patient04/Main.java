@@ -85,8 +85,8 @@ public final class Main {
             
             Display.setTitle("Patient 04");
             Display.setIcon(new ByteBuffer[] {
-                Utils.loadIcon("res/icon16.png"),
-                Utils.loadIcon("res/icon32.png")
+                Utils.loadIcon("resources/icon16.png"),
+                Utils.loadIcon("resources/icon32.png")
             });
             
             Display.create();

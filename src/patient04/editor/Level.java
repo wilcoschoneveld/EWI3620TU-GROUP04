@@ -219,7 +219,7 @@ public class Level implements Input.Listener {
                     return Input.HANDLED;
                 case SOUND:
                     // Sound directory
-                    File sdir = new File("res/sounds/");
+                    File sdir = new File("resources/sounds/");
                    
                     // Scan for sounds
                     File[] sfiles = sdir.listFiles(new FilenameFilter() {
@@ -259,7 +259,7 @@ public class Level implements Input.Listener {
                         s = ((Prop) selected).name; 
                     } else {
                         // Models directory
-                        File dir = new File("res/models/");
+                        File dir = new File("resources/models/");
                         
                         // Scan the directory
                         File[] files = dir.listFiles(new FilenameFilter() {

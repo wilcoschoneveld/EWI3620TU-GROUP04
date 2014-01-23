@@ -19,7 +19,7 @@ import patient04.utilities.Logger;
  * @author Wilco
  */
 public class Sound {
-    private static final String defaultSoundLocation = "res/sounds/";
+    private static final String defaultSoundLocation = "resources/sounds/";
     private static final HashMap<String, Integer> buffers = new HashMap<>();
     private static final HashSet<Source> sources = new HashSet<>();
     

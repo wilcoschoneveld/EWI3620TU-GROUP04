@@ -22,7 +22,7 @@ import patient04.utilities.Logger;
  */
 public class Model {
     // Static resource managing variables
-    private static final String defaultModelLocation = "res/models/";
+    private static final String defaultModelLocation = "resources/models/";
     private static final HashMap<String, Model> models = new HashMap<>();
     
     // Raw data

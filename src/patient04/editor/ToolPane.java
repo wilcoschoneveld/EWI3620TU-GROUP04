@@ -216,7 +216,7 @@ public class ToolPane implements Input.Listener {
             
             if(play.isInside(mx, my)) {
                 // Save to temp file
-                editor.level.saveToFile("res/levels/editor.tmp");
+                editor.level.saveToFile("resources/levels/editor.tmp");
                 
                 Game game = (Game) Main.requestNewState(Main.States.GAME);
                 game.loadLevel = "editor.tmp";

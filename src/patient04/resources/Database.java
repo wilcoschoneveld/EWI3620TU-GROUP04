@@ -20,7 +20,7 @@ public class Database {
             
             // Connect to database
             Connection c = DriverManager.getConnection(
-                                             "jdbc:sqlite:res/scores.db");
+                                          "jdbc:sqlite:resources/scores.db");
             
             // Create a new statement
             Statement s = c.createStatement();
@@ -43,7 +43,7 @@ public class Database {
         try {
             // Connect to database
             Connection c = DriverManager.getConnection(
-                                             "jdbc:sqlite:res/scores.db");
+                                             "jdbc:sqlite:resources/scores.db");
             
             // Prepare and executre an insert statement
             PreparedStatement s = c.prepareStatement(
@@ -67,7 +67,7 @@ public class Database {
         try {
             // Connect to database
             Connection c = DriverManager.getConnection(
-                                             "jdbc:sqlite:res/scores.db");
+                                             "jdbc:sqlite:resources/scores.db");
             
             // Create a new statement
             Statement s = c.createStatement();

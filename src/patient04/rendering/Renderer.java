@@ -124,11 +124,11 @@ public class Renderer {
         
         // Load the geometry shader
         geometryShader = Shader.loadShaderPairFromFiles(
-                "res/shaders/geometry.vert", "res/shaders/geometry.frag");
+          "resources/shaders/geometry.vert", "resources/shaders/geometry.frag");
         
         // Load the lighting shader
         lightingShader = Shader.loadShaderPairFromFiles(
-                "res/shaders/lighting.vert", "res/shaders/lighting.frag");
+          "resources/shaders/lighting.vert", "resources/shaders/lighting.frag");
         
         // Bind the lighting shader
         useShaderProgram(lightingShader);
@@ -153,7 +153,7 @@ public class Renderer {
         
         // Set stencil operations
         stencilShader = Shader.loadShaderPairFromFiles(
-                "res/shaders/lighting.vert", "res/shaders/empty.frag");
+             "resources/shaders/lighting.vert", "resources/shaders/empty.frag");
         
         useShaderProgram(stencilShader);
         
@@ -164,7 +164,7 @@ public class Renderer {
         
         // Load the effects shader
         effectShader = Shader.loadShaderPairFromFiles(
-                "res/shaders/pass.vert", "res/shaders/effect.frag");
+                "resources/shaders/pass.vert", "resources/shaders/effect.frag");
         
         // Bind the effects shader
         useShaderProgram(effectShader);
@@ -183,7 +183,7 @@ public class Renderer {
         
         // Load debug shader
         debugShader = Shader.loadShaderPairFromFiles(
-                "res/shaders/pass.vert", "res/shaders/gbuffer.frag");
+              "resources/shaders/pass.vert", "resources/shaders/gbuffer.frag");
         
         useShaderProgram(debugShader);
         

@@ -49,7 +49,7 @@ public class Utils {
         try {            
             JFileChooser jc = new JFileChooser();
             
-            jc.setCurrentDirectory(new File("res/levels/"));
+            jc.setCurrentDirectory(new File("resources/levels/"));
             jc.setAcceptAllFileFilterUsed(false);
             jc.addChoosableFileFilter(
                             new FileNameExtensionFilter("Level files", "lvl"));
@@ -67,7 +67,7 @@ public class Utils {
         try {            
             JFileChooser jc = new JFileChooser();
             
-            jc.setCurrentDirectory(new File("res/levels/"));
+            jc.setCurrentDirectory(new File("resources/levels/"));
             jc.setAcceptAllFileFilterUsed(false);
             jc.addChoosableFileFilter(
                             new FileNameExtensionFilter("Level files", "lvl"));
