@@ -131,19 +131,6 @@ public class Game implements State, Input.Listener {
             return Input.HANDLED;
         }
         
-        if(Input.keyboardKey(Keyboard.KEY_L, true)) {
-            Vector position = player.getPosition().add(0, 2, 0);
-            
-            // Create a new light at player position
-            level.addNewLight().setColor((float) Math.random(), 0.7f)
-                    .setIntensity(15).setEnvironmentLight()
-                    .setPosition(position.x, position.y, position.z);
-            
-            Logger.debug("Light placed at: " + position);
-            
-            return Input.HANDLED;
-        }
-        
         if(Input.keyboardKey(Keyboard.KEY_F12, true)) {
             renderer.makeScreenshots();
         }
@@ -174,7 +161,7 @@ public class Game implements State, Input.Listener {
         renderer.guiPass(player);
         
         // Debug navigation grid
-        if(Keyboard.isKeyDown(Keyboard.KEY_P))
+        if(Keyboard.isKeyDown(Keyboard.KEY_N))
             level.drawNavPoints(renderer);
         
         if(pauser.isPaused()) {
